@@ -3,6 +3,8 @@ package schema
 import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 )
@@ -44,7 +46,9 @@ func (ScaAuthPermissionRule) Fields() []ent.Field {
 		field.String("v5").
 			MaxLen(100).
 			Optional().
-			Nillable(),
+			Nillable().Annotations(
+			entsql.WithComments(true),
+		),
 	}
 }
 
@@ -54,5 +58,16 @@ func (ScaAuthPermissionRule) Edges() []ent.Edge {
 		edge.From("sca_auth_role", ScaAuthRole.Type).
 			Ref("sca_auth_permission_rule").
 			Unique(),
+	}
+}
+
+// Annotations of the ScaAuthPermissionRule.
+func (ScaAuthPermissionRule) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.WithComments(true),
+		schema.Comment("角色权限规则表"),
+		entsql.Annotation{
+			Table: "sca_auth_permission_rule",
+		},
 	}
 }

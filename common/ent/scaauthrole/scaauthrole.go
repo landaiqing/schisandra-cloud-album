@@ -14,25 +14,25 @@ const (
 	Label = "sca_auth_role"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeleted holds the string denoting the deleted field in the database.
+	FieldDeleted = "deleted"
 	// FieldRoleName holds the string denoting the role_name field in the database.
 	FieldRoleName = "role_name"
 	// FieldRoleKey holds the string denoting the role_key field in the database.
 	FieldRoleKey = "role_key"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
-	// FieldDeleted holds the string denoting the deleted field in the database.
-	FieldDeleted = "deleted"
 	// EdgeScaAuthPermissionRule holds the string denoting the sca_auth_permission_rule edge name in mutations.
 	EdgeScaAuthPermissionRule = "sca_auth_permission_rule"
 	// Table holds the table name of the scaauthrole in the database.
-	Table = "sca_auth_roles"
+	Table = "sca_auth_role"
 	// ScaAuthPermissionRuleTable is the table that holds the sca_auth_permission_rule relation/edge.
-	ScaAuthPermissionRuleTable = "sca_auth_permission_rules"
+	ScaAuthPermissionRuleTable = "sca_auth_permission_rule"
 	// ScaAuthPermissionRuleInverseTable is the table name for the ScaAuthPermissionRule entity.
 	// It exists in this package in order to avoid circular dependency with the "scaauthpermissionrule" package.
-	ScaAuthPermissionRuleInverseTable = "sca_auth_permission_rules"
+	ScaAuthPermissionRuleInverseTable = "sca_auth_permission_rule"
 	// ScaAuthPermissionRuleColumn is the table column denoting the sca_auth_permission_rule relation/edge.
 	ScaAuthPermissionRuleColumn = "sca_auth_role_sca_auth_permission_rule"
 )
@@ -40,11 +40,11 @@ const (
 // Columns holds all SQL columns for scaauthrole fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeleted,
 	FieldRoleName,
 	FieldRoleKey,
-	FieldCreatedAt,
-	FieldUpdateAt,
-	FieldDeleted,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -58,18 +58,20 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDeleted holds the default value on creation for the "deleted" field.
+	DefaultDeleted int8
+	// DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	DeletedValidator func(int8) error
 	// RoleNameValidator is a validator for the "role_name" field. It is called by the builders before save.
 	RoleNameValidator func(string) error
 	// RoleKeyValidator is a validator for the "role_key" field. It is called by the builders before save.
 	RoleKeyValidator func(string) error
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
-	DefaultUpdateAt func() time.Time
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
-	// DefaultDeleted holds the default value on creation for the "deleted" field.
-	DefaultDeleted int
 )
 
 // OrderOption defines the ordering options for the ScaAuthRole queries.
@@ -80,6 +82,21 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeleted orders the results by the deleted field.
+func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
+}
+
 // ByRoleName orders the results by the role_name field.
 func ByRoleName(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRoleName, opts...).ToFunc()
@@ -88,21 +105,6 @@ func ByRoleName(opts ...sql.OrderTermOption) OrderOption {
 // ByRoleKey orders the results by the role_key field.
 func ByRoleKey(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRoleKey, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdateAt orders the results by the update_at field.
-func ByUpdateAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateAt, opts...).ToFunc()
-}
-
-// ByDeleted orders the results by the deleted field.
-func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }
 
 // ByScaAuthPermissionRuleCount orders the results by sca_auth_permission_rule count.

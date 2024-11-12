@@ -21,18 +21,6 @@ type ScaAuthRoleCreate struct {
 	hooks    []Hook
 }
 
-// SetRoleName sets the "role_name" field.
-func (sarc *ScaAuthRoleCreate) SetRoleName(s string) *ScaAuthRoleCreate {
-	sarc.mutation.SetRoleName(s)
-	return sarc
-}
-
-// SetRoleKey sets the "role_key" field.
-func (sarc *ScaAuthRoleCreate) SetRoleKey(s string) *ScaAuthRoleCreate {
-	sarc.mutation.SetRoleKey(s)
-	return sarc
-}
-
 // SetCreatedAt sets the "created_at" field.
 func (sarc *ScaAuthRoleCreate) SetCreatedAt(t time.Time) *ScaAuthRoleCreate {
 	sarc.mutation.SetCreatedAt(t)
@@ -47,31 +35,43 @@ func (sarc *ScaAuthRoleCreate) SetNillableCreatedAt(t *time.Time) *ScaAuthRoleCr
 	return sarc
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (sarc *ScaAuthRoleCreate) SetUpdateAt(t time.Time) *ScaAuthRoleCreate {
-	sarc.mutation.SetUpdateAt(t)
+// SetUpdatedAt sets the "updated_at" field.
+func (sarc *ScaAuthRoleCreate) SetUpdatedAt(t time.Time) *ScaAuthRoleCreate {
+	sarc.mutation.SetUpdatedAt(t)
 	return sarc
 }
 
-// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
-func (sarc *ScaAuthRoleCreate) SetNillableUpdateAt(t *time.Time) *ScaAuthRoleCreate {
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (sarc *ScaAuthRoleCreate) SetNillableUpdatedAt(t *time.Time) *ScaAuthRoleCreate {
 	if t != nil {
-		sarc.SetUpdateAt(*t)
+		sarc.SetUpdatedAt(*t)
 	}
 	return sarc
 }
 
 // SetDeleted sets the "deleted" field.
-func (sarc *ScaAuthRoleCreate) SetDeleted(i int) *ScaAuthRoleCreate {
+func (sarc *ScaAuthRoleCreate) SetDeleted(i int8) *ScaAuthRoleCreate {
 	sarc.mutation.SetDeleted(i)
 	return sarc
 }
 
 // SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (sarc *ScaAuthRoleCreate) SetNillableDeleted(i *int) *ScaAuthRoleCreate {
+func (sarc *ScaAuthRoleCreate) SetNillableDeleted(i *int8) *ScaAuthRoleCreate {
 	if i != nil {
 		sarc.SetDeleted(*i)
 	}
+	return sarc
+}
+
+// SetRoleName sets the "role_name" field.
+func (sarc *ScaAuthRoleCreate) SetRoleName(s string) *ScaAuthRoleCreate {
+	sarc.mutation.SetRoleName(s)
+	return sarc
+}
+
+// SetRoleKey sets the "role_key" field.
+func (sarc *ScaAuthRoleCreate) SetRoleKey(s string) *ScaAuthRoleCreate {
+	sarc.mutation.SetRoleKey(s)
 	return sarc
 }
 
@@ -135,9 +135,9 @@ func (sarc *ScaAuthRoleCreate) defaults() {
 		v := scaauthrole.DefaultCreatedAt()
 		sarc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := sarc.mutation.UpdateAt(); !ok {
-		v := scaauthrole.DefaultUpdateAt()
-		sarc.mutation.SetUpdateAt(v)
+	if _, ok := sarc.mutation.UpdatedAt(); !ok {
+		v := scaauthrole.DefaultUpdatedAt()
+		sarc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := sarc.mutation.Deleted(); !ok {
 		v := scaauthrole.DefaultDeleted
@@ -147,6 +147,17 @@ func (sarc *ScaAuthRoleCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (sarc *ScaAuthRoleCreate) check() error {
+	if _, ok := sarc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthRole.created_at"`)}
+	}
+	if _, ok := sarc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthRole.updated_at"`)}
+	}
+	if v, ok := sarc.mutation.Deleted(); ok {
+		if err := scaauthrole.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthRole.deleted": %w`, err)}
+		}
+	}
 	if _, ok := sarc.mutation.RoleName(); !ok {
 		return &ValidationError{Name: "role_name", err: errors.New(`ent: missing required field "ScaAuthRole.role_name"`)}
 	}
@@ -162,15 +173,6 @@ func (sarc *ScaAuthRoleCreate) check() error {
 		if err := scaauthrole.RoleKeyValidator(v); err != nil {
 			return &ValidationError{Name: "role_key", err: fmt.Errorf(`ent: validator failed for field "ScaAuthRole.role_key": %w`, err)}
 		}
-	}
-	if _, ok := sarc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthRole.created_at"`)}
-	}
-	if _, ok := sarc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "ScaAuthRole.update_at"`)}
-	}
-	if _, ok := sarc.mutation.Deleted(); !ok {
-		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthRole.deleted"`)}
 	}
 	return nil
 }
@@ -204,6 +206,18 @@ func (sarc *ScaAuthRoleCreate) createSpec() (*ScaAuthRole, *sqlgraph.CreateSpec)
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := sarc.mutation.CreatedAt(); ok {
+		_spec.SetField(scaauthrole.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := sarc.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthrole.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := sarc.mutation.Deleted(); ok {
+		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt8, value)
+		_node.Deleted = value
+	}
 	if value, ok := sarc.mutation.RoleName(); ok {
 		_spec.SetField(scaauthrole.FieldRoleName, field.TypeString, value)
 		_node.RoleName = value
@@ -211,18 +225,6 @@ func (sarc *ScaAuthRoleCreate) createSpec() (*ScaAuthRole, *sqlgraph.CreateSpec)
 	if value, ok := sarc.mutation.RoleKey(); ok {
 		_spec.SetField(scaauthrole.FieldRoleKey, field.TypeString, value)
 		_node.RoleKey = value
-	}
-	if value, ok := sarc.mutation.CreatedAt(); ok {
-		_spec.SetField(scaauthrole.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := sarc.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthrole.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = value
-	}
-	if value, ok := sarc.mutation.Deleted(); ok {
-		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt, value)
-		_node.Deleted = value
 	}
 	if nodes := sarc.mutation.ScaAuthPermissionRuleIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

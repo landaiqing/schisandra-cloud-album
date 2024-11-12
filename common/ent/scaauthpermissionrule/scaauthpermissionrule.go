@@ -29,12 +29,12 @@ const (
 	// EdgeScaAuthRole holds the string denoting the sca_auth_role edge name in mutations.
 	EdgeScaAuthRole = "sca_auth_role"
 	// Table holds the table name of the scaauthpermissionrule in the database.
-	Table = "sca_auth_permission_rules"
+	Table = "sca_auth_permission_rule"
 	// ScaAuthRoleTable is the table that holds the sca_auth_role relation/edge.
-	ScaAuthRoleTable = "sca_auth_permission_rules"
+	ScaAuthRoleTable = "sca_auth_permission_rule"
 	// ScaAuthRoleInverseTable is the table name for the ScaAuthRole entity.
 	// It exists in this package in order to avoid circular dependency with the "scaauthrole" package.
-	ScaAuthRoleInverseTable = "sca_auth_roles"
+	ScaAuthRoleInverseTable = "sca_auth_role"
 	// ScaAuthRoleColumn is the table column denoting the sca_auth_role relation/edge.
 	ScaAuthRoleColumn = "sca_auth_role_sca_auth_permission_rule"
 )
@@ -51,7 +51,7 @@ var Columns = []string{
 	FieldV5,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_permission_rules"
+// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_permission_rule"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"sca_auth_role_sca_auth_permission_rule",

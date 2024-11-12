@@ -29,6 +29,39 @@ func (saru *ScaAuthRoleUpdate) Where(ps ...predicate.ScaAuthRole) *ScaAuthRoleUp
 	return saru
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (saru *ScaAuthRoleUpdate) SetUpdatedAt(t time.Time) *ScaAuthRoleUpdate {
+	saru.mutation.SetUpdatedAt(t)
+	return saru
+}
+
+// SetDeleted sets the "deleted" field.
+func (saru *ScaAuthRoleUpdate) SetDeleted(i int8) *ScaAuthRoleUpdate {
+	saru.mutation.ResetDeleted()
+	saru.mutation.SetDeleted(i)
+	return saru
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (saru *ScaAuthRoleUpdate) SetNillableDeleted(i *int8) *ScaAuthRoleUpdate {
+	if i != nil {
+		saru.SetDeleted(*i)
+	}
+	return saru
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (saru *ScaAuthRoleUpdate) AddDeleted(i int8) *ScaAuthRoleUpdate {
+	saru.mutation.AddDeleted(i)
+	return saru
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (saru *ScaAuthRoleUpdate) ClearDeleted() *ScaAuthRoleUpdate {
+	saru.mutation.ClearDeleted()
+	return saru
+}
+
 // SetRoleName sets the "role_name" field.
 func (saru *ScaAuthRoleUpdate) SetRoleName(s string) *ScaAuthRoleUpdate {
 	saru.mutation.SetRoleName(s)
@@ -54,33 +87,6 @@ func (saru *ScaAuthRoleUpdate) SetNillableRoleKey(s *string) *ScaAuthRoleUpdate 
 	if s != nil {
 		saru.SetRoleKey(*s)
 	}
-	return saru
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (saru *ScaAuthRoleUpdate) SetUpdateAt(t time.Time) *ScaAuthRoleUpdate {
-	saru.mutation.SetUpdateAt(t)
-	return saru
-}
-
-// SetDeleted sets the "deleted" field.
-func (saru *ScaAuthRoleUpdate) SetDeleted(i int) *ScaAuthRoleUpdate {
-	saru.mutation.ResetDeleted()
-	saru.mutation.SetDeleted(i)
-	return saru
-}
-
-// SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (saru *ScaAuthRoleUpdate) SetNillableDeleted(i *int) *ScaAuthRoleUpdate {
-	if i != nil {
-		saru.SetDeleted(*i)
-	}
-	return saru
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (saru *ScaAuthRoleUpdate) AddDeleted(i int) *ScaAuthRoleUpdate {
-	saru.mutation.AddDeleted(i)
 	return saru
 }
 
@@ -155,14 +161,19 @@ func (saru *ScaAuthRoleUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (saru *ScaAuthRoleUpdate) defaults() {
-	if _, ok := saru.mutation.UpdateAt(); !ok {
-		v := scaauthrole.UpdateDefaultUpdateAt()
-		saru.mutation.SetUpdateAt(v)
+	if _, ok := saru.mutation.UpdatedAt(); !ok {
+		v := scaauthrole.UpdateDefaultUpdatedAt()
+		saru.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (saru *ScaAuthRoleUpdate) check() error {
+	if v, ok := saru.mutation.Deleted(); ok {
+		if err := scaauthrole.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthRole.deleted": %w`, err)}
+		}
+	}
 	if v, ok := saru.mutation.RoleName(); ok {
 		if err := scaauthrole.RoleNameValidator(v); err != nil {
 			return &ValidationError{Name: "role_name", err: fmt.Errorf(`ent: validator failed for field "ScaAuthRole.role_name": %w`, err)}
@@ -188,20 +199,23 @@ func (saru *ScaAuthRoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := saru.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthrole.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := saru.mutation.Deleted(); ok {
+		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt8, value)
+	}
+	if value, ok := saru.mutation.AddedDeleted(); ok {
+		_spec.AddField(scaauthrole.FieldDeleted, field.TypeInt8, value)
+	}
+	if saru.mutation.DeletedCleared() {
+		_spec.ClearField(scaauthrole.FieldDeleted, field.TypeInt8)
+	}
 	if value, ok := saru.mutation.RoleName(); ok {
 		_spec.SetField(scaauthrole.FieldRoleName, field.TypeString, value)
 	}
 	if value, ok := saru.mutation.RoleKey(); ok {
 		_spec.SetField(scaauthrole.FieldRoleKey, field.TypeString, value)
-	}
-	if value, ok := saru.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthrole.FieldUpdateAt, field.TypeTime, value)
-	}
-	if value, ok := saru.mutation.Deleted(); ok {
-		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt, value)
-	}
-	if value, ok := saru.mutation.AddedDeleted(); ok {
-		_spec.AddField(scaauthrole.FieldDeleted, field.TypeInt, value)
 	}
 	if saru.mutation.ScaAuthPermissionRuleCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -268,6 +282,39 @@ type ScaAuthRoleUpdateOne struct {
 	mutation *ScaAuthRoleMutation
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (saruo *ScaAuthRoleUpdateOne) SetUpdatedAt(t time.Time) *ScaAuthRoleUpdateOne {
+	saruo.mutation.SetUpdatedAt(t)
+	return saruo
+}
+
+// SetDeleted sets the "deleted" field.
+func (saruo *ScaAuthRoleUpdateOne) SetDeleted(i int8) *ScaAuthRoleUpdateOne {
+	saruo.mutation.ResetDeleted()
+	saruo.mutation.SetDeleted(i)
+	return saruo
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (saruo *ScaAuthRoleUpdateOne) SetNillableDeleted(i *int8) *ScaAuthRoleUpdateOne {
+	if i != nil {
+		saruo.SetDeleted(*i)
+	}
+	return saruo
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (saruo *ScaAuthRoleUpdateOne) AddDeleted(i int8) *ScaAuthRoleUpdateOne {
+	saruo.mutation.AddDeleted(i)
+	return saruo
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (saruo *ScaAuthRoleUpdateOne) ClearDeleted() *ScaAuthRoleUpdateOne {
+	saruo.mutation.ClearDeleted()
+	return saruo
+}
+
 // SetRoleName sets the "role_name" field.
 func (saruo *ScaAuthRoleUpdateOne) SetRoleName(s string) *ScaAuthRoleUpdateOne {
 	saruo.mutation.SetRoleName(s)
@@ -293,33 +340,6 @@ func (saruo *ScaAuthRoleUpdateOne) SetNillableRoleKey(s *string) *ScaAuthRoleUpd
 	if s != nil {
 		saruo.SetRoleKey(*s)
 	}
-	return saruo
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (saruo *ScaAuthRoleUpdateOne) SetUpdateAt(t time.Time) *ScaAuthRoleUpdateOne {
-	saruo.mutation.SetUpdateAt(t)
-	return saruo
-}
-
-// SetDeleted sets the "deleted" field.
-func (saruo *ScaAuthRoleUpdateOne) SetDeleted(i int) *ScaAuthRoleUpdateOne {
-	saruo.mutation.ResetDeleted()
-	saruo.mutation.SetDeleted(i)
-	return saruo
-}
-
-// SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (saruo *ScaAuthRoleUpdateOne) SetNillableDeleted(i *int) *ScaAuthRoleUpdateOne {
-	if i != nil {
-		saruo.SetDeleted(*i)
-	}
-	return saruo
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (saruo *ScaAuthRoleUpdateOne) AddDeleted(i int) *ScaAuthRoleUpdateOne {
-	saruo.mutation.AddDeleted(i)
 	return saruo
 }
 
@@ -407,14 +427,19 @@ func (saruo *ScaAuthRoleUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (saruo *ScaAuthRoleUpdateOne) defaults() {
-	if _, ok := saruo.mutation.UpdateAt(); !ok {
-		v := scaauthrole.UpdateDefaultUpdateAt()
-		saruo.mutation.SetUpdateAt(v)
+	if _, ok := saruo.mutation.UpdatedAt(); !ok {
+		v := scaauthrole.UpdateDefaultUpdatedAt()
+		saruo.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (saruo *ScaAuthRoleUpdateOne) check() error {
+	if v, ok := saruo.mutation.Deleted(); ok {
+		if err := scaauthrole.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthRole.deleted": %w`, err)}
+		}
+	}
 	if v, ok := saruo.mutation.RoleName(); ok {
 		if err := scaauthrole.RoleNameValidator(v); err != nil {
 			return &ValidationError{Name: "role_name", err: fmt.Errorf(`ent: validator failed for field "ScaAuthRole.role_name": %w`, err)}
@@ -457,20 +482,23 @@ func (saruo *ScaAuthRoleUpdateOne) sqlSave(ctx context.Context) (_node *ScaAuthR
 			}
 		}
 	}
+	if value, ok := saruo.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthrole.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := saruo.mutation.Deleted(); ok {
+		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt8, value)
+	}
+	if value, ok := saruo.mutation.AddedDeleted(); ok {
+		_spec.AddField(scaauthrole.FieldDeleted, field.TypeInt8, value)
+	}
+	if saruo.mutation.DeletedCleared() {
+		_spec.ClearField(scaauthrole.FieldDeleted, field.TypeInt8)
+	}
 	if value, ok := saruo.mutation.RoleName(); ok {
 		_spec.SetField(scaauthrole.FieldRoleName, field.TypeString, value)
 	}
 	if value, ok := saruo.mutation.RoleKey(); ok {
 		_spec.SetField(scaauthrole.FieldRoleKey, field.TypeString, value)
-	}
-	if value, ok := saruo.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthrole.FieldUpdateAt, field.TypeTime, value)
-	}
-	if value, ok := saruo.mutation.Deleted(); ok {
-		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt, value)
-	}
-	if value, ok := saruo.mutation.AddedDeleted(); ok {
-		_spec.AddField(scaauthrole.FieldDeleted, field.TypeInt, value)
 	}
 	if saruo.mutation.ScaAuthPermissionRuleCleared() {
 		edge := &sqlgraph.EdgeSpec{

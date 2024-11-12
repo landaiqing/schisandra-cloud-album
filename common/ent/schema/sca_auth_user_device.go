@@ -1,18 +1,26 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
+	"schisandra-album-cloud-microservices/common/ent/schema/mixin"
 )
 
 // ScaAuthUserDevice holds the schema definition for the ScaAuthUserDevice entity.
 type ScaAuthUserDevice struct {
 	ent.Schema
+}
+
+func (ScaAuthUserDevice) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.DefaultMixin{},
+	}
 }
 
 // Fields of the ScaAuthUserDevice.
@@ -36,18 +44,6 @@ func (ScaAuthUserDevice) Fields() []ent.Field {
 		field.String("agent").
 			MaxLen(255).
 			Comment("设备信息"),
-		field.Time("created_at").
-			Default(time.Now).
-			Optional().
-			Immutable().
-			Comment("创建时间"),
-		field.Time("update_at").
-			Default(time.Now).UpdateDefault(time.Now).
-			Nillable().
-			Comment("更新时间"),
-		field.Int("deleted").
-			Default(0).
-			Comment("是否删除"),
 		field.String("browser").
 			MaxLen(20).
 			Comment("浏览器"),
@@ -72,7 +68,9 @@ func (ScaAuthUserDevice) Fields() []ent.Field {
 			Comment("引擎名称"),
 		field.String("engine_version").
 			MaxLen(20).
-			Comment("引擎版本"),
+			Comment("引擎版本").Annotations(
+			entsql.WithComments(true),
+		),
 	}
 }
 
@@ -90,5 +88,16 @@ func (ScaAuthUserDevice) Indexes() []ent.Index {
 	return []ent.Index{
 		index.Fields("id").
 			Unique(),
+	}
+}
+
+// Annotations of the ScaAuthUserDevice.
+func (ScaAuthUserDevice) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.WithComments(true),
+		schema.Comment("用户设备表"),
+		entsql.Annotation{
+			Table: "sca_auth_user_device",
+		},
 	}
 }

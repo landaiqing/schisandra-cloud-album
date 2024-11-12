@@ -13,12 +13,18 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ScaAuthUserSocial is the model entity for the ScaAuthUserSocial schema.
+// 用户第三方登录信息
 type ScaAuthUserSocial struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 主键ID
 	ID int64 `json:"id,omitempty"`
+	// 创建时间
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// 更新时间
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 是否删除 0 未删除 1 已删除
+	Deleted int8 `json:"deleted,omitempty"`
 	// 用户ID
 	UserID string `json:"user_id,omitempty"`
 	// 第三方用户的 open id
@@ -27,12 +33,6 @@ type ScaAuthUserSocial struct {
 	Source string `json:"source,omitempty"`
 	// 状态 0正常 1 封禁
 	Status int `json:"status,omitempty"`
-	// 创建时间
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// 更新时间
-	UpdateAt *time.Time `json:"update_at,omitempty"`
-	// 是否删除
-	Deleted int `json:"deleted,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ScaAuthUserSocialQuery when eager-loading is set.
 	Edges                              ScaAuthUserSocialEdges `json:"edges"`
@@ -65,11 +65,11 @@ func (*ScaAuthUserSocial) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case scaauthusersocial.FieldID, scaauthusersocial.FieldStatus, scaauthusersocial.FieldDeleted:
+		case scaauthusersocial.FieldID, scaauthusersocial.FieldDeleted, scaauthusersocial.FieldStatus:
 			values[i] = new(sql.NullInt64)
 		case scaauthusersocial.FieldUserID, scaauthusersocial.FieldOpenID, scaauthusersocial.FieldSource:
 			values[i] = new(sql.NullString)
-		case scaauthusersocial.FieldCreatedAt, scaauthusersocial.FieldUpdateAt:
+		case scaauthusersocial.FieldCreatedAt, scaauthusersocial.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case scaauthusersocial.ForeignKeys[0]: // sca_auth_user_sca_auth_user_social
 			values[i] = new(sql.NullInt64)
@@ -94,6 +94,24 @@ func (saus *ScaAuthUserSocial) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			saus.ID = int64(value.Int64)
+		case scaauthusersocial.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				saus.CreatedAt = value.Time
+			}
+		case scaauthusersocial.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				saus.UpdatedAt = value.Time
+			}
+		case scaauthusersocial.FieldDeleted:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted", values[i])
+			} else if value.Valid {
+				saus.Deleted = int8(value.Int64)
+			}
 		case scaauthusersocial.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
@@ -117,25 +135,6 @@ func (saus *ScaAuthUserSocial) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field status", values[i])
 			} else if value.Valid {
 				saus.Status = int(value.Int64)
-			}
-		case scaauthusersocial.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				saus.CreatedAt = value.Time
-			}
-		case scaauthusersocial.FieldUpdateAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
-			} else if value.Valid {
-				saus.UpdateAt = new(time.Time)
-				*saus.UpdateAt = value.Time
-			}
-		case scaauthusersocial.FieldDeleted:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted", values[i])
-			} else if value.Valid {
-				saus.Deleted = int(value.Int64)
 			}
 		case scaauthusersocial.ForeignKeys[0]:
 			if value, ok := values[i].(*sql.NullInt64); !ok {
@@ -185,6 +184,15 @@ func (saus *ScaAuthUserSocial) String() string {
 	var builder strings.Builder
 	builder.WriteString("ScaAuthUserSocial(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", saus.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(saus.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(saus.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted=")
+	builder.WriteString(fmt.Sprintf("%v", saus.Deleted))
+	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(saus.UserID)
 	builder.WriteString(", ")
@@ -196,17 +204,6 @@ func (saus *ScaAuthUserSocial) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("status=")
 	builder.WriteString(fmt.Sprintf("%v", saus.Status))
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(saus.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := saus.UpdateAt; v != nil {
-		builder.WriteString("update_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
-	builder.WriteString("deleted=")
-	builder.WriteString(fmt.Sprintf("%v", saus.Deleted))
 	builder.WriteByte(')')
 	return builder.String()
 }

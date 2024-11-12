@@ -1,17 +1,25 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
+
+	"schisandra-album-cloud-microservices/common/ent/schema/mixin"
 )
 
 // ScaAuthRole holds the schema definition for the ScaAuthRole entity.
 type ScaAuthRole struct {
 	ent.Schema
+}
+
+func (ScaAuthRole) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.DefaultMixin{},
+	}
 }
 
 // Fields of the ScaAuthRole.
@@ -28,17 +36,10 @@ func (ScaAuthRole) Fields() []ent.Field {
 			Comment("角色名称"),
 		field.String("role_key").
 			MaxLen(64).
-			Comment("角色关键字"),
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable().
-			Comment("创建时间"),
-		field.Time("update_at").
-			Default(time.Now).UpdateDefault(time.Now).
-			Comment("更新时间"),
-		field.Int("deleted").
-			Default(0).
-			Comment("是否删除 0 未删除 1已删除"),
+			Comment("角色关键字").
+			Annotations(
+				entsql.WithComments(true),
+			),
 	}
 }
 
@@ -52,4 +53,15 @@ func (ScaAuthRole) Edges() []ent.Edge {
 // Indexes of the ScaAuthRole.
 func (ScaAuthRole) Indexes() []ent.Index {
 	return nil
+}
+
+// Annotations of the ScaAuthRole.
+func (ScaAuthRole) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.WithComments(true),
+		schema.Comment("角色表"),
+		entsql.Annotation{
+			Table: "sca_auth_role",
+		},
+	}
 }

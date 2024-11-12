@@ -20,14 +20,14 @@
         <entry key="Chain">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/hook/hook.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/hook/hook.go" />
             </set>
           </value>
         </entry>
         <entry key="Client">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
@@ -41,7 +41,21 @@
         <entry key="ConstraintError">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="DefaultMixin">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/common/ent/schema/mixin/default_mixin.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="I18nGrpcInterceptor">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/common/i18n/rpc_interceptor.go" />
             </set>
           </value>
         </entry>
@@ -49,6 +63,7 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/auth/internal/middleware/i18n_middleware.go" />
+              <option value="file://$PROJECT_DIR$/common/i18n/middleware.go" />
             </set>
           </value>
         </entry>
@@ -62,21 +77,21 @@
         <entry key="NotFoundError">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
         <entry key="NotLoadedError">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
         <entry key="NotSingularError">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
@@ -111,7 +126,7 @@
         <entry key="ScaAuthPermissionRule">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule.go" />
               <option value="file://$PROJECT_DIR$/common/ent/schema/sca_auth_permission_rule.go" />
             </set>
           </value>
@@ -119,84 +134,91 @@
         <entry key="ScaAuthPermissionRuleClient">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleCreate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleCreateBulk">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleDelete">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleDeleteOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaAuthPermissionRuleEdges">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleGroupBy">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleMutation">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/mutation.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/mutation.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleQuery">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleSelect">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleUpdate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthPermissionRuleUpdateOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRole">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole.go" />
               <option value="file://$PROJECT_DIR$/common/ent/schema/sca_auth_role.go" />
             </set>
           </value>
@@ -204,129 +226,134 @@
         <entry key="ScaAuthRoleClient">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleCreate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleCreateBulk">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleDelete">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleDeleteOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaAuthRoleEdges">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleGroupBy">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleMutation">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/mutation.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/mutation.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleQuery">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleSelect">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleUpdate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthRoleUpdateOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthrole_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUser">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser.go" />
               <option value="file://$PROJECT_DIR$/common/ent/schema/sca_auth_user.go" />
-              <option value="file://$PROJECT_DIR$/ent/schema/sca_auth_user.go" />
-              <option value="file://$PROJECT_DIR$/ent/schema/scaauthuser.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserClient">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserCreate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserCreateBulk">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDelete">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeleteOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDevice">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice.go" />
               <option value="file://$PROJECT_DIR$/common/ent/schema/sca_auth_user_device.go" />
             </set>
           </value>
@@ -334,233 +361,232 @@
         <entry key="ScaAuthUserDeviceClient">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceCreate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceCreateBulk">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceDelete">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceDeleteOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceEdges">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceGroupBy">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceMutation">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/mutation.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/mutation.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceQuery">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceSelect">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceUpdate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserDeviceUpdateOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserEdges">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserGroupBy">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserMutation">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/mutation.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/mutation.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserQuery">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSelect">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocial">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial.go" />
               <option value="file://$PROJECT_DIR$/common/ent/schema/sca_auth_user_social.go" />
-              <option value="file://$PROJECT_DIR$/ent/schema/sca_auth_user_social.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialClient">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialCreate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialCreateBulk">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_create.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_create.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialDelete">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialDeleteOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_delete.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_delete.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialEdges">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialGroupBy">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialMutation">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/mutation.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/mutation.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialQuery">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialSelect">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_query.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_query.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialUpdate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserSocialUpdateOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthusersocial_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserUpdate">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_update.go" />
             </set>
           </value>
         </entry>
         <entry key="ScaAuthUserUpdateOne">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_update.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/scaauthuser_update.go" />
             </set>
           </value>
         </entry>
         <entry key="Schema">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/migrate/migrate.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/migrate/migrate.go" />
             </set>
           </value>
         </entry>
@@ -581,70 +607,70 @@
         <entry key="Tx">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/tx.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/tx.go" />
             </set>
           </value>
         </entry>
         <entry key="ValidationError">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
         <entry key="clientCtxKey">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
         <entry key="config">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="hooks">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="inters">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/client.go" />
             </set>
           </value>
         </entry>
         <entry key="options">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/enttest/enttest.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/enttest/enttest.go" />
             </set>
           </value>
         </entry>
         <entry key="selector">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
         <entry key="txCtxKey">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/ent.go" />
             </set>
           </value>
         </entry>
         <entry key="txDriver">
           <value>
             <set>
-              <option value="file://$PROJECT_DIR$/common/ent/gen/entschema/tx.go" />
+              <option value="file://$PROJECT_DIR$/common/ent/tx.go" />
             </set>
           </value>
         </entry>
@@ -655,14 +681,14 @@
         <entry key="file://$PROJECT_DIR$/app/auth/auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731317490307" />
+              <option name="lastModified" value="1731416226176" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/internal/config/config.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347270213" />
+              <option name="lastModified" value="1731411201283" />
               <option name="schema">
                 <list>
                   <option value="Config" />
@@ -674,7 +700,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731316239667" />
+              <option name="lastModified" value="1731398291491" />
             </ScannedPath>
           </value>
         </entry>
@@ -702,7 +728,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/internal/logic/user/account_login_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347891480" />
+              <option name="lastModified" value="1731419891451" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginLogic" />
@@ -762,7 +788,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347669390" />
+              <option name="lastModified" value="1731411183929" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -774,7 +800,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731316239666" />
+              <option name="lastModified" value="1731398291488" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -789,21 +815,14 @@
         <entry key="file://$PROJECT_DIR$/common/core/mysql.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731401922688" />
+              <option name="lastModified" value="1731419701541" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/core/orm.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/client.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731397417308" />
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/client.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731347098022" />
+              <option name="lastModified" value="1731409452417" />
               <option name="schema">
                 <list>
                   <option value="Client" />
@@ -820,10 +839,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/ent.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/ent.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097788" />
+              <option name="lastModified" value="1731409452212" />
               <option name="schema">
                 <list>
                   <option value="clientCtxKey" />
@@ -839,10 +858,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/enttest/enttest.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/enttest/enttest.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097803" />
+              <option name="lastModified" value="1731409452183" />
               <option name="schema">
                 <list>
                   <option value="options" />
@@ -851,10 +870,17 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/hook/hook.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/generate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097958" />
+              <option name="lastModified" value="1731420050392" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/ent/hook/hook.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731409452354" />
               <option name="schema">
                 <list>
                   <option value="Chain" />
@@ -863,10 +889,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/migrate/migrate.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/migrate/migrate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097960" />
+              <option name="lastModified" value="1731409452365" />
               <option name="schema">
                 <list>
                   <option value="Schema" />
@@ -875,17 +901,17 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/migrate/schema.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/migrate/schema.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097786" />
+              <option name="lastModified" value="1731409452202" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/mutation.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/mutation.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347098032" />
+              <option name="lastModified" value="1731409452434" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleMutation" />
@@ -898,57 +924,58 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/predicate/predicate.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/predicate/predicate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097801" />
+              <option name="lastModified" value="1731409452174" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/runtime.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/runtime.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097799" />
+              <option name="lastModified" value="1731409452211" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/runtime/runtime.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/runtime/runtime.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097793" />
+              <option name="lastModified" value="1731409452175" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097789" />
+              <option name="lastModified" value="1731409452176" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRule" />
+                  <option value="ScaAuthPermissionRuleEdges" />
                 </list>
               </option>
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule/scaauthpermissionrule.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule/scaauthpermissionrule.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097803" />
+              <option name="lastModified" value="1731409452204" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule/where.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097801" />
+              <option name="lastModified" value="1731409452209" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_create.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097798" />
+              <option name="lastModified" value="1731409452201" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleCreate" />
@@ -958,10 +985,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_delete.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097798" />
+              <option name="lastModified" value="1731409452200" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleDelete" />
@@ -971,10 +998,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_query.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097805" />
+              <option name="lastModified" value="1731409452196" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleQuery" />
@@ -985,10 +1012,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthpermissionrule_update.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthpermissionrule_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097788" />
+              <option name="lastModified" value="1731409452203" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleUpdate" />
@@ -998,36 +1025,37 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097803" />
+              <option name="lastModified" value="1731409452182" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRole" />
+                  <option value="ScaAuthRoleEdges" />
                 </list>
               </option>
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole/scaauthrole.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole/scaauthrole.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097780" />
+              <option name="lastModified" value="1731409452201" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole/where.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097785" />
+              <option name="lastModified" value="1731409452191" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_create.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097782" />
+              <option name="lastModified" value="1731409452186" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleCreate" />
@@ -1037,10 +1065,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_delete.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097802" />
+              <option name="lastModified" value="1731409452210" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleDelete" />
@@ -1050,10 +1078,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_query.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097795" />
+              <option name="lastModified" value="1731409452196" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleQuery" />
@@ -1064,10 +1092,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthrole_update.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthrole_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097793" />
+              <option name="lastModified" value="1731409452211" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleUpdate" />
@@ -1077,10 +1105,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097794" />
+              <option name="lastModified" value="1731409452192" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUser" />
@@ -1090,24 +1118,24 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser/scaauthuser.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser/scaauthuser.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097789" />
+              <option name="lastModified" value="1731409452202" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser/where.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097797" />
+              <option name="lastModified" value="1731409452192" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_create.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097793" />
+              <option name="lastModified" value="1731409452186" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserCreate" />
@@ -1117,10 +1145,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_delete.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097780" />
+              <option name="lastModified" value="1731409452179" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDelete" />
@@ -1130,10 +1158,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_query.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097793" />
+              <option name="lastModified" value="1731409452188" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserQuery" />
@@ -1144,10 +1172,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuser_update.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuser_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097799" />
+              <option name="lastModified" value="1731409452209" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserUpdate" />
@@ -1157,10 +1185,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097789" />
+              <option name="lastModified" value="1731409452182" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDevice" />
@@ -1170,24 +1198,24 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice/scaauthuserdevice.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice/scaauthuserdevice.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097781" />
+              <option name="lastModified" value="1731409452175" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice/where.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097806" />
+              <option name="lastModified" value="1731409452200" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_create.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097801" />
+              <option name="lastModified" value="1731409452184" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceCreate" />
@@ -1197,10 +1225,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_delete.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097792" />
+              <option name="lastModified" value="1731409452200" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceDelete" />
@@ -1210,10 +1238,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_query.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097805" />
+              <option name="lastModified" value="1731409452210" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceQuery" />
@@ -1224,10 +1252,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthuserdevice_update.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthuserdevice_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097793" />
+              <option name="lastModified" value="1731409452210" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceUpdate" />
@@ -1237,10 +1265,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097803" />
+              <option name="lastModified" value="1731409452180" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocial" />
@@ -1250,24 +1278,24 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial/scaauthusersocial.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial/scaauthusersocial.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097796" />
+              <option name="lastModified" value="1731409452175" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial/where.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097786" />
+              <option name="lastModified" value="1731409452180" />
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_create.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097787" />
+              <option name="lastModified" value="1731409452186" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialCreate" />
@@ -1277,10 +1305,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_delete.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097792" />
+              <option name="lastModified" value="1731409452207" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialDelete" />
@@ -1290,10 +1318,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_query.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097806" />
+              <option name="lastModified" value="1731409452196" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialQuery" />
@@ -1304,10 +1332,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/scaauthusersocial_update.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/scaauthusersocial_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097809" />
+              <option name="lastModified" value="1731409452186" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialUpdate" />
@@ -1317,30 +1345,22 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/gen/entschema/tx.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/schema/mixin/default_mixin.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347097781" />
+              <option name="lastModified" value="1731409162862" />
               <option name="schema">
                 <list>
-                  <option value="Tx" />
-                  <option value="txDriver" />
+                  <option value="DefaultMixin" />
                 </list>
               </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/common/ent/generate.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731397375427" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/common/ent/schema/sca_auth_permission_rule.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731378965481" />
+              <option name="lastModified" value="1731403613457" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRule" />
@@ -1352,7 +1372,7 @@
         <entry key="file://$PROJECT_DIR$/common/ent/schema/sca_auth_role.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731378907829" />
+              <option name="lastModified" value="1731409363178" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRole" />
@@ -1364,7 +1384,7 @@
         <entry key="file://$PROJECT_DIR$/common/ent/schema/sca_auth_user.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731379630953" />
+              <option name="lastModified" value="1731409206479" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUser" />
@@ -1376,7 +1396,7 @@
         <entry key="file://$PROJECT_DIR$/common/ent/schema/sca_auth_user_device.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731377968837" />
+              <option name="lastModified" value="1731409363865" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDevice" />
@@ -1388,7 +1408,7 @@
         <entry key="file://$PROJECT_DIR$/common/ent/schema/sca_auth_user_social.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731380676650" />
+              <option name="lastModified" value="1731409330688" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocial" />
@@ -1397,24 +1417,89 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/init/orm.go">
+        <entry key="file://$PROJECT_DIR$/common/ent/tx.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731347580311" />
+              <option name="lastModified" value="1731409452195" />
+              <option name="schema">
+                <list>
+                  <option value="Tx" />
+                  <option value="txDriver" />
+                </list>
+              </option>
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/middleware/i18nMiddleware.go">
+        <entry key="file://$PROJECT_DIR$/common/i18n/bundle.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731340053053" />
+              <option name="lastModified" value="1731415374511" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/i18n/cache.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731415402293" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/i18n/i18n.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731417490038" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/i18n/keys.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731415859282" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/i18n/middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731415466929" />
+              <option name="schema">
+                <list>
+                  <option value="I18nMiddleware" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/i18n/parse.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731415480368" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/i18n/rpc_interceptor.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731415557302" />
+              <option name="schema">
+                <list>
+                  <option value="I18nGrpcInterceptor" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/middleware/cors_middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731415110802" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/common/middleware/i18n_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731397687837" />
+              <option name="lastModified" value="1731419498108" />
             </ScannedPath>
           </value>
         </entry>
@@ -1432,46 +1517,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/ent/generate.go">
+        <entry key="file://$PROJECT_DIR$/../schisandra-cloud-album/config.yaml.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731344581721" />
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/ent/schema/sca_auth_user.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731344781091" />
-              <option name="schema">
-                <list>
-                  <option value="ScaAuthUser" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/ent/schema/sca_auth_user_social.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731344827682" />
-              <option name="schema">
-                <list>
-                  <option value="ScaAuthUserSocial" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/ent/schema/scaauthuser.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731343442269" />
-              <option name="schema">
-                <list>
-                  <option value="ScaAuthUser" />
-                </list>
-              </option>
+              <option name="lastModified" value="1731422935178" />
             </ScannedPath>
           </value>
         </entry>
@@ -1486,7 +1535,9 @@
         <entry key="client_ctx_key" value="clientCtxKey" />
         <entry key="config" value="config" />
         <entry key="constraint_error" value="ConstraintError" />
+        <entry key="default_mixin" value="DefaultMixin" />
         <entry key="hooks" value="hooks" />
+        <entry key="i18n_grpc_interceptor" value="I18nGrpcInterceptor" />
         <entry key="i18n_middleware" value="I18nMiddleware" />
         <entry key="inters" value="inters" />
         <entry key="login_response" value="LoginResponse" />
@@ -1504,6 +1555,7 @@
         <entry key="sca_auth_permission_rule_create_bulk" value="ScaAuthPermissionRuleCreateBulk" />
         <entry key="sca_auth_permission_rule_delete" value="ScaAuthPermissionRuleDelete" />
         <entry key="sca_auth_permission_rule_delete_one" value="ScaAuthPermissionRuleDeleteOne" />
+        <entry key="sca_auth_permission_rule_edges" value="ScaAuthPermissionRuleEdges" />
         <entry key="sca_auth_permission_rule_group_by" value="ScaAuthPermissionRuleGroupBy" />
         <entry key="sca_auth_permission_rule_mutation" value="ScaAuthPermissionRuleMutation" />
         <entry key="sca_auth_permission_rule_query" value="ScaAuthPermissionRuleQuery" />
@@ -1516,6 +1568,7 @@
         <entry key="sca_auth_role_create_bulk" value="ScaAuthRoleCreateBulk" />
         <entry key="sca_auth_role_delete" value="ScaAuthRoleDelete" />
         <entry key="sca_auth_role_delete_one" value="ScaAuthRoleDeleteOne" />
+        <entry key="sca_auth_role_edges" value="ScaAuthRoleEdges" />
         <entry key="sca_auth_role_group_by" value="ScaAuthRoleGroupBy" />
         <entry key="sca_auth_role_mutation" value="ScaAuthRoleMutation" />
         <entry key="sca_auth_role_query" value="ScaAuthRoleQuery" />
@@ -1571,6 +1624,6 @@
         <entry key="validation_error" value="ValidationError" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1731297949193" />
+    <option name="lastTimeChecked" value="1731414518038" />
   </component>
 </project>

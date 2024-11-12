@@ -299,12 +299,12 @@ func (sausq *ScaAuthUserSocialQuery) WithScaAuthUser(opts ...func(*ScaAuthUserQu
 // Example:
 //
 //	var v []struct {
-//		UserID string `json:"user_id,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ScaAuthUserSocial.Query().
-//		GroupBy(scaauthusersocial.FieldUserID).
+//		GroupBy(scaauthusersocial.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (sausq *ScaAuthUserSocialQuery) GroupBy(field string, fields ...string) *ScaAuthUserSocialGroupBy {
@@ -322,11 +322,11 @@ func (sausq *ScaAuthUserSocialQuery) GroupBy(field string, fields ...string) *Sc
 // Example:
 //
 //	var v []struct {
-//		UserID string `json:"user_id,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.ScaAuthUserSocial.Query().
-//		Select(scaauthusersocial.FieldUserID).
+//		Select(scaauthusersocial.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (sausq *ScaAuthUserSocialQuery) Select(fields ...string) *ScaAuthUserSocialSelect {
 	sausq.ctx.Fields = append(sausq.ctx.Fields, fields...)

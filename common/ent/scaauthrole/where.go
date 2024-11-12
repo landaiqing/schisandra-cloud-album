@@ -55,6 +55,21 @@ func IDLTE(id int64) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldLTE(FieldID, id))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
+func Deleted(v int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldEQ(FieldDeleted, v))
+}
+
 // RoleName applies equality check predicate on the "role_name" field. It's identical to RoleNameEQ.
 func RoleName(v string) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldEQ(FieldRoleName, v))
@@ -65,19 +80,134 @@ func RoleKey(v string) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldEQ(FieldRoleKey, v))
 }
 
-// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.ScaAuthRole {
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
-func UpdateAt(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldEQ(FieldUpdateAt, v))
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
-// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
-func Deleted(v int) predicate.ScaAuthRole {
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// DeletedEQ applies the EQ predicate on the "deleted" field.
+func DeletedEQ(v int8) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldEQ(FieldDeleted, v))
+}
+
+// DeletedNEQ applies the NEQ predicate on the "deleted" field.
+func DeletedNEQ(v int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNEQ(FieldDeleted, v))
+}
+
+// DeletedIn applies the In predicate on the "deleted" field.
+func DeletedIn(vs ...int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldIn(FieldDeleted, vs...))
+}
+
+// DeletedNotIn applies the NotIn predicate on the "deleted" field.
+func DeletedNotIn(vs ...int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNotIn(FieldDeleted, vs...))
+}
+
+// DeletedGT applies the GT predicate on the "deleted" field.
+func DeletedGT(v int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldGT(FieldDeleted, v))
+}
+
+// DeletedGTE applies the GTE predicate on the "deleted" field.
+func DeletedGTE(v int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldGTE(FieldDeleted, v))
+}
+
+// DeletedLT applies the LT predicate on the "deleted" field.
+func DeletedLT(v int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldLT(FieldDeleted, v))
+}
+
+// DeletedLTE applies the LTE predicate on the "deleted" field.
+func DeletedLTE(v int8) predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldLTE(FieldDeleted, v))
+}
+
+// DeletedIsNil applies the IsNil predicate on the "deleted" field.
+func DeletedIsNil() predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldIsNull(FieldDeleted))
+}
+
+// DeletedNotNil applies the NotNil predicate on the "deleted" field.
+func DeletedNotNil() predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNotNull(FieldDeleted))
 }
 
 // RoleNameEQ applies the EQ predicate on the "role_name" field.
@@ -208,126 +338,6 @@ func RoleKeyEqualFold(v string) predicate.ScaAuthRole {
 // RoleKeyContainsFold applies the ContainsFold predicate on the "role_key" field.
 func RoleKeyContainsFold(v string) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldContainsFold(FieldRoleKey, v))
-}
-
-// CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNotIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldGT(FieldCreatedAt, v))
-}
-
-// CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldGTE(FieldCreatedAt, v))
-}
-
-// CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldLT(FieldCreatedAt, v))
-}
-
-// CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// UpdateAtEQ applies the EQ predicate on the "update_at" field.
-func UpdateAtEQ(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldEQ(FieldUpdateAt, v))
-}
-
-// UpdateAtNEQ applies the NEQ predicate on the "update_at" field.
-func UpdateAtNEQ(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNEQ(FieldUpdateAt, v))
-}
-
-// UpdateAtIn applies the In predicate on the "update_at" field.
-func UpdateAtIn(vs ...time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldIn(FieldUpdateAt, vs...))
-}
-
-// UpdateAtNotIn applies the NotIn predicate on the "update_at" field.
-func UpdateAtNotIn(vs ...time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNotIn(FieldUpdateAt, vs...))
-}
-
-// UpdateAtGT applies the GT predicate on the "update_at" field.
-func UpdateAtGT(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldGT(FieldUpdateAt, v))
-}
-
-// UpdateAtGTE applies the GTE predicate on the "update_at" field.
-func UpdateAtGTE(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldGTE(FieldUpdateAt, v))
-}
-
-// UpdateAtLT applies the LT predicate on the "update_at" field.
-func UpdateAtLT(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldLT(FieldUpdateAt, v))
-}
-
-// UpdateAtLTE applies the LTE predicate on the "update_at" field.
-func UpdateAtLTE(v time.Time) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldLTE(FieldUpdateAt, v))
-}
-
-// DeletedEQ applies the EQ predicate on the "deleted" field.
-func DeletedEQ(v int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldEQ(FieldDeleted, v))
-}
-
-// DeletedNEQ applies the NEQ predicate on the "deleted" field.
-func DeletedNEQ(v int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNEQ(FieldDeleted, v))
-}
-
-// DeletedIn applies the In predicate on the "deleted" field.
-func DeletedIn(vs ...int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldIn(FieldDeleted, vs...))
-}
-
-// DeletedNotIn applies the NotIn predicate on the "deleted" field.
-func DeletedNotIn(vs ...int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNotIn(FieldDeleted, vs...))
-}
-
-// DeletedGT applies the GT predicate on the "deleted" field.
-func DeletedGT(v int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldGT(FieldDeleted, v))
-}
-
-// DeletedGTE applies the GTE predicate on the "deleted" field.
-func DeletedGTE(v int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldGTE(FieldDeleted, v))
-}
-
-// DeletedLT applies the LT predicate on the "deleted" field.
-func DeletedLT(v int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldLT(FieldDeleted, v))
-}
-
-// DeletedLTE applies the LTE predicate on the "deleted" field.
-func DeletedLTE(v int) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldLTE(FieldDeleted, v))
 }
 
 // HasScaAuthPermissionRule applies the HasEdge predicate on the "sca_auth_permission_rule" edge.

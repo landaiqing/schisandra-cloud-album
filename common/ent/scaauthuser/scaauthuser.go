@@ -14,6 +14,12 @@ const (
 	Label = "sca_auth_user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeleted holds the string denoting the deleted field in the database.
+	FieldDeleted = "deleted"
 	// FieldUID holds the string denoting the uid field in the database.
 	FieldUID = "uid"
 	// FieldUsername holds the string denoting the username field in the database.
@@ -34,12 +40,6 @@ const (
 	FieldStatus = "status"
 	// FieldIntroduce holds the string denoting the introduce field in the database.
 	FieldIntroduce = "introduce"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
-	// FieldDeleted holds the string denoting the deleted field in the database.
-	FieldDeleted = "deleted"
 	// FieldBlog holds the string denoting the blog field in the database.
 	FieldBlog = "blog"
 	// FieldLocation holds the string denoting the location field in the database.
@@ -51,19 +51,19 @@ const (
 	// EdgeScaAuthUserDevice holds the string denoting the sca_auth_user_device edge name in mutations.
 	EdgeScaAuthUserDevice = "sca_auth_user_device"
 	// Table holds the table name of the scaauthuser in the database.
-	Table = "sca_auth_users"
+	Table = "sca_auth_user"
 	// ScaAuthUserSocialTable is the table that holds the sca_auth_user_social relation/edge.
-	ScaAuthUserSocialTable = "sca_auth_user_socials"
+	ScaAuthUserSocialTable = "sca_auth_user_social"
 	// ScaAuthUserSocialInverseTable is the table name for the ScaAuthUserSocial entity.
 	// It exists in this package in order to avoid circular dependency with the "scaauthusersocial" package.
-	ScaAuthUserSocialInverseTable = "sca_auth_user_socials"
+	ScaAuthUserSocialInverseTable = "sca_auth_user_social"
 	// ScaAuthUserSocialColumn is the table column denoting the sca_auth_user_social relation/edge.
 	ScaAuthUserSocialColumn = "sca_auth_user_sca_auth_user_social"
 	// ScaAuthUserDeviceTable is the table that holds the sca_auth_user_device relation/edge.
-	ScaAuthUserDeviceTable = "sca_auth_user_devices"
+	ScaAuthUserDeviceTable = "sca_auth_user_device"
 	// ScaAuthUserDeviceInverseTable is the table name for the ScaAuthUserDevice entity.
 	// It exists in this package in order to avoid circular dependency with the "scaauthuserdevice" package.
-	ScaAuthUserDeviceInverseTable = "sca_auth_user_devices"
+	ScaAuthUserDeviceInverseTable = "sca_auth_user_device"
 	// ScaAuthUserDeviceColumn is the table column denoting the sca_auth_user_device relation/edge.
 	ScaAuthUserDeviceColumn = "sca_auth_user_sca_auth_user_device"
 )
@@ -71,6 +71,9 @@ const (
 // Columns holds all SQL columns for scaauthuser fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeleted,
 	FieldUID,
 	FieldUsername,
 	FieldNickname,
@@ -81,9 +84,6 @@ var Columns = []string{
 	FieldAvatar,
 	FieldStatus,
 	FieldIntroduce,
-	FieldCreatedAt,
-	FieldUpdateAt,
-	FieldDeleted,
 	FieldBlog,
 	FieldLocation,
 	FieldCompany,
@@ -100,6 +100,16 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDeleted holds the default value on creation for the "deleted" field.
+	DefaultDeleted int8
+	// DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	DeletedValidator func(int8) error
 	// UIDValidator is a validator for the "uid" field. It is called by the builders before save.
 	UIDValidator func(string) error
 	// UsernameValidator is a validator for the "username" field. It is called by the builders before save.
@@ -118,14 +128,6 @@ var (
 	DefaultStatus int8
 	// IntroduceValidator is a validator for the "introduce" field. It is called by the builders before save.
 	IntroduceValidator func(string) error
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
-	DefaultUpdateAt func() time.Time
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
-	// DefaultDeleted holds the default value on creation for the "deleted" field.
-	DefaultDeleted int8
 	// BlogValidator is a validator for the "blog" field. It is called by the builders before save.
 	BlogValidator func(string) error
 	// LocationValidator is a validator for the "location" field. It is called by the builders before save.
@@ -140,6 +142,21 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeleted orders the results by the deleted field.
+func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }
 
 // ByUID orders the results by the uid field.
@@ -190,21 +207,6 @@ func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 // ByIntroduce orders the results by the introduce field.
 func ByIntroduce(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldIntroduce, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdateAt orders the results by the update_at field.
-func ByUpdateAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateAt, opts...).ToFunc()
-}
-
-// ByDeleted orders the results by the deleted field.
-func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }
 
 // ByBlog orders the results by the blog field.

@@ -12,22 +12,22 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ScaAuthRole is the model entity for the ScaAuthRole schema.
+// 角色表
 type ScaAuthRole struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 主键ID
 	ID int64 `json:"id,omitempty"`
+	// 创建时间
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// 更新时间
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 是否删除 0 未删除 1 已删除
+	Deleted int8 `json:"deleted,omitempty"`
 	// 角色名称
 	RoleName string `json:"role_name,omitempty"`
 	// 角色关键字
 	RoleKey string `json:"role_key,omitempty"`
-	// 创建时间
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// 更新时间
-	UpdateAt time.Time `json:"update_at,omitempty"`
-	// 是否删除 0 未删除 1已删除
-	Deleted int `json:"deleted,omitempty"`
 	// Edges holds the relations/edges for other nodes in the graph.
 	// The values are being populated by the ScaAuthRoleQuery when eager-loading is set.
 	Edges        ScaAuthRoleEdges `json:"edges"`
@@ -61,7 +61,7 @@ func (*ScaAuthRole) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case scaauthrole.FieldRoleName, scaauthrole.FieldRoleKey:
 			values[i] = new(sql.NullString)
-		case scaauthrole.FieldCreatedAt, scaauthrole.FieldUpdateAt:
+		case scaauthrole.FieldCreatedAt, scaauthrole.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -84,6 +84,24 @@ func (sar *ScaAuthRole) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			sar.ID = int64(value.Int64)
+		case scaauthrole.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				sar.CreatedAt = value.Time
+			}
+		case scaauthrole.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				sar.UpdatedAt = value.Time
+			}
+		case scaauthrole.FieldDeleted:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted", values[i])
+			} else if value.Valid {
+				sar.Deleted = int8(value.Int64)
+			}
 		case scaauthrole.FieldRoleName:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field role_name", values[i])
@@ -95,24 +113,6 @@ func (sar *ScaAuthRole) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field role_key", values[i])
 			} else if value.Valid {
 				sar.RoleKey = value.String
-			}
-		case scaauthrole.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				sar.CreatedAt = value.Time
-			}
-		case scaauthrole.FieldUpdateAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
-			} else if value.Valid {
-				sar.UpdateAt = value.Time
-			}
-		case scaauthrole.FieldDeleted:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted", values[i])
-			} else if value.Valid {
-				sar.Deleted = int(value.Int64)
 			}
 		default:
 			sar.selectValues.Set(columns[i], values[i])
@@ -155,20 +155,20 @@ func (sar *ScaAuthRole) String() string {
 	var builder strings.Builder
 	builder.WriteString("ScaAuthRole(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sar.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(sar.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(sar.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted=")
+	builder.WriteString(fmt.Sprintf("%v", sar.Deleted))
+	builder.WriteString(", ")
 	builder.WriteString("role_name=")
 	builder.WriteString(sar.RoleName)
 	builder.WriteString(", ")
 	builder.WriteString("role_key=")
 	builder.WriteString(sar.RoleKey)
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(sar.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("update_at=")
-	builder.WriteString(sar.UpdateAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	builder.WriteString("deleted=")
-	builder.WriteString(fmt.Sprintf("%v", sar.Deleted))
 	builder.WriteByte(')')
 	return builder.String()
 }

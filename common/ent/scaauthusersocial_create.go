@@ -21,6 +21,48 @@ type ScaAuthUserSocialCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (sausc *ScaAuthUserSocialCreate) SetCreatedAt(t time.Time) *ScaAuthUserSocialCreate {
+	sausc.mutation.SetCreatedAt(t)
+	return sausc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (sausc *ScaAuthUserSocialCreate) SetNillableCreatedAt(t *time.Time) *ScaAuthUserSocialCreate {
+	if t != nil {
+		sausc.SetCreatedAt(*t)
+	}
+	return sausc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (sausc *ScaAuthUserSocialCreate) SetUpdatedAt(t time.Time) *ScaAuthUserSocialCreate {
+	sausc.mutation.SetUpdatedAt(t)
+	return sausc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (sausc *ScaAuthUserSocialCreate) SetNillableUpdatedAt(t *time.Time) *ScaAuthUserSocialCreate {
+	if t != nil {
+		sausc.SetUpdatedAt(*t)
+	}
+	return sausc
+}
+
+// SetDeleted sets the "deleted" field.
+func (sausc *ScaAuthUserSocialCreate) SetDeleted(i int8) *ScaAuthUserSocialCreate {
+	sausc.mutation.SetDeleted(i)
+	return sausc
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (sausc *ScaAuthUserSocialCreate) SetNillableDeleted(i *int8) *ScaAuthUserSocialCreate {
+	if i != nil {
+		sausc.SetDeleted(*i)
+	}
+	return sausc
+}
+
 // SetUserID sets the "user_id" field.
 func (sausc *ScaAuthUserSocialCreate) SetUserID(s string) *ScaAuthUserSocialCreate {
 	sausc.mutation.SetUserID(s)
@@ -49,48 +91,6 @@ func (sausc *ScaAuthUserSocialCreate) SetStatus(i int) *ScaAuthUserSocialCreate 
 func (sausc *ScaAuthUserSocialCreate) SetNillableStatus(i *int) *ScaAuthUserSocialCreate {
 	if i != nil {
 		sausc.SetStatus(*i)
-	}
-	return sausc
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (sausc *ScaAuthUserSocialCreate) SetCreatedAt(t time.Time) *ScaAuthUserSocialCreate {
-	sausc.mutation.SetCreatedAt(t)
-	return sausc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (sausc *ScaAuthUserSocialCreate) SetNillableCreatedAt(t *time.Time) *ScaAuthUserSocialCreate {
-	if t != nil {
-		sausc.SetCreatedAt(*t)
-	}
-	return sausc
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (sausc *ScaAuthUserSocialCreate) SetUpdateAt(t time.Time) *ScaAuthUserSocialCreate {
-	sausc.mutation.SetUpdateAt(t)
-	return sausc
-}
-
-// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
-func (sausc *ScaAuthUserSocialCreate) SetNillableUpdateAt(t *time.Time) *ScaAuthUserSocialCreate {
-	if t != nil {
-		sausc.SetUpdateAt(*t)
-	}
-	return sausc
-}
-
-// SetDeleted sets the "deleted" field.
-func (sausc *ScaAuthUserSocialCreate) SetDeleted(i int) *ScaAuthUserSocialCreate {
-	sausc.mutation.SetDeleted(i)
-	return sausc
-}
-
-// SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (sausc *ScaAuthUserSocialCreate) SetNillableDeleted(i *int) *ScaAuthUserSocialCreate {
-	if i != nil {
-		sausc.SetDeleted(*i)
 	}
 	return sausc
 }
@@ -155,26 +155,37 @@ func (sausc *ScaAuthUserSocialCreate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (sausc *ScaAuthUserSocialCreate) defaults() {
-	if _, ok := sausc.mutation.Status(); !ok {
-		v := scaauthusersocial.DefaultStatus
-		sausc.mutation.SetStatus(v)
-	}
 	if _, ok := sausc.mutation.CreatedAt(); !ok {
 		v := scaauthusersocial.DefaultCreatedAt()
 		sausc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := sausc.mutation.UpdateAt(); !ok {
-		v := scaauthusersocial.DefaultUpdateAt()
-		sausc.mutation.SetUpdateAt(v)
+	if _, ok := sausc.mutation.UpdatedAt(); !ok {
+		v := scaauthusersocial.DefaultUpdatedAt()
+		sausc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := sausc.mutation.Deleted(); !ok {
 		v := scaauthusersocial.DefaultDeleted
 		sausc.mutation.SetDeleted(v)
 	}
+	if _, ok := sausc.mutation.Status(); !ok {
+		v := scaauthusersocial.DefaultStatus
+		sausc.mutation.SetStatus(v)
+	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (sausc *ScaAuthUserSocialCreate) check() error {
+	if _, ok := sausc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthUserSocial.created_at"`)}
+	}
+	if _, ok := sausc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthUserSocial.updated_at"`)}
+	}
+	if v, ok := sausc.mutation.Deleted(); ok {
+		if err := scaauthusersocial.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserSocial.deleted": %w`, err)}
+		}
+	}
 	if _, ok := sausc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "ScaAuthUserSocial.user_id"`)}
 	}
@@ -201,12 +212,6 @@ func (sausc *ScaAuthUserSocialCreate) check() error {
 	}
 	if _, ok := sausc.mutation.Status(); !ok {
 		return &ValidationError{Name: "status", err: errors.New(`ent: missing required field "ScaAuthUserSocial.status"`)}
-	}
-	if _, ok := sausc.mutation.CreatedAt(); !ok {
-		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthUserSocial.created_at"`)}
-	}
-	if _, ok := sausc.mutation.Deleted(); !ok {
-		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthUserSocial.deleted"`)}
 	}
 	return nil
 }
@@ -240,6 +245,18 @@ func (sausc *ScaAuthUserSocialCreate) createSpec() (*ScaAuthUserSocial, *sqlgrap
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := sausc.mutation.CreatedAt(); ok {
+		_spec.SetField(scaauthusersocial.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := sausc.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthusersocial.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := sausc.mutation.Deleted(); ok {
+		_spec.SetField(scaauthusersocial.FieldDeleted, field.TypeInt8, value)
+		_node.Deleted = value
+	}
 	if value, ok := sausc.mutation.UserID(); ok {
 		_spec.SetField(scaauthusersocial.FieldUserID, field.TypeString, value)
 		_node.UserID = value
@@ -255,18 +272,6 @@ func (sausc *ScaAuthUserSocialCreate) createSpec() (*ScaAuthUserSocial, *sqlgrap
 	if value, ok := sausc.mutation.Status(); ok {
 		_spec.SetField(scaauthusersocial.FieldStatus, field.TypeInt, value)
 		_node.Status = value
-	}
-	if value, ok := sausc.mutation.CreatedAt(); ok {
-		_spec.SetField(scaauthusersocial.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := sausc.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthusersocial.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = &value
-	}
-	if value, ok := sausc.mutation.Deleted(); ok {
-		_spec.SetField(scaauthusersocial.FieldDeleted, field.TypeInt, value)
-		_node.Deleted = value
 	}
 	if nodes := sausc.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
 		edge := &sqlgraph.EdgeSpec{

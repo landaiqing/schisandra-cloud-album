@@ -55,6 +55,21 @@ func IDLTE(id int64) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldID, id))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
+func Deleted(v int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldDeleted, v))
+}
+
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
 func UserID(v string) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldUserID, v))
@@ -75,19 +90,134 @@ func Status(v int) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldStatus, v))
 }
 
-// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.ScaAuthUserSocial {
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldCreatedAt, v))
 }
 
-// UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
-func UpdateAt(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldUpdateAt, v))
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNEQ(FieldCreatedAt, v))
 }
 
-// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
-func Deleted(v int) predicate.ScaAuthUserSocial {
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// DeletedEQ applies the EQ predicate on the "deleted" field.
+func DeletedEQ(v int8) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldDeleted, v))
+}
+
+// DeletedNEQ applies the NEQ predicate on the "deleted" field.
+func DeletedNEQ(v int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNEQ(FieldDeleted, v))
+}
+
+// DeletedIn applies the In predicate on the "deleted" field.
+func DeletedIn(vs ...int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldIn(FieldDeleted, vs...))
+}
+
+// DeletedNotIn applies the NotIn predicate on the "deleted" field.
+func DeletedNotIn(vs ...int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNotIn(FieldDeleted, vs...))
+}
+
+// DeletedGT applies the GT predicate on the "deleted" field.
+func DeletedGT(v int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldGT(FieldDeleted, v))
+}
+
+// DeletedGTE applies the GTE predicate on the "deleted" field.
+func DeletedGTE(v int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldGTE(FieldDeleted, v))
+}
+
+// DeletedLT applies the LT predicate on the "deleted" field.
+func DeletedLT(v int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldLT(FieldDeleted, v))
+}
+
+// DeletedLTE applies the LTE predicate on the "deleted" field.
+func DeletedLTE(v int8) predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldDeleted, v))
+}
+
+// DeletedIsNil applies the IsNil predicate on the "deleted" field.
+func DeletedIsNil() predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldIsNull(FieldDeleted))
+}
+
+// DeletedNotNil applies the NotNil predicate on the "deleted" field.
+func DeletedNotNil() predicate.ScaAuthUserSocial {
+	return predicate.ScaAuthUserSocial(sql.FieldNotNull(FieldDeleted))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
@@ -323,136 +453,6 @@ func StatusLT(v int) predicate.ScaAuthUserSocial {
 // StatusLTE applies the LTE predicate on the "status" field.
 func StatusLTE(v int) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldStatus, v))
-}
-
-// CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNotIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldGT(FieldCreatedAt, v))
-}
-
-// CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldGTE(FieldCreatedAt, v))
-}
-
-// CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldLT(FieldCreatedAt, v))
-}
-
-// CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// UpdateAtEQ applies the EQ predicate on the "update_at" field.
-func UpdateAtEQ(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldUpdateAt, v))
-}
-
-// UpdateAtNEQ applies the NEQ predicate on the "update_at" field.
-func UpdateAtNEQ(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNEQ(FieldUpdateAt, v))
-}
-
-// UpdateAtIn applies the In predicate on the "update_at" field.
-func UpdateAtIn(vs ...time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldIn(FieldUpdateAt, vs...))
-}
-
-// UpdateAtNotIn applies the NotIn predicate on the "update_at" field.
-func UpdateAtNotIn(vs ...time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNotIn(FieldUpdateAt, vs...))
-}
-
-// UpdateAtGT applies the GT predicate on the "update_at" field.
-func UpdateAtGT(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldGT(FieldUpdateAt, v))
-}
-
-// UpdateAtGTE applies the GTE predicate on the "update_at" field.
-func UpdateAtGTE(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldGTE(FieldUpdateAt, v))
-}
-
-// UpdateAtLT applies the LT predicate on the "update_at" field.
-func UpdateAtLT(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldLT(FieldUpdateAt, v))
-}
-
-// UpdateAtLTE applies the LTE predicate on the "update_at" field.
-func UpdateAtLTE(v time.Time) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldUpdateAt, v))
-}
-
-// UpdateAtIsNil applies the IsNil predicate on the "update_at" field.
-func UpdateAtIsNil() predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldIsNull(FieldUpdateAt))
-}
-
-// UpdateAtNotNil applies the NotNil predicate on the "update_at" field.
-func UpdateAtNotNil() predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNotNull(FieldUpdateAt))
-}
-
-// DeletedEQ applies the EQ predicate on the "deleted" field.
-func DeletedEQ(v int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldEQ(FieldDeleted, v))
-}
-
-// DeletedNEQ applies the NEQ predicate on the "deleted" field.
-func DeletedNEQ(v int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNEQ(FieldDeleted, v))
-}
-
-// DeletedIn applies the In predicate on the "deleted" field.
-func DeletedIn(vs ...int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldIn(FieldDeleted, vs...))
-}
-
-// DeletedNotIn applies the NotIn predicate on the "deleted" field.
-func DeletedNotIn(vs ...int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldNotIn(FieldDeleted, vs...))
-}
-
-// DeletedGT applies the GT predicate on the "deleted" field.
-func DeletedGT(v int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldGT(FieldDeleted, v))
-}
-
-// DeletedGTE applies the GTE predicate on the "deleted" field.
-func DeletedGTE(v int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldGTE(FieldDeleted, v))
-}
-
-// DeletedLT applies the LT predicate on the "deleted" field.
-func DeletedLT(v int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldLT(FieldDeleted, v))
-}
-
-// DeletedLTE applies the LTE predicate on the "deleted" field.
-func DeletedLTE(v int) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldDeleted, v))
 }
 
 // HasScaAuthUser applies the HasEdge predicate on the "sca_auth_user" edge.

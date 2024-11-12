@@ -14,6 +14,12 @@ const (
 	Label = "sca_auth_user_social"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeleted holds the string denoting the deleted field in the database.
+	FieldDeleted = "deleted"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
 	// FieldOpenID holds the string denoting the open_id field in the database.
@@ -22,21 +28,15 @@ const (
 	FieldSource = "source"
 	// FieldStatus holds the string denoting the status field in the database.
 	FieldStatus = "status"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
-	// FieldDeleted holds the string denoting the deleted field in the database.
-	FieldDeleted = "deleted"
 	// EdgeScaAuthUser holds the string denoting the sca_auth_user edge name in mutations.
 	EdgeScaAuthUser = "sca_auth_user"
 	// Table holds the table name of the scaauthusersocial in the database.
-	Table = "sca_auth_user_socials"
+	Table = "sca_auth_user_social"
 	// ScaAuthUserTable is the table that holds the sca_auth_user relation/edge.
-	ScaAuthUserTable = "sca_auth_user_socials"
+	ScaAuthUserTable = "sca_auth_user_social"
 	// ScaAuthUserInverseTable is the table name for the ScaAuthUser entity.
 	// It exists in this package in order to avoid circular dependency with the "scaauthuser" package.
-	ScaAuthUserInverseTable = "sca_auth_users"
+	ScaAuthUserInverseTable = "sca_auth_user"
 	// ScaAuthUserColumn is the table column denoting the sca_auth_user relation/edge.
 	ScaAuthUserColumn = "sca_auth_user_sca_auth_user_social"
 )
@@ -44,16 +44,16 @@ const (
 // Columns holds all SQL columns for scaauthusersocial fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeleted,
 	FieldUserID,
 	FieldOpenID,
 	FieldSource,
 	FieldStatus,
-	FieldCreatedAt,
-	FieldUpdateAt,
-	FieldDeleted,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_user_socials"
+// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_user_social"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"sca_auth_user_sca_auth_user_social",
@@ -75,6 +75,16 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDeleted holds the default value on creation for the "deleted" field.
+	DefaultDeleted int8
+	// DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	DeletedValidator func(int8) error
 	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	UserIDValidator func(string) error
 	// OpenIDValidator is a validator for the "open_id" field. It is called by the builders before save.
@@ -83,14 +93,6 @@ var (
 	SourceValidator func(string) error
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
-	DefaultUpdateAt func() time.Time
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
-	// DefaultDeleted holds the default value on creation for the "deleted" field.
-	DefaultDeleted int
 )
 
 // OrderOption defines the ordering options for the ScaAuthUserSocial queries.
@@ -99,6 +101,21 @@ type OrderOption func(*sql.Selector)
 // ByID orders the results by the id field.
 func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
+}
+
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeleted orders the results by the deleted field.
+func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }
 
 // ByUserID orders the results by the user_id field.
@@ -119,21 +136,6 @@ func BySource(opts ...sql.OrderTermOption) OrderOption {
 // ByStatus orders the results by the status field.
 func ByStatus(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldStatus, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdateAt orders the results by the update_at field.
-func ByUpdateAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateAt, opts...).ToFunc()
-}
-
-// ByDeleted orders the results by the deleted field.
-func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }
 
 // ByScaAuthUserField orders the results by sca_auth_user field.

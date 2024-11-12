@@ -29,6 +29,39 @@ func (sausu *ScaAuthUserSocialUpdate) Where(ps ...predicate.ScaAuthUserSocial) *
 	return sausu
 }
 
+// SetUpdatedAt sets the "updated_at" field.
+func (sausu *ScaAuthUserSocialUpdate) SetUpdatedAt(t time.Time) *ScaAuthUserSocialUpdate {
+	sausu.mutation.SetUpdatedAt(t)
+	return sausu
+}
+
+// SetDeleted sets the "deleted" field.
+func (sausu *ScaAuthUserSocialUpdate) SetDeleted(i int8) *ScaAuthUserSocialUpdate {
+	sausu.mutation.ResetDeleted()
+	sausu.mutation.SetDeleted(i)
+	return sausu
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (sausu *ScaAuthUserSocialUpdate) SetNillableDeleted(i *int8) *ScaAuthUserSocialUpdate {
+	if i != nil {
+		sausu.SetDeleted(*i)
+	}
+	return sausu
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (sausu *ScaAuthUserSocialUpdate) AddDeleted(i int8) *ScaAuthUserSocialUpdate {
+	sausu.mutation.AddDeleted(i)
+	return sausu
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (sausu *ScaAuthUserSocialUpdate) ClearDeleted() *ScaAuthUserSocialUpdate {
+	sausu.mutation.ClearDeleted()
+	return sausu
+}
+
 // SetUserID sets the "user_id" field.
 func (sausu *ScaAuthUserSocialUpdate) SetUserID(s string) *ScaAuthUserSocialUpdate {
 	sausu.mutation.SetUserID(s)
@@ -92,39 +125,6 @@ func (sausu *ScaAuthUserSocialUpdate) AddStatus(i int) *ScaAuthUserSocialUpdate 
 	return sausu
 }
 
-// SetUpdateAt sets the "update_at" field.
-func (sausu *ScaAuthUserSocialUpdate) SetUpdateAt(t time.Time) *ScaAuthUserSocialUpdate {
-	sausu.mutation.SetUpdateAt(t)
-	return sausu
-}
-
-// ClearUpdateAt clears the value of the "update_at" field.
-func (sausu *ScaAuthUserSocialUpdate) ClearUpdateAt() *ScaAuthUserSocialUpdate {
-	sausu.mutation.ClearUpdateAt()
-	return sausu
-}
-
-// SetDeleted sets the "deleted" field.
-func (sausu *ScaAuthUserSocialUpdate) SetDeleted(i int) *ScaAuthUserSocialUpdate {
-	sausu.mutation.ResetDeleted()
-	sausu.mutation.SetDeleted(i)
-	return sausu
-}
-
-// SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (sausu *ScaAuthUserSocialUpdate) SetNillableDeleted(i *int) *ScaAuthUserSocialUpdate {
-	if i != nil {
-		sausu.SetDeleted(*i)
-	}
-	return sausu
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (sausu *ScaAuthUserSocialUpdate) AddDeleted(i int) *ScaAuthUserSocialUpdate {
-	sausu.mutation.AddDeleted(i)
-	return sausu
-}
-
 // SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
 func (sausu *ScaAuthUserSocialUpdate) SetScaAuthUserID(id int64) *ScaAuthUserSocialUpdate {
 	sausu.mutation.SetScaAuthUserID(id)
@@ -185,14 +185,19 @@ func (sausu *ScaAuthUserSocialUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (sausu *ScaAuthUserSocialUpdate) defaults() {
-	if _, ok := sausu.mutation.UpdateAt(); !ok && !sausu.mutation.UpdateAtCleared() {
-		v := scaauthusersocial.UpdateDefaultUpdateAt()
-		sausu.mutation.SetUpdateAt(v)
+	if _, ok := sausu.mutation.UpdatedAt(); !ok {
+		v := scaauthusersocial.UpdateDefaultUpdatedAt()
+		sausu.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (sausu *ScaAuthUserSocialUpdate) check() error {
+	if v, ok := sausu.mutation.Deleted(); ok {
+		if err := scaauthusersocial.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserSocial.deleted": %w`, err)}
+		}
+	}
 	if v, ok := sausu.mutation.UserID(); ok {
 		if err := scaauthusersocial.UserIDValidator(v); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserSocial.user_id": %w`, err)}
@@ -223,6 +228,18 @@ func (sausu *ScaAuthUserSocialUpdate) sqlSave(ctx context.Context) (n int, err e
 			}
 		}
 	}
+	if value, ok := sausu.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthusersocial.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := sausu.mutation.Deleted(); ok {
+		_spec.SetField(scaauthusersocial.FieldDeleted, field.TypeInt8, value)
+	}
+	if value, ok := sausu.mutation.AddedDeleted(); ok {
+		_spec.AddField(scaauthusersocial.FieldDeleted, field.TypeInt8, value)
+	}
+	if sausu.mutation.DeletedCleared() {
+		_spec.ClearField(scaauthusersocial.FieldDeleted, field.TypeInt8)
+	}
 	if value, ok := sausu.mutation.UserID(); ok {
 		_spec.SetField(scaauthusersocial.FieldUserID, field.TypeString, value)
 	}
@@ -237,18 +254,6 @@ func (sausu *ScaAuthUserSocialUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := sausu.mutation.AddedStatus(); ok {
 		_spec.AddField(scaauthusersocial.FieldStatus, field.TypeInt, value)
-	}
-	if value, ok := sausu.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthusersocial.FieldUpdateAt, field.TypeTime, value)
-	}
-	if sausu.mutation.UpdateAtCleared() {
-		_spec.ClearField(scaauthusersocial.FieldUpdateAt, field.TypeTime)
-	}
-	if value, ok := sausu.mutation.Deleted(); ok {
-		_spec.SetField(scaauthusersocial.FieldDeleted, field.TypeInt, value)
-	}
-	if value, ok := sausu.mutation.AddedDeleted(); ok {
-		_spec.AddField(scaauthusersocial.FieldDeleted, field.TypeInt, value)
 	}
 	if sausu.mutation.ScaAuthUserCleared() {
 		edge := &sqlgraph.EdgeSpec{
@@ -297,6 +302,39 @@ type ScaAuthUserSocialUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *ScaAuthUserSocialMutation
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (sausuo *ScaAuthUserSocialUpdateOne) SetUpdatedAt(t time.Time) *ScaAuthUserSocialUpdateOne {
+	sausuo.mutation.SetUpdatedAt(t)
+	return sausuo
+}
+
+// SetDeleted sets the "deleted" field.
+func (sausuo *ScaAuthUserSocialUpdateOne) SetDeleted(i int8) *ScaAuthUserSocialUpdateOne {
+	sausuo.mutation.ResetDeleted()
+	sausuo.mutation.SetDeleted(i)
+	return sausuo
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (sausuo *ScaAuthUserSocialUpdateOne) SetNillableDeleted(i *int8) *ScaAuthUserSocialUpdateOne {
+	if i != nil {
+		sausuo.SetDeleted(*i)
+	}
+	return sausuo
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (sausuo *ScaAuthUserSocialUpdateOne) AddDeleted(i int8) *ScaAuthUserSocialUpdateOne {
+	sausuo.mutation.AddDeleted(i)
+	return sausuo
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (sausuo *ScaAuthUserSocialUpdateOne) ClearDeleted() *ScaAuthUserSocialUpdateOne {
+	sausuo.mutation.ClearDeleted()
+	return sausuo
 }
 
 // SetUserID sets the "user_id" field.
@@ -359,39 +397,6 @@ func (sausuo *ScaAuthUserSocialUpdateOne) SetNillableStatus(i *int) *ScaAuthUser
 // AddStatus adds i to the "status" field.
 func (sausuo *ScaAuthUserSocialUpdateOne) AddStatus(i int) *ScaAuthUserSocialUpdateOne {
 	sausuo.mutation.AddStatus(i)
-	return sausuo
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (sausuo *ScaAuthUserSocialUpdateOne) SetUpdateAt(t time.Time) *ScaAuthUserSocialUpdateOne {
-	sausuo.mutation.SetUpdateAt(t)
-	return sausuo
-}
-
-// ClearUpdateAt clears the value of the "update_at" field.
-func (sausuo *ScaAuthUserSocialUpdateOne) ClearUpdateAt() *ScaAuthUserSocialUpdateOne {
-	sausuo.mutation.ClearUpdateAt()
-	return sausuo
-}
-
-// SetDeleted sets the "deleted" field.
-func (sausuo *ScaAuthUserSocialUpdateOne) SetDeleted(i int) *ScaAuthUserSocialUpdateOne {
-	sausuo.mutation.ResetDeleted()
-	sausuo.mutation.SetDeleted(i)
-	return sausuo
-}
-
-// SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (sausuo *ScaAuthUserSocialUpdateOne) SetNillableDeleted(i *int) *ScaAuthUserSocialUpdateOne {
-	if i != nil {
-		sausuo.SetDeleted(*i)
-	}
-	return sausuo
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (sausuo *ScaAuthUserSocialUpdateOne) AddDeleted(i int) *ScaAuthUserSocialUpdateOne {
-	sausuo.mutation.AddDeleted(i)
 	return sausuo
 }
 
@@ -468,14 +473,19 @@ func (sausuo *ScaAuthUserSocialUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (sausuo *ScaAuthUserSocialUpdateOne) defaults() {
-	if _, ok := sausuo.mutation.UpdateAt(); !ok && !sausuo.mutation.UpdateAtCleared() {
-		v := scaauthusersocial.UpdateDefaultUpdateAt()
-		sausuo.mutation.SetUpdateAt(v)
+	if _, ok := sausuo.mutation.UpdatedAt(); !ok {
+		v := scaauthusersocial.UpdateDefaultUpdatedAt()
+		sausuo.mutation.SetUpdatedAt(v)
 	}
 }
 
 // check runs all checks and user-defined validators on the builder.
 func (sausuo *ScaAuthUserSocialUpdateOne) check() error {
+	if v, ok := sausuo.mutation.Deleted(); ok {
+		if err := scaauthusersocial.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserSocial.deleted": %w`, err)}
+		}
+	}
 	if v, ok := sausuo.mutation.UserID(); ok {
 		if err := scaauthusersocial.UserIDValidator(v); err != nil {
 			return &ValidationError{Name: "user_id", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserSocial.user_id": %w`, err)}
@@ -523,6 +533,18 @@ func (sausuo *ScaAuthUserSocialUpdateOne) sqlSave(ctx context.Context) (_node *S
 			}
 		}
 	}
+	if value, ok := sausuo.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthusersocial.FieldUpdatedAt, field.TypeTime, value)
+	}
+	if value, ok := sausuo.mutation.Deleted(); ok {
+		_spec.SetField(scaauthusersocial.FieldDeleted, field.TypeInt8, value)
+	}
+	if value, ok := sausuo.mutation.AddedDeleted(); ok {
+		_spec.AddField(scaauthusersocial.FieldDeleted, field.TypeInt8, value)
+	}
+	if sausuo.mutation.DeletedCleared() {
+		_spec.ClearField(scaauthusersocial.FieldDeleted, field.TypeInt8)
+	}
 	if value, ok := sausuo.mutation.UserID(); ok {
 		_spec.SetField(scaauthusersocial.FieldUserID, field.TypeString, value)
 	}
@@ -537,18 +559,6 @@ func (sausuo *ScaAuthUserSocialUpdateOne) sqlSave(ctx context.Context) (_node *S
 	}
 	if value, ok := sausuo.mutation.AddedStatus(); ok {
 		_spec.AddField(scaauthusersocial.FieldStatus, field.TypeInt, value)
-	}
-	if value, ok := sausuo.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthusersocial.FieldUpdateAt, field.TypeTime, value)
-	}
-	if sausuo.mutation.UpdateAtCleared() {
-		_spec.ClearField(scaauthusersocial.FieldUpdateAt, field.TypeTime)
-	}
-	if value, ok := sausuo.mutation.Deleted(); ok {
-		_spec.SetField(scaauthusersocial.FieldDeleted, field.TypeInt, value)
-	}
-	if value, ok := sausuo.mutation.AddedDeleted(); ok {
-		_spec.AddField(scaauthusersocial.FieldDeleted, field.TypeInt, value)
 	}
 	if sausuo.mutation.ScaAuthUserCleared() {
 		edge := &sqlgraph.EdgeSpec{

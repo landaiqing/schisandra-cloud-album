@@ -1,18 +1,26 @@
 package schema
 
 import (
-	"time"
-
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
+	"entgo.io/ent/dialect/entsql"
+	"entgo.io/ent/schema"
 	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
+
+	"schisandra-album-cloud-microservices/common/ent/schema/mixin"
 )
 
 // ScaAuthUser holds the schema definition for the ScaAuthUser entity.
 type ScaAuthUser struct {
 	ent.Schema
+}
+
+func (ScaAuthUser) Mixin() []ent.Mixin {
+	return []ent.Mixin{
+		mixin.DefaultMixin{},
+	}
 }
 
 // Fields of the ScaAuthUser.
@@ -64,18 +72,6 @@ func (ScaAuthUser) Fields() []ent.Field {
 			MaxLen(255).
 			Optional().
 			Comment("介绍"),
-		field.Time("created_at").
-			Default(time.Now).
-			Immutable().
-			Comment("创建时间"),
-		field.Time("update_at").
-			Default(time.Now).UpdateDefault(time.Now).
-			Nillable().
-			Optional().
-			Comment("更新时间"),
-		field.Int8("deleted").
-			Default(0).
-			Comment("是否删除 0 未删除 1 已删除"),
 		field.String("blog").
 			MaxLen(30).
 			Nillable().
@@ -90,7 +86,10 @@ func (ScaAuthUser) Fields() []ent.Field {
 			MaxLen(50).
 			Nillable().
 			Optional().
-			Comment("公司"),
+			Comment("公司").
+			Annotations(
+				entsql.WithComments(true),
+			),
 	}
 }
 
@@ -111,5 +110,16 @@ func (ScaAuthUser) Indexes() []ent.Index {
 			Unique(),
 		index.Fields("phone").
 			Unique(),
+	}
+}
+
+// Annotations of the ScaAuthUser.
+func (ScaAuthUser) Annotations() []schema.Annotation {
+	return []schema.Annotation{
+		entsql.WithComments(true),
+		schema.Comment("用户表"),
+		entsql.Annotation{
+			Table: "sca_auth_user",
+		},
 	}
 }

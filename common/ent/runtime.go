@@ -46,8 +46,27 @@ func init() {
 	scaauthpermissionruleDescV5 := scaauthpermissionruleFields[7].Descriptor()
 	// scaauthpermissionrule.V5Validator is a validator for the "v5" field. It is called by the builders before save.
 	scaauthpermissionrule.V5Validator = scaauthpermissionruleDescV5.Validators[0].(func(string) error)
+	scaauthroleMixin := schema.ScaAuthRole{}.Mixin()
+	scaauthroleMixinFields0 := scaauthroleMixin[0].Fields()
+	_ = scaauthroleMixinFields0
 	scaauthroleFields := schema.ScaAuthRole{}.Fields()
 	_ = scaauthroleFields
+	// scaauthroleDescCreatedAt is the schema descriptor for created_at field.
+	scaauthroleDescCreatedAt := scaauthroleMixinFields0[0].Descriptor()
+	// scaauthrole.DefaultCreatedAt holds the default value on creation for the created_at field.
+	scaauthrole.DefaultCreatedAt = scaauthroleDescCreatedAt.Default.(func() time.Time)
+	// scaauthroleDescUpdatedAt is the schema descriptor for updated_at field.
+	scaauthroleDescUpdatedAt := scaauthroleMixinFields0[1].Descriptor()
+	// scaauthrole.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	scaauthrole.DefaultUpdatedAt = scaauthroleDescUpdatedAt.Default.(func() time.Time)
+	// scaauthrole.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	scaauthrole.UpdateDefaultUpdatedAt = scaauthroleDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// scaauthroleDescDeleted is the schema descriptor for deleted field.
+	scaauthroleDescDeleted := scaauthroleMixinFields0[2].Descriptor()
+	// scaauthrole.DefaultDeleted holds the default value on creation for the deleted field.
+	scaauthrole.DefaultDeleted = scaauthroleDescDeleted.Default.(int8)
+	// scaauthrole.DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	scaauthrole.DeletedValidator = scaauthroleDescDeleted.Validators[0].(func(int8) error)
 	// scaauthroleDescRoleName is the schema descriptor for role_name field.
 	scaauthroleDescRoleName := scaauthroleFields[1].Descriptor()
 	// scaauthrole.RoleNameValidator is a validator for the "role_name" field. It is called by the builders before save.
@@ -56,22 +75,27 @@ func init() {
 	scaauthroleDescRoleKey := scaauthroleFields[2].Descriptor()
 	// scaauthrole.RoleKeyValidator is a validator for the "role_key" field. It is called by the builders before save.
 	scaauthrole.RoleKeyValidator = scaauthroleDescRoleKey.Validators[0].(func(string) error)
-	// scaauthroleDescCreatedAt is the schema descriptor for created_at field.
-	scaauthroleDescCreatedAt := scaauthroleFields[3].Descriptor()
-	// scaauthrole.DefaultCreatedAt holds the default value on creation for the created_at field.
-	scaauthrole.DefaultCreatedAt = scaauthroleDescCreatedAt.Default.(func() time.Time)
-	// scaauthroleDescUpdateAt is the schema descriptor for update_at field.
-	scaauthroleDescUpdateAt := scaauthroleFields[4].Descriptor()
-	// scaauthrole.DefaultUpdateAt holds the default value on creation for the update_at field.
-	scaauthrole.DefaultUpdateAt = scaauthroleDescUpdateAt.Default.(func() time.Time)
-	// scaauthrole.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
-	scaauthrole.UpdateDefaultUpdateAt = scaauthroleDescUpdateAt.UpdateDefault.(func() time.Time)
-	// scaauthroleDescDeleted is the schema descriptor for deleted field.
-	scaauthroleDescDeleted := scaauthroleFields[5].Descriptor()
-	// scaauthrole.DefaultDeleted holds the default value on creation for the deleted field.
-	scaauthrole.DefaultDeleted = scaauthroleDescDeleted.Default.(int)
+	scaauthuserMixin := schema.ScaAuthUser{}.Mixin()
+	scaauthuserMixinFields0 := scaauthuserMixin[0].Fields()
+	_ = scaauthuserMixinFields0
 	scaauthuserFields := schema.ScaAuthUser{}.Fields()
 	_ = scaauthuserFields
+	// scaauthuserDescCreatedAt is the schema descriptor for created_at field.
+	scaauthuserDescCreatedAt := scaauthuserMixinFields0[0].Descriptor()
+	// scaauthuser.DefaultCreatedAt holds the default value on creation for the created_at field.
+	scaauthuser.DefaultCreatedAt = scaauthuserDescCreatedAt.Default.(func() time.Time)
+	// scaauthuserDescUpdatedAt is the schema descriptor for updated_at field.
+	scaauthuserDescUpdatedAt := scaauthuserMixinFields0[1].Descriptor()
+	// scaauthuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	scaauthuser.DefaultUpdatedAt = scaauthuserDescUpdatedAt.Default.(func() time.Time)
+	// scaauthuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	scaauthuser.UpdateDefaultUpdatedAt = scaauthuserDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// scaauthuserDescDeleted is the schema descriptor for deleted field.
+	scaauthuserDescDeleted := scaauthuserMixinFields0[2].Descriptor()
+	// scaauthuser.DefaultDeleted holds the default value on creation for the deleted field.
+	scaauthuser.DefaultDeleted = scaauthuserDescDeleted.Default.(int8)
+	// scaauthuser.DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	scaauthuser.DeletedValidator = scaauthuserDescDeleted.Validators[0].(func(int8) error)
 	// scaauthuserDescUID is the schema descriptor for uid field.
 	scaauthuserDescUID := scaauthuserFields[1].Descriptor()
 	// scaauthuser.UIDValidator is a validator for the "uid" field. It is called by the builders before save.
@@ -108,34 +132,39 @@ func init() {
 	scaauthuserDescIntroduce := scaauthuserFields[10].Descriptor()
 	// scaauthuser.IntroduceValidator is a validator for the "introduce" field. It is called by the builders before save.
 	scaauthuser.IntroduceValidator = scaauthuserDescIntroduce.Validators[0].(func(string) error)
-	// scaauthuserDescCreatedAt is the schema descriptor for created_at field.
-	scaauthuserDescCreatedAt := scaauthuserFields[11].Descriptor()
-	// scaauthuser.DefaultCreatedAt holds the default value on creation for the created_at field.
-	scaauthuser.DefaultCreatedAt = scaauthuserDescCreatedAt.Default.(func() time.Time)
-	// scaauthuserDescUpdateAt is the schema descriptor for update_at field.
-	scaauthuserDescUpdateAt := scaauthuserFields[12].Descriptor()
-	// scaauthuser.DefaultUpdateAt holds the default value on creation for the update_at field.
-	scaauthuser.DefaultUpdateAt = scaauthuserDescUpdateAt.Default.(func() time.Time)
-	// scaauthuser.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
-	scaauthuser.UpdateDefaultUpdateAt = scaauthuserDescUpdateAt.UpdateDefault.(func() time.Time)
-	// scaauthuserDescDeleted is the schema descriptor for deleted field.
-	scaauthuserDescDeleted := scaauthuserFields[13].Descriptor()
-	// scaauthuser.DefaultDeleted holds the default value on creation for the deleted field.
-	scaauthuser.DefaultDeleted = scaauthuserDescDeleted.Default.(int8)
 	// scaauthuserDescBlog is the schema descriptor for blog field.
-	scaauthuserDescBlog := scaauthuserFields[14].Descriptor()
+	scaauthuserDescBlog := scaauthuserFields[11].Descriptor()
 	// scaauthuser.BlogValidator is a validator for the "blog" field. It is called by the builders before save.
 	scaauthuser.BlogValidator = scaauthuserDescBlog.Validators[0].(func(string) error)
 	// scaauthuserDescLocation is the schema descriptor for location field.
-	scaauthuserDescLocation := scaauthuserFields[15].Descriptor()
+	scaauthuserDescLocation := scaauthuserFields[12].Descriptor()
 	// scaauthuser.LocationValidator is a validator for the "location" field. It is called by the builders before save.
 	scaauthuser.LocationValidator = scaauthuserDescLocation.Validators[0].(func(string) error)
 	// scaauthuserDescCompany is the schema descriptor for company field.
-	scaauthuserDescCompany := scaauthuserFields[16].Descriptor()
+	scaauthuserDescCompany := scaauthuserFields[13].Descriptor()
 	// scaauthuser.CompanyValidator is a validator for the "company" field. It is called by the builders before save.
 	scaauthuser.CompanyValidator = scaauthuserDescCompany.Validators[0].(func(string) error)
+	scaauthuserdeviceMixin := schema.ScaAuthUserDevice{}.Mixin()
+	scaauthuserdeviceMixinFields0 := scaauthuserdeviceMixin[0].Fields()
+	_ = scaauthuserdeviceMixinFields0
 	scaauthuserdeviceFields := schema.ScaAuthUserDevice{}.Fields()
 	_ = scaauthuserdeviceFields
+	// scaauthuserdeviceDescCreatedAt is the schema descriptor for created_at field.
+	scaauthuserdeviceDescCreatedAt := scaauthuserdeviceMixinFields0[0].Descriptor()
+	// scaauthuserdevice.DefaultCreatedAt holds the default value on creation for the created_at field.
+	scaauthuserdevice.DefaultCreatedAt = scaauthuserdeviceDescCreatedAt.Default.(func() time.Time)
+	// scaauthuserdeviceDescUpdatedAt is the schema descriptor for updated_at field.
+	scaauthuserdeviceDescUpdatedAt := scaauthuserdeviceMixinFields0[1].Descriptor()
+	// scaauthuserdevice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	scaauthuserdevice.DefaultUpdatedAt = scaauthuserdeviceDescUpdatedAt.Default.(func() time.Time)
+	// scaauthuserdevice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	scaauthuserdevice.UpdateDefaultUpdatedAt = scaauthuserdeviceDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// scaauthuserdeviceDescDeleted is the schema descriptor for deleted field.
+	scaauthuserdeviceDescDeleted := scaauthuserdeviceMixinFields0[2].Descriptor()
+	// scaauthuserdevice.DefaultDeleted holds the default value on creation for the deleted field.
+	scaauthuserdevice.DefaultDeleted = scaauthuserdeviceDescDeleted.Default.(int8)
+	// scaauthuserdevice.DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	scaauthuserdevice.DeletedValidator = scaauthuserdeviceDescDeleted.Validators[0].(func(int8) error)
 	// scaauthuserdeviceDescUserID is the schema descriptor for user_id field.
 	scaauthuserdeviceDescUserID := scaauthuserdeviceFields[1].Descriptor()
 	// scaauthuserdevice.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
@@ -152,50 +181,55 @@ func init() {
 	scaauthuserdeviceDescAgent := scaauthuserdeviceFields[4].Descriptor()
 	// scaauthuserdevice.AgentValidator is a validator for the "agent" field. It is called by the builders before save.
 	scaauthuserdevice.AgentValidator = scaauthuserdeviceDescAgent.Validators[0].(func(string) error)
-	// scaauthuserdeviceDescCreatedAt is the schema descriptor for created_at field.
-	scaauthuserdeviceDescCreatedAt := scaauthuserdeviceFields[5].Descriptor()
-	// scaauthuserdevice.DefaultCreatedAt holds the default value on creation for the created_at field.
-	scaauthuserdevice.DefaultCreatedAt = scaauthuserdeviceDescCreatedAt.Default.(func() time.Time)
-	// scaauthuserdeviceDescUpdateAt is the schema descriptor for update_at field.
-	scaauthuserdeviceDescUpdateAt := scaauthuserdeviceFields[6].Descriptor()
-	// scaauthuserdevice.DefaultUpdateAt holds the default value on creation for the update_at field.
-	scaauthuserdevice.DefaultUpdateAt = scaauthuserdeviceDescUpdateAt.Default.(func() time.Time)
-	// scaauthuserdevice.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
-	scaauthuserdevice.UpdateDefaultUpdateAt = scaauthuserdeviceDescUpdateAt.UpdateDefault.(func() time.Time)
-	// scaauthuserdeviceDescDeleted is the schema descriptor for deleted field.
-	scaauthuserdeviceDescDeleted := scaauthuserdeviceFields[7].Descriptor()
-	// scaauthuserdevice.DefaultDeleted holds the default value on creation for the deleted field.
-	scaauthuserdevice.DefaultDeleted = scaauthuserdeviceDescDeleted.Default.(int)
 	// scaauthuserdeviceDescBrowser is the schema descriptor for browser field.
-	scaauthuserdeviceDescBrowser := scaauthuserdeviceFields[8].Descriptor()
+	scaauthuserdeviceDescBrowser := scaauthuserdeviceFields[5].Descriptor()
 	// scaauthuserdevice.BrowserValidator is a validator for the "browser" field. It is called by the builders before save.
 	scaauthuserdevice.BrowserValidator = scaauthuserdeviceDescBrowser.Validators[0].(func(string) error)
 	// scaauthuserdeviceDescOperatingSystem is the schema descriptor for operating_system field.
-	scaauthuserdeviceDescOperatingSystem := scaauthuserdeviceFields[9].Descriptor()
+	scaauthuserdeviceDescOperatingSystem := scaauthuserdeviceFields[6].Descriptor()
 	// scaauthuserdevice.OperatingSystemValidator is a validator for the "operating_system" field. It is called by the builders before save.
 	scaauthuserdevice.OperatingSystemValidator = scaauthuserdeviceDescOperatingSystem.Validators[0].(func(string) error)
 	// scaauthuserdeviceDescBrowserVersion is the schema descriptor for browser_version field.
-	scaauthuserdeviceDescBrowserVersion := scaauthuserdeviceFields[10].Descriptor()
+	scaauthuserdeviceDescBrowserVersion := scaauthuserdeviceFields[7].Descriptor()
 	// scaauthuserdevice.BrowserVersionValidator is a validator for the "browser_version" field. It is called by the builders before save.
 	scaauthuserdevice.BrowserVersionValidator = scaauthuserdeviceDescBrowserVersion.Validators[0].(func(string) error)
 	// scaauthuserdeviceDescMozilla is the schema descriptor for mozilla field.
-	scaauthuserdeviceDescMozilla := scaauthuserdeviceFields[13].Descriptor()
+	scaauthuserdeviceDescMozilla := scaauthuserdeviceFields[10].Descriptor()
 	// scaauthuserdevice.MozillaValidator is a validator for the "mozilla" field. It is called by the builders before save.
 	scaauthuserdevice.MozillaValidator = scaauthuserdeviceDescMozilla.Validators[0].(func(string) error)
 	// scaauthuserdeviceDescPlatform is the schema descriptor for platform field.
-	scaauthuserdeviceDescPlatform := scaauthuserdeviceFields[14].Descriptor()
+	scaauthuserdeviceDescPlatform := scaauthuserdeviceFields[11].Descriptor()
 	// scaauthuserdevice.PlatformValidator is a validator for the "platform" field. It is called by the builders before save.
 	scaauthuserdevice.PlatformValidator = scaauthuserdeviceDescPlatform.Validators[0].(func(string) error)
 	// scaauthuserdeviceDescEngineName is the schema descriptor for engine_name field.
-	scaauthuserdeviceDescEngineName := scaauthuserdeviceFields[15].Descriptor()
+	scaauthuserdeviceDescEngineName := scaauthuserdeviceFields[12].Descriptor()
 	// scaauthuserdevice.EngineNameValidator is a validator for the "engine_name" field. It is called by the builders before save.
 	scaauthuserdevice.EngineNameValidator = scaauthuserdeviceDescEngineName.Validators[0].(func(string) error)
 	// scaauthuserdeviceDescEngineVersion is the schema descriptor for engine_version field.
-	scaauthuserdeviceDescEngineVersion := scaauthuserdeviceFields[16].Descriptor()
+	scaauthuserdeviceDescEngineVersion := scaauthuserdeviceFields[13].Descriptor()
 	// scaauthuserdevice.EngineVersionValidator is a validator for the "engine_version" field. It is called by the builders before save.
 	scaauthuserdevice.EngineVersionValidator = scaauthuserdeviceDescEngineVersion.Validators[0].(func(string) error)
+	scaauthusersocialMixin := schema.ScaAuthUserSocial{}.Mixin()
+	scaauthusersocialMixinFields0 := scaauthusersocialMixin[0].Fields()
+	_ = scaauthusersocialMixinFields0
 	scaauthusersocialFields := schema.ScaAuthUserSocial{}.Fields()
 	_ = scaauthusersocialFields
+	// scaauthusersocialDescCreatedAt is the schema descriptor for created_at field.
+	scaauthusersocialDescCreatedAt := scaauthusersocialMixinFields0[0].Descriptor()
+	// scaauthusersocial.DefaultCreatedAt holds the default value on creation for the created_at field.
+	scaauthusersocial.DefaultCreatedAt = scaauthusersocialDescCreatedAt.Default.(func() time.Time)
+	// scaauthusersocialDescUpdatedAt is the schema descriptor for updated_at field.
+	scaauthusersocialDescUpdatedAt := scaauthusersocialMixinFields0[1].Descriptor()
+	// scaauthusersocial.DefaultUpdatedAt holds the default value on creation for the updated_at field.
+	scaauthusersocial.DefaultUpdatedAt = scaauthusersocialDescUpdatedAt.Default.(func() time.Time)
+	// scaauthusersocial.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	scaauthusersocial.UpdateDefaultUpdatedAt = scaauthusersocialDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// scaauthusersocialDescDeleted is the schema descriptor for deleted field.
+	scaauthusersocialDescDeleted := scaauthusersocialMixinFields0[2].Descriptor()
+	// scaauthusersocial.DefaultDeleted holds the default value on creation for the deleted field.
+	scaauthusersocial.DefaultDeleted = scaauthusersocialDescDeleted.Default.(int8)
+	// scaauthusersocial.DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	scaauthusersocial.DeletedValidator = scaauthusersocialDescDeleted.Validators[0].(func(int8) error)
 	// scaauthusersocialDescUserID is the schema descriptor for user_id field.
 	scaauthusersocialDescUserID := scaauthusersocialFields[1].Descriptor()
 	// scaauthusersocial.UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
@@ -212,18 +246,4 @@ func init() {
 	scaauthusersocialDescStatus := scaauthusersocialFields[4].Descriptor()
 	// scaauthusersocial.DefaultStatus holds the default value on creation for the status field.
 	scaauthusersocial.DefaultStatus = scaauthusersocialDescStatus.Default.(int)
-	// scaauthusersocialDescCreatedAt is the schema descriptor for created_at field.
-	scaauthusersocialDescCreatedAt := scaauthusersocialFields[5].Descriptor()
-	// scaauthusersocial.DefaultCreatedAt holds the default value on creation for the created_at field.
-	scaauthusersocial.DefaultCreatedAt = scaauthusersocialDescCreatedAt.Default.(func() time.Time)
-	// scaauthusersocialDescUpdateAt is the schema descriptor for update_at field.
-	scaauthusersocialDescUpdateAt := scaauthusersocialFields[6].Descriptor()
-	// scaauthusersocial.DefaultUpdateAt holds the default value on creation for the update_at field.
-	scaauthusersocial.DefaultUpdateAt = scaauthusersocialDescUpdateAt.Default.(func() time.Time)
-	// scaauthusersocial.UpdateDefaultUpdateAt holds the default value on update for the update_at field.
-	scaauthusersocial.UpdateDefaultUpdateAt = scaauthusersocialDescUpdateAt.UpdateDefault.(func() time.Time)
-	// scaauthusersocialDescDeleted is the schema descriptor for deleted field.
-	scaauthusersocialDescDeleted := scaauthusersocialFields[7].Descriptor()
-	// scaauthusersocial.DefaultDeleted holds the default value on creation for the deleted field.
-	scaauthusersocial.DefaultDeleted = scaauthusersocialDescDeleted.Default.(int)
 }

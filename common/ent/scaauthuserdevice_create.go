@@ -21,6 +21,48 @@ type ScaAuthUserDeviceCreate struct {
 	hooks    []Hook
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (saudc *ScaAuthUserDeviceCreate) SetCreatedAt(t time.Time) *ScaAuthUserDeviceCreate {
+	saudc.mutation.SetCreatedAt(t)
+	return saudc
+}
+
+// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
+func (saudc *ScaAuthUserDeviceCreate) SetNillableCreatedAt(t *time.Time) *ScaAuthUserDeviceCreate {
+	if t != nil {
+		saudc.SetCreatedAt(*t)
+	}
+	return saudc
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (saudc *ScaAuthUserDeviceCreate) SetUpdatedAt(t time.Time) *ScaAuthUserDeviceCreate {
+	saudc.mutation.SetUpdatedAt(t)
+	return saudc
+}
+
+// SetNillableUpdatedAt sets the "updated_at" field if the given value is not nil.
+func (saudc *ScaAuthUserDeviceCreate) SetNillableUpdatedAt(t *time.Time) *ScaAuthUserDeviceCreate {
+	if t != nil {
+		saudc.SetUpdatedAt(*t)
+	}
+	return saudc
+}
+
+// SetDeleted sets the "deleted" field.
+func (saudc *ScaAuthUserDeviceCreate) SetDeleted(i int8) *ScaAuthUserDeviceCreate {
+	saudc.mutation.SetDeleted(i)
+	return saudc
+}
+
+// SetNillableDeleted sets the "deleted" field if the given value is not nil.
+func (saudc *ScaAuthUserDeviceCreate) SetNillableDeleted(i *int8) *ScaAuthUserDeviceCreate {
+	if i != nil {
+		saudc.SetDeleted(*i)
+	}
+	return saudc
+}
+
 // SetUserID sets the "user_id" field.
 func (saudc *ScaAuthUserDeviceCreate) SetUserID(s string) *ScaAuthUserDeviceCreate {
 	saudc.mutation.SetUserID(s)
@@ -42,48 +84,6 @@ func (saudc *ScaAuthUserDeviceCreate) SetLocation(s string) *ScaAuthUserDeviceCr
 // SetAgent sets the "agent" field.
 func (saudc *ScaAuthUserDeviceCreate) SetAgent(s string) *ScaAuthUserDeviceCreate {
 	saudc.mutation.SetAgent(s)
-	return saudc
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (saudc *ScaAuthUserDeviceCreate) SetCreatedAt(t time.Time) *ScaAuthUserDeviceCreate {
-	saudc.mutation.SetCreatedAt(t)
-	return saudc
-}
-
-// SetNillableCreatedAt sets the "created_at" field if the given value is not nil.
-func (saudc *ScaAuthUserDeviceCreate) SetNillableCreatedAt(t *time.Time) *ScaAuthUserDeviceCreate {
-	if t != nil {
-		saudc.SetCreatedAt(*t)
-	}
-	return saudc
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (saudc *ScaAuthUserDeviceCreate) SetUpdateAt(t time.Time) *ScaAuthUserDeviceCreate {
-	saudc.mutation.SetUpdateAt(t)
-	return saudc
-}
-
-// SetNillableUpdateAt sets the "update_at" field if the given value is not nil.
-func (saudc *ScaAuthUserDeviceCreate) SetNillableUpdateAt(t *time.Time) *ScaAuthUserDeviceCreate {
-	if t != nil {
-		saudc.SetUpdateAt(*t)
-	}
-	return saudc
-}
-
-// SetDeleted sets the "deleted" field.
-func (saudc *ScaAuthUserDeviceCreate) SetDeleted(i int) *ScaAuthUserDeviceCreate {
-	saudc.mutation.SetDeleted(i)
-	return saudc
-}
-
-// SetNillableDeleted sets the "deleted" field if the given value is not nil.
-func (saudc *ScaAuthUserDeviceCreate) SetNillableDeleted(i *int) *ScaAuthUserDeviceCreate {
-	if i != nil {
-		saudc.SetDeleted(*i)
-	}
 	return saudc
 }
 
@@ -205,9 +205,9 @@ func (saudc *ScaAuthUserDeviceCreate) defaults() {
 		v := scaauthuserdevice.DefaultCreatedAt()
 		saudc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := saudc.mutation.UpdateAt(); !ok {
-		v := scaauthuserdevice.DefaultUpdateAt()
-		saudc.mutation.SetUpdateAt(v)
+	if _, ok := saudc.mutation.UpdatedAt(); !ok {
+		v := scaauthuserdevice.DefaultUpdatedAt()
+		saudc.mutation.SetUpdatedAt(v)
 	}
 	if _, ok := saudc.mutation.Deleted(); !ok {
 		v := scaauthuserdevice.DefaultDeleted
@@ -217,6 +217,17 @@ func (saudc *ScaAuthUserDeviceCreate) defaults() {
 
 // check runs all checks and user-defined validators on the builder.
 func (saudc *ScaAuthUserDeviceCreate) check() error {
+	if _, ok := saudc.mutation.CreatedAt(); !ok {
+		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthUserDevice.created_at"`)}
+	}
+	if _, ok := saudc.mutation.UpdatedAt(); !ok {
+		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthUserDevice.updated_at"`)}
+	}
+	if v, ok := saudc.mutation.Deleted(); ok {
+		if err := scaauthuserdevice.DeletedValidator(v); err != nil {
+			return &ValidationError{Name: "deleted", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserDevice.deleted": %w`, err)}
+		}
+	}
 	if _, ok := saudc.mutation.UserID(); !ok {
 		return &ValidationError{Name: "user_id", err: errors.New(`ent: missing required field "ScaAuthUserDevice.user_id"`)}
 	}
@@ -248,12 +259,6 @@ func (saudc *ScaAuthUserDeviceCreate) check() error {
 		if err := scaauthuserdevice.AgentValidator(v); err != nil {
 			return &ValidationError{Name: "agent", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUserDevice.agent": %w`, err)}
 		}
-	}
-	if _, ok := saudc.mutation.UpdateAt(); !ok {
-		return &ValidationError{Name: "update_at", err: errors.New(`ent: missing required field "ScaAuthUserDevice.update_at"`)}
-	}
-	if _, ok := saudc.mutation.Deleted(); !ok {
-		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthUserDevice.deleted"`)}
 	}
 	if _, ok := saudc.mutation.Browser(); !ok {
 		return &ValidationError{Name: "browser", err: errors.New(`ent: missing required field "ScaAuthUserDevice.browser"`)}
@@ -349,6 +354,18 @@ func (saudc *ScaAuthUserDeviceCreate) createSpec() (*ScaAuthUserDevice, *sqlgrap
 		_node.ID = id
 		_spec.ID.Value = id
 	}
+	if value, ok := saudc.mutation.CreatedAt(); ok {
+		_spec.SetField(scaauthuserdevice.FieldCreatedAt, field.TypeTime, value)
+		_node.CreatedAt = value
+	}
+	if value, ok := saudc.mutation.UpdatedAt(); ok {
+		_spec.SetField(scaauthuserdevice.FieldUpdatedAt, field.TypeTime, value)
+		_node.UpdatedAt = value
+	}
+	if value, ok := saudc.mutation.Deleted(); ok {
+		_spec.SetField(scaauthuserdevice.FieldDeleted, field.TypeInt8, value)
+		_node.Deleted = value
+	}
 	if value, ok := saudc.mutation.UserID(); ok {
 		_spec.SetField(scaauthuserdevice.FieldUserID, field.TypeString, value)
 		_node.UserID = value
@@ -364,18 +381,6 @@ func (saudc *ScaAuthUserDeviceCreate) createSpec() (*ScaAuthUserDevice, *sqlgrap
 	if value, ok := saudc.mutation.Agent(); ok {
 		_spec.SetField(scaauthuserdevice.FieldAgent, field.TypeString, value)
 		_node.Agent = value
-	}
-	if value, ok := saudc.mutation.CreatedAt(); ok {
-		_spec.SetField(scaauthuserdevice.FieldCreatedAt, field.TypeTime, value)
-		_node.CreatedAt = value
-	}
-	if value, ok := saudc.mutation.UpdateAt(); ok {
-		_spec.SetField(scaauthuserdevice.FieldUpdateAt, field.TypeTime, value)
-		_node.UpdateAt = &value
-	}
-	if value, ok := saudc.mutation.Deleted(); ok {
-		_spec.SetField(scaauthuserdevice.FieldDeleted, field.TypeInt, value)
-		_node.Deleted = value
 	}
 	if value, ok := saudc.mutation.Browser(); ok {
 		_spec.SetField(scaauthuserdevice.FieldBrowser, field.TypeString, value)

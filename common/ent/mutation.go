@@ -843,12 +843,12 @@ type ScaAuthRoleMutation struct {
 	op                              Op
 	typ                             string
 	id                              *int64
+	created_at                      *time.Time
+	updated_at                      *time.Time
+	deleted                         *int8
+	adddeleted                      *int8
 	role_name                       *string
 	role_key                        *string
-	created_at                      *time.Time
-	update_at                       *time.Time
-	deleted                         *int
-	adddeleted                      *int
 	clearedFields                   map[string]struct{}
 	sca_auth_permission_rule        map[int64]struct{}
 	removedsca_auth_permission_rule map[int64]struct{}
@@ -962,6 +962,148 @@ func (m *ScaAuthRoleMutation) IDs(ctx context.Context) ([]int64, error) {
 	}
 }
 
+// SetCreatedAt sets the "created_at" field.
+func (m *ScaAuthRoleMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScaAuthRoleMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScaAuthRole entity.
+// If the ScaAuthRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthRoleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScaAuthRoleMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScaAuthRoleMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScaAuthRoleMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScaAuthRole entity.
+// If the ScaAuthRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthRoleMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScaAuthRoleMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *ScaAuthRoleMutation) SetDeleted(i int8) {
+	m.deleted = &i
+	m.adddeleted = nil
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *ScaAuthRoleMutation) Deleted() (r int8, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the ScaAuthRole entity.
+// If the ScaAuthRole object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthRoleMutation) OldDeleted(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (m *ScaAuthRoleMutation) AddDeleted(i int8) {
+	if m.adddeleted != nil {
+		*m.adddeleted += i
+	} else {
+		m.adddeleted = &i
+	}
+}
+
+// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
+func (m *ScaAuthRoleMutation) AddedDeleted() (r int8, exists bool) {
+	v := m.adddeleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (m *ScaAuthRoleMutation) ClearDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	m.clearedFields[scaauthrole.FieldDeleted] = struct{}{}
+}
+
+// DeletedCleared returns if the "deleted" field was cleared in this mutation.
+func (m *ScaAuthRoleMutation) DeletedCleared() bool {
+	_, ok := m.clearedFields[scaauthrole.FieldDeleted]
+	return ok
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *ScaAuthRoleMutation) ResetDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	delete(m.clearedFields, scaauthrole.FieldDeleted)
+}
+
 // SetRoleName sets the "role_name" field.
 func (m *ScaAuthRoleMutation) SetRoleName(s string) {
 	m.role_name = &s
@@ -1032,134 +1174,6 @@ func (m *ScaAuthRoleMutation) OldRoleKey(ctx context.Context) (v string, err err
 // ResetRoleKey resets all changes to the "role_key" field.
 func (m *ScaAuthRoleMutation) ResetRoleKey() {
 	m.role_key = nil
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *ScaAuthRoleMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ScaAuthRoleMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the ScaAuthRole entity.
-// If the ScaAuthRole object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthRoleMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ScaAuthRoleMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (m *ScaAuthRoleMutation) SetUpdateAt(t time.Time) {
-	m.update_at = &t
-}
-
-// UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *ScaAuthRoleMutation) UpdateAt() (r time.Time, exists bool) {
-	v := m.update_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateAt returns the old "update_at" field's value of the ScaAuthRole entity.
-// If the ScaAuthRole object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthRoleMutation) OldUpdateAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
-	}
-	return oldValue.UpdateAt, nil
-}
-
-// ResetUpdateAt resets all changes to the "update_at" field.
-func (m *ScaAuthRoleMutation) ResetUpdateAt() {
-	m.update_at = nil
-}
-
-// SetDeleted sets the "deleted" field.
-func (m *ScaAuthRoleMutation) SetDeleted(i int) {
-	m.deleted = &i
-	m.adddeleted = nil
-}
-
-// Deleted returns the value of the "deleted" field in the mutation.
-func (m *ScaAuthRoleMutation) Deleted() (r int, exists bool) {
-	v := m.deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeleted returns the old "deleted" field's value of the ScaAuthRole entity.
-// If the ScaAuthRole object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthRoleMutation) OldDeleted(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
-	}
-	return oldValue.Deleted, nil
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (m *ScaAuthRoleMutation) AddDeleted(i int) {
-	if m.adddeleted != nil {
-		*m.adddeleted += i
-	} else {
-		m.adddeleted = &i
-	}
-}
-
-// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
-func (m *ScaAuthRoleMutation) AddedDeleted() (r int, exists bool) {
-	v := m.adddeleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDeleted resets all changes to the "deleted" field.
-func (m *ScaAuthRoleMutation) ResetDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
 }
 
 // AddScaAuthPermissionRuleIDs adds the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity by ids.
@@ -1251,20 +1265,20 @@ func (m *ScaAuthRoleMutation) Type() string {
 // AddedFields().
 func (m *ScaAuthRoleMutation) Fields() []string {
 	fields := make([]string, 0, 5)
+	if m.created_at != nil {
+		fields = append(fields, scaauthrole.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, scaauthrole.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, scaauthrole.FieldDeleted)
+	}
 	if m.role_name != nil {
 		fields = append(fields, scaauthrole.FieldRoleName)
 	}
 	if m.role_key != nil {
 		fields = append(fields, scaauthrole.FieldRoleKey)
-	}
-	if m.created_at != nil {
-		fields = append(fields, scaauthrole.FieldCreatedAt)
-	}
-	if m.update_at != nil {
-		fields = append(fields, scaauthrole.FieldUpdateAt)
-	}
-	if m.deleted != nil {
-		fields = append(fields, scaauthrole.FieldDeleted)
 	}
 	return fields
 }
@@ -1274,16 +1288,16 @@ func (m *ScaAuthRoleMutation) Fields() []string {
 // schema.
 func (m *ScaAuthRoleMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case scaauthrole.FieldCreatedAt:
+		return m.CreatedAt()
+	case scaauthrole.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case scaauthrole.FieldDeleted:
+		return m.Deleted()
 	case scaauthrole.FieldRoleName:
 		return m.RoleName()
 	case scaauthrole.FieldRoleKey:
 		return m.RoleKey()
-	case scaauthrole.FieldCreatedAt:
-		return m.CreatedAt()
-	case scaauthrole.FieldUpdateAt:
-		return m.UpdateAt()
-	case scaauthrole.FieldDeleted:
-		return m.Deleted()
 	}
 	return nil, false
 }
@@ -1293,16 +1307,16 @@ func (m *ScaAuthRoleMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ScaAuthRoleMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case scaauthrole.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case scaauthrole.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case scaauthrole.FieldDeleted:
+		return m.OldDeleted(ctx)
 	case scaauthrole.FieldRoleName:
 		return m.OldRoleName(ctx)
 	case scaauthrole.FieldRoleKey:
 		return m.OldRoleKey(ctx)
-	case scaauthrole.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case scaauthrole.FieldUpdateAt:
-		return m.OldUpdateAt(ctx)
-	case scaauthrole.FieldDeleted:
-		return m.OldDeleted(ctx)
 	}
 	return nil, fmt.Errorf("unknown ScaAuthRole field %s", name)
 }
@@ -1312,6 +1326,27 @@ func (m *ScaAuthRoleMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *ScaAuthRoleMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case scaauthrole.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case scaauthrole.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case scaauthrole.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
 	case scaauthrole.FieldRoleName:
 		v, ok := value.(string)
 		if !ok {
@@ -1325,27 +1360,6 @@ func (m *ScaAuthRoleMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetRoleKey(v)
-		return nil
-	case scaauthrole.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case scaauthrole.FieldUpdateAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateAt(v)
-		return nil
-	case scaauthrole.FieldDeleted:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeleted(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthRole field %s", name)
@@ -1378,7 +1392,7 @@ func (m *ScaAuthRoleMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ScaAuthRoleMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case scaauthrole.FieldDeleted:
-		v, ok := value.(int)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -1391,7 +1405,11 @@ func (m *ScaAuthRoleMutation) AddField(name string, value ent.Value) error {
 // ClearedFields returns all nullable fields that were cleared during this
 // mutation.
 func (m *ScaAuthRoleMutation) ClearedFields() []string {
-	return nil
+	var fields []string
+	if m.FieldCleared(scaauthrole.FieldDeleted) {
+		fields = append(fields, scaauthrole.FieldDeleted)
+	}
+	return fields
 }
 
 // FieldCleared returns a boolean indicating if a field with the given name was
@@ -1404,6 +1422,11 @@ func (m *ScaAuthRoleMutation) FieldCleared(name string) bool {
 // ClearField clears the value of the field with the given name. It returns an
 // error if the field is not defined in the schema.
 func (m *ScaAuthRoleMutation) ClearField(name string) error {
+	switch name {
+	case scaauthrole.FieldDeleted:
+		m.ClearDeleted()
+		return nil
+	}
 	return fmt.Errorf("unknown ScaAuthRole nullable field %s", name)
 }
 
@@ -1411,20 +1434,20 @@ func (m *ScaAuthRoleMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ScaAuthRoleMutation) ResetField(name string) error {
 	switch name {
+	case scaauthrole.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case scaauthrole.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case scaauthrole.FieldDeleted:
+		m.ResetDeleted()
+		return nil
 	case scaauthrole.FieldRoleName:
 		m.ResetRoleName()
 		return nil
 	case scaauthrole.FieldRoleKey:
 		m.ResetRoleKey()
-		return nil
-	case scaauthrole.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case scaauthrole.FieldUpdateAt:
-		m.ResetUpdateAt()
-		return nil
-	case scaauthrole.FieldDeleted:
-		m.ResetDeleted()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthRole field %s", name)
@@ -1520,6 +1543,10 @@ type ScaAuthUserMutation struct {
 	op                          Op
 	typ                         string
 	id                          *int64
+	created_at                  *time.Time
+	updated_at                  *time.Time
+	deleted                     *int8
+	adddeleted                  *int8
 	uid                         *string
 	username                    *string
 	nickname                    *string
@@ -1531,10 +1558,6 @@ type ScaAuthUserMutation struct {
 	status                      *int8
 	addstatus                   *int8
 	introduce                   *string
-	created_at                  *time.Time
-	update_at                   *time.Time
-	deleted                     *int8
-	adddeleted                  *int8
 	blog                        *string
 	location                    *string
 	company                     *string
@@ -1652,6 +1675,148 @@ func (m *ScaAuthUserMutation) IDs(ctx context.Context) ([]int64, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ScaAuthUserMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScaAuthUserMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScaAuthUser entity.
+// If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScaAuthUserMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScaAuthUserMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScaAuthUserMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScaAuthUser entity.
+// If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScaAuthUserMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *ScaAuthUserMutation) SetDeleted(i int8) {
+	m.deleted = &i
+	m.adddeleted = nil
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *ScaAuthUserMutation) Deleted() (r int8, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the ScaAuthUser entity.
+// If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserMutation) OldDeleted(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (m *ScaAuthUserMutation) AddDeleted(i int8) {
+	if m.adddeleted != nil {
+		*m.adddeleted += i
+	} else {
+		m.adddeleted = &i
+	}
+}
+
+// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
+func (m *ScaAuthUserMutation) AddedDeleted() (r int8, exists bool) {
+	v := m.adddeleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (m *ScaAuthUserMutation) ClearDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	m.clearedFields[scaauthuser.FieldDeleted] = struct{}{}
+}
+
+// DeletedCleared returns if the "deleted" field was cleared in this mutation.
+func (m *ScaAuthUserMutation) DeletedCleared() bool {
+	_, ok := m.clearedFields[scaauthuser.FieldDeleted]
+	return ok
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *ScaAuthUserMutation) ResetDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	delete(m.clearedFields, scaauthuser.FieldDeleted)
 }
 
 // SetUID sets the "uid" field.
@@ -2152,147 +2317,6 @@ func (m *ScaAuthUserMutation) ResetIntroduce() {
 	delete(m.clearedFields, scaauthuser.FieldIntroduce)
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *ScaAuthUserMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ScaAuthUserMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the ScaAuthUser entity.
-// If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ScaAuthUserMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (m *ScaAuthUserMutation) SetUpdateAt(t time.Time) {
-	m.update_at = &t
-}
-
-// UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *ScaAuthUserMutation) UpdateAt() (r time.Time, exists bool) {
-	v := m.update_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateAt returns the old "update_at" field's value of the ScaAuthUser entity.
-// If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserMutation) OldUpdateAt(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
-	}
-	return oldValue.UpdateAt, nil
-}
-
-// ClearUpdateAt clears the value of the "update_at" field.
-func (m *ScaAuthUserMutation) ClearUpdateAt() {
-	m.update_at = nil
-	m.clearedFields[scaauthuser.FieldUpdateAt] = struct{}{}
-}
-
-// UpdateAtCleared returns if the "update_at" field was cleared in this mutation.
-func (m *ScaAuthUserMutation) UpdateAtCleared() bool {
-	_, ok := m.clearedFields[scaauthuser.FieldUpdateAt]
-	return ok
-}
-
-// ResetUpdateAt resets all changes to the "update_at" field.
-func (m *ScaAuthUserMutation) ResetUpdateAt() {
-	m.update_at = nil
-	delete(m.clearedFields, scaauthuser.FieldUpdateAt)
-}
-
-// SetDeleted sets the "deleted" field.
-func (m *ScaAuthUserMutation) SetDeleted(i int8) {
-	m.deleted = &i
-	m.adddeleted = nil
-}
-
-// Deleted returns the value of the "deleted" field in the mutation.
-func (m *ScaAuthUserMutation) Deleted() (r int8, exists bool) {
-	v := m.deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeleted returns the old "deleted" field's value of the ScaAuthUser entity.
-// If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserMutation) OldDeleted(ctx context.Context) (v int8, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
-	}
-	return oldValue.Deleted, nil
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (m *ScaAuthUserMutation) AddDeleted(i int8) {
-	if m.adddeleted != nil {
-		*m.adddeleted += i
-	} else {
-		m.adddeleted = &i
-	}
-}
-
-// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
-func (m *ScaAuthUserMutation) AddedDeleted() (r int8, exists bool) {
-	v := m.adddeleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDeleted resets all changes to the "deleted" field.
-func (m *ScaAuthUserMutation) ResetDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
-}
-
 // SetBlog sets the "blog" field.
 func (m *ScaAuthUserMutation) SetBlog(s string) {
 	m.blog = &s
@@ -2583,6 +2607,15 @@ func (m *ScaAuthUserMutation) Type() string {
 // AddedFields().
 func (m *ScaAuthUserMutation) Fields() []string {
 	fields := make([]string, 0, 16)
+	if m.created_at != nil {
+		fields = append(fields, scaauthuser.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, scaauthuser.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, scaauthuser.FieldDeleted)
+	}
 	if m.uid != nil {
 		fields = append(fields, scaauthuser.FieldUID)
 	}
@@ -2613,15 +2646,6 @@ func (m *ScaAuthUserMutation) Fields() []string {
 	if m.introduce != nil {
 		fields = append(fields, scaauthuser.FieldIntroduce)
 	}
-	if m.created_at != nil {
-		fields = append(fields, scaauthuser.FieldCreatedAt)
-	}
-	if m.update_at != nil {
-		fields = append(fields, scaauthuser.FieldUpdateAt)
-	}
-	if m.deleted != nil {
-		fields = append(fields, scaauthuser.FieldDeleted)
-	}
 	if m.blog != nil {
 		fields = append(fields, scaauthuser.FieldBlog)
 	}
@@ -2639,6 +2663,12 @@ func (m *ScaAuthUserMutation) Fields() []string {
 // schema.
 func (m *ScaAuthUserMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case scaauthuser.FieldCreatedAt:
+		return m.CreatedAt()
+	case scaauthuser.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case scaauthuser.FieldDeleted:
+		return m.Deleted()
 	case scaauthuser.FieldUID:
 		return m.UID()
 	case scaauthuser.FieldUsername:
@@ -2659,12 +2689,6 @@ func (m *ScaAuthUserMutation) Field(name string) (ent.Value, bool) {
 		return m.Status()
 	case scaauthuser.FieldIntroduce:
 		return m.Introduce()
-	case scaauthuser.FieldCreatedAt:
-		return m.CreatedAt()
-	case scaauthuser.FieldUpdateAt:
-		return m.UpdateAt()
-	case scaauthuser.FieldDeleted:
-		return m.Deleted()
 	case scaauthuser.FieldBlog:
 		return m.Blog()
 	case scaauthuser.FieldLocation:
@@ -2680,6 +2704,12 @@ func (m *ScaAuthUserMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ScaAuthUserMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case scaauthuser.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case scaauthuser.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case scaauthuser.FieldDeleted:
+		return m.OldDeleted(ctx)
 	case scaauthuser.FieldUID:
 		return m.OldUID(ctx)
 	case scaauthuser.FieldUsername:
@@ -2700,12 +2730,6 @@ func (m *ScaAuthUserMutation) OldField(ctx context.Context, name string) (ent.Va
 		return m.OldStatus(ctx)
 	case scaauthuser.FieldIntroduce:
 		return m.OldIntroduce(ctx)
-	case scaauthuser.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case scaauthuser.FieldUpdateAt:
-		return m.OldUpdateAt(ctx)
-	case scaauthuser.FieldDeleted:
-		return m.OldDeleted(ctx)
 	case scaauthuser.FieldBlog:
 		return m.OldBlog(ctx)
 	case scaauthuser.FieldLocation:
@@ -2721,6 +2745,27 @@ func (m *ScaAuthUserMutation) OldField(ctx context.Context, name string) (ent.Va
 // type.
 func (m *ScaAuthUserMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case scaauthuser.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case scaauthuser.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case scaauthuser.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
 	case scaauthuser.FieldUID:
 		v, ok := value.(string)
 		if !ok {
@@ -2791,27 +2836,6 @@ func (m *ScaAuthUserMutation) SetField(name string, value ent.Value) error {
 		}
 		m.SetIntroduce(v)
 		return nil
-	case scaauthuser.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case scaauthuser.FieldUpdateAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateAt(v)
-		return nil
-	case scaauthuser.FieldDeleted:
-		v, ok := value.(int8)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeleted(v)
-		return nil
 	case scaauthuser.FieldBlog:
 		v, ok := value.(string)
 		if !ok {
@@ -2841,11 +2865,11 @@ func (m *ScaAuthUserMutation) SetField(name string, value ent.Value) error {
 // this mutation.
 func (m *ScaAuthUserMutation) AddedFields() []string {
 	var fields []string
-	if m.addstatus != nil {
-		fields = append(fields, scaauthuser.FieldStatus)
-	}
 	if m.adddeleted != nil {
 		fields = append(fields, scaauthuser.FieldDeleted)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, scaauthuser.FieldStatus)
 	}
 	return fields
 }
@@ -2855,10 +2879,10 @@ func (m *ScaAuthUserMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ScaAuthUserMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case scaauthuser.FieldStatus:
-		return m.AddedStatus()
 	case scaauthuser.FieldDeleted:
 		return m.AddedDeleted()
+	case scaauthuser.FieldStatus:
+		return m.AddedStatus()
 	}
 	return nil, false
 }
@@ -2868,19 +2892,19 @@ func (m *ScaAuthUserMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ScaAuthUserMutation) AddField(name string, value ent.Value) error {
 	switch name {
-	case scaauthuser.FieldStatus:
-		v, ok := value.(int8)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddStatus(v)
-		return nil
 	case scaauthuser.FieldDeleted:
 		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeleted(v)
+		return nil
+	case scaauthuser.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUser numeric field %s", name)
@@ -2890,6 +2914,9 @@ func (m *ScaAuthUserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ScaAuthUserMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(scaauthuser.FieldDeleted) {
+		fields = append(fields, scaauthuser.FieldDeleted)
+	}
 	if m.FieldCleared(scaauthuser.FieldUsername) {
 		fields = append(fields, scaauthuser.FieldUsername)
 	}
@@ -2917,9 +2944,6 @@ func (m *ScaAuthUserMutation) ClearedFields() []string {
 	if m.FieldCleared(scaauthuser.FieldIntroduce) {
 		fields = append(fields, scaauthuser.FieldIntroduce)
 	}
-	if m.FieldCleared(scaauthuser.FieldUpdateAt) {
-		fields = append(fields, scaauthuser.FieldUpdateAt)
-	}
 	if m.FieldCleared(scaauthuser.FieldBlog) {
 		fields = append(fields, scaauthuser.FieldBlog)
 	}
@@ -2943,6 +2967,9 @@ func (m *ScaAuthUserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthUserMutation) ClearField(name string) error {
 	switch name {
+	case scaauthuser.FieldDeleted:
+		m.ClearDeleted()
+		return nil
 	case scaauthuser.FieldUsername:
 		m.ClearUsername()
 		return nil
@@ -2970,9 +2997,6 @@ func (m *ScaAuthUserMutation) ClearField(name string) error {
 	case scaauthuser.FieldIntroduce:
 		m.ClearIntroduce()
 		return nil
-	case scaauthuser.FieldUpdateAt:
-		m.ClearUpdateAt()
-		return nil
 	case scaauthuser.FieldBlog:
 		m.ClearBlog()
 		return nil
@@ -2990,6 +3014,15 @@ func (m *ScaAuthUserMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ScaAuthUserMutation) ResetField(name string) error {
 	switch name {
+	case scaauthuser.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case scaauthuser.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case scaauthuser.FieldDeleted:
+		m.ResetDeleted()
+		return nil
 	case scaauthuser.FieldUID:
 		m.ResetUID()
 		return nil
@@ -3019,15 +3052,6 @@ func (m *ScaAuthUserMutation) ResetField(name string) error {
 		return nil
 	case scaauthuser.FieldIntroduce:
 		m.ResetIntroduce()
-		return nil
-	case scaauthuser.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case scaauthuser.FieldUpdateAt:
-		m.ResetUpdateAt()
-		return nil
-	case scaauthuser.FieldDeleted:
-		m.ResetDeleted()
 		return nil
 	case scaauthuser.FieldBlog:
 		m.ResetBlog()
@@ -3158,14 +3182,14 @@ type ScaAuthUserDeviceMutation struct {
 	op                   Op
 	typ                  string
 	id                   *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted              *int8
+	adddeleted           *int8
 	user_id              *string
 	ip                   *string
 	location             *string
 	agent                *string
-	created_at           *time.Time
-	update_at            *time.Time
-	deleted              *int
-	adddeleted           *int
 	browser              *string
 	operating_system     *string
 	browser_version      *string
@@ -3287,6 +3311,148 @@ func (m *ScaAuthUserDeviceMutation) IDs(ctx context.Context) ([]int64, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ScaAuthUserDeviceMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScaAuthUserDeviceMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScaAuthUserDevice entity.
+// If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserDeviceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScaAuthUserDeviceMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScaAuthUserDeviceMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScaAuthUserDeviceMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScaAuthUserDevice entity.
+// If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserDeviceMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScaAuthUserDeviceMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *ScaAuthUserDeviceMutation) SetDeleted(i int8) {
+	m.deleted = &i
+	m.adddeleted = nil
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *ScaAuthUserDeviceMutation) Deleted() (r int8, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the ScaAuthUserDevice entity.
+// If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserDeviceMutation) OldDeleted(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (m *ScaAuthUserDeviceMutation) AddDeleted(i int8) {
+	if m.adddeleted != nil {
+		*m.adddeleted += i
+	} else {
+		m.adddeleted = &i
+	}
+}
+
+// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
+func (m *ScaAuthUserDeviceMutation) AddedDeleted() (r int8, exists bool) {
+	v := m.adddeleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (m *ScaAuthUserDeviceMutation) ClearDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	m.clearedFields[scaauthuserdevice.FieldDeleted] = struct{}{}
+}
+
+// DeletedCleared returns if the "deleted" field was cleared in this mutation.
+func (m *ScaAuthUserDeviceMutation) DeletedCleared() bool {
+	_, ok := m.clearedFields[scaauthuserdevice.FieldDeleted]
+	return ok
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *ScaAuthUserDeviceMutation) ResetDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	delete(m.clearedFields, scaauthuserdevice.FieldDeleted)
 }
 
 // SetUserID sets the "user_id" field.
@@ -3431,147 +3597,6 @@ func (m *ScaAuthUserDeviceMutation) OldAgent(ctx context.Context) (v string, err
 // ResetAgent resets all changes to the "agent" field.
 func (m *ScaAuthUserDeviceMutation) ResetAgent() {
 	m.agent = nil
-}
-
-// SetCreatedAt sets the "created_at" field.
-func (m *ScaAuthUserDeviceMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ScaAuthUserDeviceMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the ScaAuthUserDevice entity.
-// If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserDeviceMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ClearCreatedAt clears the value of the "created_at" field.
-func (m *ScaAuthUserDeviceMutation) ClearCreatedAt() {
-	m.created_at = nil
-	m.clearedFields[scaauthuserdevice.FieldCreatedAt] = struct{}{}
-}
-
-// CreatedAtCleared returns if the "created_at" field was cleared in this mutation.
-func (m *ScaAuthUserDeviceMutation) CreatedAtCleared() bool {
-	_, ok := m.clearedFields[scaauthuserdevice.FieldCreatedAt]
-	return ok
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ScaAuthUserDeviceMutation) ResetCreatedAt() {
-	m.created_at = nil
-	delete(m.clearedFields, scaauthuserdevice.FieldCreatedAt)
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (m *ScaAuthUserDeviceMutation) SetUpdateAt(t time.Time) {
-	m.update_at = &t
-}
-
-// UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *ScaAuthUserDeviceMutation) UpdateAt() (r time.Time, exists bool) {
-	v := m.update_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateAt returns the old "update_at" field's value of the ScaAuthUserDevice entity.
-// If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserDeviceMutation) OldUpdateAt(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
-	}
-	return oldValue.UpdateAt, nil
-}
-
-// ResetUpdateAt resets all changes to the "update_at" field.
-func (m *ScaAuthUserDeviceMutation) ResetUpdateAt() {
-	m.update_at = nil
-}
-
-// SetDeleted sets the "deleted" field.
-func (m *ScaAuthUserDeviceMutation) SetDeleted(i int) {
-	m.deleted = &i
-	m.adddeleted = nil
-}
-
-// Deleted returns the value of the "deleted" field in the mutation.
-func (m *ScaAuthUserDeviceMutation) Deleted() (r int, exists bool) {
-	v := m.deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeleted returns the old "deleted" field's value of the ScaAuthUserDevice entity.
-// If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserDeviceMutation) OldDeleted(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
-	}
-	return oldValue.Deleted, nil
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (m *ScaAuthUserDeviceMutation) AddDeleted(i int) {
-	if m.adddeleted != nil {
-		*m.adddeleted += i
-	} else {
-		m.adddeleted = &i
-	}
-}
-
-// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
-func (m *ScaAuthUserDeviceMutation) AddedDeleted() (r int, exists bool) {
-	v := m.adddeleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDeleted resets all changes to the "deleted" field.
-func (m *ScaAuthUserDeviceMutation) ResetDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
 }
 
 // SetBrowser sets the "browser" field.
@@ -4012,6 +4037,15 @@ func (m *ScaAuthUserDeviceMutation) Type() string {
 // AddedFields().
 func (m *ScaAuthUserDeviceMutation) Fields() []string {
 	fields := make([]string, 0, 16)
+	if m.created_at != nil {
+		fields = append(fields, scaauthuserdevice.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, scaauthuserdevice.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, scaauthuserdevice.FieldDeleted)
+	}
 	if m.user_id != nil {
 		fields = append(fields, scaauthuserdevice.FieldUserID)
 	}
@@ -4023,15 +4057,6 @@ func (m *ScaAuthUserDeviceMutation) Fields() []string {
 	}
 	if m.agent != nil {
 		fields = append(fields, scaauthuserdevice.FieldAgent)
-	}
-	if m.created_at != nil {
-		fields = append(fields, scaauthuserdevice.FieldCreatedAt)
-	}
-	if m.update_at != nil {
-		fields = append(fields, scaauthuserdevice.FieldUpdateAt)
-	}
-	if m.deleted != nil {
-		fields = append(fields, scaauthuserdevice.FieldDeleted)
 	}
 	if m.browser != nil {
 		fields = append(fields, scaauthuserdevice.FieldBrowser)
@@ -4068,6 +4093,12 @@ func (m *ScaAuthUserDeviceMutation) Fields() []string {
 // schema.
 func (m *ScaAuthUserDeviceMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case scaauthuserdevice.FieldCreatedAt:
+		return m.CreatedAt()
+	case scaauthuserdevice.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case scaauthuserdevice.FieldDeleted:
+		return m.Deleted()
 	case scaauthuserdevice.FieldUserID:
 		return m.UserID()
 	case scaauthuserdevice.FieldIP:
@@ -4076,12 +4107,6 @@ func (m *ScaAuthUserDeviceMutation) Field(name string) (ent.Value, bool) {
 		return m.Location()
 	case scaauthuserdevice.FieldAgent:
 		return m.Agent()
-	case scaauthuserdevice.FieldCreatedAt:
-		return m.CreatedAt()
-	case scaauthuserdevice.FieldUpdateAt:
-		return m.UpdateAt()
-	case scaauthuserdevice.FieldDeleted:
-		return m.Deleted()
 	case scaauthuserdevice.FieldBrowser:
 		return m.Browser()
 	case scaauthuserdevice.FieldOperatingSystem:
@@ -4109,6 +4134,12 @@ func (m *ScaAuthUserDeviceMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ScaAuthUserDeviceMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case scaauthuserdevice.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case scaauthuserdevice.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case scaauthuserdevice.FieldDeleted:
+		return m.OldDeleted(ctx)
 	case scaauthuserdevice.FieldUserID:
 		return m.OldUserID(ctx)
 	case scaauthuserdevice.FieldIP:
@@ -4117,12 +4148,6 @@ func (m *ScaAuthUserDeviceMutation) OldField(ctx context.Context, name string) (
 		return m.OldLocation(ctx)
 	case scaauthuserdevice.FieldAgent:
 		return m.OldAgent(ctx)
-	case scaauthuserdevice.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case scaauthuserdevice.FieldUpdateAt:
-		return m.OldUpdateAt(ctx)
-	case scaauthuserdevice.FieldDeleted:
-		return m.OldDeleted(ctx)
 	case scaauthuserdevice.FieldBrowser:
 		return m.OldBrowser(ctx)
 	case scaauthuserdevice.FieldOperatingSystem:
@@ -4150,6 +4175,27 @@ func (m *ScaAuthUserDeviceMutation) OldField(ctx context.Context, name string) (
 // type.
 func (m *ScaAuthUserDeviceMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case scaauthuserdevice.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case scaauthuserdevice.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case scaauthuserdevice.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
 	case scaauthuserdevice.FieldUserID:
 		v, ok := value.(string)
 		if !ok {
@@ -4177,27 +4223,6 @@ func (m *ScaAuthUserDeviceMutation) SetField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetAgent(v)
-		return nil
-	case scaauthuserdevice.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case scaauthuserdevice.FieldUpdateAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateAt(v)
-		return nil
-	case scaauthuserdevice.FieldDeleted:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeleted(v)
 		return nil
 	case scaauthuserdevice.FieldBrowser:
 		v, ok := value.(string)
@@ -4303,7 +4328,7 @@ func (m *ScaAuthUserDeviceMutation) AddedField(name string) (ent.Value, bool) {
 func (m *ScaAuthUserDeviceMutation) AddField(name string, value ent.Value) error {
 	switch name {
 	case scaauthuserdevice.FieldDeleted:
-		v, ok := value.(int)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4331,8 +4356,8 @@ func (m *ScaAuthUserDeviceMutation) AddField(name string, value ent.Value) error
 // mutation.
 func (m *ScaAuthUserDeviceMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(scaauthuserdevice.FieldCreatedAt) {
-		fields = append(fields, scaauthuserdevice.FieldCreatedAt)
+	if m.FieldCleared(scaauthuserdevice.FieldDeleted) {
+		fields = append(fields, scaauthuserdevice.FieldDeleted)
 	}
 	return fields
 }
@@ -4348,8 +4373,8 @@ func (m *ScaAuthUserDeviceMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthUserDeviceMutation) ClearField(name string) error {
 	switch name {
-	case scaauthuserdevice.FieldCreatedAt:
-		m.ClearCreatedAt()
+	case scaauthuserdevice.FieldDeleted:
+		m.ClearDeleted()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserDevice nullable field %s", name)
@@ -4359,6 +4384,15 @@ func (m *ScaAuthUserDeviceMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ScaAuthUserDeviceMutation) ResetField(name string) error {
 	switch name {
+	case scaauthuserdevice.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case scaauthuserdevice.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case scaauthuserdevice.FieldDeleted:
+		m.ResetDeleted()
+		return nil
 	case scaauthuserdevice.FieldUserID:
 		m.ResetUserID()
 		return nil
@@ -4370,15 +4404,6 @@ func (m *ScaAuthUserDeviceMutation) ResetField(name string) error {
 		return nil
 	case scaauthuserdevice.FieldAgent:
 		m.ResetAgent()
-		return nil
-	case scaauthuserdevice.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case scaauthuserdevice.FieldUpdateAt:
-		m.ResetUpdateAt()
-		return nil
-	case scaauthuserdevice.FieldDeleted:
-		m.ResetDeleted()
 		return nil
 	case scaauthuserdevice.FieldBrowser:
 		m.ResetBrowser()
@@ -4491,15 +4516,15 @@ type ScaAuthUserSocialMutation struct {
 	op                   Op
 	typ                  string
 	id                   *int64
+	created_at           *time.Time
+	updated_at           *time.Time
+	deleted              *int8
+	adddeleted           *int8
 	user_id              *string
 	open_id              *string
 	source               *string
 	status               *int
 	addstatus            *int
-	created_at           *time.Time
-	update_at            *time.Time
-	deleted              *int
-	adddeleted           *int
 	clearedFields        map[string]struct{}
 	sca_auth_user        *int64
 	clearedsca_auth_user bool
@@ -4610,6 +4635,148 @@ func (m *ScaAuthUserSocialMutation) IDs(ctx context.Context) ([]int64, error) {
 	default:
 		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
 	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ScaAuthUserSocialMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScaAuthUserSocialMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScaAuthUserSocial entity.
+// If the ScaAuthUserSocial object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserSocialMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScaAuthUserSocialMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScaAuthUserSocialMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScaAuthUserSocialMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScaAuthUserSocial entity.
+// If the ScaAuthUserSocial object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserSocialMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScaAuthUserSocialMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *ScaAuthUserSocialMutation) SetDeleted(i int8) {
+	m.deleted = &i
+	m.adddeleted = nil
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *ScaAuthUserSocialMutation) Deleted() (r int8, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the ScaAuthUserSocial entity.
+// If the ScaAuthUserSocial object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaAuthUserSocialMutation) OldDeleted(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (m *ScaAuthUserSocialMutation) AddDeleted(i int8) {
+	if m.adddeleted != nil {
+		*m.adddeleted += i
+	} else {
+		m.adddeleted = &i
+	}
+}
+
+// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
+func (m *ScaAuthUserSocialMutation) AddedDeleted() (r int8, exists bool) {
+	v := m.adddeleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearDeleted clears the value of the "deleted" field.
+func (m *ScaAuthUserSocialMutation) ClearDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	m.clearedFields[scaauthusersocial.FieldDeleted] = struct{}{}
+}
+
+// DeletedCleared returns if the "deleted" field was cleared in this mutation.
+func (m *ScaAuthUserSocialMutation) DeletedCleared() bool {
+	_, ok := m.clearedFields[scaauthusersocial.FieldDeleted]
+	return ok
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *ScaAuthUserSocialMutation) ResetDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+	delete(m.clearedFields, scaauthusersocial.FieldDeleted)
 }
 
 // SetUserID sets the "user_id" field.
@@ -4776,147 +4943,6 @@ func (m *ScaAuthUserSocialMutation) ResetStatus() {
 	m.addstatus = nil
 }
 
-// SetCreatedAt sets the "created_at" field.
-func (m *ScaAuthUserSocialMutation) SetCreatedAt(t time.Time) {
-	m.created_at = &t
-}
-
-// CreatedAt returns the value of the "created_at" field in the mutation.
-func (m *ScaAuthUserSocialMutation) CreatedAt() (r time.Time, exists bool) {
-	v := m.created_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldCreatedAt returns the old "created_at" field's value of the ScaAuthUserSocial entity.
-// If the ScaAuthUserSocial object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserSocialMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
-	}
-	return oldValue.CreatedAt, nil
-}
-
-// ResetCreatedAt resets all changes to the "created_at" field.
-func (m *ScaAuthUserSocialMutation) ResetCreatedAt() {
-	m.created_at = nil
-}
-
-// SetUpdateAt sets the "update_at" field.
-func (m *ScaAuthUserSocialMutation) SetUpdateAt(t time.Time) {
-	m.update_at = &t
-}
-
-// UpdateAt returns the value of the "update_at" field in the mutation.
-func (m *ScaAuthUserSocialMutation) UpdateAt() (r time.Time, exists bool) {
-	v := m.update_at
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldUpdateAt returns the old "update_at" field's value of the ScaAuthUserSocial entity.
-// If the ScaAuthUserSocial object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserSocialMutation) OldUpdateAt(ctx context.Context) (v *time.Time, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldUpdateAt is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldUpdateAt requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldUpdateAt: %w", err)
-	}
-	return oldValue.UpdateAt, nil
-}
-
-// ClearUpdateAt clears the value of the "update_at" field.
-func (m *ScaAuthUserSocialMutation) ClearUpdateAt() {
-	m.update_at = nil
-	m.clearedFields[scaauthusersocial.FieldUpdateAt] = struct{}{}
-}
-
-// UpdateAtCleared returns if the "update_at" field was cleared in this mutation.
-func (m *ScaAuthUserSocialMutation) UpdateAtCleared() bool {
-	_, ok := m.clearedFields[scaauthusersocial.FieldUpdateAt]
-	return ok
-}
-
-// ResetUpdateAt resets all changes to the "update_at" field.
-func (m *ScaAuthUserSocialMutation) ResetUpdateAt() {
-	m.update_at = nil
-	delete(m.clearedFields, scaauthusersocial.FieldUpdateAt)
-}
-
-// SetDeleted sets the "deleted" field.
-func (m *ScaAuthUserSocialMutation) SetDeleted(i int) {
-	m.deleted = &i
-	m.adddeleted = nil
-}
-
-// Deleted returns the value of the "deleted" field in the mutation.
-func (m *ScaAuthUserSocialMutation) Deleted() (r int, exists bool) {
-	v := m.deleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// OldDeleted returns the old "deleted" field's value of the ScaAuthUserSocial entity.
-// If the ScaAuthUserSocial object wasn't provided to the builder, the object is fetched from the database.
-// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserSocialMutation) OldDeleted(ctx context.Context) (v int, err error) {
-	if !m.op.Is(OpUpdateOne) {
-		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
-	}
-	if m.id == nil || m.oldValue == nil {
-		return v, errors.New("OldDeleted requires an ID field in the mutation")
-	}
-	oldValue, err := m.oldValue(ctx)
-	if err != nil {
-		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
-	}
-	return oldValue.Deleted, nil
-}
-
-// AddDeleted adds i to the "deleted" field.
-func (m *ScaAuthUserSocialMutation) AddDeleted(i int) {
-	if m.adddeleted != nil {
-		*m.adddeleted += i
-	} else {
-		m.adddeleted = &i
-	}
-}
-
-// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
-func (m *ScaAuthUserSocialMutation) AddedDeleted() (r int, exists bool) {
-	v := m.adddeleted
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
-// ResetDeleted resets all changes to the "deleted" field.
-func (m *ScaAuthUserSocialMutation) ResetDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
-}
-
 // SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by id.
 func (m *ScaAuthUserSocialMutation) SetScaAuthUserID(id int64) {
 	m.sca_auth_user = &id
@@ -4991,6 +5017,15 @@ func (m *ScaAuthUserSocialMutation) Type() string {
 // AddedFields().
 func (m *ScaAuthUserSocialMutation) Fields() []string {
 	fields := make([]string, 0, 7)
+	if m.created_at != nil {
+		fields = append(fields, scaauthusersocial.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, scaauthusersocial.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, scaauthusersocial.FieldDeleted)
+	}
 	if m.user_id != nil {
 		fields = append(fields, scaauthusersocial.FieldUserID)
 	}
@@ -5003,15 +5038,6 @@ func (m *ScaAuthUserSocialMutation) Fields() []string {
 	if m.status != nil {
 		fields = append(fields, scaauthusersocial.FieldStatus)
 	}
-	if m.created_at != nil {
-		fields = append(fields, scaauthusersocial.FieldCreatedAt)
-	}
-	if m.update_at != nil {
-		fields = append(fields, scaauthusersocial.FieldUpdateAt)
-	}
-	if m.deleted != nil {
-		fields = append(fields, scaauthusersocial.FieldDeleted)
-	}
 	return fields
 }
 
@@ -5020,6 +5046,12 @@ func (m *ScaAuthUserSocialMutation) Fields() []string {
 // schema.
 func (m *ScaAuthUserSocialMutation) Field(name string) (ent.Value, bool) {
 	switch name {
+	case scaauthusersocial.FieldCreatedAt:
+		return m.CreatedAt()
+	case scaauthusersocial.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case scaauthusersocial.FieldDeleted:
+		return m.Deleted()
 	case scaauthusersocial.FieldUserID:
 		return m.UserID()
 	case scaauthusersocial.FieldOpenID:
@@ -5028,12 +5060,6 @@ func (m *ScaAuthUserSocialMutation) Field(name string) (ent.Value, bool) {
 		return m.Source()
 	case scaauthusersocial.FieldStatus:
 		return m.Status()
-	case scaauthusersocial.FieldCreatedAt:
-		return m.CreatedAt()
-	case scaauthusersocial.FieldUpdateAt:
-		return m.UpdateAt()
-	case scaauthusersocial.FieldDeleted:
-		return m.Deleted()
 	}
 	return nil, false
 }
@@ -5043,6 +5069,12 @@ func (m *ScaAuthUserSocialMutation) Field(name string) (ent.Value, bool) {
 // database failed.
 func (m *ScaAuthUserSocialMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
 	switch name {
+	case scaauthusersocial.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case scaauthusersocial.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case scaauthusersocial.FieldDeleted:
+		return m.OldDeleted(ctx)
 	case scaauthusersocial.FieldUserID:
 		return m.OldUserID(ctx)
 	case scaauthusersocial.FieldOpenID:
@@ -5051,12 +5083,6 @@ func (m *ScaAuthUserSocialMutation) OldField(ctx context.Context, name string) (
 		return m.OldSource(ctx)
 	case scaauthusersocial.FieldStatus:
 		return m.OldStatus(ctx)
-	case scaauthusersocial.FieldCreatedAt:
-		return m.OldCreatedAt(ctx)
-	case scaauthusersocial.FieldUpdateAt:
-		return m.OldUpdateAt(ctx)
-	case scaauthusersocial.FieldDeleted:
-		return m.OldDeleted(ctx)
 	}
 	return nil, fmt.Errorf("unknown ScaAuthUserSocial field %s", name)
 }
@@ -5066,6 +5092,27 @@ func (m *ScaAuthUserSocialMutation) OldField(ctx context.Context, name string) (
 // type.
 func (m *ScaAuthUserSocialMutation) SetField(name string, value ent.Value) error {
 	switch name {
+	case scaauthusersocial.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case scaauthusersocial.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case scaauthusersocial.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
 	case scaauthusersocial.FieldUserID:
 		v, ok := value.(string)
 		if !ok {
@@ -5094,27 +5141,6 @@ func (m *ScaAuthUserSocialMutation) SetField(name string, value ent.Value) error
 		}
 		m.SetStatus(v)
 		return nil
-	case scaauthusersocial.FieldCreatedAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetCreatedAt(v)
-		return nil
-	case scaauthusersocial.FieldUpdateAt:
-		v, ok := value.(time.Time)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetUpdateAt(v)
-		return nil
-	case scaauthusersocial.FieldDeleted:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.SetDeleted(v)
-		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserSocial field %s", name)
 }
@@ -5123,11 +5149,11 @@ func (m *ScaAuthUserSocialMutation) SetField(name string, value ent.Value) error
 // this mutation.
 func (m *ScaAuthUserSocialMutation) AddedFields() []string {
 	var fields []string
-	if m.addstatus != nil {
-		fields = append(fields, scaauthusersocial.FieldStatus)
-	}
 	if m.adddeleted != nil {
 		fields = append(fields, scaauthusersocial.FieldDeleted)
+	}
+	if m.addstatus != nil {
+		fields = append(fields, scaauthusersocial.FieldStatus)
 	}
 	return fields
 }
@@ -5137,10 +5163,10 @@ func (m *ScaAuthUserSocialMutation) AddedFields() []string {
 // was not set, or was not defined in the schema.
 func (m *ScaAuthUserSocialMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
-	case scaauthusersocial.FieldStatus:
-		return m.AddedStatus()
 	case scaauthusersocial.FieldDeleted:
 		return m.AddedDeleted()
+	case scaauthusersocial.FieldStatus:
+		return m.AddedStatus()
 	}
 	return nil, false
 }
@@ -5150,19 +5176,19 @@ func (m *ScaAuthUserSocialMutation) AddedField(name string) (ent.Value, bool) {
 // type.
 func (m *ScaAuthUserSocialMutation) AddField(name string, value ent.Value) error {
 	switch name {
+	case scaauthusersocial.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeleted(v)
+		return nil
 	case scaauthusersocial.FieldStatus:
 		v, ok := value.(int)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddStatus(v)
-		return nil
-	case scaauthusersocial.FieldDeleted:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddDeleted(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserSocial numeric field %s", name)
@@ -5172,8 +5198,8 @@ func (m *ScaAuthUserSocialMutation) AddField(name string, value ent.Value) error
 // mutation.
 func (m *ScaAuthUserSocialMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(scaauthusersocial.FieldUpdateAt) {
-		fields = append(fields, scaauthusersocial.FieldUpdateAt)
+	if m.FieldCleared(scaauthusersocial.FieldDeleted) {
+		fields = append(fields, scaauthusersocial.FieldDeleted)
 	}
 	return fields
 }
@@ -5189,8 +5215,8 @@ func (m *ScaAuthUserSocialMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthUserSocialMutation) ClearField(name string) error {
 	switch name {
-	case scaauthusersocial.FieldUpdateAt:
-		m.ClearUpdateAt()
+	case scaauthusersocial.FieldDeleted:
+		m.ClearDeleted()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserSocial nullable field %s", name)
@@ -5200,6 +5226,15 @@ func (m *ScaAuthUserSocialMutation) ClearField(name string) error {
 // It returns an error if the field is not defined in the schema.
 func (m *ScaAuthUserSocialMutation) ResetField(name string) error {
 	switch name {
+	case scaauthusersocial.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case scaauthusersocial.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case scaauthusersocial.FieldDeleted:
+		m.ResetDeleted()
+		return nil
 	case scaauthusersocial.FieldUserID:
 		m.ResetUserID()
 		return nil
@@ -5211,15 +5246,6 @@ func (m *ScaAuthUserSocialMutation) ResetField(name string) error {
 		return nil
 	case scaauthusersocial.FieldStatus:
 		m.ResetStatus()
-		return nil
-	case scaauthusersocial.FieldCreatedAt:
-		m.ResetCreatedAt()
-		return nil
-	case scaauthusersocial.FieldUpdateAt:
-		m.ResetUpdateAt()
-		return nil
-	case scaauthusersocial.FieldDeleted:
-		m.ResetDeleted()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserSocial field %s", name)

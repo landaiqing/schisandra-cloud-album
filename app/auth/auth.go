@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/http"
 
 	"schisandra-album-cloud-microservices/app/auth/internal/config"
 	"schisandra-album-cloud-microservices/app/auth/internal/handler"
 	"schisandra-album-cloud-microservices/app/auth/internal/svc"
+	"schisandra-album-cloud-microservices/common/middleware"
 
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
@@ -21,14 +21,10 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf, rest.WithCustomCors(func(header http.Header) {
-		header.Set("Access-Control-Allow-Origin", "*")
-		header.Add("Access-Control-Allow-Headers", "UserHeader1, UserHeader2")
-		header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
-		header.Set("Access-Control-Expose-Headers", "Content-Length, Content-Type")
-	}, nil, "*"))
+	server := rest.MustNewServer(c.RestConf, rest.WithCustomCors(middleware.CORSMiddleware(), nil, "*"))
 	defer server.Stop()
-
+	// i18n middleware
+	server.Use(middleware.I18nMiddleware)
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
 

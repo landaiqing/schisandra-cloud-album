@@ -12,12 +12,18 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ScaAuthUser is the model entity for the ScaAuthUser schema.
+// 用户表
 type ScaAuthUser struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 自增ID
 	ID int64 `json:"id,omitempty"`
+	// 创建时间
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// 更新时间
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 是否删除 0 未删除 1 已删除
+	Deleted int8 `json:"deleted,omitempty"`
 	// 唯一ID
 	UID string `json:"uid,omitempty"`
 	// 用户名
@@ -38,12 +44,6 @@ type ScaAuthUser struct {
 	Status int8 `json:"status,omitempty"`
 	// 介绍
 	Introduce string `json:"introduce,omitempty"`
-	// 创建时间
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// 更新时间
-	UpdateAt *time.Time `json:"update_at,omitempty"`
-	// 是否删除 0 未删除 1 已删除
-	Deleted int8 `json:"deleted,omitempty"`
 	// 博客
 	Blog *string `json:"blog,omitempty"`
 	// 地址
@@ -90,11 +90,11 @@ func (*ScaAuthUser) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case scaauthuser.FieldID, scaauthuser.FieldStatus, scaauthuser.FieldDeleted:
+		case scaauthuser.FieldID, scaauthuser.FieldDeleted, scaauthuser.FieldStatus:
 			values[i] = new(sql.NullInt64)
 		case scaauthuser.FieldUID, scaauthuser.FieldUsername, scaauthuser.FieldNickname, scaauthuser.FieldEmail, scaauthuser.FieldPhone, scaauthuser.FieldPassword, scaauthuser.FieldGender, scaauthuser.FieldAvatar, scaauthuser.FieldIntroduce, scaauthuser.FieldBlog, scaauthuser.FieldLocation, scaauthuser.FieldCompany:
 			values[i] = new(sql.NullString)
-		case scaauthuser.FieldCreatedAt, scaauthuser.FieldUpdateAt:
+		case scaauthuser.FieldCreatedAt, scaauthuser.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		default:
 			values[i] = new(sql.UnknownType)
@@ -117,6 +117,24 @@ func (sau *ScaAuthUser) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			sau.ID = int64(value.Int64)
+		case scaauthuser.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				sau.CreatedAt = value.Time
+			}
+		case scaauthuser.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				sau.UpdatedAt = value.Time
+			}
+		case scaauthuser.FieldDeleted:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted", values[i])
+			} else if value.Valid {
+				sau.Deleted = int8(value.Int64)
+			}
 		case scaauthuser.FieldUID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field uid", values[i])
@@ -176,25 +194,6 @@ func (sau *ScaAuthUser) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field introduce", values[i])
 			} else if value.Valid {
 				sau.Introduce = value.String
-			}
-		case scaauthuser.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				sau.CreatedAt = value.Time
-			}
-		case scaauthuser.FieldUpdateAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
-			} else if value.Valid {
-				sau.UpdateAt = new(time.Time)
-				*sau.UpdateAt = value.Time
-			}
-		case scaauthuser.FieldDeleted:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted", values[i])
-			} else if value.Valid {
-				sau.Deleted = int8(value.Int64)
 			}
 		case scaauthuser.FieldBlog:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -263,6 +262,15 @@ func (sau *ScaAuthUser) String() string {
 	var builder strings.Builder
 	builder.WriteString("ScaAuthUser(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sau.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(sau.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(sau.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted=")
+	builder.WriteString(fmt.Sprintf("%v", sau.Deleted))
+	builder.WriteString(", ")
 	builder.WriteString("uid=")
 	builder.WriteString(sau.UID)
 	builder.WriteString(", ")
@@ -291,17 +299,6 @@ func (sau *ScaAuthUser) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("introduce=")
 	builder.WriteString(sau.Introduce)
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(sau.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := sau.UpdateAt; v != nil {
-		builder.WriteString("update_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
-	builder.WriteString("deleted=")
-	builder.WriteString(fmt.Sprintf("%v", sau.Deleted))
 	builder.WriteString(", ")
 	if v := sau.Blog; v != nil {
 		builder.WriteString("blog=")

@@ -55,6 +55,21 @@ func IDLTE(id int64) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldID, id))
 }
 
+// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
+func CreatedAt(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// UpdatedAt applies equality check predicate on the "updated_at" field. It's identical to UpdatedAtEQ.
+func UpdatedAt(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
+func Deleted(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldDeleted, v))
+}
+
 // UserID applies equality check predicate on the "user_id" field. It's identical to UserIDEQ.
 func UserID(v string) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldUserID, v))
@@ -73,21 +88,6 @@ func Location(v string) predicate.ScaAuthUserDevice {
 // Agent applies equality check predicate on the "agent" field. It's identical to AgentEQ.
 func Agent(v string) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldAgent, v))
-}
-
-// CreatedAt applies equality check predicate on the "created_at" field. It's identical to CreatedAtEQ.
-func CreatedAt(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldCreatedAt, v))
-}
-
-// UpdateAt applies equality check predicate on the "update_at" field. It's identical to UpdateAtEQ.
-func UpdateAt(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldUpdateAt, v))
-}
-
-// Deleted applies equality check predicate on the "deleted" field. It's identical to DeletedEQ.
-func Deleted(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldDeleted, v))
 }
 
 // Browser applies equality check predicate on the "browser" field. It's identical to BrowserEQ.
@@ -133,6 +133,136 @@ func EngineName(v string) predicate.ScaAuthUserDevice {
 // EngineVersion applies equality check predicate on the "engine_version" field. It's identical to EngineVersionEQ.
 func EngineVersion(v string) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldEngineVersion, v))
+}
+
+// CreatedAtEQ applies the EQ predicate on the "created_at" field.
+func CreatedAtEQ(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
+func CreatedAtNEQ(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldCreatedAt, v))
+}
+
+// CreatedAtIn applies the In predicate on the "created_at" field.
+func CreatedAtIn(vs ...time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
+func CreatedAtNotIn(vs ...time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldCreatedAt, vs...))
+}
+
+// CreatedAtGT applies the GT predicate on the "created_at" field.
+func CreatedAtGT(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldCreatedAt, v))
+}
+
+// CreatedAtGTE applies the GTE predicate on the "created_at" field.
+func CreatedAtGTE(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldCreatedAt, v))
+}
+
+// CreatedAtLT applies the LT predicate on the "created_at" field.
+func CreatedAtLT(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldCreatedAt, v))
+}
+
+// CreatedAtLTE applies the LTE predicate on the "created_at" field.
+func CreatedAtLTE(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldCreatedAt, v))
+}
+
+// UpdatedAtEQ applies the EQ predicate on the "updated_at" field.
+func UpdatedAtEQ(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtNEQ applies the NEQ predicate on the "updated_at" field.
+func UpdatedAtNEQ(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldUpdatedAt, v))
+}
+
+// UpdatedAtIn applies the In predicate on the "updated_at" field.
+func UpdatedAtIn(vs ...time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtNotIn applies the NotIn predicate on the "updated_at" field.
+func UpdatedAtNotIn(vs ...time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldUpdatedAt, vs...))
+}
+
+// UpdatedAtGT applies the GT predicate on the "updated_at" field.
+func UpdatedAtGT(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtGTE applies the GTE predicate on the "updated_at" field.
+func UpdatedAtGTE(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLT applies the LT predicate on the "updated_at" field.
+func UpdatedAtLT(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldUpdatedAt, v))
+}
+
+// UpdatedAtLTE applies the LTE predicate on the "updated_at" field.
+func UpdatedAtLTE(v time.Time) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldUpdatedAt, v))
+}
+
+// DeletedEQ applies the EQ predicate on the "deleted" field.
+func DeletedEQ(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldDeleted, v))
+}
+
+// DeletedNEQ applies the NEQ predicate on the "deleted" field.
+func DeletedNEQ(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldDeleted, v))
+}
+
+// DeletedIn applies the In predicate on the "deleted" field.
+func DeletedIn(vs ...int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldDeleted, vs...))
+}
+
+// DeletedNotIn applies the NotIn predicate on the "deleted" field.
+func DeletedNotIn(vs ...int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldDeleted, vs...))
+}
+
+// DeletedGT applies the GT predicate on the "deleted" field.
+func DeletedGT(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldDeleted, v))
+}
+
+// DeletedGTE applies the GTE predicate on the "deleted" field.
+func DeletedGTE(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldDeleted, v))
+}
+
+// DeletedLT applies the LT predicate on the "deleted" field.
+func DeletedLT(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldDeleted, v))
+}
+
+// DeletedLTE applies the LTE predicate on the "deleted" field.
+func DeletedLTE(v int8) predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldDeleted, v))
+}
+
+// DeletedIsNil applies the IsNil predicate on the "deleted" field.
+func DeletedIsNil() predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldIsNull(FieldDeleted))
+}
+
+// DeletedNotNil applies the NotNil predicate on the "deleted" field.
+func DeletedNotNil() predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNotNull(FieldDeleted))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.
@@ -393,136 +523,6 @@ func AgentEqualFold(v string) predicate.ScaAuthUserDevice {
 // AgentContainsFold applies the ContainsFold predicate on the "agent" field.
 func AgentContainsFold(v string) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldContainsFold(FieldAgent, v))
-}
-
-// CreatedAtEQ applies the EQ predicate on the "created_at" field.
-func CreatedAtEQ(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtNEQ applies the NEQ predicate on the "created_at" field.
-func CreatedAtNEQ(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldCreatedAt, v))
-}
-
-// CreatedAtIn applies the In predicate on the "created_at" field.
-func CreatedAtIn(vs ...time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtNotIn applies the NotIn predicate on the "created_at" field.
-func CreatedAtNotIn(vs ...time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldCreatedAt, vs...))
-}
-
-// CreatedAtGT applies the GT predicate on the "created_at" field.
-func CreatedAtGT(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldCreatedAt, v))
-}
-
-// CreatedAtGTE applies the GTE predicate on the "created_at" field.
-func CreatedAtGTE(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldCreatedAt, v))
-}
-
-// CreatedAtLT applies the LT predicate on the "created_at" field.
-func CreatedAtLT(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldCreatedAt, v))
-}
-
-// CreatedAtLTE applies the LTE predicate on the "created_at" field.
-func CreatedAtLTE(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldCreatedAt, v))
-}
-
-// CreatedAtIsNil applies the IsNil predicate on the "created_at" field.
-func CreatedAtIsNil() predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIsNull(FieldCreatedAt))
-}
-
-// CreatedAtNotNil applies the NotNil predicate on the "created_at" field.
-func CreatedAtNotNil() predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotNull(FieldCreatedAt))
-}
-
-// UpdateAtEQ applies the EQ predicate on the "update_at" field.
-func UpdateAtEQ(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldUpdateAt, v))
-}
-
-// UpdateAtNEQ applies the NEQ predicate on the "update_at" field.
-func UpdateAtNEQ(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldUpdateAt, v))
-}
-
-// UpdateAtIn applies the In predicate on the "update_at" field.
-func UpdateAtIn(vs ...time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldUpdateAt, vs...))
-}
-
-// UpdateAtNotIn applies the NotIn predicate on the "update_at" field.
-func UpdateAtNotIn(vs ...time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldUpdateAt, vs...))
-}
-
-// UpdateAtGT applies the GT predicate on the "update_at" field.
-func UpdateAtGT(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldUpdateAt, v))
-}
-
-// UpdateAtGTE applies the GTE predicate on the "update_at" field.
-func UpdateAtGTE(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldUpdateAt, v))
-}
-
-// UpdateAtLT applies the LT predicate on the "update_at" field.
-func UpdateAtLT(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldUpdateAt, v))
-}
-
-// UpdateAtLTE applies the LTE predicate on the "update_at" field.
-func UpdateAtLTE(v time.Time) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldUpdateAt, v))
-}
-
-// DeletedEQ applies the EQ predicate on the "deleted" field.
-func DeletedEQ(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldDeleted, v))
-}
-
-// DeletedNEQ applies the NEQ predicate on the "deleted" field.
-func DeletedNEQ(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldDeleted, v))
-}
-
-// DeletedIn applies the In predicate on the "deleted" field.
-func DeletedIn(vs ...int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldDeleted, vs...))
-}
-
-// DeletedNotIn applies the NotIn predicate on the "deleted" field.
-func DeletedNotIn(vs ...int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldDeleted, vs...))
-}
-
-// DeletedGT applies the GT predicate on the "deleted" field.
-func DeletedGT(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldDeleted, v))
-}
-
-// DeletedGTE applies the GTE predicate on the "deleted" field.
-func DeletedGTE(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldDeleted, v))
-}
-
-// DeletedLT applies the LT predicate on the "deleted" field.
-func DeletedLT(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldDeleted, v))
-}
-
-// DeletedLTE applies the LTE predicate on the "deleted" field.
-func DeletedLTE(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldDeleted, v))
 }
 
 // BrowserEQ applies the EQ predicate on the "browser" field.

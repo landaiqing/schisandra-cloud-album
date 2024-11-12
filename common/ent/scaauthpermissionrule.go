@@ -12,7 +12,7 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ScaAuthPermissionRule is the model entity for the ScaAuthPermissionRule schema.
+// 角色权限规则表
 type ScaAuthPermissionRule struct {
 	config `json:"-"`
 	// ID of the ent.

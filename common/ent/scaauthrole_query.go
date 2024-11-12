@@ -299,12 +299,12 @@ func (sarq *ScaAuthRoleQuery) WithScaAuthPermissionRule(opts ...func(*ScaAuthPer
 // Example:
 //
 //	var v []struct {
-//		RoleName string `json:"role_name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.ScaAuthRole.Query().
-//		GroupBy(scaauthrole.FieldRoleName).
+//		GroupBy(scaauthrole.FieldCreatedAt).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (sarq *ScaAuthRoleQuery) GroupBy(field string, fields ...string) *ScaAuthRoleGroupBy {
@@ -322,11 +322,11 @@ func (sarq *ScaAuthRoleQuery) GroupBy(field string, fields ...string) *ScaAuthRo
 // Example:
 //
 //	var v []struct {
-//		RoleName string `json:"role_name,omitempty"`
+//		CreatedAt time.Time `json:"created_at,omitempty"`
 //	}
 //
 //	client.ScaAuthRole.Query().
-//		Select(scaauthrole.FieldRoleName).
+//		Select(scaauthrole.FieldCreatedAt).
 //		Scan(ctx, &v)
 func (sarq *ScaAuthRoleQuery) Select(fields ...string) *ScaAuthRoleSelect {
 	sarq.ctx.Fields = append(sarq.ctx.Fields, fields...)

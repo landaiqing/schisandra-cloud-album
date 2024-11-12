@@ -14,6 +14,12 @@ const (
 	Label = "sca_auth_user_device"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
+	// FieldCreatedAt holds the string denoting the created_at field in the database.
+	FieldCreatedAt = "created_at"
+	// FieldUpdatedAt holds the string denoting the updated_at field in the database.
+	FieldUpdatedAt = "updated_at"
+	// FieldDeleted holds the string denoting the deleted field in the database.
+	FieldDeleted = "deleted"
 	// FieldUserID holds the string denoting the user_id field in the database.
 	FieldUserID = "user_id"
 	// FieldIP holds the string denoting the ip field in the database.
@@ -22,12 +28,6 @@ const (
 	FieldLocation = "location"
 	// FieldAgent holds the string denoting the agent field in the database.
 	FieldAgent = "agent"
-	// FieldCreatedAt holds the string denoting the created_at field in the database.
-	FieldCreatedAt = "created_at"
-	// FieldUpdateAt holds the string denoting the update_at field in the database.
-	FieldUpdateAt = "update_at"
-	// FieldDeleted holds the string denoting the deleted field in the database.
-	FieldDeleted = "deleted"
 	// FieldBrowser holds the string denoting the browser field in the database.
 	FieldBrowser = "browser"
 	// FieldOperatingSystem holds the string denoting the operating_system field in the database.
@@ -49,12 +49,12 @@ const (
 	// EdgeScaAuthUser holds the string denoting the sca_auth_user edge name in mutations.
 	EdgeScaAuthUser = "sca_auth_user"
 	// Table holds the table name of the scaauthuserdevice in the database.
-	Table = "sca_auth_user_devices"
+	Table = "sca_auth_user_device"
 	// ScaAuthUserTable is the table that holds the sca_auth_user relation/edge.
-	ScaAuthUserTable = "sca_auth_user_devices"
+	ScaAuthUserTable = "sca_auth_user_device"
 	// ScaAuthUserInverseTable is the table name for the ScaAuthUser entity.
 	// It exists in this package in order to avoid circular dependency with the "scaauthuser" package.
-	ScaAuthUserInverseTable = "sca_auth_users"
+	ScaAuthUserInverseTable = "sca_auth_user"
 	// ScaAuthUserColumn is the table column denoting the sca_auth_user relation/edge.
 	ScaAuthUserColumn = "sca_auth_user_sca_auth_user_device"
 )
@@ -62,13 +62,13 @@ const (
 // Columns holds all SQL columns for scaauthuserdevice fields.
 var Columns = []string{
 	FieldID,
+	FieldCreatedAt,
+	FieldUpdatedAt,
+	FieldDeleted,
 	FieldUserID,
 	FieldIP,
 	FieldLocation,
 	FieldAgent,
-	FieldCreatedAt,
-	FieldUpdateAt,
-	FieldDeleted,
 	FieldBrowser,
 	FieldOperatingSystem,
 	FieldBrowserVersion,
@@ -80,7 +80,7 @@ var Columns = []string{
 	FieldEngineVersion,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_user_devices"
+// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_user_device"
 // table and are not defined as standalone fields in the schema.
 var ForeignKeys = []string{
 	"sca_auth_user_sca_auth_user_device",
@@ -102,6 +102,16 @@ func ValidColumn(column string) bool {
 }
 
 var (
+	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
+	DefaultCreatedAt func() time.Time
+	// DefaultUpdatedAt holds the default value on creation for the "updated_at" field.
+	DefaultUpdatedAt func() time.Time
+	// UpdateDefaultUpdatedAt holds the default value on update for the "updated_at" field.
+	UpdateDefaultUpdatedAt func() time.Time
+	// DefaultDeleted holds the default value on creation for the "deleted" field.
+	DefaultDeleted int8
+	// DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	DeletedValidator func(int8) error
 	// UserIDValidator is a validator for the "user_id" field. It is called by the builders before save.
 	UserIDValidator func(string) error
 	// IPValidator is a validator for the "ip" field. It is called by the builders before save.
@@ -110,14 +120,6 @@ var (
 	LocationValidator func(string) error
 	// AgentValidator is a validator for the "agent" field. It is called by the builders before save.
 	AgentValidator func(string) error
-	// DefaultCreatedAt holds the default value on creation for the "created_at" field.
-	DefaultCreatedAt func() time.Time
-	// DefaultUpdateAt holds the default value on creation for the "update_at" field.
-	DefaultUpdateAt func() time.Time
-	// UpdateDefaultUpdateAt holds the default value on update for the "update_at" field.
-	UpdateDefaultUpdateAt func() time.Time
-	// DefaultDeleted holds the default value on creation for the "deleted" field.
-	DefaultDeleted int
 	// BrowserValidator is a validator for the "browser" field. It is called by the builders before save.
 	BrowserValidator func(string) error
 	// OperatingSystemValidator is a validator for the "operating_system" field. It is called by the builders before save.
@@ -142,6 +144,21 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
+// ByCreatedAt orders the results by the created_at field.
+func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
+}
+
+// ByUpdatedAt orders the results by the updated_at field.
+func ByUpdatedAt(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldUpdatedAt, opts...).ToFunc()
+}
+
+// ByDeleted orders the results by the deleted field.
+func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
+}
+
 // ByUserID orders the results by the user_id field.
 func ByUserID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldUserID, opts...).ToFunc()
@@ -160,21 +177,6 @@ func ByLocation(opts ...sql.OrderTermOption) OrderOption {
 // ByAgent orders the results by the agent field.
 func ByAgent(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAgent, opts...).ToFunc()
-}
-
-// ByCreatedAt orders the results by the created_at field.
-func ByCreatedAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldCreatedAt, opts...).ToFunc()
-}
-
-// ByUpdateAt orders the results by the update_at field.
-func ByUpdateAt(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldUpdateAt, opts...).ToFunc()
-}
-
-// ByDeleted orders the results by the deleted field.
-func ByDeleted(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldDeleted, opts...).ToFunc()
 }
 
 // ByBrowser orders the results by the browser field.

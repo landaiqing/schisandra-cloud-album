@@ -3,13 +3,14 @@
 package migrate
 
 import (
+	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/dialect/sql/schema"
 	"entgo.io/ent/schema/field"
 )
 
 var (
-	// ScaAuthPermissionRulesColumns holds the columns for the "sca_auth_permission_rules" table.
-	ScaAuthPermissionRulesColumns = []*schema.Column{
+	// ScaAuthPermissionRuleColumns holds the columns for the "sca_auth_permission_rule" table.
+	ScaAuthPermissionRuleColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, SchemaType: map[string]string{"mysql": "bigint(20) unsigned"}},
 		{Name: "ptype", Type: field.TypeString, Size: 100},
 		{Name: "v0", Type: field.TypeString, Size: 100},
@@ -20,109 +21,113 @@ var (
 		{Name: "v5", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "sca_auth_role_sca_auth_permission_rule", Type: field.TypeInt64, Nullable: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
 	}
-	// ScaAuthPermissionRulesTable holds the schema information for the "sca_auth_permission_rules" table.
-	ScaAuthPermissionRulesTable = &schema.Table{
-		Name:       "sca_auth_permission_rules",
-		Columns:    ScaAuthPermissionRulesColumns,
-		PrimaryKey: []*schema.Column{ScaAuthPermissionRulesColumns[0]},
+	// ScaAuthPermissionRuleTable holds the schema information for the "sca_auth_permission_rule" table.
+	ScaAuthPermissionRuleTable = &schema.Table{
+		Name:       "sca_auth_permission_rule",
+		Comment:    "角色权限规则表",
+		Columns:    ScaAuthPermissionRuleColumns,
+		PrimaryKey: []*schema.Column{ScaAuthPermissionRuleColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "sca_auth_permission_rules_sca_auth_roles_sca_auth_permission_rule",
-				Columns:    []*schema.Column{ScaAuthPermissionRulesColumns[8]},
-				RefColumns: []*schema.Column{ScaAuthRolesColumns[0]},
+				Symbol:     "sca_auth_permission_rule_sca_auth_role_sca_auth_permission_rule",
+				Columns:    []*schema.Column{ScaAuthPermissionRuleColumns[8]},
+				RefColumns: []*schema.Column{ScaAuthRoleColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
 	}
-	// ScaAuthRolesColumns holds the columns for the "sca_auth_roles" table.
-	ScaAuthRolesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
-		{Name: "role_name", Type: field.TypeString, Size: 32},
-		{Name: "role_key", Type: field.TypeString, Size: 64},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "update_at", Type: field.TypeTime},
-		{Name: "deleted", Type: field.TypeInt, Default: 0},
+	// ScaAuthRoleColumns holds the columns for the "sca_auth_role" table.
+	ScaAuthRoleColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "role_name", Type: field.TypeString, Size: 32, Comment: "角色名称"},
+		{Name: "role_key", Type: field.TypeString, Size: 64, Comment: "角色关键字"},
 	}
-	// ScaAuthRolesTable holds the schema information for the "sca_auth_roles" table.
-	ScaAuthRolesTable = &schema.Table{
-		Name:       "sca_auth_roles",
-		Columns:    ScaAuthRolesColumns,
-		PrimaryKey: []*schema.Column{ScaAuthRolesColumns[0]},
+	// ScaAuthRoleTable holds the schema information for the "sca_auth_role" table.
+	ScaAuthRoleTable = &schema.Table{
+		Name:       "sca_auth_role",
+		Comment:    "角色表",
+		Columns:    ScaAuthRoleColumns,
+		PrimaryKey: []*schema.Column{ScaAuthRoleColumns[0]},
 	}
-	// ScaAuthUsersColumns holds the columns for the "sca_auth_users" table.
-	ScaAuthUsersColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
-		{Name: "uid", Type: field.TypeString, Unique: true, Size: 20},
-		{Name: "username", Type: field.TypeString, Nullable: true, Size: 32},
-		{Name: "nickname", Type: field.TypeString, Nullable: true, Size: 32},
-		{Name: "email", Type: field.TypeString, Nullable: true, Size: 32},
-		{Name: "phone", Type: field.TypeString, Nullable: true, Size: 32},
-		{Name: "password", Type: field.TypeString, Nullable: true, Size: 64},
-		{Name: "gender", Type: field.TypeString, Nullable: true, Size: 32},
-		{Name: "avatar", Type: field.TypeString, Nullable: true},
-		{Name: "status", Type: field.TypeInt8, Nullable: true, Default: 0},
-		{Name: "introduce", Type: field.TypeString, Nullable: true, Size: 255},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "update_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted", Type: field.TypeInt8, Default: 0},
-		{Name: "blog", Type: field.TypeString, Nullable: true, Size: 30},
-		{Name: "location", Type: field.TypeString, Nullable: true, Size: 50},
-		{Name: "company", Type: field.TypeString, Nullable: true, Size: 50},
+	// ScaAuthUserColumns holds the columns for the "sca_auth_user" table.
+	ScaAuthUserColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "自增ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "uid", Type: field.TypeString, Unique: true, Size: 20, Comment: "唯一ID"},
+		{Name: "username", Type: field.TypeString, Nullable: true, Size: 32, Comment: "用户名"},
+		{Name: "nickname", Type: field.TypeString, Nullable: true, Size: 32, Comment: "昵称"},
+		{Name: "email", Type: field.TypeString, Nullable: true, Size: 32, Comment: "邮箱"},
+		{Name: "phone", Type: field.TypeString, Nullable: true, Size: 32, Comment: "电话"},
+		{Name: "password", Type: field.TypeString, Nullable: true, Size: 64, Comment: "密码"},
+		{Name: "gender", Type: field.TypeString, Nullable: true, Size: 32, Comment: "性别"},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "头像"},
+		{Name: "status", Type: field.TypeInt8, Nullable: true, Comment: "状态 0 正常 1 封禁", Default: 0},
+		{Name: "introduce", Type: field.TypeString, Nullable: true, Size: 255, Comment: "介绍"},
+		{Name: "blog", Type: field.TypeString, Nullable: true, Size: 30, Comment: "博客"},
+		{Name: "location", Type: field.TypeString, Nullable: true, Size: 50, Comment: "地址"},
+		{Name: "company", Type: field.TypeString, Nullable: true, Size: 50, Comment: "公司"},
 	}
-	// ScaAuthUsersTable holds the schema information for the "sca_auth_users" table.
-	ScaAuthUsersTable = &schema.Table{
-		Name:       "sca_auth_users",
-		Columns:    ScaAuthUsersColumns,
-		PrimaryKey: []*schema.Column{ScaAuthUsersColumns[0]},
+	// ScaAuthUserTable holds the schema information for the "sca_auth_user" table.
+	ScaAuthUserTable = &schema.Table{
+		Name:       "sca_auth_user",
+		Comment:    "用户表",
+		Columns:    ScaAuthUserColumns,
+		PrimaryKey: []*schema.Column{ScaAuthUserColumns[0]},
 		Indexes: []*schema.Index{
 			{
 				Name:    "scaauthuser_id",
 				Unique:  true,
-				Columns: []*schema.Column{ScaAuthUsersColumns[0]},
+				Columns: []*schema.Column{ScaAuthUserColumns[0]},
 			},
 			{
 				Name:    "scaauthuser_uid",
 				Unique:  true,
-				Columns: []*schema.Column{ScaAuthUsersColumns[1]},
+				Columns: []*schema.Column{ScaAuthUserColumns[4]},
 			},
 			{
 				Name:    "scaauthuser_phone",
 				Unique:  true,
-				Columns: []*schema.Column{ScaAuthUsersColumns[5]},
+				Columns: []*schema.Column{ScaAuthUserColumns[8]},
 			},
 		},
 	}
-	// ScaAuthUserDevicesColumns holds the columns for the "sca_auth_user_devices" table.
-	ScaAuthUserDevicesColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
-		{Name: "user_id", Type: field.TypeString, Size: 20},
-		{Name: "ip", Type: field.TypeString, Size: 20},
-		{Name: "location", Type: field.TypeString, Size: 20},
-		{Name: "agent", Type: field.TypeString, Size: 255},
-		{Name: "created_at", Type: field.TypeTime, Nullable: true},
-		{Name: "update_at", Type: field.TypeTime},
-		{Name: "deleted", Type: field.TypeInt, Default: 0},
-		{Name: "browser", Type: field.TypeString, Size: 20},
-		{Name: "operating_system", Type: field.TypeString, Size: 20},
-		{Name: "browser_version", Type: field.TypeString, Size: 20},
-		{Name: "mobile", Type: field.TypeInt},
-		{Name: "bot", Type: field.TypeInt},
-		{Name: "mozilla", Type: field.TypeString, Size: 10},
-		{Name: "platform", Type: field.TypeString, Size: 20},
-		{Name: "engine_name", Type: field.TypeString, Size: 20},
-		{Name: "engine_version", Type: field.TypeString, Size: 20},
+	// ScaAuthUserDeviceColumns holds the columns for the "sca_auth_user_device" table.
+	ScaAuthUserDeviceColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "user_id", Type: field.TypeString, Size: 20, Comment: "用户ID"},
+		{Name: "ip", Type: field.TypeString, Size: 20, Comment: "登录IP"},
+		{Name: "location", Type: field.TypeString, Size: 20, Comment: "地址"},
+		{Name: "agent", Type: field.TypeString, Size: 255, Comment: "设备信息"},
+		{Name: "browser", Type: field.TypeString, Size: 20, Comment: "浏览器"},
+		{Name: "operating_system", Type: field.TypeString, Size: 20, Comment: "操作系统"},
+		{Name: "browser_version", Type: field.TypeString, Size: 20, Comment: "浏览器版本"},
+		{Name: "mobile", Type: field.TypeInt, Comment: "是否为手机 0否1是"},
+		{Name: "bot", Type: field.TypeInt, Comment: "是否为bot 0否1是"},
+		{Name: "mozilla", Type: field.TypeString, Size: 10, Comment: "火狐版本"},
+		{Name: "platform", Type: field.TypeString, Size: 20, Comment: "平台"},
+		{Name: "engine_name", Type: field.TypeString, Size: 20, Comment: "引擎名称"},
+		{Name: "engine_version", Type: field.TypeString, Size: 20, Comment: "引擎版本"},
 		{Name: "sca_auth_user_sca_auth_user_device", Type: field.TypeInt64, Nullable: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
 	}
-	// ScaAuthUserDevicesTable holds the schema information for the "sca_auth_user_devices" table.
-	ScaAuthUserDevicesTable = &schema.Table{
-		Name:       "sca_auth_user_devices",
-		Columns:    ScaAuthUserDevicesColumns,
-		PrimaryKey: []*schema.Column{ScaAuthUserDevicesColumns[0]},
+	// ScaAuthUserDeviceTable holds the schema information for the "sca_auth_user_device" table.
+	ScaAuthUserDeviceTable = &schema.Table{
+		Name:       "sca_auth_user_device",
+		Comment:    "用户设备表",
+		Columns:    ScaAuthUserDeviceColumns,
+		PrimaryKey: []*schema.Column{ScaAuthUserDeviceColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "sca_auth_user_devices_sca_auth_users_sca_auth_user_device",
-				Columns:    []*schema.Column{ScaAuthUserDevicesColumns[17]},
-				RefColumns: []*schema.Column{ScaAuthUsersColumns[0]},
+				Symbol:     "sca_auth_user_device_sca_auth_user_sca_auth_user_device",
+				Columns:    []*schema.Column{ScaAuthUserDeviceColumns[17]},
+				RefColumns: []*schema.Column{ScaAuthUserColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -130,55 +135,81 @@ var (
 			{
 				Name:    "scaauthuserdevice_id",
 				Unique:  true,
-				Columns: []*schema.Column{ScaAuthUserDevicesColumns[0]},
+				Columns: []*schema.Column{ScaAuthUserDeviceColumns[0]},
 			},
 		},
 	}
-	// ScaAuthUserSocialsColumns holds the columns for the "sca_auth_user_socials" table.
-	ScaAuthUserSocialsColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
-		{Name: "user_id", Type: field.TypeString, Size: 20},
-		{Name: "open_id", Type: field.TypeString, Size: 50},
-		{Name: "source", Type: field.TypeString, Size: 10},
-		{Name: "status", Type: field.TypeInt, Default: 0},
-		{Name: "created_at", Type: field.TypeTime},
-		{Name: "update_at", Type: field.TypeTime, Nullable: true},
-		{Name: "deleted", Type: field.TypeInt, Default: 0},
+	// ScaAuthUserSocialColumns holds the columns for the "sca_auth_user_social" table.
+	ScaAuthUserSocialColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "user_id", Type: field.TypeString, Size: 20, Comment: "用户ID"},
+		{Name: "open_id", Type: field.TypeString, Size: 50, Comment: "第三方用户的 open id"},
+		{Name: "source", Type: field.TypeString, Size: 10, Comment: "第三方用户来源"},
+		{Name: "status", Type: field.TypeInt, Comment: "状态 0正常 1 封禁", Default: 0},
 		{Name: "sca_auth_user_sca_auth_user_social", Type: field.TypeInt64, Nullable: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
 	}
-	// ScaAuthUserSocialsTable holds the schema information for the "sca_auth_user_socials" table.
-	ScaAuthUserSocialsTable = &schema.Table{
-		Name:       "sca_auth_user_socials",
-		Columns:    ScaAuthUserSocialsColumns,
-		PrimaryKey: []*schema.Column{ScaAuthUserSocialsColumns[0]},
+	// ScaAuthUserSocialTable holds the schema information for the "sca_auth_user_social" table.
+	ScaAuthUserSocialTable = &schema.Table{
+		Name:       "sca_auth_user_social",
+		Comment:    "用户第三方登录信息",
+		Columns:    ScaAuthUserSocialColumns,
+		PrimaryKey: []*schema.Column{ScaAuthUserSocialColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "sca_auth_user_socials_sca_auth_users_sca_auth_user_social",
-				Columns:    []*schema.Column{ScaAuthUserSocialsColumns[8]},
-				RefColumns: []*schema.Column{ScaAuthUsersColumns[0]},
+				Symbol:     "sca_auth_user_social_sca_auth_user_sca_auth_user_social",
+				Columns:    []*schema.Column{ScaAuthUserSocialColumns[8]},
+				RefColumns: []*schema.Column{ScaAuthUserColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
 		Indexes: []*schema.Index{
 			{
-				Name:    "scaauthusersocial_id_user_id_open_id",
+				Name:    "scaauthusersocial_id",
 				Unique:  true,
-				Columns: []*schema.Column{ScaAuthUserSocialsColumns[0], ScaAuthUserSocialsColumns[1], ScaAuthUserSocialsColumns[2]},
+				Columns: []*schema.Column{ScaAuthUserSocialColumns[0]},
+			},
+			{
+				Name:    "scaauthusersocial_user_id",
+				Unique:  true,
+				Columns: []*schema.Column{ScaAuthUserSocialColumns[4]},
+			},
+			{
+				Name:    "scaauthusersocial_open_id",
+				Unique:  true,
+				Columns: []*schema.Column{ScaAuthUserSocialColumns[5]},
 			},
 		},
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		ScaAuthPermissionRulesTable,
-		ScaAuthRolesTable,
-		ScaAuthUsersTable,
-		ScaAuthUserDevicesTable,
-		ScaAuthUserSocialsTable,
+		ScaAuthPermissionRuleTable,
+		ScaAuthRoleTable,
+		ScaAuthUserTable,
+		ScaAuthUserDeviceTable,
+		ScaAuthUserSocialTable,
 	}
 )
 
 func init() {
-	ScaAuthPermissionRulesTable.ForeignKeys[0].RefTable = ScaAuthRolesTable
-	ScaAuthUserDevicesTable.ForeignKeys[0].RefTable = ScaAuthUsersTable
-	ScaAuthUserSocialsTable.ForeignKeys[0].RefTable = ScaAuthUsersTable
+	ScaAuthPermissionRuleTable.ForeignKeys[0].RefTable = ScaAuthRoleTable
+	ScaAuthPermissionRuleTable.Annotation = &entsql.Annotation{
+		Table: "sca_auth_permission_rule",
+	}
+	ScaAuthRoleTable.Annotation = &entsql.Annotation{
+		Table: "sca_auth_role",
+	}
+	ScaAuthUserTable.Annotation = &entsql.Annotation{
+		Table: "sca_auth_user",
+	}
+	ScaAuthUserDeviceTable.ForeignKeys[0].RefTable = ScaAuthUserTable
+	ScaAuthUserDeviceTable.Annotation = &entsql.Annotation{
+		Table: "sca_auth_user_device",
+	}
+	ScaAuthUserSocialTable.ForeignKeys[0].RefTable = ScaAuthUserTable
+	ScaAuthUserSocialTable.Annotation = &entsql.Annotation{
+		Table: "sca_auth_user_social",
+	}
 }

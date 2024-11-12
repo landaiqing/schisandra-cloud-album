@@ -13,12 +13,18 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// ScaAuthUserDevice is the model entity for the ScaAuthUserDevice schema.
+// 用户设备表
 type ScaAuthUserDevice struct {
 	config `json:"-"`
 	// ID of the ent.
 	// 主键ID
 	ID int64 `json:"id,omitempty"`
+	// 创建时间
+	CreatedAt time.Time `json:"created_at,omitempty"`
+	// 更新时间
+	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	// 是否删除 0 未删除 1 已删除
+	Deleted int8 `json:"deleted,omitempty"`
 	// 用户ID
 	UserID string `json:"user_id,omitempty"`
 	// 登录IP
@@ -27,12 +33,6 @@ type ScaAuthUserDevice struct {
 	Location string `json:"location,omitempty"`
 	// 设备信息
 	Agent string `json:"agent,omitempty"`
-	// 创建时间
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	// 更新时间
-	UpdateAt *time.Time `json:"update_at,omitempty"`
-	// 是否删除
-	Deleted int `json:"deleted,omitempty"`
 	// 浏览器
 	Browser string `json:"browser,omitempty"`
 	// 操作系统
@@ -87,7 +87,7 @@ func (*ScaAuthUserDevice) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case scaauthuserdevice.FieldUserID, scaauthuserdevice.FieldIP, scaauthuserdevice.FieldLocation, scaauthuserdevice.FieldAgent, scaauthuserdevice.FieldBrowser, scaauthuserdevice.FieldOperatingSystem, scaauthuserdevice.FieldBrowserVersion, scaauthuserdevice.FieldMozilla, scaauthuserdevice.FieldPlatform, scaauthuserdevice.FieldEngineName, scaauthuserdevice.FieldEngineVersion:
 			values[i] = new(sql.NullString)
-		case scaauthuserdevice.FieldCreatedAt, scaauthuserdevice.FieldUpdateAt:
+		case scaauthuserdevice.FieldCreatedAt, scaauthuserdevice.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
 		case scaauthuserdevice.ForeignKeys[0]: // sca_auth_user_sca_auth_user_device
 			values[i] = new(sql.NullInt64)
@@ -112,6 +112,24 @@ func (saud *ScaAuthUserDevice) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			saud.ID = int64(value.Int64)
+		case scaauthuserdevice.FieldCreatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field created_at", values[i])
+			} else if value.Valid {
+				saud.CreatedAt = value.Time
+			}
+		case scaauthuserdevice.FieldUpdatedAt:
+			if value, ok := values[i].(*sql.NullTime); !ok {
+				return fmt.Errorf("unexpected type %T for field updated_at", values[i])
+			} else if value.Valid {
+				saud.UpdatedAt = value.Time
+			}
+		case scaauthuserdevice.FieldDeleted:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field deleted", values[i])
+			} else if value.Valid {
+				saud.Deleted = int8(value.Int64)
+			}
 		case scaauthuserdevice.FieldUserID:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field user_id", values[i])
@@ -135,25 +153,6 @@ func (saud *ScaAuthUserDevice) assignValues(columns []string, values []any) erro
 				return fmt.Errorf("unexpected type %T for field agent", values[i])
 			} else if value.Valid {
 				saud.Agent = value.String
-			}
-		case scaauthuserdevice.FieldCreatedAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field created_at", values[i])
-			} else if value.Valid {
-				saud.CreatedAt = value.Time
-			}
-		case scaauthuserdevice.FieldUpdateAt:
-			if value, ok := values[i].(*sql.NullTime); !ok {
-				return fmt.Errorf("unexpected type %T for field update_at", values[i])
-			} else if value.Valid {
-				saud.UpdateAt = new(time.Time)
-				*saud.UpdateAt = value.Time
-			}
-		case scaauthuserdevice.FieldDeleted:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field deleted", values[i])
-			} else if value.Valid {
-				saud.Deleted = int(value.Int64)
 			}
 		case scaauthuserdevice.FieldBrowser:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -257,6 +256,15 @@ func (saud *ScaAuthUserDevice) String() string {
 	var builder strings.Builder
 	builder.WriteString("ScaAuthUserDevice(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", saud.ID))
+	builder.WriteString("created_at=")
+	builder.WriteString(saud.CreatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("updated_at=")
+	builder.WriteString(saud.UpdatedAt.Format(time.ANSIC))
+	builder.WriteString(", ")
+	builder.WriteString("deleted=")
+	builder.WriteString(fmt.Sprintf("%v", saud.Deleted))
+	builder.WriteString(", ")
 	builder.WriteString("user_id=")
 	builder.WriteString(saud.UserID)
 	builder.WriteString(", ")
@@ -268,17 +276,6 @@ func (saud *ScaAuthUserDevice) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("agent=")
 	builder.WriteString(saud.Agent)
-	builder.WriteString(", ")
-	builder.WriteString("created_at=")
-	builder.WriteString(saud.CreatedAt.Format(time.ANSIC))
-	builder.WriteString(", ")
-	if v := saud.UpdateAt; v != nil {
-		builder.WriteString("update_at=")
-		builder.WriteString(v.Format(time.ANSIC))
-	}
-	builder.WriteString(", ")
-	builder.WriteString("deleted=")
-	builder.WriteString(fmt.Sprintf("%v", saud.Deleted))
 	builder.WriteString(", ")
 	builder.WriteString("browser=")
 	builder.WriteString(saud.Browser)
