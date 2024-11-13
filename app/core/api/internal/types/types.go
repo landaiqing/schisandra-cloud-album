@@ -14,10 +14,10 @@ type AccountLoginRequest struct {
 type LoginResponse struct {
 	AccessToken string `json:"access_token"`
 	UID         string `json:"uid"`
-	Username    string `json:"username,optional"`
+	Username    string `json:"username,omitempty"`
 	Nickname    string `json:"nickname"`
 	Avatar      string `json:"avatar"`
-	Status      int64  `json:"status"`
+	Status      int8   `json:"status"`
 }
 
 type PhoneLoginRequest struct {
@@ -31,4 +31,10 @@ type ResetPasswordRequest struct {
 	Captcha    string `json:"captcha"`
 	Password   string `json:"password"`
 	Repassword string `json:"repassword"`
+}
+
+type Response struct {
+	Code    int64       `json:"code"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,optional"`
 }

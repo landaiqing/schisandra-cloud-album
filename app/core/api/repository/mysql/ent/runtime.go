@@ -8,7 +8,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/schema"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 	"time"
 )
 
@@ -16,7 +16,7 @@ import (
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
-	scaauthpermissionruleFields := schema.ScaAuthPermissionRule{}.Fields()
+	scaauthpermissionruleFields := model.ScaAuthPermissionRule{}.Fields()
 	_ = scaauthpermissionruleFields
 	// scaauthpermissionruleDescPtype is the schema descriptor for ptype field.
 	scaauthpermissionruleDescPtype := scaauthpermissionruleFields[1].Descriptor()
@@ -46,10 +46,10 @@ func init() {
 	scaauthpermissionruleDescV5 := scaauthpermissionruleFields[7].Descriptor()
 	// scaauthpermissionrule.V5Validator is a validator for the "v5" field. It is called by the builders before save.
 	scaauthpermissionrule.V5Validator = scaauthpermissionruleDescV5.Validators[0].(func(string) error)
-	scaauthroleMixin := schema.ScaAuthRole{}.Mixin()
+	scaauthroleMixin := model.ScaAuthRole{}.Mixin()
 	scaauthroleMixinFields0 := scaauthroleMixin[0].Fields()
 	_ = scaauthroleMixinFields0
-	scaauthroleFields := schema.ScaAuthRole{}.Fields()
+	scaauthroleFields := model.ScaAuthRole{}.Fields()
 	_ = scaauthroleFields
 	// scaauthroleDescCreatedAt is the schema descriptor for created_at field.
 	scaauthroleDescCreatedAt := scaauthroleMixinFields0[0].Descriptor()
@@ -75,10 +75,10 @@ func init() {
 	scaauthroleDescRoleKey := scaauthroleFields[2].Descriptor()
 	// scaauthrole.RoleKeyValidator is a validator for the "role_key" field. It is called by the builders before save.
 	scaauthrole.RoleKeyValidator = scaauthroleDescRoleKey.Validators[0].(func(string) error)
-	scaauthuserMixin := schema.ScaAuthUser{}.Mixin()
+	scaauthuserMixin := model.ScaAuthUser{}.Mixin()
 	scaauthuserMixinFields0 := scaauthuserMixin[0].Fields()
 	_ = scaauthuserMixinFields0
-	scaauthuserFields := schema.ScaAuthUser{}.Fields()
+	scaauthuserFields := model.ScaAuthUser{}.Fields()
 	_ = scaauthuserFields
 	// scaauthuserDescCreatedAt is the schema descriptor for created_at field.
 	scaauthuserDescCreatedAt := scaauthuserMixinFields0[0].Descriptor()
@@ -144,10 +144,10 @@ func init() {
 	scaauthuserDescCompany := scaauthuserFields[13].Descriptor()
 	// scaauthuser.CompanyValidator is a validator for the "company" field. It is called by the builders before save.
 	scaauthuser.CompanyValidator = scaauthuserDescCompany.Validators[0].(func(string) error)
-	scaauthuserdeviceMixin := schema.ScaAuthUserDevice{}.Mixin()
+	scaauthuserdeviceMixin := model.ScaAuthUserDevice{}.Mixin()
 	scaauthuserdeviceMixinFields0 := scaauthuserdeviceMixin[0].Fields()
 	_ = scaauthuserdeviceMixinFields0
-	scaauthuserdeviceFields := schema.ScaAuthUserDevice{}.Fields()
+	scaauthuserdeviceFields := model.ScaAuthUserDevice{}.Fields()
 	_ = scaauthuserdeviceFields
 	// scaauthuserdeviceDescCreatedAt is the schema descriptor for created_at field.
 	scaauthuserdeviceDescCreatedAt := scaauthuserdeviceMixinFields0[0].Descriptor()
@@ -209,10 +209,10 @@ func init() {
 	scaauthuserdeviceDescEngineVersion := scaauthuserdeviceFields[13].Descriptor()
 	// scaauthuserdevice.EngineVersionValidator is a validator for the "engine_version" field. It is called by the builders before save.
 	scaauthuserdevice.EngineVersionValidator = scaauthuserdeviceDescEngineVersion.Validators[0].(func(string) error)
-	scaauthusersocialMixin := schema.ScaAuthUserSocial{}.Mixin()
+	scaauthusersocialMixin := model.ScaAuthUserSocial{}.Mixin()
 	scaauthusersocialMixinFields0 := scaauthusersocialMixin[0].Fields()
 	_ = scaauthusersocialMixinFields0
-	scaauthusersocialFields := schema.ScaAuthUserSocial{}.Fields()
+	scaauthusersocialFields := model.ScaAuthUserSocial{}.Fields()
 	_ = scaauthusersocialFields
 	// scaauthusersocialDescCreatedAt is the schema descriptor for created_at field.
 	scaauthusersocialDescCreatedAt := scaauthusersocialMixinFields0[0].Descriptor()

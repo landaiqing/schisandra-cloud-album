@@ -29,7 +29,7 @@ func NewMySQL(url string) *ent.Client {
 	defer client.Close()
 
 	if err = client.Schema.Create(context.Background()); err != nil {
-		log.Panicf("failed creating schema resources: %v", err)
+		log.Panicf("failed creating model resources: %v", err)
 	}
 	return client
 }

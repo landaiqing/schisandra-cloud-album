@@ -106,14 +106,14 @@ func (saudc *ScaAuthUserDeviceCreate) SetBrowserVersion(s string) *ScaAuthUserDe
 }
 
 // SetMobile sets the "mobile" field.
-func (saudc *ScaAuthUserDeviceCreate) SetMobile(i int) *ScaAuthUserDeviceCreate {
-	saudc.mutation.SetMobile(i)
+func (saudc *ScaAuthUserDeviceCreate) SetMobile(b bool) *ScaAuthUserDeviceCreate {
+	saudc.mutation.SetMobile(b)
 	return saudc
 }
 
 // SetBot sets the "bot" field.
-func (saudc *ScaAuthUserDeviceCreate) SetBot(i int) *ScaAuthUserDeviceCreate {
-	saudc.mutation.SetBot(i)
+func (saudc *ScaAuthUserDeviceCreate) SetBot(b bool) *ScaAuthUserDeviceCreate {
+	saudc.mutation.SetBot(b)
 	return saudc
 }
 
@@ -395,11 +395,11 @@ func (saudc *ScaAuthUserDeviceCreate) createSpec() (*ScaAuthUserDevice, *sqlgrap
 		_node.BrowserVersion = value
 	}
 	if value, ok := saudc.mutation.Mobile(); ok {
-		_spec.SetField(scaauthuserdevice.FieldMobile, field.TypeInt, value)
+		_spec.SetField(scaauthuserdevice.FieldMobile, field.TypeBool, value)
 		_node.Mobile = value
 	}
 	if value, ok := saudc.mutation.Bot(); ok {
-		_spec.SetField(scaauthuserdevice.FieldBot, field.TypeInt, value)
+		_spec.SetField(scaauthuserdevice.FieldBot, field.TypeBool, value)
 		_node.Bot = value
 	}
 	if value, ok := saudc.mutation.Mozilla(); ok {

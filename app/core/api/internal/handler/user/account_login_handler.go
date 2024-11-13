@@ -19,8 +19,8 @@ func AccountLoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := user.NewAccountLoginLogic(r.Context(), svcCtx)
-		resp, err := l.AccountLogin(&req)
-		if err != nil {
+		resp, err := l.AccountLogin(w, r, &req)
+		if err != nil || resp.Code == 500 {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {
 			httpx.OkJsonCtx(r.Context(), w, resp)

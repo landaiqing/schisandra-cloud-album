@@ -35,10 +35,19 @@ type (
 	LoginResponse {
 		AccessToken string `json:"access_token"`
 		UID         string `json:"uid"`
-		Username    string `json:"username,optional"`
+		Username    string `json:"username,omitempty"`
 		Nickname    string `json:"nickname"`
 		Avatar      string `json:"avatar"`
-		Status      int64  `json:"status"`
+		Status      int8   `json:"status"`
+	}
+)
+
+// 统一响应参数
+type (
+	Response {
+		Code    int64       `json:"code"`
+		Message string      `json:"message"`
+		Data    interface{} `json:"data,optional"`
 	}
 )
 
@@ -56,14 +65,30 @@ type (
 service core {
 	// 账户登录
 	@handler accountLogin
-	post /login (AccountLoginRequest) returns (LoginResponse)
+	post /login (AccountLoginRequest) returns (Response)
 
 	// 手机号登录
 	@handler phoneLogin
-	post /phone_login (PhoneLoginRequest) returns (LoginResponse)
+	post /phone_login (PhoneLoginRequest) returns (Response)
 
 	// 重置密码
 	@handler resetPassword
-	post /reset_password (ResetPasswordRequest) returns (string)
+	post /reset_password (ResetPasswordRequest) returns (Response)
+}
+
+// 客户端服务
+@server (
+	group:      client // 微服务分组
+	prefix:     /api/client // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	@handler generateClientId
+	get /generate_client_id returns (Response)
 }
 

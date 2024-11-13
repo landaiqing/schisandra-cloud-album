@@ -3,7 +3,7 @@ package middleware
 import (
 	"net/http"
 
-	"schisandra-album-cloud-microservices/common/middleware"
+	"schisandra-album-cloud-microservices/app/core/api/common/middleware"
 )
 
 type SecurityHeadersMiddleware struct {

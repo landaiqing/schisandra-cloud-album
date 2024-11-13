@@ -13,9 +13,8 @@ type Config struct {
 	}
 	Redis struct {
 		Host string
-		Type string
 		Pass string
-		Tls  bool
+		DB   int
 	}
 	Mongo struct {
 		Uri        string

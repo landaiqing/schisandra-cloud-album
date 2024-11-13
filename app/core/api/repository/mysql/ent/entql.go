@@ -107,8 +107,8 @@ var schemaGraph = func() *sqlgraph.Schema {
 			scaauthuserdevice.FieldBrowser:         {Type: field.TypeString, Column: scaauthuserdevice.FieldBrowser},
 			scaauthuserdevice.FieldOperatingSystem: {Type: field.TypeString, Column: scaauthuserdevice.FieldOperatingSystem},
 			scaauthuserdevice.FieldBrowserVersion:  {Type: field.TypeString, Column: scaauthuserdevice.FieldBrowserVersion},
-			scaauthuserdevice.FieldMobile:          {Type: field.TypeInt, Column: scaauthuserdevice.FieldMobile},
-			scaauthuserdevice.FieldBot:             {Type: field.TypeInt, Column: scaauthuserdevice.FieldBot},
+			scaauthuserdevice.FieldMobile:          {Type: field.TypeBool, Column: scaauthuserdevice.FieldMobile},
+			scaauthuserdevice.FieldBot:             {Type: field.TypeBool, Column: scaauthuserdevice.FieldBot},
 			scaauthuserdevice.FieldMozilla:         {Type: field.TypeString, Column: scaauthuserdevice.FieldMozilla},
 			scaauthuserdevice.FieldPlatform:        {Type: field.TypeString, Column: scaauthuserdevice.FieldPlatform},
 			scaauthuserdevice.FieldEngineName:      {Type: field.TypeString, Column: scaauthuserdevice.FieldEngineName},
@@ -622,13 +622,13 @@ func (f *ScaAuthUserDeviceFilter) WhereBrowserVersion(p entql.StringP) {
 	f.Where(p.Field(scaauthuserdevice.FieldBrowserVersion))
 }
 
-// WhereMobile applies the entql int predicate on the mobile field.
-func (f *ScaAuthUserDeviceFilter) WhereMobile(p entql.IntP) {
+// WhereMobile applies the entql bool predicate on the mobile field.
+func (f *ScaAuthUserDeviceFilter) WhereMobile(p entql.BoolP) {
 	f.Where(p.Field(scaauthuserdevice.FieldMobile))
 }
 
-// WhereBot applies the entql int predicate on the bot field.
-func (f *ScaAuthUserDeviceFilter) WhereBot(p entql.IntP) {
+// WhereBot applies the entql bool predicate on the bot field.
+func (f *ScaAuthUserDeviceFilter) WhereBot(p entql.BoolP) {
 	f.Where(p.Field(scaauthuserdevice.FieldBot))
 }
 

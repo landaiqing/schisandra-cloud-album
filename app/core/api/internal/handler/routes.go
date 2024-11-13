@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	client "schisandra-album-cloud-microservices/app/core/api/internal/handler/client"
 	user "schisandra-album-cloud-microservices/app/core/api/internal/handler/user"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 
@@ -14,6 +15,22 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/generate_client_id",
+					Handler: client.GenerateClientIdHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/client"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(1048576),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},

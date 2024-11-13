@@ -3193,10 +3193,8 @@ type ScaAuthUserDeviceMutation struct {
 	browser              *string
 	operating_system     *string
 	browser_version      *string
-	mobile               *int
-	addmobile            *int
-	bot                  *int
-	addbot               *int
+	mobile               *bool
+	bot                  *bool
 	mozilla              *string
 	platform             *string
 	engine_name          *string
@@ -3708,13 +3706,12 @@ func (m *ScaAuthUserDeviceMutation) ResetBrowserVersion() {
 }
 
 // SetMobile sets the "mobile" field.
-func (m *ScaAuthUserDeviceMutation) SetMobile(i int) {
-	m.mobile = &i
-	m.addmobile = nil
+func (m *ScaAuthUserDeviceMutation) SetMobile(b bool) {
+	m.mobile = &b
 }
 
 // Mobile returns the value of the "mobile" field in the mutation.
-func (m *ScaAuthUserDeviceMutation) Mobile() (r int, exists bool) {
+func (m *ScaAuthUserDeviceMutation) Mobile() (r bool, exists bool) {
 	v := m.mobile
 	if v == nil {
 		return
@@ -3725,7 +3722,7 @@ func (m *ScaAuthUserDeviceMutation) Mobile() (r int, exists bool) {
 // OldMobile returns the old "mobile" field's value of the ScaAuthUserDevice entity.
 // If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserDeviceMutation) OldMobile(ctx context.Context) (v int, err error) {
+func (m *ScaAuthUserDeviceMutation) OldMobile(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldMobile is only allowed on UpdateOne operations")
 	}
@@ -3739,38 +3736,18 @@ func (m *ScaAuthUserDeviceMutation) OldMobile(ctx context.Context) (v int, err e
 	return oldValue.Mobile, nil
 }
 
-// AddMobile adds i to the "mobile" field.
-func (m *ScaAuthUserDeviceMutation) AddMobile(i int) {
-	if m.addmobile != nil {
-		*m.addmobile += i
-	} else {
-		m.addmobile = &i
-	}
-}
-
-// AddedMobile returns the value that was added to the "mobile" field in this mutation.
-func (m *ScaAuthUserDeviceMutation) AddedMobile() (r int, exists bool) {
-	v := m.addmobile
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetMobile resets all changes to the "mobile" field.
 func (m *ScaAuthUserDeviceMutation) ResetMobile() {
 	m.mobile = nil
-	m.addmobile = nil
 }
 
 // SetBot sets the "bot" field.
-func (m *ScaAuthUserDeviceMutation) SetBot(i int) {
-	m.bot = &i
-	m.addbot = nil
+func (m *ScaAuthUserDeviceMutation) SetBot(b bool) {
+	m.bot = &b
 }
 
 // Bot returns the value of the "bot" field in the mutation.
-func (m *ScaAuthUserDeviceMutation) Bot() (r int, exists bool) {
+func (m *ScaAuthUserDeviceMutation) Bot() (r bool, exists bool) {
 	v := m.bot
 	if v == nil {
 		return
@@ -3781,7 +3758,7 @@ func (m *ScaAuthUserDeviceMutation) Bot() (r int, exists bool) {
 // OldBot returns the old "bot" field's value of the ScaAuthUserDevice entity.
 // If the ScaAuthUserDevice object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserDeviceMutation) OldBot(ctx context.Context) (v int, err error) {
+func (m *ScaAuthUserDeviceMutation) OldBot(ctx context.Context) (v bool, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldBot is only allowed on UpdateOne operations")
 	}
@@ -3795,28 +3772,9 @@ func (m *ScaAuthUserDeviceMutation) OldBot(ctx context.Context) (v int, err erro
 	return oldValue.Bot, nil
 }
 
-// AddBot adds i to the "bot" field.
-func (m *ScaAuthUserDeviceMutation) AddBot(i int) {
-	if m.addbot != nil {
-		*m.addbot += i
-	} else {
-		m.addbot = &i
-	}
-}
-
-// AddedBot returns the value that was added to the "bot" field in this mutation.
-func (m *ScaAuthUserDeviceMutation) AddedBot() (r int, exists bool) {
-	v := m.addbot
-	if v == nil {
-		return
-	}
-	return *v, true
-}
-
 // ResetBot resets all changes to the "bot" field.
 func (m *ScaAuthUserDeviceMutation) ResetBot() {
 	m.bot = nil
-	m.addbot = nil
 }
 
 // SetMozilla sets the "mozilla" field.
@@ -4246,14 +4204,14 @@ func (m *ScaAuthUserDeviceMutation) SetField(name string, value ent.Value) error
 		m.SetBrowserVersion(v)
 		return nil
 	case scaauthuserdevice.FieldMobile:
-		v, ok := value.(int)
+		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetMobile(v)
 		return nil
 	case scaauthuserdevice.FieldBot:
-		v, ok := value.(int)
+		v, ok := value.(bool)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -4298,12 +4256,6 @@ func (m *ScaAuthUserDeviceMutation) AddedFields() []string {
 	if m.adddeleted != nil {
 		fields = append(fields, scaauthuserdevice.FieldDeleted)
 	}
-	if m.addmobile != nil {
-		fields = append(fields, scaauthuserdevice.FieldMobile)
-	}
-	if m.addbot != nil {
-		fields = append(fields, scaauthuserdevice.FieldBot)
-	}
 	return fields
 }
 
@@ -4314,10 +4266,6 @@ func (m *ScaAuthUserDeviceMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case scaauthuserdevice.FieldDeleted:
 		return m.AddedDeleted()
-	case scaauthuserdevice.FieldMobile:
-		return m.AddedMobile()
-	case scaauthuserdevice.FieldBot:
-		return m.AddedBot()
 	}
 	return nil, false
 }
@@ -4333,20 +4281,6 @@ func (m *ScaAuthUserDeviceMutation) AddField(name string, value ent.Value) error
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeleted(v)
-		return nil
-	case scaauthuserdevice.FieldMobile:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddMobile(v)
-		return nil
-	case scaauthuserdevice.FieldBot:
-		v, ok := value.(int)
-		if !ok {
-			return fmt.Errorf("unexpected type %T for field %s", value, name)
-		}
-		m.AddBot(v)
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserDevice numeric field %s", name)

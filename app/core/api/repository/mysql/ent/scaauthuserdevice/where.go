@@ -106,12 +106,12 @@ func BrowserVersion(v string) predicate.ScaAuthUserDevice {
 }
 
 // Mobile applies equality check predicate on the "mobile" field. It's identical to MobileEQ.
-func Mobile(v int) predicate.ScaAuthUserDevice {
+func Mobile(v bool) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldMobile, v))
 }
 
 // Bot applies equality check predicate on the "bot" field. It's identical to BotEQ.
-func Bot(v int) predicate.ScaAuthUserDevice {
+func Bot(v bool) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldBot, v))
 }
 
@@ -721,83 +721,23 @@ func BrowserVersionContainsFold(v string) predicate.ScaAuthUserDevice {
 }
 
 // MobileEQ applies the EQ predicate on the "mobile" field.
-func MobileEQ(v int) predicate.ScaAuthUserDevice {
+func MobileEQ(v bool) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldMobile, v))
 }
 
 // MobileNEQ applies the NEQ predicate on the "mobile" field.
-func MobileNEQ(v int) predicate.ScaAuthUserDevice {
+func MobileNEQ(v bool) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldMobile, v))
 }
 
-// MobileIn applies the In predicate on the "mobile" field.
-func MobileIn(vs ...int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldMobile, vs...))
-}
-
-// MobileNotIn applies the NotIn predicate on the "mobile" field.
-func MobileNotIn(vs ...int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldMobile, vs...))
-}
-
-// MobileGT applies the GT predicate on the "mobile" field.
-func MobileGT(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldMobile, v))
-}
-
-// MobileGTE applies the GTE predicate on the "mobile" field.
-func MobileGTE(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldMobile, v))
-}
-
-// MobileLT applies the LT predicate on the "mobile" field.
-func MobileLT(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldMobile, v))
-}
-
-// MobileLTE applies the LTE predicate on the "mobile" field.
-func MobileLTE(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldMobile, v))
-}
-
 // BotEQ applies the EQ predicate on the "bot" field.
-func BotEQ(v int) predicate.ScaAuthUserDevice {
+func BotEQ(v bool) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldBot, v))
 }
 
 // BotNEQ applies the NEQ predicate on the "bot" field.
-func BotNEQ(v int) predicate.ScaAuthUserDevice {
+func BotNEQ(v bool) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldNEQ(FieldBot, v))
-}
-
-// BotIn applies the In predicate on the "bot" field.
-func BotIn(vs ...int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIn(FieldBot, vs...))
-}
-
-// BotNotIn applies the NotIn predicate on the "bot" field.
-func BotNotIn(vs ...int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotIn(FieldBot, vs...))
-}
-
-// BotGT applies the GT predicate on the "bot" field.
-func BotGT(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGT(FieldBot, v))
-}
-
-// BotGTE applies the GTE predicate on the "bot" field.
-func BotGTE(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldGTE(FieldBot, v))
-}
-
-// BotLT applies the LT predicate on the "bot" field.
-func BotLT(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLT(FieldBot, v))
-}
-
-// BotLTE applies the LTE predicate on the "bot" field.
-func BotLTE(v int) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldBot, v))
 }
 
 // MozillaEQ applies the EQ predicate on the "mozilla" field.

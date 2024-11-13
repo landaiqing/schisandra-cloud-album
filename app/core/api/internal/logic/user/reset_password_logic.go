@@ -3,10 +3,10 @@ package user
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type ResetPasswordLogic struct {
@@ -23,7 +23,7 @@ func NewResetPasswordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Res
 	}
 }
 
-func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordRequest) (resp string, err error) {
+func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordRequest) (resp *types.Response, err error) {
 	// todo: add your logic here and delete this line
 
 	return

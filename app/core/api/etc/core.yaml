@@ -1,6 +1,10 @@
 Name: main
 Host: 0.0.0.0
-Port: 8888
+Port: 80
+Web:
+  Addr: localhost:8080
+Middlewares:
+  Log: true
 Mysql:
   DataSource: root:1611@tcp(localhost:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local
 Auth:
@@ -8,9 +12,8 @@ Auth:
   AccessExpire: 86400
 Redis:
   Host: 1.95.0.111:6379
-  Type: node
   Pass: LDQ20020618xxx
-  Tls: false
+  DB: 0
 Mongo:
   Uri: mongodb://1.95.0.111:27017
   Username: landaiqing

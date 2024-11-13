@@ -161,44 +161,30 @@ func (saudu *ScaAuthUserDeviceUpdate) SetNillableBrowserVersion(s *string) *ScaA
 }
 
 // SetMobile sets the "mobile" field.
-func (saudu *ScaAuthUserDeviceUpdate) SetMobile(i int) *ScaAuthUserDeviceUpdate {
-	saudu.mutation.ResetMobile()
-	saudu.mutation.SetMobile(i)
+func (saudu *ScaAuthUserDeviceUpdate) SetMobile(b bool) *ScaAuthUserDeviceUpdate {
+	saudu.mutation.SetMobile(b)
 	return saudu
 }
 
 // SetNillableMobile sets the "mobile" field if the given value is not nil.
-func (saudu *ScaAuthUserDeviceUpdate) SetNillableMobile(i *int) *ScaAuthUserDeviceUpdate {
-	if i != nil {
-		saudu.SetMobile(*i)
+func (saudu *ScaAuthUserDeviceUpdate) SetNillableMobile(b *bool) *ScaAuthUserDeviceUpdate {
+	if b != nil {
+		saudu.SetMobile(*b)
 	}
-	return saudu
-}
-
-// AddMobile adds i to the "mobile" field.
-func (saudu *ScaAuthUserDeviceUpdate) AddMobile(i int) *ScaAuthUserDeviceUpdate {
-	saudu.mutation.AddMobile(i)
 	return saudu
 }
 
 // SetBot sets the "bot" field.
-func (saudu *ScaAuthUserDeviceUpdate) SetBot(i int) *ScaAuthUserDeviceUpdate {
-	saudu.mutation.ResetBot()
-	saudu.mutation.SetBot(i)
+func (saudu *ScaAuthUserDeviceUpdate) SetBot(b bool) *ScaAuthUserDeviceUpdate {
+	saudu.mutation.SetBot(b)
 	return saudu
 }
 
 // SetNillableBot sets the "bot" field if the given value is not nil.
-func (saudu *ScaAuthUserDeviceUpdate) SetNillableBot(i *int) *ScaAuthUserDeviceUpdate {
-	if i != nil {
-		saudu.SetBot(*i)
+func (saudu *ScaAuthUserDeviceUpdate) SetNillableBot(b *bool) *ScaAuthUserDeviceUpdate {
+	if b != nil {
+		saudu.SetBot(*b)
 	}
-	return saudu
-}
-
-// AddBot adds i to the "bot" field.
-func (saudu *ScaAuthUserDeviceUpdate) AddBot(i int) *ScaAuthUserDeviceUpdate {
-	saudu.mutation.AddBot(i)
 	return saudu
 }
 
@@ -435,16 +421,10 @@ func (saudu *ScaAuthUserDeviceUpdate) sqlSave(ctx context.Context) (n int, err e
 		_spec.SetField(scaauthuserdevice.FieldBrowserVersion, field.TypeString, value)
 	}
 	if value, ok := saudu.mutation.Mobile(); ok {
-		_spec.SetField(scaauthuserdevice.FieldMobile, field.TypeInt, value)
-	}
-	if value, ok := saudu.mutation.AddedMobile(); ok {
-		_spec.AddField(scaauthuserdevice.FieldMobile, field.TypeInt, value)
+		_spec.SetField(scaauthuserdevice.FieldMobile, field.TypeBool, value)
 	}
 	if value, ok := saudu.mutation.Bot(); ok {
-		_spec.SetField(scaauthuserdevice.FieldBot, field.TypeInt, value)
-	}
-	if value, ok := saudu.mutation.AddedBot(); ok {
-		_spec.AddField(scaauthuserdevice.FieldBot, field.TypeInt, value)
+		_spec.SetField(scaauthuserdevice.FieldBot, field.TypeBool, value)
 	}
 	if value, ok := saudu.mutation.Mozilla(); ok {
 		_spec.SetField(scaauthuserdevice.FieldMozilla, field.TypeString, value)
@@ -639,44 +619,30 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableBrowserVersion(s *string) *
 }
 
 // SetMobile sets the "mobile" field.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetMobile(i int) *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.ResetMobile()
-	sauduo.mutation.SetMobile(i)
+func (sauduo *ScaAuthUserDeviceUpdateOne) SetMobile(b bool) *ScaAuthUserDeviceUpdateOne {
+	sauduo.mutation.SetMobile(b)
 	return sauduo
 }
 
 // SetNillableMobile sets the "mobile" field if the given value is not nil.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableMobile(i *int) *ScaAuthUserDeviceUpdateOne {
-	if i != nil {
-		sauduo.SetMobile(*i)
+func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableMobile(b *bool) *ScaAuthUserDeviceUpdateOne {
+	if b != nil {
+		sauduo.SetMobile(*b)
 	}
-	return sauduo
-}
-
-// AddMobile adds i to the "mobile" field.
-func (sauduo *ScaAuthUserDeviceUpdateOne) AddMobile(i int) *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.AddMobile(i)
 	return sauduo
 }
 
 // SetBot sets the "bot" field.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetBot(i int) *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.ResetBot()
-	sauduo.mutation.SetBot(i)
+func (sauduo *ScaAuthUserDeviceUpdateOne) SetBot(b bool) *ScaAuthUserDeviceUpdateOne {
+	sauduo.mutation.SetBot(b)
 	return sauduo
 }
 
 // SetNillableBot sets the "bot" field if the given value is not nil.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableBot(i *int) *ScaAuthUserDeviceUpdateOne {
-	if i != nil {
-		sauduo.SetBot(*i)
+func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableBot(b *bool) *ScaAuthUserDeviceUpdateOne {
+	if b != nil {
+		sauduo.SetBot(*b)
 	}
-	return sauduo
-}
-
-// AddBot adds i to the "bot" field.
-func (sauduo *ScaAuthUserDeviceUpdateOne) AddBot(i int) *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.AddBot(i)
 	return sauduo
 }
 
@@ -943,16 +909,10 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *S
 		_spec.SetField(scaauthuserdevice.FieldBrowserVersion, field.TypeString, value)
 	}
 	if value, ok := sauduo.mutation.Mobile(); ok {
-		_spec.SetField(scaauthuserdevice.FieldMobile, field.TypeInt, value)
-	}
-	if value, ok := sauduo.mutation.AddedMobile(); ok {
-		_spec.AddField(scaauthuserdevice.FieldMobile, field.TypeInt, value)
+		_spec.SetField(scaauthuserdevice.FieldMobile, field.TypeBool, value)
 	}
 	if value, ok := sauduo.mutation.Bot(); ok {
-		_spec.SetField(scaauthuserdevice.FieldBot, field.TypeInt, value)
-	}
-	if value, ok := sauduo.mutation.AddedBot(); ok {
-		_spec.AddField(scaauthuserdevice.FieldBot, field.TypeInt, value)
+		_spec.SetField(scaauthuserdevice.FieldBot, field.TypeBool, value)
 	}
 	if value, ok := sauduo.mutation.Mozilla(); ok {
 		_spec.SetField(scaauthuserdevice.FieldMozilla, field.TypeString, value)

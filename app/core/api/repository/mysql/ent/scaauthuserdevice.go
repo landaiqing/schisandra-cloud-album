@@ -40,9 +40,9 @@ type ScaAuthUserDevice struct {
 	// 浏览器版本
 	BrowserVersion string `json:"browser_version,omitempty"`
 	// 是否为手机 0否1是
-	Mobile int `json:"mobile,omitempty"`
+	Mobile bool `json:"mobile,omitempty"`
 	// 是否为bot 0否1是
-	Bot int `json:"bot,omitempty"`
+	Bot bool `json:"bot,omitempty"`
 	// 火狐版本
 	Mozilla string `json:"mozilla,omitempty"`
 	// 平台
@@ -83,7 +83,9 @@ func (*ScaAuthUserDevice) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case scaauthuserdevice.FieldID, scaauthuserdevice.FieldDeleted, scaauthuserdevice.FieldMobile, scaauthuserdevice.FieldBot:
+		case scaauthuserdevice.FieldMobile, scaauthuserdevice.FieldBot:
+			values[i] = new(sql.NullBool)
+		case scaauthuserdevice.FieldID, scaauthuserdevice.FieldDeleted:
 			values[i] = new(sql.NullInt64)
 		case scaauthuserdevice.FieldUserID, scaauthuserdevice.FieldIP, scaauthuserdevice.FieldLocation, scaauthuserdevice.FieldAgent, scaauthuserdevice.FieldBrowser, scaauthuserdevice.FieldOperatingSystem, scaauthuserdevice.FieldBrowserVersion, scaauthuserdevice.FieldMozilla, scaauthuserdevice.FieldPlatform, scaauthuserdevice.FieldEngineName, scaauthuserdevice.FieldEngineVersion:
 			values[i] = new(sql.NullString)
@@ -173,16 +175,16 @@ func (saud *ScaAuthUserDevice) assignValues(columns []string, values []any) erro
 				saud.BrowserVersion = value.String
 			}
 		case scaauthuserdevice.FieldMobile:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field mobile", values[i])
 			} else if value.Valid {
-				saud.Mobile = int(value.Int64)
+				saud.Mobile = value.Bool
 			}
 		case scaauthuserdevice.FieldBot:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
+			if value, ok := values[i].(*sql.NullBool); !ok {
 				return fmt.Errorf("unexpected type %T for field bot", values[i])
 			} else if value.Valid {
-				saud.Bot = int(value.Int64)
+				saud.Bot = value.Bool
 			}
 		case scaauthuserdevice.FieldMozilla:
 			if value, ok := values[i].(*sql.NullString); !ok {

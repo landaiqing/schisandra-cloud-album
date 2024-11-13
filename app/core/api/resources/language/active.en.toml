@@ -1,0 +1,7 @@
+[captcha]
+verificationFailure = "verification failure!"
+[login]
+invalidAccount = "invalid account！"
+notFoundAccount = "account not found！"
+invalidPassword = "invalid password！"
+loginFailed = "login failed！"

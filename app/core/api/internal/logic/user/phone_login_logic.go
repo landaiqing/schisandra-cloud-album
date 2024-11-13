@@ -3,10 +3,10 @@ package user
 import (
 	"context"
 
-	"github.com/zeromicro/go-zero/core/logx"
-
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type PhoneLoginLogic struct {
@@ -23,7 +23,7 @@ func NewPhoneLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PhoneL
 	}
 }
 
-func (l *PhoneLoginLogic) PhoneLogin(req *types.PhoneLoginRequest) (resp *types.LoginResponse, err error) {
+func (l *PhoneLoginLogic) PhoneLogin(req *types.PhoneLoginRequest) (resp *types.Response, err error) {
 	// todo: add your logic here and delete this line
 
 	return

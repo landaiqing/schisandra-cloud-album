@@ -2,7 +2,7 @@
 
 package runtime
 
-// The schema-stitching logic is generated in schisandra-album-cloud-microservices/app/main/api/repository/mysql/ent/runtime.go
+// The schema-stitching logic is generated in schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/runtime.go
 
 const (
 	Version = "v0.14.1"                                         // Version of ent codegen.
