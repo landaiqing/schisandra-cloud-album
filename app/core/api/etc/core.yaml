@@ -1,0 +1,19 @@
+Name: main
+Host: 0.0.0.0
+Port: 8888
+Mysql:
+  DataSource: root:1611@tcp(localhost:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local
+Auth:
+  AccessSecret: uOvKLmVfztaXGpNYd4Z0I1SiT7MweJhl
+  AccessExpire: 86400
+Redis:
+  Host: 1.95.0.111:6379
+  Type: node
+  Pass: LDQ20020618xxx
+  Tls: false
+Mongo:
+  Uri: mongodb://1.95.0.111:27017
+  Username: landaiqing
+  Password: LDQ20020618xxx
+  Database: schisandra-cloud-album
+  AuthSource: admin

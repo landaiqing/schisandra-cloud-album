@@ -1,0 +1,69 @@
+syntax = "v1"
+
+info (
+	title:   "核心服务"
+	desc:    "核心服务"
+	author:  "landaiqing"
+	email:   "landaiqing@126.com"
+	version: "v1.0.0"
+)
+
+// 登录请求参数
+type (
+	// 账户登录请求参数
+	AccountLoginRequest {
+		Account   string `json:"account"`
+		Password  string `json:"password"`
+		AutoLogin bool   `json:"auto_login"`
+		Angle     int64  `json:"angle"`
+		Key       string `json:"key"`
+	}
+	// 手机号登录请求参数
+	PhoneLoginRequest {
+		Phone     string `json:"phone"`
+		Captcha   string `json:"captcha"`
+		AutoLogin bool   `json:"auto_login"`
+	}
+	// 重置密码请求参数
+	ResetPasswordRequest {
+		Phone      string `json:"phone"`
+		Captcha    string `json:"captcha"`
+		Password   string `json:"password"`
+		Repassword string `json:"repassword"`
+	}
+	// 登录响应参数
+	LoginResponse {
+		AccessToken string `json:"access_token"`
+		UID         string `json:"uid"`
+		Username    string `json:"username,optional"`
+		Nickname    string `json:"nickname"`
+		Avatar      string `json:"avatar"`
+		Status      int64  `json:"status"`
+	}
+)
+
+// 用户服务
+@server (
+	group:      user // 微服务分组
+	prefix:     /api/auth/user // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  true // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	// 账户登录
+	@handler accountLogin
+	post /login (AccountLoginRequest) returns (LoginResponse)
+
+	// 手机号登录
+	@handler phoneLogin
+	post /phone_login (PhoneLoginRequest) returns (LoginResponse)
+
+	// 重置密码
+	@handler resetPassword
+	post /reset_password (ResetPasswordRequest) returns (string)
+}
+
