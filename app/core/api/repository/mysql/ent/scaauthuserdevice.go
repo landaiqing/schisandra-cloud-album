@@ -4,7 +4,6 @@ package ent
 
 import (
 	"fmt"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"strings"
 	"time"
@@ -51,31 +50,7 @@ type ScaAuthUserDevice struct {
 	EngineName string `json:"engine_name,omitempty"`
 	// 引擎版本
 	EngineVersion string `json:"engine_version,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ScaAuthUserDeviceQuery when eager-loading is set.
-	Edges                              ScaAuthUserDeviceEdges `json:"edges"`
-	sca_auth_user_sca_auth_user_device *int64
-	selectValues                       sql.SelectValues
-}
-
-// ScaAuthUserDeviceEdges holds the relations/edges for other nodes in the graph.
-type ScaAuthUserDeviceEdges struct {
-	// ScaAuthUser holds the value of the sca_auth_user edge.
-	ScaAuthUser *ScaAuthUser `json:"sca_auth_user,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// ScaAuthUserOrErr returns the ScaAuthUser value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ScaAuthUserDeviceEdges) ScaAuthUserOrErr() (*ScaAuthUser, error) {
-	if e.ScaAuthUser != nil {
-		return e.ScaAuthUser, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: scaauthuser.Label}
-	}
-	return nil, &NotLoadedError{edge: "sca_auth_user"}
+	selectValues  sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -91,8 +66,6 @@ func (*ScaAuthUserDevice) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case scaauthuserdevice.FieldCreatedAt, scaauthuserdevice.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case scaauthuserdevice.ForeignKeys[0]: // sca_auth_user_sca_auth_user_device
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -210,13 +183,6 @@ func (saud *ScaAuthUserDevice) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				saud.EngineVersion = value.String
 			}
-		case scaauthuserdevice.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field sca_auth_user_sca_auth_user_device", value)
-			} else if value.Valid {
-				saud.sca_auth_user_sca_auth_user_device = new(int64)
-				*saud.sca_auth_user_sca_auth_user_device = int64(value.Int64)
-			}
 		default:
 			saud.selectValues.Set(columns[i], values[i])
 		}
@@ -228,11 +194,6 @@ func (saud *ScaAuthUserDevice) assignValues(columns []string, values []any) erro
 // This includes values selected through modifiers, order, etc.
 func (saud *ScaAuthUserDevice) Value(name string) (ent.Value, error) {
 	return saud.selectValues.Get(name)
-}
-
-// QueryScaAuthUser queries the "sca_auth_user" edge of the ScaAuthUserDevice entity.
-func (saud *ScaAuthUserDevice) QueryScaAuthUser() *ScaAuthUserQuery {
-	return NewScaAuthUserDeviceClient(saud.config).QueryScaAuthUser(saud)
 }
 
 // Update returns a builder for updating this ScaAuthUserDevice.

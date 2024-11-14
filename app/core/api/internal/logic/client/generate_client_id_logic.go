@@ -32,12 +32,12 @@ func (l *GenerateClientIdLogic) GenerateClientId(clientIP string) (resp *types.R
 	clientId := l.svcCtx.RedisClient.Get(l.ctx, constant.UserClientPrefix+clientIP).Val()
 
 	if clientId != "" {
-		return response.Success(clientId), nil
+		return response.SuccessWithData(clientId), nil
 	}
 	simpleUuid := kgo.SimpleUuid()
 	if err = l.svcCtx.RedisClient.SetEx(l.ctx, constant.UserClientPrefix+clientIP, simpleUuid, time.Hour*24*7).Err(); err != nil {
 		l.Error(err)
 		return response.Error(), err
 	}
-	return response.Success(simpleUuid), nil
+	return response.SuccessWithData(simpleUuid), nil
 }

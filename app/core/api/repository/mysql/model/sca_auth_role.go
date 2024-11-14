@@ -5,7 +5,6 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model/mixin"
@@ -45,9 +44,7 @@ func (ScaAuthRole) Fields() []ent.Field {
 
 // Edges of the ScaAuthRole.
 func (ScaAuthRole) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.To("sca_auth_permission_rule", ScaAuthPermissionRule.Type),
-	}
+	return nil
 }
 
 // Indexes of the ScaAuthRole.

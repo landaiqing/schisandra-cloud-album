@@ -27,29 +27,8 @@ type ScaAuthRole struct {
 	// 角色名称
 	RoleName string `json:"role_name,omitempty"`
 	// 角色关键字
-	RoleKey string `json:"role_key,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ScaAuthRoleQuery when eager-loading is set.
-	Edges        ScaAuthRoleEdges `json:"edges"`
+	RoleKey      string `json:"role_key,omitempty"`
 	selectValues sql.SelectValues
-}
-
-// ScaAuthRoleEdges holds the relations/edges for other nodes in the graph.
-type ScaAuthRoleEdges struct {
-	// ScaAuthPermissionRule holds the value of the sca_auth_permission_rule edge.
-	ScaAuthPermissionRule []*ScaAuthPermissionRule `json:"sca_auth_permission_rule,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// ScaAuthPermissionRuleOrErr returns the ScaAuthPermissionRule value or an error if the edge
-// was not loaded in eager-loading.
-func (e ScaAuthRoleEdges) ScaAuthPermissionRuleOrErr() ([]*ScaAuthPermissionRule, error) {
-	if e.loadedTypes[0] {
-		return e.ScaAuthPermissionRule, nil
-	}
-	return nil, &NotLoadedError{edge: "sca_auth_permission_rule"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -125,11 +104,6 @@ func (sar *ScaAuthRole) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (sar *ScaAuthRole) Value(name string) (ent.Value, error) {
 	return sar.selectValues.Get(name)
-}
-
-// QueryScaAuthPermissionRule queries the "sca_auth_permission_rule" edge of the ScaAuthRole entity.
-func (sar *ScaAuthRole) QueryScaAuthPermissionRule() *ScaAuthPermissionRuleQuery {
-	return NewScaAuthRoleClient(sar.config).QueryScaAuthPermissionRule(sar)
 }
 
 // Update returns a builder for updating this ScaAuthRole.

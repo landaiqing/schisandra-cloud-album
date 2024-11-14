@@ -4,13 +4,14 @@ import (
 	"flag"
 	"fmt"
 
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/rest"
+
 	"schisandra-album-cloud-microservices/app/core/api/common/middleware"
 	"schisandra-album-cloud-microservices/app/core/api/internal/config"
 	"schisandra-album-cloud-microservices/app/core/api/internal/handler"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
-
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/rest"
+	"schisandra-album-cloud-microservices/app/core/api/repository/idgenerator"
 )
 
 var configFile = flag.String("f", "etc/core.yaml", "the config file")
@@ -27,7 +28,8 @@ func main() {
 	server.Use(middleware.I18nMiddleware)
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
-
+	// init id generator
+	idgenerator.NewIDGenerator()
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

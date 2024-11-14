@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -453,29 +452,6 @@ func StatusLT(v int) predicate.ScaAuthUserSocial {
 // StatusLTE applies the LTE predicate on the "status" field.
 func StatusLTE(v int) predicate.ScaAuthUserSocial {
 	return predicate.ScaAuthUserSocial(sql.FieldLTE(FieldStatus, v))
-}
-
-// HasScaAuthUser applies the HasEdge predicate on the "sca_auth_user" edge.
-func HasScaAuthUser() predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ScaAuthUserTable, ScaAuthUserColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasScaAuthUserWith applies the HasEdge predicate on the "sca_auth_user" edge with a given conditions (other predicates).
-func HasScaAuthUserWith(preds ...predicate.ScaAuthUser) predicate.ScaAuthUserSocial {
-	return predicate.ScaAuthUserSocial(func(s *sql.Selector) {
-		step := newScaAuthUserStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

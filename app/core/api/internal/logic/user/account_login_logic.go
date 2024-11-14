@@ -12,7 +12,6 @@ import (
 
 	"schisandra-album-cloud-microservices/app/core/api/common/captcha/verify"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
-	"schisandra-album-cloud-microservices/app/core/api/common/i18n"
 	"schisandra-album-cloud-microservices/app/core/api/common/jwt"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
@@ -21,8 +20,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
-	types3 "schisandra-album-cloud-microservices/app/core/api/repository/redis_session/types"
-	types2 "schisandra-album-cloud-microservices/app/core/api/repository/redisx/types"
 )
 
 type AccountLoginLogic struct {
@@ -42,7 +39,7 @@ func NewAccountLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Acco
 func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request, req *types.AccountLoginRequest) (resp *types.Response, err error) {
 	verifyResult := verify.VerifyRotateCaptcha(l.ctx, l.svcCtx.RedisClient, req.Angle, req.Key)
 	if !verifyResult {
-		return response.ErrorWithMessage(i18n.FormatText(l.ctx, "captcha.verificationFailure", "验证失败！")), nil
+		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure", "验证失败！"), nil
 	}
 	var user *ent.ScaAuthUser
 	var query *ent.ScaAuthUserQuery
@@ -55,31 +52,31 @@ func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request,
 	case utils.IsUsername(req.Account):
 		query = l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.UsernameEQ(req.Account), scaauthuser.DeletedEQ(0))
 	default:
-		return response.ErrorWithMessage(i18n.FormatText(l.ctx, "login.invalidAccount", "无效账号！")), nil
+		return response.ErrorWithI18n(l.ctx, "login.invalidAccount", "无效账号！"), nil
 	}
 
 	user, err = query.First(l.ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return response.ErrorWithMessage(i18n.FormatText(l.ctx, "login.notFoundAccount", "无效账号！")), nil
+			return response.ErrorWithI18n(l.ctx, "login.userNotRegistered", "用户未注册！"), nil
 		}
 		return nil, err
 	}
 
 	if !utils.Verify(user.Password, req.Password) {
-		return response.ErrorWithMessage(i18n.FormatText(l.ctx, "login.invalidPassword", "密码错误！")), nil
+		return response.ErrorWithI18n(l.ctx, "login.invalidPassword", "密码错误！"), nil
 	}
-	data, result := HandleUserLogin(user, l, req.AutoLogin, r, w, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient)
+	data, result := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 	if !result {
-		return response.ErrorWithMessage(i18n.FormatText(l.ctx, "login.loginFailed", "登录失败！")), nil
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败！"), nil
 	}
-	return response.Success(data), nil
+	return response.SuccessWithData(data), nil
 }
 
 // HandleUserLogin 处理用户登录
-func HandleUserLogin(user *ent.ScaAuthUser, l *AccountLoginLogic, autoLogin bool, r *http.Request, w http.ResponseWriter, ip2location *xdb.Searcher, entClient *ent.Client) (*types.LoginResponse, bool) {
+func HandleUserLogin(user *ent.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, w http.ResponseWriter, ctx context.Context) (*types.LoginResponse, bool) {
 	// 生成jwt token
-	accessToken := jwt.GenerateAccessToken(l.svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
+	accessToken := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: user.UID,
 	})
 	var days time.Duration
@@ -88,7 +85,7 @@ func HandleUserLogin(user *ent.ScaAuthUser, l *AccountLoginLogic, autoLogin bool
 	} else {
 		days = time.Hour * 24
 	}
-	refreshToken := jwt.GenerateRefreshToken(l.svcCtx.Config.Auth.AccessSecret, jwt.RefreshJWTPayload{
+	refreshToken := jwt.GenerateRefreshToken(svcCtx.Config.Auth.AccessSecret, jwt.RefreshJWTPayload{
 		UserID: user.UID,
 	}, days)
 	data := types.LoginResponse{
@@ -100,31 +97,31 @@ func HandleUserLogin(user *ent.ScaAuthUser, l *AccountLoginLogic, autoLogin bool
 		Status:      user.Status,
 	}
 
-	redisToken := types2.RedisToken{
+	redisToken := types.RedisToken{
 		AccessToken: accessToken,
 		UID:         user.UID,
 	}
-	err := l.svcCtx.RedisClient.SetEx(l.ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
+	err := svcCtx.RedisClient.Set(ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
 	if err != nil {
-		logc.Error(l.ctx, err)
+		logc.Error(ctx, err)
 		return nil, false
 	}
-	sessionData := types3.SessionData{
+	sessionData := types.SessionData{
 		RefreshToken: refreshToken,
 		UID:          user.UID,
 	}
-	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
+	session, err := svcCtx.Session.Get(r, constant.SESSION_KEY)
 	if err != nil {
-		logc.Error(l.ctx, err)
+		logc.Error(ctx, err)
 		return nil, false
 	}
 	session.Values[constant.SESSION_KEY] = sessionData
 	if err = session.Save(r, w); err != nil {
-		logc.Error(l.ctx, err)
+		logc.Error(ctx, err)
 		return nil, false
 	}
 	// 记录用户登录设备
-	if !getUserLoginDevice(user.UID, r, ip2location, entClient, l.ctx) {
+	if !getUserLoginDevice(user.UID, r, svcCtx.Ip2Region, svcCtx.MySQLClient, ctx) {
 		return nil, false
 	}
 	return &data, true
@@ -160,7 +157,7 @@ func getUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searche
 	// 如果有错误，表示设备不存在，执行插入
 	if ent.IsNotFound(err) {
 		// 创建新的设备记录
-		entClient.ScaAuthUserDevice.Create().
+		err = entClient.ScaAuthUserDevice.Create().
 			SetBot(isBot).
 			SetAgent(userAgent).
 			SetBrowser(browser).
@@ -173,10 +170,14 @@ func getUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searche
 			SetMobile(mobile).
 			SetMozilla(mozilla).
 			SetPlatform(platform).
-			SaveX(ctx)
+			Exec(ctx)
+		if err != nil {
+			return false
+		}
+		return true
 	} else if err == nil {
 		// 如果设备存在，执行更新
-		device.Update().
+		err = device.Update().
 			SetBot(isBot).
 			SetAgent(userAgent).
 			SetBrowser(browser).
@@ -189,10 +190,13 @@ func getUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searche
 			SetMobile(mobile).
 			SetMozilla(mozilla).
 			SetPlatform(platform).
-			SaveX(ctx)
+			Exec(ctx)
+		if err != nil {
+			return false
+		}
+		return true
 	} else {
 		logc.Error(ctx, err)
 		return false
 	}
-	return true
 }

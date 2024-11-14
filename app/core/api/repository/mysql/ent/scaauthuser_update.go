@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
 	"time"
 
 	"entgo.io/ent/dialect/sql"
@@ -178,16 +176,23 @@ func (sauu *ScaAuthUserUpdate) ClearPassword() *ScaAuthUserUpdate {
 }
 
 // SetGender sets the "gender" field.
-func (sauu *ScaAuthUserUpdate) SetGender(s string) *ScaAuthUserUpdate {
-	sauu.mutation.SetGender(s)
+func (sauu *ScaAuthUserUpdate) SetGender(i int8) *ScaAuthUserUpdate {
+	sauu.mutation.ResetGender()
+	sauu.mutation.SetGender(i)
 	return sauu
 }
 
 // SetNillableGender sets the "gender" field if the given value is not nil.
-func (sauu *ScaAuthUserUpdate) SetNillableGender(s *string) *ScaAuthUserUpdate {
-	if s != nil {
-		sauu.SetGender(*s)
+func (sauu *ScaAuthUserUpdate) SetNillableGender(i *int8) *ScaAuthUserUpdate {
+	if i != nil {
+		sauu.SetGender(*i)
 	}
+	return sauu
+}
+
+// AddGender adds i to the "gender" field.
+func (sauu *ScaAuthUserUpdate) AddGender(i int8) *ScaAuthUserUpdate {
+	sauu.mutation.AddGender(i)
 	return sauu
 }
 
@@ -324,81 +329,9 @@ func (sauu *ScaAuthUserUpdate) ClearCompany() *ScaAuthUserUpdate {
 	return sauu
 }
 
-// AddScaAuthUserSocialIDs adds the "sca_auth_user_social" edge to the ScaAuthUserSocial entity by IDs.
-func (sauu *ScaAuthUserUpdate) AddScaAuthUserSocialIDs(ids ...int64) *ScaAuthUserUpdate {
-	sauu.mutation.AddScaAuthUserSocialIDs(ids...)
-	return sauu
-}
-
-// AddScaAuthUserSocial adds the "sca_auth_user_social" edges to the ScaAuthUserSocial entity.
-func (sauu *ScaAuthUserUpdate) AddScaAuthUserSocial(s ...*ScaAuthUserSocial) *ScaAuthUserUpdate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauu.AddScaAuthUserSocialIDs(ids...)
-}
-
-// AddScaAuthUserDeviceIDs adds the "sca_auth_user_device" edge to the ScaAuthUserDevice entity by IDs.
-func (sauu *ScaAuthUserUpdate) AddScaAuthUserDeviceIDs(ids ...int64) *ScaAuthUserUpdate {
-	sauu.mutation.AddScaAuthUserDeviceIDs(ids...)
-	return sauu
-}
-
-// AddScaAuthUserDevice adds the "sca_auth_user_device" edges to the ScaAuthUserDevice entity.
-func (sauu *ScaAuthUserUpdate) AddScaAuthUserDevice(s ...*ScaAuthUserDevice) *ScaAuthUserUpdate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauu.AddScaAuthUserDeviceIDs(ids...)
-}
-
 // Mutation returns the ScaAuthUserMutation object of the builder.
 func (sauu *ScaAuthUserUpdate) Mutation() *ScaAuthUserMutation {
 	return sauu.mutation
-}
-
-// ClearScaAuthUserSocial clears all "sca_auth_user_social" edges to the ScaAuthUserSocial entity.
-func (sauu *ScaAuthUserUpdate) ClearScaAuthUserSocial() *ScaAuthUserUpdate {
-	sauu.mutation.ClearScaAuthUserSocial()
-	return sauu
-}
-
-// RemoveScaAuthUserSocialIDs removes the "sca_auth_user_social" edge to ScaAuthUserSocial entities by IDs.
-func (sauu *ScaAuthUserUpdate) RemoveScaAuthUserSocialIDs(ids ...int64) *ScaAuthUserUpdate {
-	sauu.mutation.RemoveScaAuthUserSocialIDs(ids...)
-	return sauu
-}
-
-// RemoveScaAuthUserSocial removes "sca_auth_user_social" edges to ScaAuthUserSocial entities.
-func (sauu *ScaAuthUserUpdate) RemoveScaAuthUserSocial(s ...*ScaAuthUserSocial) *ScaAuthUserUpdate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauu.RemoveScaAuthUserSocialIDs(ids...)
-}
-
-// ClearScaAuthUserDevice clears all "sca_auth_user_device" edges to the ScaAuthUserDevice entity.
-func (sauu *ScaAuthUserUpdate) ClearScaAuthUserDevice() *ScaAuthUserUpdate {
-	sauu.mutation.ClearScaAuthUserDevice()
-	return sauu
-}
-
-// RemoveScaAuthUserDeviceIDs removes the "sca_auth_user_device" edge to ScaAuthUserDevice entities by IDs.
-func (sauu *ScaAuthUserUpdate) RemoveScaAuthUserDeviceIDs(ids ...int64) *ScaAuthUserUpdate {
-	sauu.mutation.RemoveScaAuthUserDeviceIDs(ids...)
-	return sauu
-}
-
-// RemoveScaAuthUserDevice removes "sca_auth_user_device" edges to ScaAuthUserDevice entities.
-func (sauu *ScaAuthUserUpdate) RemoveScaAuthUserDevice(s ...*ScaAuthUserDevice) *ScaAuthUserUpdate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauu.RemoveScaAuthUserDeviceIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -472,11 +405,6 @@ func (sauu *ScaAuthUserUpdate) check() error {
 	if v, ok := sauu.mutation.Password(); ok {
 		if err := scaauthuser.PasswordValidator(v); err != nil {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.password": %w`, err)}
-		}
-	}
-	if v, ok := sauu.mutation.Gender(); ok {
-		if err := scaauthuser.GenderValidator(v); err != nil {
-			return &ValidationError{Name: "gender", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.gender": %w`, err)}
 		}
 	}
 	if v, ok := sauu.mutation.Introduce(); ok {
@@ -560,10 +488,13 @@ func (sauu *ScaAuthUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 		_spec.ClearField(scaauthuser.FieldPassword, field.TypeString)
 	}
 	if value, ok := sauu.mutation.Gender(); ok {
-		_spec.SetField(scaauthuser.FieldGender, field.TypeString, value)
+		_spec.SetField(scaauthuser.FieldGender, field.TypeInt8, value)
+	}
+	if value, ok := sauu.mutation.AddedGender(); ok {
+		_spec.AddField(scaauthuser.FieldGender, field.TypeInt8, value)
 	}
 	if sauu.mutation.GenderCleared() {
-		_spec.ClearField(scaauthuser.FieldGender, field.TypeString)
+		_spec.ClearField(scaauthuser.FieldGender, field.TypeInt8)
 	}
 	if value, ok := sauu.mutation.Avatar(); ok {
 		_spec.SetField(scaauthuser.FieldAvatar, field.TypeString, value)
@@ -603,96 +534,6 @@ func (sauu *ScaAuthUserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	}
 	if sauu.mutation.CompanyCleared() {
 		_spec.ClearField(scaauthuser.FieldCompany, field.TypeString)
-	}
-	if sauu.mutation.ScaAuthUserSocialCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauu.mutation.RemovedScaAuthUserSocialIDs(); len(nodes) > 0 && !sauu.mutation.ScaAuthUserSocialCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauu.mutation.ScaAuthUserSocialIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if sauu.mutation.ScaAuthUserDeviceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauu.mutation.RemovedScaAuthUserDeviceIDs(); len(nodes) > 0 && !sauu.mutation.ScaAuthUserDeviceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauu.mutation.ScaAuthUserDeviceIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, sauu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -862,16 +703,23 @@ func (sauuo *ScaAuthUserUpdateOne) ClearPassword() *ScaAuthUserUpdateOne {
 }
 
 // SetGender sets the "gender" field.
-func (sauuo *ScaAuthUserUpdateOne) SetGender(s string) *ScaAuthUserUpdateOne {
-	sauuo.mutation.SetGender(s)
+func (sauuo *ScaAuthUserUpdateOne) SetGender(i int8) *ScaAuthUserUpdateOne {
+	sauuo.mutation.ResetGender()
+	sauuo.mutation.SetGender(i)
 	return sauuo
 }
 
 // SetNillableGender sets the "gender" field if the given value is not nil.
-func (sauuo *ScaAuthUserUpdateOne) SetNillableGender(s *string) *ScaAuthUserUpdateOne {
-	if s != nil {
-		sauuo.SetGender(*s)
+func (sauuo *ScaAuthUserUpdateOne) SetNillableGender(i *int8) *ScaAuthUserUpdateOne {
+	if i != nil {
+		sauuo.SetGender(*i)
 	}
+	return sauuo
+}
+
+// AddGender adds i to the "gender" field.
+func (sauuo *ScaAuthUserUpdateOne) AddGender(i int8) *ScaAuthUserUpdateOne {
+	sauuo.mutation.AddGender(i)
 	return sauuo
 }
 
@@ -1008,81 +856,9 @@ func (sauuo *ScaAuthUserUpdateOne) ClearCompany() *ScaAuthUserUpdateOne {
 	return sauuo
 }
 
-// AddScaAuthUserSocialIDs adds the "sca_auth_user_social" edge to the ScaAuthUserSocial entity by IDs.
-func (sauuo *ScaAuthUserUpdateOne) AddScaAuthUserSocialIDs(ids ...int64) *ScaAuthUserUpdateOne {
-	sauuo.mutation.AddScaAuthUserSocialIDs(ids...)
-	return sauuo
-}
-
-// AddScaAuthUserSocial adds the "sca_auth_user_social" edges to the ScaAuthUserSocial entity.
-func (sauuo *ScaAuthUserUpdateOne) AddScaAuthUserSocial(s ...*ScaAuthUserSocial) *ScaAuthUserUpdateOne {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauuo.AddScaAuthUserSocialIDs(ids...)
-}
-
-// AddScaAuthUserDeviceIDs adds the "sca_auth_user_device" edge to the ScaAuthUserDevice entity by IDs.
-func (sauuo *ScaAuthUserUpdateOne) AddScaAuthUserDeviceIDs(ids ...int64) *ScaAuthUserUpdateOne {
-	sauuo.mutation.AddScaAuthUserDeviceIDs(ids...)
-	return sauuo
-}
-
-// AddScaAuthUserDevice adds the "sca_auth_user_device" edges to the ScaAuthUserDevice entity.
-func (sauuo *ScaAuthUserUpdateOne) AddScaAuthUserDevice(s ...*ScaAuthUserDevice) *ScaAuthUserUpdateOne {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauuo.AddScaAuthUserDeviceIDs(ids...)
-}
-
 // Mutation returns the ScaAuthUserMutation object of the builder.
 func (sauuo *ScaAuthUserUpdateOne) Mutation() *ScaAuthUserMutation {
 	return sauuo.mutation
-}
-
-// ClearScaAuthUserSocial clears all "sca_auth_user_social" edges to the ScaAuthUserSocial entity.
-func (sauuo *ScaAuthUserUpdateOne) ClearScaAuthUserSocial() *ScaAuthUserUpdateOne {
-	sauuo.mutation.ClearScaAuthUserSocial()
-	return sauuo
-}
-
-// RemoveScaAuthUserSocialIDs removes the "sca_auth_user_social" edge to ScaAuthUserSocial entities by IDs.
-func (sauuo *ScaAuthUserUpdateOne) RemoveScaAuthUserSocialIDs(ids ...int64) *ScaAuthUserUpdateOne {
-	sauuo.mutation.RemoveScaAuthUserSocialIDs(ids...)
-	return sauuo
-}
-
-// RemoveScaAuthUserSocial removes "sca_auth_user_social" edges to ScaAuthUserSocial entities.
-func (sauuo *ScaAuthUserUpdateOne) RemoveScaAuthUserSocial(s ...*ScaAuthUserSocial) *ScaAuthUserUpdateOne {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauuo.RemoveScaAuthUserSocialIDs(ids...)
-}
-
-// ClearScaAuthUserDevice clears all "sca_auth_user_device" edges to the ScaAuthUserDevice entity.
-func (sauuo *ScaAuthUserUpdateOne) ClearScaAuthUserDevice() *ScaAuthUserUpdateOne {
-	sauuo.mutation.ClearScaAuthUserDevice()
-	return sauuo
-}
-
-// RemoveScaAuthUserDeviceIDs removes the "sca_auth_user_device" edge to ScaAuthUserDevice entities by IDs.
-func (sauuo *ScaAuthUserUpdateOne) RemoveScaAuthUserDeviceIDs(ids ...int64) *ScaAuthUserUpdateOne {
-	sauuo.mutation.RemoveScaAuthUserDeviceIDs(ids...)
-	return sauuo
-}
-
-// RemoveScaAuthUserDevice removes "sca_auth_user_device" edges to ScaAuthUserDevice entities.
-func (sauuo *ScaAuthUserUpdateOne) RemoveScaAuthUserDevice(s ...*ScaAuthUserDevice) *ScaAuthUserUpdateOne {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauuo.RemoveScaAuthUserDeviceIDs(ids...)
 }
 
 // Where appends a list predicates to the ScaAuthUserUpdate builder.
@@ -1169,11 +945,6 @@ func (sauuo *ScaAuthUserUpdateOne) check() error {
 	if v, ok := sauuo.mutation.Password(); ok {
 		if err := scaauthuser.PasswordValidator(v); err != nil {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.password": %w`, err)}
-		}
-	}
-	if v, ok := sauuo.mutation.Gender(); ok {
-		if err := scaauthuser.GenderValidator(v); err != nil {
-			return &ValidationError{Name: "gender", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.gender": %w`, err)}
 		}
 	}
 	if v, ok := sauuo.mutation.Introduce(); ok {
@@ -1274,10 +1045,13 @@ func (sauuo *ScaAuthUserUpdateOne) sqlSave(ctx context.Context) (_node *ScaAuthU
 		_spec.ClearField(scaauthuser.FieldPassword, field.TypeString)
 	}
 	if value, ok := sauuo.mutation.Gender(); ok {
-		_spec.SetField(scaauthuser.FieldGender, field.TypeString, value)
+		_spec.SetField(scaauthuser.FieldGender, field.TypeInt8, value)
+	}
+	if value, ok := sauuo.mutation.AddedGender(); ok {
+		_spec.AddField(scaauthuser.FieldGender, field.TypeInt8, value)
 	}
 	if sauuo.mutation.GenderCleared() {
-		_spec.ClearField(scaauthuser.FieldGender, field.TypeString)
+		_spec.ClearField(scaauthuser.FieldGender, field.TypeInt8)
 	}
 	if value, ok := sauuo.mutation.Avatar(); ok {
 		_spec.SetField(scaauthuser.FieldAvatar, field.TypeString, value)
@@ -1317,96 +1091,6 @@ func (sauuo *ScaAuthUserUpdateOne) sqlSave(ctx context.Context) (_node *ScaAuthU
 	}
 	if sauuo.mutation.CompanyCleared() {
 		_spec.ClearField(scaauthuser.FieldCompany, field.TypeString)
-	}
-	if sauuo.mutation.ScaAuthUserSocialCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauuo.mutation.RemovedScaAuthUserSocialIDs(); len(nodes) > 0 && !sauuo.mutation.ScaAuthUserSocialCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauuo.mutation.ScaAuthUserSocialIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
-	if sauuo.mutation.ScaAuthUserDeviceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauuo.mutation.RemovedScaAuthUserDeviceIDs(); len(nodes) > 0 && !sauuo.mutation.ScaAuthUserDeviceCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauuo.mutation.ScaAuthUserDeviceIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &ScaAuthUser{config: sauuo.config}
 	_spec.Assign = _node.assignValues

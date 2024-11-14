@@ -11,7 +11,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logc"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
-	"schisandra-album-cloud-microservices/app/core/api/repository/redis_session/types"
+	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 )
 
 func NewRedisSession(addr string, password string) *redisstore.RedisStore {

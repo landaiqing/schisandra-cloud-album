@@ -38,22 +38,20 @@ const (
 // ScaAuthPermissionRuleMutation represents an operation that mutates the ScaAuthPermissionRule nodes in the graph.
 type ScaAuthPermissionRuleMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	ptype                *string
-	v0                   *string
-	v1                   *string
-	v2                   *string
-	v3                   *string
-	v4                   *string
-	v5                   *string
-	clearedFields        map[string]struct{}
-	sca_auth_role        *int64
-	clearedsca_auth_role bool
-	done                 bool
-	oldValue             func(context.Context) (*ScaAuthPermissionRule, error)
-	predicates           []predicate.ScaAuthPermissionRule
+	op            Op
+	typ           string
+	id            *int
+	ptype         *string
+	v0            *string
+	v1            *string
+	v2            *string
+	v3            *string
+	v4            *string
+	v5            *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaAuthPermissionRule, error)
+	predicates    []predicate.ScaAuthPermissionRule
 }
 
 var _ ent.Mutation = (*ScaAuthPermissionRuleMutation)(nil)
@@ -76,7 +74,7 @@ func newScaAuthPermissionRuleMutation(c config, op Op, opts ...scaauthpermission
 }
 
 // withScaAuthPermissionRuleID sets the ID field of the mutation.
-func withScaAuthPermissionRuleID(id int64) scaauthpermissionruleOption {
+func withScaAuthPermissionRuleID(id int) scaauthpermissionruleOption {
 	return func(m *ScaAuthPermissionRuleMutation) {
 		var (
 			err   error
@@ -128,13 +126,13 @@ func (m ScaAuthPermissionRuleMutation) Tx() (*Tx, error) {
 
 // SetID sets the value of the id field. Note that this
 // operation is only accepted on creation of ScaAuthPermissionRule entities.
-func (m *ScaAuthPermissionRuleMutation) SetID(id int64) {
+func (m *ScaAuthPermissionRuleMutation) SetID(id int) {
 	m.id = &id
 }
 
 // ID returns the ID value in the mutation. Note that the ID is only available
 // if it was provided to the builder or after it was returned from the database.
-func (m *ScaAuthPermissionRuleMutation) ID() (id int64, exists bool) {
+func (m *ScaAuthPermissionRuleMutation) ID() (id int, exists bool) {
 	if m.id == nil {
 		return
 	}
@@ -145,12 +143,12 @@ func (m *ScaAuthPermissionRuleMutation) ID() (id int64, exists bool) {
 // That means, if the mutation is applied within a transaction with an isolation level such
 // as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
 // or updated by the mutation.
-func (m *ScaAuthPermissionRuleMutation) IDs(ctx context.Context) ([]int64, error) {
+func (m *ScaAuthPermissionRuleMutation) IDs(ctx context.Context) ([]int, error) {
 	switch {
 	case m.op.Is(OpUpdateOne | OpDeleteOne):
 		id, exists := m.ID()
 		if exists {
-			return []int64{id}, nil
+			return []int{id}, nil
 		}
 		fallthrough
 	case m.op.Is(OpUpdate | OpDelete):
@@ -177,7 +175,7 @@ func (m *ScaAuthPermissionRuleMutation) Ptype() (r string, exists bool) {
 // OldPtype returns the old "ptype" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldPtype(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldPtype(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldPtype is only allowed on UpdateOne operations")
 	}
@@ -191,9 +189,22 @@ func (m *ScaAuthPermissionRuleMutation) OldPtype(ctx context.Context) (v *string
 	return oldValue.Ptype, nil
 }
 
+// ClearPtype clears the value of the "ptype" field.
+func (m *ScaAuthPermissionRuleMutation) ClearPtype() {
+	m.ptype = nil
+	m.clearedFields[scaauthpermissionrule.FieldPtype] = struct{}{}
+}
+
+// PtypeCleared returns if the "ptype" field was cleared in this mutation.
+func (m *ScaAuthPermissionRuleMutation) PtypeCleared() bool {
+	_, ok := m.clearedFields[scaauthpermissionrule.FieldPtype]
+	return ok
+}
+
 // ResetPtype resets all changes to the "ptype" field.
 func (m *ScaAuthPermissionRuleMutation) ResetPtype() {
 	m.ptype = nil
+	delete(m.clearedFields, scaauthpermissionrule.FieldPtype)
 }
 
 // SetV0 sets the "v0" field.
@@ -213,7 +224,7 @@ func (m *ScaAuthPermissionRuleMutation) V0() (r string, exists bool) {
 // OldV0 returns the old "v0" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldV0(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldV0(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldV0 is only allowed on UpdateOne operations")
 	}
@@ -227,9 +238,22 @@ func (m *ScaAuthPermissionRuleMutation) OldV0(ctx context.Context) (v *string, e
 	return oldValue.V0, nil
 }
 
+// ClearV0 clears the value of the "v0" field.
+func (m *ScaAuthPermissionRuleMutation) ClearV0() {
+	m.v0 = nil
+	m.clearedFields[scaauthpermissionrule.FieldV0] = struct{}{}
+}
+
+// V0Cleared returns if the "v0" field was cleared in this mutation.
+func (m *ScaAuthPermissionRuleMutation) V0Cleared() bool {
+	_, ok := m.clearedFields[scaauthpermissionrule.FieldV0]
+	return ok
+}
+
 // ResetV0 resets all changes to the "v0" field.
 func (m *ScaAuthPermissionRuleMutation) ResetV0() {
 	m.v0 = nil
+	delete(m.clearedFields, scaauthpermissionrule.FieldV0)
 }
 
 // SetV1 sets the "v1" field.
@@ -249,7 +273,7 @@ func (m *ScaAuthPermissionRuleMutation) V1() (r string, exists bool) {
 // OldV1 returns the old "v1" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldV1(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldV1(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldV1 is only allowed on UpdateOne operations")
 	}
@@ -263,9 +287,22 @@ func (m *ScaAuthPermissionRuleMutation) OldV1(ctx context.Context) (v *string, e
 	return oldValue.V1, nil
 }
 
+// ClearV1 clears the value of the "v1" field.
+func (m *ScaAuthPermissionRuleMutation) ClearV1() {
+	m.v1 = nil
+	m.clearedFields[scaauthpermissionrule.FieldV1] = struct{}{}
+}
+
+// V1Cleared returns if the "v1" field was cleared in this mutation.
+func (m *ScaAuthPermissionRuleMutation) V1Cleared() bool {
+	_, ok := m.clearedFields[scaauthpermissionrule.FieldV1]
+	return ok
+}
+
 // ResetV1 resets all changes to the "v1" field.
 func (m *ScaAuthPermissionRuleMutation) ResetV1() {
 	m.v1 = nil
+	delete(m.clearedFields, scaauthpermissionrule.FieldV1)
 }
 
 // SetV2 sets the "v2" field.
@@ -285,7 +322,7 @@ func (m *ScaAuthPermissionRuleMutation) V2() (r string, exists bool) {
 // OldV2 returns the old "v2" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldV2(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldV2(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldV2 is only allowed on UpdateOne operations")
 	}
@@ -334,7 +371,7 @@ func (m *ScaAuthPermissionRuleMutation) V3() (r string, exists bool) {
 // OldV3 returns the old "v3" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldV3(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldV3(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldV3 is only allowed on UpdateOne operations")
 	}
@@ -383,7 +420,7 @@ func (m *ScaAuthPermissionRuleMutation) V4() (r string, exists bool) {
 // OldV4 returns the old "v4" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldV4(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldV4(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldV4 is only allowed on UpdateOne operations")
 	}
@@ -432,7 +469,7 @@ func (m *ScaAuthPermissionRuleMutation) V5() (r string, exists bool) {
 // OldV5 returns the old "v5" field's value of the ScaAuthPermissionRule entity.
 // If the ScaAuthPermissionRule object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthPermissionRuleMutation) OldV5(ctx context.Context) (v *string, err error) {
+func (m *ScaAuthPermissionRuleMutation) OldV5(ctx context.Context) (v string, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldV5 is only allowed on UpdateOne operations")
 	}
@@ -462,45 +499,6 @@ func (m *ScaAuthPermissionRuleMutation) V5Cleared() bool {
 func (m *ScaAuthPermissionRuleMutation) ResetV5() {
 	m.v5 = nil
 	delete(m.clearedFields, scaauthpermissionrule.FieldV5)
-}
-
-// SetScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by id.
-func (m *ScaAuthPermissionRuleMutation) SetScaAuthRoleID(id int64) {
-	m.sca_auth_role = &id
-}
-
-// ClearScaAuthRole clears the "sca_auth_role" edge to the ScaAuthRole entity.
-func (m *ScaAuthPermissionRuleMutation) ClearScaAuthRole() {
-	m.clearedsca_auth_role = true
-}
-
-// ScaAuthRoleCleared reports if the "sca_auth_role" edge to the ScaAuthRole entity was cleared.
-func (m *ScaAuthPermissionRuleMutation) ScaAuthRoleCleared() bool {
-	return m.clearedsca_auth_role
-}
-
-// ScaAuthRoleID returns the "sca_auth_role" edge ID in the mutation.
-func (m *ScaAuthPermissionRuleMutation) ScaAuthRoleID() (id int64, exists bool) {
-	if m.sca_auth_role != nil {
-		return *m.sca_auth_role, true
-	}
-	return
-}
-
-// ScaAuthRoleIDs returns the "sca_auth_role" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ScaAuthRoleID instead. It exists only for internal usage by the builders.
-func (m *ScaAuthPermissionRuleMutation) ScaAuthRoleIDs() (ids []int64) {
-	if id := m.sca_auth_role; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetScaAuthRole resets all changes to the "sca_auth_role" edge.
-func (m *ScaAuthPermissionRuleMutation) ResetScaAuthRole() {
-	m.sca_auth_role = nil
-	m.clearedsca_auth_role = false
 }
 
 // Where appends a list predicates to the ScaAuthPermissionRuleMutation builder.
@@ -692,6 +690,15 @@ func (m *ScaAuthPermissionRuleMutation) AddField(name string, value ent.Value) e
 // mutation.
 func (m *ScaAuthPermissionRuleMutation) ClearedFields() []string {
 	var fields []string
+	if m.FieldCleared(scaauthpermissionrule.FieldPtype) {
+		fields = append(fields, scaauthpermissionrule.FieldPtype)
+	}
+	if m.FieldCleared(scaauthpermissionrule.FieldV0) {
+		fields = append(fields, scaauthpermissionrule.FieldV0)
+	}
+	if m.FieldCleared(scaauthpermissionrule.FieldV1) {
+		fields = append(fields, scaauthpermissionrule.FieldV1)
+	}
 	if m.FieldCleared(scaauthpermissionrule.FieldV2) {
 		fields = append(fields, scaauthpermissionrule.FieldV2)
 	}
@@ -718,6 +725,15 @@ func (m *ScaAuthPermissionRuleMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthPermissionRuleMutation) ClearField(name string) error {
 	switch name {
+	case scaauthpermissionrule.FieldPtype:
+		m.ClearPtype()
+		return nil
+	case scaauthpermissionrule.FieldV0:
+		m.ClearV0()
+		return nil
+	case scaauthpermissionrule.FieldV1:
+		m.ClearV1()
+		return nil
 	case scaauthpermissionrule.FieldV2:
 		m.ClearV2()
 		return nil
@@ -765,28 +781,19 @@ func (m *ScaAuthPermissionRuleMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ScaAuthPermissionRuleMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.sca_auth_role != nil {
-		edges = append(edges, scaauthpermissionrule.EdgeScaAuthRole)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *ScaAuthPermissionRuleMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthpermissionrule.EdgeScaAuthRole:
-		if id := m.sca_auth_role; id != nil {
-			return []ent.Value{*id}
-		}
-	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ScaAuthPermissionRuleMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 0)
 	return edges
 }
 
@@ -798,64 +805,44 @@ func (m *ScaAuthPermissionRuleMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ScaAuthPermissionRuleMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedsca_auth_role {
-		edges = append(edges, scaauthpermissionrule.EdgeScaAuthRole)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *ScaAuthPermissionRuleMutation) EdgeCleared(name string) bool {
-	switch name {
-	case scaauthpermissionrule.EdgeScaAuthRole:
-		return m.clearedsca_auth_role
-	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ScaAuthPermissionRuleMutation) ClearEdge(name string) error {
-	switch name {
-	case scaauthpermissionrule.EdgeScaAuthRole:
-		m.ClearScaAuthRole()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthPermissionRule unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ScaAuthPermissionRuleMutation) ResetEdge(name string) error {
-	switch name {
-	case scaauthpermissionrule.EdgeScaAuthRole:
-		m.ResetScaAuthRole()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthPermissionRule edge %s", name)
 }
 
 // ScaAuthRoleMutation represents an operation that mutates the ScaAuthRole nodes in the graph.
 type ScaAuthRoleMutation struct {
 	config
-	op                              Op
-	typ                             string
-	id                              *int64
-	created_at                      *time.Time
-	updated_at                      *time.Time
-	deleted                         *int8
-	adddeleted                      *int8
-	role_name                       *string
-	role_key                        *string
-	clearedFields                   map[string]struct{}
-	sca_auth_permission_rule        map[int64]struct{}
-	removedsca_auth_permission_rule map[int64]struct{}
-	clearedsca_auth_permission_rule bool
-	done                            bool
-	oldValue                        func(context.Context) (*ScaAuthRole, error)
-	predicates                      []predicate.ScaAuthRole
+	op            Op
+	typ           string
+	id            *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *int8
+	adddeleted    *int8
+	role_name     *string
+	role_key      *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaAuthRole, error)
+	predicates    []predicate.ScaAuthRole
 }
 
 var _ ent.Mutation = (*ScaAuthRoleMutation)(nil)
@@ -1176,60 +1163,6 @@ func (m *ScaAuthRoleMutation) ResetRoleKey() {
 	m.role_key = nil
 }
 
-// AddScaAuthPermissionRuleIDs adds the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity by ids.
-func (m *ScaAuthRoleMutation) AddScaAuthPermissionRuleIDs(ids ...int64) {
-	if m.sca_auth_permission_rule == nil {
-		m.sca_auth_permission_rule = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.sca_auth_permission_rule[ids[i]] = struct{}{}
-	}
-}
-
-// ClearScaAuthPermissionRule clears the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity.
-func (m *ScaAuthRoleMutation) ClearScaAuthPermissionRule() {
-	m.clearedsca_auth_permission_rule = true
-}
-
-// ScaAuthPermissionRuleCleared reports if the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity was cleared.
-func (m *ScaAuthRoleMutation) ScaAuthPermissionRuleCleared() bool {
-	return m.clearedsca_auth_permission_rule
-}
-
-// RemoveScaAuthPermissionRuleIDs removes the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity by IDs.
-func (m *ScaAuthRoleMutation) RemoveScaAuthPermissionRuleIDs(ids ...int64) {
-	if m.removedsca_auth_permission_rule == nil {
-		m.removedsca_auth_permission_rule = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.sca_auth_permission_rule, ids[i])
-		m.removedsca_auth_permission_rule[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedScaAuthPermissionRule returns the removed IDs of the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity.
-func (m *ScaAuthRoleMutation) RemovedScaAuthPermissionRuleIDs() (ids []int64) {
-	for id := range m.removedsca_auth_permission_rule {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ScaAuthPermissionRuleIDs returns the "sca_auth_permission_rule" edge IDs in the mutation.
-func (m *ScaAuthRoleMutation) ScaAuthPermissionRuleIDs() (ids []int64) {
-	for id := range m.sca_auth_permission_rule {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetScaAuthPermissionRule resets all changes to the "sca_auth_permission_rule" edge.
-func (m *ScaAuthRoleMutation) ResetScaAuthPermissionRule() {
-	m.sca_auth_permission_rule = nil
-	m.clearedsca_auth_permission_rule = false
-	m.removedsca_auth_permission_rule = nil
-}
-
 // Where appends a list predicates to the ScaAuthRoleMutation builder.
 func (m *ScaAuthRoleMutation) Where(ps ...predicate.ScaAuthRole) {
 	m.predicates = append(m.predicates, ps...)
@@ -1455,122 +1388,81 @@ func (m *ScaAuthRoleMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ScaAuthRoleMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.sca_auth_permission_rule != nil {
-		edges = append(edges, scaauthrole.EdgeScaAuthPermissionRule)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *ScaAuthRoleMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthrole.EdgeScaAuthPermissionRule:
-		ids := make([]ent.Value, 0, len(m.sca_auth_permission_rule))
-		for id := range m.sca_auth_permission_rule {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ScaAuthRoleMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.removedsca_auth_permission_rule != nil {
-		edges = append(edges, scaauthrole.EdgeScaAuthPermissionRule)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *ScaAuthRoleMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthrole.EdgeScaAuthPermissionRule:
-		ids := make([]ent.Value, 0, len(m.removedsca_auth_permission_rule))
-		for id := range m.removedsca_auth_permission_rule {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ScaAuthRoleMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedsca_auth_permission_rule {
-		edges = append(edges, scaauthrole.EdgeScaAuthPermissionRule)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *ScaAuthRoleMutation) EdgeCleared(name string) bool {
-	switch name {
-	case scaauthrole.EdgeScaAuthPermissionRule:
-		return m.clearedsca_auth_permission_rule
-	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ScaAuthRoleMutation) ClearEdge(name string) error {
-	switch name {
-	}
 	return fmt.Errorf("unknown ScaAuthRole unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ScaAuthRoleMutation) ResetEdge(name string) error {
-	switch name {
-	case scaauthrole.EdgeScaAuthPermissionRule:
-		m.ResetScaAuthPermissionRule()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthRole edge %s", name)
 }
 
 // ScaAuthUserMutation represents an operation that mutates the ScaAuthUser nodes in the graph.
 type ScaAuthUserMutation struct {
 	config
-	op                          Op
-	typ                         string
-	id                          *int64
-	created_at                  *time.Time
-	updated_at                  *time.Time
-	deleted                     *int8
-	adddeleted                  *int8
-	uid                         *string
-	username                    *string
-	nickname                    *string
-	email                       *string
-	phone                       *string
-	password                    *string
-	gender                      *string
-	avatar                      *string
-	status                      *int8
-	addstatus                   *int8
-	introduce                   *string
-	blog                        *string
-	location                    *string
-	company                     *string
-	clearedFields               map[string]struct{}
-	sca_auth_user_social        map[int64]struct{}
-	removedsca_auth_user_social map[int64]struct{}
-	clearedsca_auth_user_social bool
-	sca_auth_user_device        map[int64]struct{}
-	removedsca_auth_user_device map[int64]struct{}
-	clearedsca_auth_user_device bool
-	done                        bool
-	oldValue                    func(context.Context) (*ScaAuthUser, error)
-	predicates                  []predicate.ScaAuthUser
+	op            Op
+	typ           string
+	id            *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *int8
+	adddeleted    *int8
+	uid           *string
+	username      *string
+	nickname      *string
+	email         *string
+	phone         *string
+	password      *string
+	gender        *int8
+	addgender     *int8
+	avatar        *string
+	status        *int8
+	addstatus     *int8
+	introduce     *string
+	blog          *string
+	location      *string
+	company       *string
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaAuthUser, error)
+	predicates    []predicate.ScaAuthUser
 }
 
 var _ ent.Mutation = (*ScaAuthUserMutation)(nil)
@@ -2101,12 +1993,13 @@ func (m *ScaAuthUserMutation) ResetPassword() {
 }
 
 // SetGender sets the "gender" field.
-func (m *ScaAuthUserMutation) SetGender(s string) {
-	m.gender = &s
+func (m *ScaAuthUserMutation) SetGender(i int8) {
+	m.gender = &i
+	m.addgender = nil
 }
 
 // Gender returns the value of the "gender" field in the mutation.
-func (m *ScaAuthUserMutation) Gender() (r string, exists bool) {
+func (m *ScaAuthUserMutation) Gender() (r int8, exists bool) {
 	v := m.gender
 	if v == nil {
 		return
@@ -2117,7 +2010,7 @@ func (m *ScaAuthUserMutation) Gender() (r string, exists bool) {
 // OldGender returns the old "gender" field's value of the ScaAuthUser entity.
 // If the ScaAuthUser object wasn't provided to the builder, the object is fetched from the database.
 // An error is returned if the mutation operation is not UpdateOne, or the database query fails.
-func (m *ScaAuthUserMutation) OldGender(ctx context.Context) (v string, err error) {
+func (m *ScaAuthUserMutation) OldGender(ctx context.Context) (v int8, err error) {
 	if !m.op.Is(OpUpdateOne) {
 		return v, errors.New("OldGender is only allowed on UpdateOne operations")
 	}
@@ -2131,9 +2024,28 @@ func (m *ScaAuthUserMutation) OldGender(ctx context.Context) (v string, err erro
 	return oldValue.Gender, nil
 }
 
+// AddGender adds i to the "gender" field.
+func (m *ScaAuthUserMutation) AddGender(i int8) {
+	if m.addgender != nil {
+		*m.addgender += i
+	} else {
+		m.addgender = &i
+	}
+}
+
+// AddedGender returns the value that was added to the "gender" field in this mutation.
+func (m *ScaAuthUserMutation) AddedGender() (r int8, exists bool) {
+	v := m.addgender
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
 // ClearGender clears the value of the "gender" field.
 func (m *ScaAuthUserMutation) ClearGender() {
 	m.gender = nil
+	m.addgender = nil
 	m.clearedFields[scaauthuser.FieldGender] = struct{}{}
 }
 
@@ -2146,6 +2058,7 @@ func (m *ScaAuthUserMutation) GenderCleared() bool {
 // ResetGender resets all changes to the "gender" field.
 func (m *ScaAuthUserMutation) ResetGender() {
 	m.gender = nil
+	m.addgender = nil
 	delete(m.clearedFields, scaauthuser.FieldGender)
 }
 
@@ -2464,114 +2377,6 @@ func (m *ScaAuthUserMutation) ResetCompany() {
 	delete(m.clearedFields, scaauthuser.FieldCompany)
 }
 
-// AddScaAuthUserSocialIDs adds the "sca_auth_user_social" edge to the ScaAuthUserSocial entity by ids.
-func (m *ScaAuthUserMutation) AddScaAuthUserSocialIDs(ids ...int64) {
-	if m.sca_auth_user_social == nil {
-		m.sca_auth_user_social = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.sca_auth_user_social[ids[i]] = struct{}{}
-	}
-}
-
-// ClearScaAuthUserSocial clears the "sca_auth_user_social" edge to the ScaAuthUserSocial entity.
-func (m *ScaAuthUserMutation) ClearScaAuthUserSocial() {
-	m.clearedsca_auth_user_social = true
-}
-
-// ScaAuthUserSocialCleared reports if the "sca_auth_user_social" edge to the ScaAuthUserSocial entity was cleared.
-func (m *ScaAuthUserMutation) ScaAuthUserSocialCleared() bool {
-	return m.clearedsca_auth_user_social
-}
-
-// RemoveScaAuthUserSocialIDs removes the "sca_auth_user_social" edge to the ScaAuthUserSocial entity by IDs.
-func (m *ScaAuthUserMutation) RemoveScaAuthUserSocialIDs(ids ...int64) {
-	if m.removedsca_auth_user_social == nil {
-		m.removedsca_auth_user_social = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.sca_auth_user_social, ids[i])
-		m.removedsca_auth_user_social[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedScaAuthUserSocial returns the removed IDs of the "sca_auth_user_social" edge to the ScaAuthUserSocial entity.
-func (m *ScaAuthUserMutation) RemovedScaAuthUserSocialIDs() (ids []int64) {
-	for id := range m.removedsca_auth_user_social {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ScaAuthUserSocialIDs returns the "sca_auth_user_social" edge IDs in the mutation.
-func (m *ScaAuthUserMutation) ScaAuthUserSocialIDs() (ids []int64) {
-	for id := range m.sca_auth_user_social {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetScaAuthUserSocial resets all changes to the "sca_auth_user_social" edge.
-func (m *ScaAuthUserMutation) ResetScaAuthUserSocial() {
-	m.sca_auth_user_social = nil
-	m.clearedsca_auth_user_social = false
-	m.removedsca_auth_user_social = nil
-}
-
-// AddScaAuthUserDeviceIDs adds the "sca_auth_user_device" edge to the ScaAuthUserDevice entity by ids.
-func (m *ScaAuthUserMutation) AddScaAuthUserDeviceIDs(ids ...int64) {
-	if m.sca_auth_user_device == nil {
-		m.sca_auth_user_device = make(map[int64]struct{})
-	}
-	for i := range ids {
-		m.sca_auth_user_device[ids[i]] = struct{}{}
-	}
-}
-
-// ClearScaAuthUserDevice clears the "sca_auth_user_device" edge to the ScaAuthUserDevice entity.
-func (m *ScaAuthUserMutation) ClearScaAuthUserDevice() {
-	m.clearedsca_auth_user_device = true
-}
-
-// ScaAuthUserDeviceCleared reports if the "sca_auth_user_device" edge to the ScaAuthUserDevice entity was cleared.
-func (m *ScaAuthUserMutation) ScaAuthUserDeviceCleared() bool {
-	return m.clearedsca_auth_user_device
-}
-
-// RemoveScaAuthUserDeviceIDs removes the "sca_auth_user_device" edge to the ScaAuthUserDevice entity by IDs.
-func (m *ScaAuthUserMutation) RemoveScaAuthUserDeviceIDs(ids ...int64) {
-	if m.removedsca_auth_user_device == nil {
-		m.removedsca_auth_user_device = make(map[int64]struct{})
-	}
-	for i := range ids {
-		delete(m.sca_auth_user_device, ids[i])
-		m.removedsca_auth_user_device[ids[i]] = struct{}{}
-	}
-}
-
-// RemovedScaAuthUserDevice returns the removed IDs of the "sca_auth_user_device" edge to the ScaAuthUserDevice entity.
-func (m *ScaAuthUserMutation) RemovedScaAuthUserDeviceIDs() (ids []int64) {
-	for id := range m.removedsca_auth_user_device {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ScaAuthUserDeviceIDs returns the "sca_auth_user_device" edge IDs in the mutation.
-func (m *ScaAuthUserMutation) ScaAuthUserDeviceIDs() (ids []int64) {
-	for id := range m.sca_auth_user_device {
-		ids = append(ids, id)
-	}
-	return
-}
-
-// ResetScaAuthUserDevice resets all changes to the "sca_auth_user_device" edge.
-func (m *ScaAuthUserMutation) ResetScaAuthUserDevice() {
-	m.sca_auth_user_device = nil
-	m.clearedsca_auth_user_device = false
-	m.removedsca_auth_user_device = nil
-}
-
 // Where appends a list predicates to the ScaAuthUserMutation builder.
 func (m *ScaAuthUserMutation) Where(ps ...predicate.ScaAuthUser) {
 	m.predicates = append(m.predicates, ps...)
@@ -2809,7 +2614,7 @@ func (m *ScaAuthUserMutation) SetField(name string, value ent.Value) error {
 		m.SetPassword(v)
 		return nil
 	case scaauthuser.FieldGender:
-		v, ok := value.(string)
+		v, ok := value.(int8)
 		if !ok {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
@@ -2868,6 +2673,9 @@ func (m *ScaAuthUserMutation) AddedFields() []string {
 	if m.adddeleted != nil {
 		fields = append(fields, scaauthuser.FieldDeleted)
 	}
+	if m.addgender != nil {
+		fields = append(fields, scaauthuser.FieldGender)
+	}
 	if m.addstatus != nil {
 		fields = append(fields, scaauthuser.FieldStatus)
 	}
@@ -2881,6 +2689,8 @@ func (m *ScaAuthUserMutation) AddedField(name string) (ent.Value, bool) {
 	switch name {
 	case scaauthuser.FieldDeleted:
 		return m.AddedDeleted()
+	case scaauthuser.FieldGender:
+		return m.AddedGender()
 	case scaauthuser.FieldStatus:
 		return m.AddedStatus()
 	}
@@ -2898,6 +2708,13 @@ func (m *ScaAuthUserMutation) AddField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.AddDeleted(v)
+		return nil
+	case scaauthuser.FieldGender:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddGender(v)
 		return nil
 	case scaauthuser.FieldStatus:
 		v, ok := value.(int8)
@@ -3068,143 +2885,79 @@ func (m *ScaAuthUserMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ScaAuthUserMutation) AddedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.sca_auth_user_social != nil {
-		edges = append(edges, scaauthuser.EdgeScaAuthUserSocial)
-	}
-	if m.sca_auth_user_device != nil {
-		edges = append(edges, scaauthuser.EdgeScaAuthUserDevice)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *ScaAuthUserMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthuser.EdgeScaAuthUserSocial:
-		ids := make([]ent.Value, 0, len(m.sca_auth_user_social))
-		for id := range m.sca_auth_user_social {
-			ids = append(ids, id)
-		}
-		return ids
-	case scaauthuser.EdgeScaAuthUserDevice:
-		ids := make([]ent.Value, 0, len(m.sca_auth_user_device))
-		for id := range m.sca_auth_user_device {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ScaAuthUserMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.removedsca_auth_user_social != nil {
-		edges = append(edges, scaauthuser.EdgeScaAuthUserSocial)
-	}
-	if m.removedsca_auth_user_device != nil {
-		edges = append(edges, scaauthuser.EdgeScaAuthUserDevice)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
 // the given name in this mutation.
 func (m *ScaAuthUserMutation) RemovedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthuser.EdgeScaAuthUserSocial:
-		ids := make([]ent.Value, 0, len(m.removedsca_auth_user_social))
-		for id := range m.removedsca_auth_user_social {
-			ids = append(ids, id)
-		}
-		return ids
-	case scaauthuser.EdgeScaAuthUserDevice:
-		ids := make([]ent.Value, 0, len(m.removedsca_auth_user_device))
-		for id := range m.removedsca_auth_user_device {
-			ids = append(ids, id)
-		}
-		return ids
-	}
 	return nil
 }
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ScaAuthUserMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 2)
-	if m.clearedsca_auth_user_social {
-		edges = append(edges, scaauthuser.EdgeScaAuthUserSocial)
-	}
-	if m.clearedsca_auth_user_device {
-		edges = append(edges, scaauthuser.EdgeScaAuthUserDevice)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *ScaAuthUserMutation) EdgeCleared(name string) bool {
-	switch name {
-	case scaauthuser.EdgeScaAuthUserSocial:
-		return m.clearedsca_auth_user_social
-	case scaauthuser.EdgeScaAuthUserDevice:
-		return m.clearedsca_auth_user_device
-	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ScaAuthUserMutation) ClearEdge(name string) error {
-	switch name {
-	}
 	return fmt.Errorf("unknown ScaAuthUser unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ScaAuthUserMutation) ResetEdge(name string) error {
-	switch name {
-	case scaauthuser.EdgeScaAuthUserSocial:
-		m.ResetScaAuthUserSocial()
-		return nil
-	case scaauthuser.EdgeScaAuthUserDevice:
-		m.ResetScaAuthUserDevice()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthUser edge %s", name)
 }
 
 // ScaAuthUserDeviceMutation represents an operation that mutates the ScaAuthUserDevice nodes in the graph.
 type ScaAuthUserDeviceMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	created_at           *time.Time
-	updated_at           *time.Time
-	deleted              *int8
-	adddeleted           *int8
-	user_id              *string
-	ip                   *string
-	location             *string
-	agent                *string
-	browser              *string
-	operating_system     *string
-	browser_version      *string
-	mobile               *bool
-	bot                  *bool
-	mozilla              *string
-	platform             *string
-	engine_name          *string
-	engine_version       *string
-	clearedFields        map[string]struct{}
-	sca_auth_user        *int64
-	clearedsca_auth_user bool
-	done                 bool
-	oldValue             func(context.Context) (*ScaAuthUserDevice, error)
-	predicates           []predicate.ScaAuthUserDevice
+	op               Op
+	typ              string
+	id               *int64
+	created_at       *time.Time
+	updated_at       *time.Time
+	deleted          *int8
+	adddeleted       *int8
+	user_id          *string
+	ip               *string
+	location         *string
+	agent            *string
+	browser          *string
+	operating_system *string
+	browser_version  *string
+	mobile           *bool
+	bot              *bool
+	mozilla          *string
+	platform         *string
+	engine_name      *string
+	engine_version   *string
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*ScaAuthUserDevice, error)
+	predicates       []predicate.ScaAuthUserDevice
 }
 
 var _ ent.Mutation = (*ScaAuthUserDeviceMutation)(nil)
@@ -3921,45 +3674,6 @@ func (m *ScaAuthUserDeviceMutation) ResetEngineVersion() {
 	m.engine_version = nil
 }
 
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by id.
-func (m *ScaAuthUserDeviceMutation) SetScaAuthUserID(id int64) {
-	m.sca_auth_user = &id
-}
-
-// ClearScaAuthUser clears the "sca_auth_user" edge to the ScaAuthUser entity.
-func (m *ScaAuthUserDeviceMutation) ClearScaAuthUser() {
-	m.clearedsca_auth_user = true
-}
-
-// ScaAuthUserCleared reports if the "sca_auth_user" edge to the ScaAuthUser entity was cleared.
-func (m *ScaAuthUserDeviceMutation) ScaAuthUserCleared() bool {
-	return m.clearedsca_auth_user
-}
-
-// ScaAuthUserID returns the "sca_auth_user" edge ID in the mutation.
-func (m *ScaAuthUserDeviceMutation) ScaAuthUserID() (id int64, exists bool) {
-	if m.sca_auth_user != nil {
-		return *m.sca_auth_user, true
-	}
-	return
-}
-
-// ScaAuthUserIDs returns the "sca_auth_user" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ScaAuthUserID instead. It exists only for internal usage by the builders.
-func (m *ScaAuthUserDeviceMutation) ScaAuthUserIDs() (ids []int64) {
-	if id := m.sca_auth_user; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetScaAuthUser resets all changes to the "sca_auth_user" edge.
-func (m *ScaAuthUserDeviceMutation) ResetScaAuthUser() {
-	m.sca_auth_user = nil
-	m.clearedsca_auth_user = false
-}
-
 // Where appends a list predicates to the ScaAuthUserDeviceMutation builder.
 func (m *ScaAuthUserDeviceMutation) Where(ps ...predicate.ScaAuthUserDevice) {
 	m.predicates = append(m.predicates, ps...)
@@ -4372,28 +4086,19 @@ func (m *ScaAuthUserDeviceMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ScaAuthUserDeviceMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.sca_auth_user != nil {
-		edges = append(edges, scaauthuserdevice.EdgeScaAuthUser)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *ScaAuthUserDeviceMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthuserdevice.EdgeScaAuthUser:
-		if id := m.sca_auth_user; id != nil {
-			return []ent.Value{*id}
-		}
-	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ScaAuthUserDeviceMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 0)
 	return edges
 }
 
@@ -4405,66 +4110,47 @@ func (m *ScaAuthUserDeviceMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ScaAuthUserDeviceMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedsca_auth_user {
-		edges = append(edges, scaauthuserdevice.EdgeScaAuthUser)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *ScaAuthUserDeviceMutation) EdgeCleared(name string) bool {
-	switch name {
-	case scaauthuserdevice.EdgeScaAuthUser:
-		return m.clearedsca_auth_user
-	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ScaAuthUserDeviceMutation) ClearEdge(name string) error {
-	switch name {
-	case scaauthuserdevice.EdgeScaAuthUser:
-		m.ClearScaAuthUser()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthUserDevice unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ScaAuthUserDeviceMutation) ResetEdge(name string) error {
-	switch name {
-	case scaauthuserdevice.EdgeScaAuthUser:
-		m.ResetScaAuthUser()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthUserDevice edge %s", name)
 }
 
 // ScaAuthUserSocialMutation represents an operation that mutates the ScaAuthUserSocial nodes in the graph.
 type ScaAuthUserSocialMutation struct {
 	config
-	op                   Op
-	typ                  string
-	id                   *int64
-	created_at           *time.Time
-	updated_at           *time.Time
-	deleted              *int8
-	adddeleted           *int8
-	user_id              *string
-	open_id              *string
-	source               *string
-	status               *int
-	addstatus            *int
-	clearedFields        map[string]struct{}
-	sca_auth_user        *int64
-	clearedsca_auth_user bool
-	done                 bool
-	oldValue             func(context.Context) (*ScaAuthUserSocial, error)
-	predicates           []predicate.ScaAuthUserSocial
+	op            Op
+	typ           string
+	id            *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *int8
+	adddeleted    *int8
+	user_id       *string
+	open_id       *string
+	source        *string
+	status        *int
+	addstatus     *int
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaAuthUserSocial, error)
+	predicates    []predicate.ScaAuthUserSocial
 }
 
 var _ ent.Mutation = (*ScaAuthUserSocialMutation)(nil)
@@ -4877,45 +4563,6 @@ func (m *ScaAuthUserSocialMutation) ResetStatus() {
 	m.addstatus = nil
 }
 
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by id.
-func (m *ScaAuthUserSocialMutation) SetScaAuthUserID(id int64) {
-	m.sca_auth_user = &id
-}
-
-// ClearScaAuthUser clears the "sca_auth_user" edge to the ScaAuthUser entity.
-func (m *ScaAuthUserSocialMutation) ClearScaAuthUser() {
-	m.clearedsca_auth_user = true
-}
-
-// ScaAuthUserCleared reports if the "sca_auth_user" edge to the ScaAuthUser entity was cleared.
-func (m *ScaAuthUserSocialMutation) ScaAuthUserCleared() bool {
-	return m.clearedsca_auth_user
-}
-
-// ScaAuthUserID returns the "sca_auth_user" edge ID in the mutation.
-func (m *ScaAuthUserSocialMutation) ScaAuthUserID() (id int64, exists bool) {
-	if m.sca_auth_user != nil {
-		return *m.sca_auth_user, true
-	}
-	return
-}
-
-// ScaAuthUserIDs returns the "sca_auth_user" edge IDs in the mutation.
-// Note that IDs always returns len(IDs) <= 1 for unique edges, and you should use
-// ScaAuthUserID instead. It exists only for internal usage by the builders.
-func (m *ScaAuthUserSocialMutation) ScaAuthUserIDs() (ids []int64) {
-	if id := m.sca_auth_user; id != nil {
-		ids = append(ids, *id)
-	}
-	return
-}
-
-// ResetScaAuthUser resets all changes to the "sca_auth_user" edge.
-func (m *ScaAuthUserSocialMutation) ResetScaAuthUser() {
-	m.sca_auth_user = nil
-	m.clearedsca_auth_user = false
-}
-
 // Where appends a list predicates to the ScaAuthUserSocialMutation builder.
 func (m *ScaAuthUserSocialMutation) Where(ps ...predicate.ScaAuthUserSocial) {
 	m.predicates = append(m.predicates, ps...)
@@ -5187,28 +4834,19 @@ func (m *ScaAuthUserSocialMutation) ResetField(name string) error {
 
 // AddedEdges returns all edge names that were set/added in this mutation.
 func (m *ScaAuthUserSocialMutation) AddedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.sca_auth_user != nil {
-		edges = append(edges, scaauthusersocial.EdgeScaAuthUser)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // AddedIDs returns all IDs (to other nodes) that were added for the given edge
 // name in this mutation.
 func (m *ScaAuthUserSocialMutation) AddedIDs(name string) []ent.Value {
-	switch name {
-	case scaauthusersocial.EdgeScaAuthUser:
-		if id := m.sca_auth_user; id != nil {
-			return []ent.Value{*id}
-		}
-	}
 	return nil
 }
 
 // RemovedEdges returns all edge names that were removed in this mutation.
 func (m *ScaAuthUserSocialMutation) RemovedEdges() []string {
-	edges := make([]string, 0, 1)
+	edges := make([]string, 0, 0)
 	return edges
 }
 
@@ -5220,41 +4858,24 @@ func (m *ScaAuthUserSocialMutation) RemovedIDs(name string) []ent.Value {
 
 // ClearedEdges returns all edge names that were cleared in this mutation.
 func (m *ScaAuthUserSocialMutation) ClearedEdges() []string {
-	edges := make([]string, 0, 1)
-	if m.clearedsca_auth_user {
-		edges = append(edges, scaauthusersocial.EdgeScaAuthUser)
-	}
+	edges := make([]string, 0, 0)
 	return edges
 }
 
 // EdgeCleared returns a boolean which indicates if the edge with the given name
 // was cleared in this mutation.
 func (m *ScaAuthUserSocialMutation) EdgeCleared(name string) bool {
-	switch name {
-	case scaauthusersocial.EdgeScaAuthUser:
-		return m.clearedsca_auth_user
-	}
 	return false
 }
 
 // ClearEdge clears the value of the edge with the given name. It returns an error
 // if that edge is not defined in the schema.
 func (m *ScaAuthUserSocialMutation) ClearEdge(name string) error {
-	switch name {
-	case scaauthusersocial.EdgeScaAuthUser:
-		m.ClearScaAuthUser()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthUserSocial unique edge %s", name)
 }
 
 // ResetEdge resets all changes to the edge with the given name in this mutation.
 // It returns an error if the edge is not defined in the schema.
 func (m *ScaAuthUserSocialMutation) ResetEdge(name string) error {
-	switch name {
-	case scaauthusersocial.EdgeScaAuthUser:
-		m.ResetScaAuthUser()
-		return nil
-	}
 	return fmt.Errorf("unknown ScaAuthUserSocial edge %s", name)
 }

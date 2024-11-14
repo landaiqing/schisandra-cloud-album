@@ -3,7 +3,6 @@
 package ent
 
 import (
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
@@ -24,7 +23,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			Table:   scaauthpermissionrule.Table,
 			Columns: scaauthpermissionrule.Columns,
 			ID: &sqlgraph.FieldSpec{
-				Type:   field.TypeInt64,
+				Type:   field.TypeInt,
 				Column: scaauthpermissionrule.FieldID,
 			},
 		},
@@ -77,7 +76,7 @@ var schemaGraph = func() *sqlgraph.Schema {
 			scaauthuser.FieldEmail:     {Type: field.TypeString, Column: scaauthuser.FieldEmail},
 			scaauthuser.FieldPhone:     {Type: field.TypeString, Column: scaauthuser.FieldPhone},
 			scaauthuser.FieldPassword:  {Type: field.TypeString, Column: scaauthuser.FieldPassword},
-			scaauthuser.FieldGender:    {Type: field.TypeString, Column: scaauthuser.FieldGender},
+			scaauthuser.FieldGender:    {Type: field.TypeInt8, Column: scaauthuser.FieldGender},
 			scaauthuser.FieldAvatar:    {Type: field.TypeString, Column: scaauthuser.FieldAvatar},
 			scaauthuser.FieldStatus:    {Type: field.TypeInt8, Column: scaauthuser.FieldStatus},
 			scaauthuser.FieldIntroduce: {Type: field.TypeString, Column: scaauthuser.FieldIntroduce},
@@ -135,78 +134,6 @@ var schemaGraph = func() *sqlgraph.Schema {
 			scaauthusersocial.FieldStatus:    {Type: field.TypeInt, Column: scaauthusersocial.FieldStatus},
 		},
 	}
-	graph.MustAddE(
-		"sca_auth_role",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthpermissionrule.ScaAuthRoleTable,
-			Columns: []string{scaauthpermissionrule.ScaAuthRoleColumn},
-			Bidi:    false,
-		},
-		"ScaAuthPermissionRule",
-		"ScaAuthRole",
-	)
-	graph.MustAddE(
-		"sca_auth_permission_rule",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-		},
-		"ScaAuthRole",
-		"ScaAuthPermissionRule",
-	)
-	graph.MustAddE(
-		"sca_auth_user_social",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-		},
-		"ScaAuthUser",
-		"ScaAuthUserSocial",
-	)
-	graph.MustAddE(
-		"sca_auth_user_device",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-		},
-		"ScaAuthUser",
-		"ScaAuthUserDevice",
-	)
-	graph.MustAddE(
-		"sca_auth_user",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthuserdevice.ScaAuthUserTable,
-			Columns: []string{scaauthuserdevice.ScaAuthUserColumn},
-			Bidi:    false,
-		},
-		"ScaAuthUserDevice",
-		"ScaAuthUser",
-	)
-	graph.MustAddE(
-		"sca_auth_user",
-		&sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthusersocial.ScaAuthUserTable,
-			Columns: []string{scaauthusersocial.ScaAuthUserColumn},
-			Bidi:    false,
-		},
-		"ScaAuthUserSocial",
-		"ScaAuthUser",
-	)
 	return graph
 }()
 
@@ -251,8 +178,8 @@ func (f *ScaAuthPermissionRuleFilter) Where(p entql.P) {
 	})
 }
 
-// WhereID applies the entql int64 predicate on the id field.
-func (f *ScaAuthPermissionRuleFilter) WhereID(p entql.Int64P) {
+// WhereID applies the entql int predicate on the id field.
+func (f *ScaAuthPermissionRuleFilter) WhereID(p entql.IntP) {
 	f.Where(p.Field(scaauthpermissionrule.FieldID))
 }
 
@@ -289,20 +216,6 @@ func (f *ScaAuthPermissionRuleFilter) WhereV4(p entql.StringP) {
 // WhereV5 applies the entql string predicate on the v5 field.
 func (f *ScaAuthPermissionRuleFilter) WhereV5(p entql.StringP) {
 	f.Where(p.Field(scaauthpermissionrule.FieldV5))
-}
-
-// WhereHasScaAuthRole applies a predicate to check if query has an edge sca_auth_role.
-func (f *ScaAuthPermissionRuleFilter) WhereHasScaAuthRole() {
-	f.Where(entql.HasEdge("sca_auth_role"))
-}
-
-// WhereHasScaAuthRoleWith applies a predicate to check if query has an edge sca_auth_role with a given conditions (other predicates).
-func (f *ScaAuthPermissionRuleFilter) WhereHasScaAuthRoleWith(preds ...predicate.ScaAuthRole) {
-	f.Where(entql.HasEdgeWith("sca_auth_role", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -368,20 +281,6 @@ func (f *ScaAuthRoleFilter) WhereRoleName(p entql.StringP) {
 // WhereRoleKey applies the entql string predicate on the role_key field.
 func (f *ScaAuthRoleFilter) WhereRoleKey(p entql.StringP) {
 	f.Where(p.Field(scaauthrole.FieldRoleKey))
-}
-
-// WhereHasScaAuthPermissionRule applies a predicate to check if query has an edge sca_auth_permission_rule.
-func (f *ScaAuthRoleFilter) WhereHasScaAuthPermissionRule() {
-	f.Where(entql.HasEdge("sca_auth_permission_rule"))
-}
-
-// WhereHasScaAuthPermissionRuleWith applies a predicate to check if query has an edge sca_auth_permission_rule with a given conditions (other predicates).
-func (f *ScaAuthRoleFilter) WhereHasScaAuthPermissionRuleWith(preds ...predicate.ScaAuthPermissionRule) {
-	f.Where(entql.HasEdgeWith("sca_auth_permission_rule", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -469,8 +368,8 @@ func (f *ScaAuthUserFilter) WherePassword(p entql.StringP) {
 	f.Where(p.Field(scaauthuser.FieldPassword))
 }
 
-// WhereGender applies the entql string predicate on the gender field.
-func (f *ScaAuthUserFilter) WhereGender(p entql.StringP) {
+// WhereGender applies the entql int8 predicate on the gender field.
+func (f *ScaAuthUserFilter) WhereGender(p entql.Int8P) {
 	f.Where(p.Field(scaauthuser.FieldGender))
 }
 
@@ -502,34 +401,6 @@ func (f *ScaAuthUserFilter) WhereLocation(p entql.StringP) {
 // WhereCompany applies the entql string predicate on the company field.
 func (f *ScaAuthUserFilter) WhereCompany(p entql.StringP) {
 	f.Where(p.Field(scaauthuser.FieldCompany))
-}
-
-// WhereHasScaAuthUserSocial applies a predicate to check if query has an edge sca_auth_user_social.
-func (f *ScaAuthUserFilter) WhereHasScaAuthUserSocial() {
-	f.Where(entql.HasEdge("sca_auth_user_social"))
-}
-
-// WhereHasScaAuthUserSocialWith applies a predicate to check if query has an edge sca_auth_user_social with a given conditions (other predicates).
-func (f *ScaAuthUserFilter) WhereHasScaAuthUserSocialWith(preds ...predicate.ScaAuthUserSocial) {
-	f.Where(entql.HasEdgeWith("sca_auth_user_social", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
-// WhereHasScaAuthUserDevice applies a predicate to check if query has an edge sca_auth_user_device.
-func (f *ScaAuthUserFilter) WhereHasScaAuthUserDevice() {
-	f.Where(entql.HasEdge("sca_auth_user_device"))
-}
-
-// WhereHasScaAuthUserDeviceWith applies a predicate to check if query has an edge sca_auth_user_device with a given conditions (other predicates).
-func (f *ScaAuthUserFilter) WhereHasScaAuthUserDeviceWith(preds ...predicate.ScaAuthUserDevice) {
-	f.Where(entql.HasEdgeWith("sca_auth_user_device", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }
 
 // addPredicate implements the predicateAdder interface.
@@ -652,20 +523,6 @@ func (f *ScaAuthUserDeviceFilter) WhereEngineVersion(p entql.StringP) {
 	f.Where(p.Field(scaauthuserdevice.FieldEngineVersion))
 }
 
-// WhereHasScaAuthUser applies a predicate to check if query has an edge sca_auth_user.
-func (f *ScaAuthUserDeviceFilter) WhereHasScaAuthUser() {
-	f.Where(entql.HasEdge("sca_auth_user"))
-}
-
-// WhereHasScaAuthUserWith applies a predicate to check if query has an edge sca_auth_user with a given conditions (other predicates).
-func (f *ScaAuthUserDeviceFilter) WhereHasScaAuthUserWith(preds ...predicate.ScaAuthUser) {
-	f.Where(entql.HasEdgeWith("sca_auth_user", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
-}
-
 // addPredicate implements the predicateAdder interface.
 func (sausq *ScaAuthUserSocialQuery) addPredicate(pred func(s *sql.Selector)) {
 	sausq.predicates = append(sausq.predicates, pred)
@@ -739,18 +596,4 @@ func (f *ScaAuthUserSocialFilter) WhereSource(p entql.StringP) {
 // WhereStatus applies the entql int predicate on the status field.
 func (f *ScaAuthUserSocialFilter) WhereStatus(p entql.IntP) {
 	f.Where(p.Field(scaauthusersocial.FieldStatus))
-}
-
-// WhereHasScaAuthUser applies a predicate to check if query has an edge sca_auth_user.
-func (f *ScaAuthUserSocialFilter) WhereHasScaAuthUser() {
-	f.Where(entql.HasEdge("sca_auth_user"))
-}
-
-// WhereHasScaAuthUserWith applies a predicate to check if query has an edge sca_auth_user with a given conditions (other predicates).
-func (f *ScaAuthUserSocialFilter) WhereHasScaAuthUserWith(preds ...predicate.ScaAuthUser) {
-	f.Where(entql.HasEdgeWith("sca_auth_user", sqlgraph.WrapFunc(func(s *sql.Selector) {
-		for _, p := range preds {
-			p(s)
-		}
-	})))
 }

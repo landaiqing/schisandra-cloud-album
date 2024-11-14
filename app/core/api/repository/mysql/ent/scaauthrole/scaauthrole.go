@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -24,17 +23,8 @@ const (
 	FieldRoleName = "role_name"
 	// FieldRoleKey holds the string denoting the role_key field in the database.
 	FieldRoleKey = "role_key"
-	// EdgeScaAuthPermissionRule holds the string denoting the sca_auth_permission_rule edge name in mutations.
-	EdgeScaAuthPermissionRule = "sca_auth_permission_rule"
 	// Table holds the table name of the scaauthrole in the database.
 	Table = "sca_auth_role"
-	// ScaAuthPermissionRuleTable is the table that holds the sca_auth_permission_rule relation/edge.
-	ScaAuthPermissionRuleTable = "sca_auth_permission_rule"
-	// ScaAuthPermissionRuleInverseTable is the table name for the ScaAuthPermissionRule entity.
-	// It exists in this package in order to avoid circular dependency with the "scaauthpermissionrule" package.
-	ScaAuthPermissionRuleInverseTable = "sca_auth_permission_rule"
-	// ScaAuthPermissionRuleColumn is the table column denoting the sca_auth_permission_rule relation/edge.
-	ScaAuthPermissionRuleColumn = "sca_auth_role_sca_auth_permission_rule"
 )
 
 // Columns holds all SQL columns for scaauthrole fields.
@@ -105,25 +95,4 @@ func ByRoleName(opts ...sql.OrderTermOption) OrderOption {
 // ByRoleKey orders the results by the role_key field.
 func ByRoleKey(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldRoleKey, opts...).ToFunc()
-}
-
-// ByScaAuthPermissionRuleCount orders the results by sca_auth_permission_rule count.
-func ByScaAuthPermissionRuleCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newScaAuthPermissionRuleStep(), opts...)
-	}
-}
-
-// ByScaAuthPermissionRule orders the results by sca_auth_permission_rule terms.
-func ByScaAuthPermissionRule(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newScaAuthPermissionRuleStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-func newScaAuthPermissionRuleStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ScaAuthPermissionRuleInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ScaAuthPermissionRuleTable, ScaAuthPermissionRuleColumn),
-	)
 }

@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"time"
 
@@ -244,34 +243,9 @@ func (saudu *ScaAuthUserDeviceUpdate) SetNillableEngineVersion(s *string) *ScaAu
 	return saudu
 }
 
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
-func (saudu *ScaAuthUserDeviceUpdate) SetScaAuthUserID(id int64) *ScaAuthUserDeviceUpdate {
-	saudu.mutation.SetScaAuthUserID(id)
-	return saudu
-}
-
-// SetNillableScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID if the given value is not nil.
-func (saudu *ScaAuthUserDeviceUpdate) SetNillableScaAuthUserID(id *int64) *ScaAuthUserDeviceUpdate {
-	if id != nil {
-		saudu = saudu.SetScaAuthUserID(*id)
-	}
-	return saudu
-}
-
-// SetScaAuthUser sets the "sca_auth_user" edge to the ScaAuthUser entity.
-func (saudu *ScaAuthUserDeviceUpdate) SetScaAuthUser(s *ScaAuthUser) *ScaAuthUserDeviceUpdate {
-	return saudu.SetScaAuthUserID(s.ID)
-}
-
 // Mutation returns the ScaAuthUserDeviceMutation object of the builder.
 func (saudu *ScaAuthUserDeviceUpdate) Mutation() *ScaAuthUserDeviceMutation {
 	return saudu.mutation
-}
-
-// ClearScaAuthUser clears the "sca_auth_user" edge to the ScaAuthUser entity.
-func (saudu *ScaAuthUserDeviceUpdate) ClearScaAuthUser() *ScaAuthUserDeviceUpdate {
-	saudu.mutation.ClearScaAuthUser()
-	return saudu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -437,35 +411,6 @@ func (saudu *ScaAuthUserDeviceUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := saudu.mutation.EngineVersion(); ok {
 		_spec.SetField(scaauthuserdevice.FieldEngineVersion, field.TypeString, value)
-	}
-	if saudu.mutation.ScaAuthUserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthuserdevice.ScaAuthUserTable,
-			Columns: []string{scaauthuserdevice.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := saudu.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthuserdevice.ScaAuthUserTable,
-			Columns: []string{scaauthuserdevice.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, saudu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -702,34 +647,9 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableEngineVersion(s *string) *S
 	return sauduo
 }
 
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetScaAuthUserID(id int64) *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.SetScaAuthUserID(id)
-	return sauduo
-}
-
-// SetNillableScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID if the given value is not nil.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableScaAuthUserID(id *int64) *ScaAuthUserDeviceUpdateOne {
-	if id != nil {
-		sauduo = sauduo.SetScaAuthUserID(*id)
-	}
-	return sauduo
-}
-
-// SetScaAuthUser sets the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sauduo *ScaAuthUserDeviceUpdateOne) SetScaAuthUser(s *ScaAuthUser) *ScaAuthUserDeviceUpdateOne {
-	return sauduo.SetScaAuthUserID(s.ID)
-}
-
 // Mutation returns the ScaAuthUserDeviceMutation object of the builder.
 func (sauduo *ScaAuthUserDeviceUpdateOne) Mutation() *ScaAuthUserDeviceMutation {
 	return sauduo.mutation
-}
-
-// ClearScaAuthUser clears the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sauduo *ScaAuthUserDeviceUpdateOne) ClearScaAuthUser() *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.ClearScaAuthUser()
-	return sauduo
 }
 
 // Where appends a list predicates to the ScaAuthUserDeviceUpdate builder.
@@ -925,35 +845,6 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *S
 	}
 	if value, ok := sauduo.mutation.EngineVersion(); ok {
 		_spec.SetField(scaauthuserdevice.FieldEngineVersion, field.TypeString, value)
-	}
-	if sauduo.mutation.ScaAuthUserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthuserdevice.ScaAuthUserTable,
-			Columns: []string{scaauthuserdevice.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sauduo.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthuserdevice.ScaAuthUserTable,
-			Columns: []string{scaauthuserdevice.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &ScaAuthUserDevice{config: sauduo.config}
 	_spec.Assign = _node.assignValues

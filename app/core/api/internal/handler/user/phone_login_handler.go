@@ -19,7 +19,7 @@ func PhoneLoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := user.NewPhoneLoginLogic(r.Context(), svcCtx)
-		resp, err := l.PhoneLogin(&req)
+		resp, err := l.PhoneLogin(r, w, &req)
 		if err != nil || resp.Code == 500 {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

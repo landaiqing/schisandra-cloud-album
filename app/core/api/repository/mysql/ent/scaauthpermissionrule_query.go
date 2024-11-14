@@ -8,7 +8,6 @@ import (
 	"math"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
@@ -19,12 +18,10 @@ import (
 // ScaAuthPermissionRuleQuery is the builder for querying ScaAuthPermissionRule entities.
 type ScaAuthPermissionRuleQuery struct {
 	config
-	ctx             *QueryContext
-	order           []scaauthpermissionrule.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.ScaAuthPermissionRule
-	withScaAuthRole *ScaAuthRoleQuery
-	withFKs         bool
+	ctx        *QueryContext
+	order      []scaauthpermissionrule.OrderOption
+	inters     []Interceptor
+	predicates []predicate.ScaAuthPermissionRule
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -61,28 +58,6 @@ func (saprq *ScaAuthPermissionRuleQuery) Order(o ...scaauthpermissionrule.OrderO
 	return saprq
 }
 
-// QueryScaAuthRole chains the current query on the "sca_auth_role" edge.
-func (saprq *ScaAuthPermissionRuleQuery) QueryScaAuthRole() *ScaAuthRoleQuery {
-	query := (&ScaAuthRoleClient{config: saprq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := saprq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := saprq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthpermissionrule.Table, scaauthpermissionrule.FieldID, selector),
-			sqlgraph.To(scaauthrole.Table, scaauthrole.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, scaauthpermissionrule.ScaAuthRoleTable, scaauthpermissionrule.ScaAuthRoleColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(saprq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
-}
-
 // First returns the first ScaAuthPermissionRule entity from the query.
 // Returns a *NotFoundError when no ScaAuthPermissionRule was found.
 func (saprq *ScaAuthPermissionRuleQuery) First(ctx context.Context) (*ScaAuthPermissionRule, error) {
@@ -107,8 +82,8 @@ func (saprq *ScaAuthPermissionRuleQuery) FirstX(ctx context.Context) *ScaAuthPer
 
 // FirstID returns the first ScaAuthPermissionRule ID from the query.
 // Returns a *NotFoundError when no ScaAuthPermissionRule ID was found.
-func (saprq *ScaAuthPermissionRuleQuery) FirstID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (saprq *ScaAuthPermissionRuleQuery) FirstID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = saprq.Limit(1).IDs(setContextOp(ctx, saprq.ctx, ent.OpQueryFirstID)); err != nil {
 		return
 	}
@@ -120,7 +95,7 @@ func (saprq *ScaAuthPermissionRuleQuery) FirstID(ctx context.Context) (id int64,
 }
 
 // FirstIDX is like FirstID, but panics if an error occurs.
-func (saprq *ScaAuthPermissionRuleQuery) FirstIDX(ctx context.Context) int64 {
+func (saprq *ScaAuthPermissionRuleQuery) FirstIDX(ctx context.Context) int {
 	id, err := saprq.FirstID(ctx)
 	if err != nil && !IsNotFound(err) {
 		panic(err)
@@ -158,8 +133,8 @@ func (saprq *ScaAuthPermissionRuleQuery) OnlyX(ctx context.Context) *ScaAuthPerm
 // OnlyID is like Only, but returns the only ScaAuthPermissionRule ID in the query.
 // Returns a *NotSingularError when more than one ScaAuthPermissionRule ID is found.
 // Returns a *NotFoundError when no entities are found.
-func (saprq *ScaAuthPermissionRuleQuery) OnlyID(ctx context.Context) (id int64, err error) {
-	var ids []int64
+func (saprq *ScaAuthPermissionRuleQuery) OnlyID(ctx context.Context) (id int, err error) {
+	var ids []int
 	if ids, err = saprq.Limit(2).IDs(setContextOp(ctx, saprq.ctx, ent.OpQueryOnlyID)); err != nil {
 		return
 	}
@@ -175,7 +150,7 @@ func (saprq *ScaAuthPermissionRuleQuery) OnlyID(ctx context.Context) (id int64, 
 }
 
 // OnlyIDX is like OnlyID, but panics if an error occurs.
-func (saprq *ScaAuthPermissionRuleQuery) OnlyIDX(ctx context.Context) int64 {
+func (saprq *ScaAuthPermissionRuleQuery) OnlyIDX(ctx context.Context) int {
 	id, err := saprq.OnlyID(ctx)
 	if err != nil {
 		panic(err)
@@ -203,7 +178,7 @@ func (saprq *ScaAuthPermissionRuleQuery) AllX(ctx context.Context) []*ScaAuthPer
 }
 
 // IDs executes the query and returns a list of ScaAuthPermissionRule IDs.
-func (saprq *ScaAuthPermissionRuleQuery) IDs(ctx context.Context) (ids []int64, err error) {
+func (saprq *ScaAuthPermissionRuleQuery) IDs(ctx context.Context) (ids []int, err error) {
 	if saprq.ctx.Unique == nil && saprq.path != nil {
 		saprq.Unique(true)
 	}
@@ -215,7 +190,7 @@ func (saprq *ScaAuthPermissionRuleQuery) IDs(ctx context.Context) (ids []int64, 
 }
 
 // IDsX is like IDs, but panics if an error occurs.
-func (saprq *ScaAuthPermissionRuleQuery) IDsX(ctx context.Context) []int64 {
+func (saprq *ScaAuthPermissionRuleQuery) IDsX(ctx context.Context) []int {
 	ids, err := saprq.IDs(ctx)
 	if err != nil {
 		panic(err)
@@ -270,27 +245,15 @@ func (saprq *ScaAuthPermissionRuleQuery) Clone() *ScaAuthPermissionRuleQuery {
 		return nil
 	}
 	return &ScaAuthPermissionRuleQuery{
-		config:          saprq.config,
-		ctx:             saprq.ctx.Clone(),
-		order:           append([]scaauthpermissionrule.OrderOption{}, saprq.order...),
-		inters:          append([]Interceptor{}, saprq.inters...),
-		predicates:      append([]predicate.ScaAuthPermissionRule{}, saprq.predicates...),
-		withScaAuthRole: saprq.withScaAuthRole.Clone(),
+		config:     saprq.config,
+		ctx:        saprq.ctx.Clone(),
+		order:      append([]scaauthpermissionrule.OrderOption{}, saprq.order...),
+		inters:     append([]Interceptor{}, saprq.inters...),
+		predicates: append([]predicate.ScaAuthPermissionRule{}, saprq.predicates...),
 		// clone intermediate query.
 		sql:  saprq.sql.Clone(),
 		path: saprq.path,
 	}
-}
-
-// WithScaAuthRole tells the query-builder to eager-load the nodes that are connected to
-// the "sca_auth_role" edge. The optional arguments are used to configure the query builder of the edge.
-func (saprq *ScaAuthPermissionRuleQuery) WithScaAuthRole(opts ...func(*ScaAuthRoleQuery)) *ScaAuthPermissionRuleQuery {
-	query := (&ScaAuthRoleClient{config: saprq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	saprq.withScaAuthRole = query
-	return saprq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -369,26 +332,15 @@ func (saprq *ScaAuthPermissionRuleQuery) prepareQuery(ctx context.Context) error
 
 func (saprq *ScaAuthPermissionRuleQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ScaAuthPermissionRule, error) {
 	var (
-		nodes       = []*ScaAuthPermissionRule{}
-		withFKs     = saprq.withFKs
-		_spec       = saprq.querySpec()
-		loadedTypes = [1]bool{
-			saprq.withScaAuthRole != nil,
-		}
+		nodes = []*ScaAuthPermissionRule{}
+		_spec = saprq.querySpec()
 	)
-	if saprq.withScaAuthRole != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, scaauthpermissionrule.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*ScaAuthPermissionRule).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &ScaAuthPermissionRule{config: saprq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -400,46 +352,7 @@ func (saprq *ScaAuthPermissionRuleQuery) sqlAll(ctx context.Context, hooks ...qu
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := saprq.withScaAuthRole; query != nil {
-		if err := saprq.loadScaAuthRole(ctx, query, nodes, nil,
-			func(n *ScaAuthPermissionRule, e *ScaAuthRole) { n.Edges.ScaAuthRole = e }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (saprq *ScaAuthPermissionRuleQuery) loadScaAuthRole(ctx context.Context, query *ScaAuthRoleQuery, nodes []*ScaAuthPermissionRule, init func(*ScaAuthPermissionRule), assign func(*ScaAuthPermissionRule, *ScaAuthRole)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*ScaAuthPermissionRule)
-	for i := range nodes {
-		if nodes[i].sca_auth_role_sca_auth_permission_rule == nil {
-			continue
-		}
-		fk := *nodes[i].sca_auth_role_sca_auth_permission_rule
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(scaauthrole.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "sca_auth_role_sca_auth_permission_rule" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
 }
 
 func (saprq *ScaAuthPermissionRuleQuery) sqlCount(ctx context.Context) (int, error) {
@@ -452,7 +365,7 @@ func (saprq *ScaAuthPermissionRuleQuery) sqlCount(ctx context.Context) (int, err
 }
 
 func (saprq *ScaAuthPermissionRuleQuery) querySpec() *sqlgraph.QuerySpec {
-	_spec := sqlgraph.NewQuerySpec(scaauthpermissionrule.Table, scaauthpermissionrule.Columns, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewQuerySpec(scaauthpermissionrule.Table, scaauthpermissionrule.Columns, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt))
 	_spec.From = saprq.sql
 	if unique := saprq.ctx.Unique; unique != nil {
 		_spec.Unique = *unique

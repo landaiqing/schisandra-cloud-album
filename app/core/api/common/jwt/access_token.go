@@ -1,11 +1,9 @@
 package jwt
 
 import (
-	"context"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/zeromicro/go-zero/core/logc"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type AccessJWTPayload struct {
@@ -29,23 +27,21 @@ func GenerateAccessToken(secret string, payload AccessJWTPayload) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	accessToken, err := token.SignedString([]byte(secret))
 	if err != nil {
-		logc.Error(context.Background(), err)
 		return ""
 	}
 	return accessToken
 }
 
 // ParseAccessToken parses a JWT token and returns the payload
-func ParseAccessToken(secret string, tokenString string) *AccessJWTPayload {
+func ParseAccessToken(secret string, tokenString string) (*AccessJWTPayload, bool) {
 	token, err := jwt.ParseWithClaims(tokenString, &AccessJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
 	if err != nil {
-		logc.Error(context.Background(), err)
-		return nil
+		return nil, false
 	}
 	if claims, ok := token.Claims.(*AccessJWTClaims); ok && token.Valid {
-		return &claims.AccessJWTPayload
+		return &claims.AccessJWTPayload, true
 	}
-	return nil
+	return nil, false
 }

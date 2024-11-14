@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
 	"time"
 
@@ -125,34 +124,9 @@ func (sausu *ScaAuthUserSocialUpdate) AddStatus(i int) *ScaAuthUserSocialUpdate 
 	return sausu
 }
 
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
-func (sausu *ScaAuthUserSocialUpdate) SetScaAuthUserID(id int64) *ScaAuthUserSocialUpdate {
-	sausu.mutation.SetScaAuthUserID(id)
-	return sausu
-}
-
-// SetNillableScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID if the given value is not nil.
-func (sausu *ScaAuthUserSocialUpdate) SetNillableScaAuthUserID(id *int64) *ScaAuthUserSocialUpdate {
-	if id != nil {
-		sausu = sausu.SetScaAuthUserID(*id)
-	}
-	return sausu
-}
-
-// SetScaAuthUser sets the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sausu *ScaAuthUserSocialUpdate) SetScaAuthUser(s *ScaAuthUser) *ScaAuthUserSocialUpdate {
-	return sausu.SetScaAuthUserID(s.ID)
-}
-
 // Mutation returns the ScaAuthUserSocialMutation object of the builder.
 func (sausu *ScaAuthUserSocialUpdate) Mutation() *ScaAuthUserSocialMutation {
 	return sausu.mutation
-}
-
-// ClearScaAuthUser clears the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sausu *ScaAuthUserSocialUpdate) ClearScaAuthUser() *ScaAuthUserSocialUpdate {
-	sausu.mutation.ClearScaAuthUser()
-	return sausu
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -254,35 +228,6 @@ func (sausu *ScaAuthUserSocialUpdate) sqlSave(ctx context.Context) (n int, err e
 	}
 	if value, ok := sausu.mutation.AddedStatus(); ok {
 		_spec.AddField(scaauthusersocial.FieldStatus, field.TypeInt, value)
-	}
-	if sausu.mutation.ScaAuthUserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthusersocial.ScaAuthUserTable,
-			Columns: []string{scaauthusersocial.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sausu.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthusersocial.ScaAuthUserTable,
-			Columns: []string{scaauthusersocial.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, sausu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -400,34 +345,9 @@ func (sausuo *ScaAuthUserSocialUpdateOne) AddStatus(i int) *ScaAuthUserSocialUpd
 	return sausuo
 }
 
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
-func (sausuo *ScaAuthUserSocialUpdateOne) SetScaAuthUserID(id int64) *ScaAuthUserSocialUpdateOne {
-	sausuo.mutation.SetScaAuthUserID(id)
-	return sausuo
-}
-
-// SetNillableScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID if the given value is not nil.
-func (sausuo *ScaAuthUserSocialUpdateOne) SetNillableScaAuthUserID(id *int64) *ScaAuthUserSocialUpdateOne {
-	if id != nil {
-		sausuo = sausuo.SetScaAuthUserID(*id)
-	}
-	return sausuo
-}
-
-// SetScaAuthUser sets the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sausuo *ScaAuthUserSocialUpdateOne) SetScaAuthUser(s *ScaAuthUser) *ScaAuthUserSocialUpdateOne {
-	return sausuo.SetScaAuthUserID(s.ID)
-}
-
 // Mutation returns the ScaAuthUserSocialMutation object of the builder.
 func (sausuo *ScaAuthUserSocialUpdateOne) Mutation() *ScaAuthUserSocialMutation {
 	return sausuo.mutation
-}
-
-// ClearScaAuthUser clears the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sausuo *ScaAuthUserSocialUpdateOne) ClearScaAuthUser() *ScaAuthUserSocialUpdateOne {
-	sausuo.mutation.ClearScaAuthUser()
-	return sausuo
 }
 
 // Where appends a list predicates to the ScaAuthUserSocialUpdate builder.
@@ -559,35 +479,6 @@ func (sausuo *ScaAuthUserSocialUpdateOne) sqlSave(ctx context.Context) (_node *S
 	}
 	if value, ok := sausuo.mutation.AddedStatus(); ok {
 		_spec.AddField(scaauthusersocial.FieldStatus, field.TypeInt, value)
-	}
-	if sausuo.mutation.ScaAuthUserCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthusersocial.ScaAuthUserTable,
-			Columns: []string{scaauthusersocial.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sausuo.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthusersocial.ScaAuthUserTable,
-			Columns: []string{scaauthusersocial.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &ScaAuthUserSocial{config: sausuo.config}
 	_spec.Assign = _node.assignValues

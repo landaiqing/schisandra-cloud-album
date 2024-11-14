@@ -7,8 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
 	"time"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -141,15 +139,15 @@ func (sauc *ScaAuthUserCreate) SetNillablePassword(s *string) *ScaAuthUserCreate
 }
 
 // SetGender sets the "gender" field.
-func (sauc *ScaAuthUserCreate) SetGender(s string) *ScaAuthUserCreate {
-	sauc.mutation.SetGender(s)
+func (sauc *ScaAuthUserCreate) SetGender(i int8) *ScaAuthUserCreate {
+	sauc.mutation.SetGender(i)
 	return sauc
 }
 
 // SetNillableGender sets the "gender" field if the given value is not nil.
-func (sauc *ScaAuthUserCreate) SetNillableGender(s *string) *ScaAuthUserCreate {
-	if s != nil {
-		sauc.SetGender(*s)
+func (sauc *ScaAuthUserCreate) SetNillableGender(i *int8) *ScaAuthUserCreate {
+	if i != nil {
+		sauc.SetGender(*i)
 	}
 	return sauc
 }
@@ -242,36 +240,6 @@ func (sauc *ScaAuthUserCreate) SetNillableCompany(s *string) *ScaAuthUserCreate 
 func (sauc *ScaAuthUserCreate) SetID(i int64) *ScaAuthUserCreate {
 	sauc.mutation.SetID(i)
 	return sauc
-}
-
-// AddScaAuthUserSocialIDs adds the "sca_auth_user_social" edge to the ScaAuthUserSocial entity by IDs.
-func (sauc *ScaAuthUserCreate) AddScaAuthUserSocialIDs(ids ...int64) *ScaAuthUserCreate {
-	sauc.mutation.AddScaAuthUserSocialIDs(ids...)
-	return sauc
-}
-
-// AddScaAuthUserSocial adds the "sca_auth_user_social" edges to the ScaAuthUserSocial entity.
-func (sauc *ScaAuthUserCreate) AddScaAuthUserSocial(s ...*ScaAuthUserSocial) *ScaAuthUserCreate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauc.AddScaAuthUserSocialIDs(ids...)
-}
-
-// AddScaAuthUserDeviceIDs adds the "sca_auth_user_device" edge to the ScaAuthUserDevice entity by IDs.
-func (sauc *ScaAuthUserCreate) AddScaAuthUserDeviceIDs(ids ...int64) *ScaAuthUserCreate {
-	sauc.mutation.AddScaAuthUserDeviceIDs(ids...)
-	return sauc
-}
-
-// AddScaAuthUserDevice adds the "sca_auth_user_device" edges to the ScaAuthUserDevice entity.
-func (sauc *ScaAuthUserCreate) AddScaAuthUserDevice(s ...*ScaAuthUserDevice) *ScaAuthUserCreate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sauc.AddScaAuthUserDeviceIDs(ids...)
 }
 
 // Mutation returns the ScaAuthUserMutation object of the builder.
@@ -373,11 +341,6 @@ func (sauc *ScaAuthUserCreate) check() error {
 			return &ValidationError{Name: "password", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.password": %w`, err)}
 		}
 	}
-	if v, ok := sauc.mutation.Gender(); ok {
-		if err := scaauthuser.GenderValidator(v); err != nil {
-			return &ValidationError{Name: "gender", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.gender": %w`, err)}
-		}
-	}
 	if v, ok := sauc.mutation.Introduce(); ok {
 		if err := scaauthuser.IntroduceValidator(v); err != nil {
 			return &ValidationError{Name: "introduce", err: fmt.Errorf(`ent: validator failed for field "ScaAuthUser.introduce": %w`, err)}
@@ -467,7 +430,7 @@ func (sauc *ScaAuthUserCreate) createSpec() (*ScaAuthUser, *sqlgraph.CreateSpec)
 		_node.Password = value
 	}
 	if value, ok := sauc.mutation.Gender(); ok {
-		_spec.SetField(scaauthuser.FieldGender, field.TypeString, value)
+		_spec.SetField(scaauthuser.FieldGender, field.TypeInt8, value)
 		_node.Gender = value
 	}
 	if value, ok := sauc.mutation.Avatar(); ok {
@@ -493,38 +456,6 @@ func (sauc *ScaAuthUserCreate) createSpec() (*ScaAuthUser, *sqlgraph.CreateSpec)
 	if value, ok := sauc.mutation.Company(); ok {
 		_spec.SetField(scaauthuser.FieldCompany, field.TypeString, value)
 		_node.Company = &value
-	}
-	if nodes := sauc.mutation.ScaAuthUserSocialIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserSocialTable,
-			Columns: []string{scaauthuser.ScaAuthUserSocialColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthusersocial.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
-	}
-	if nodes := sauc.mutation.ScaAuthUserDeviceIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthuser.ScaAuthUserDeviceTable,
-			Columns: []string{scaauthuser.ScaAuthUserDeviceColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuserdevice.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

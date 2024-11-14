@@ -1,6 +1,7 @@
 package svc
 
 import (
+	"github.com/casbin/casbin/v2"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/rbcervilla/redisstore/v9"
 	"github.com/redis/go-redis/v9"
@@ -10,6 +11,7 @@ import (
 
 	"schisandra-album-cloud-microservices/app/core/api/internal/config"
 	"schisandra-album-cloud-microservices/app/core/api/internal/middleware"
+	"schisandra-album-cloud-microservices/app/core/api/repository/casbinx"
 	"schisandra-album-cloud-microservices/app/core/api/repository/ip2region"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mongodb"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql"
@@ -26,6 +28,7 @@ type ServiceContext struct {
 	MongoClient               *mongo.Database
 	Session                   *redisstore.RedisStore
 	Ip2Region                 *xdb.Searcher
+	CasbinEnforcer            *casbin.CachedEnforcer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -37,5 +40,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),
 		Session:                   redis_session.NewRedisSession(c.Redis.Host, c.Redis.Pass),
 		Ip2Region:                 ip2region.NewIP2Region(),
+		CasbinEnforcer:            casbinx.NewCasbin(c.Mysql.DataSource),
 	}
 }

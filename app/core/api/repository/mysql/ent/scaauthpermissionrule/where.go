@@ -6,51 +6,50 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
-func ID(id int64) predicate.ScaAuthPermissionRule {
+func ID(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldEQ(FieldID, id))
 }
 
 // IDEQ applies the EQ predicate on the ID field.
-func IDEQ(id int64) predicate.ScaAuthPermissionRule {
+func IDEQ(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldEQ(FieldID, id))
 }
 
 // IDNEQ applies the NEQ predicate on the ID field.
-func IDNEQ(id int64) predicate.ScaAuthPermissionRule {
+func IDNEQ(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldNEQ(FieldID, id))
 }
 
 // IDIn applies the In predicate on the ID field.
-func IDIn(ids ...int64) predicate.ScaAuthPermissionRule {
+func IDIn(ids ...int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldIn(FieldID, ids...))
 }
 
 // IDNotIn applies the NotIn predicate on the ID field.
-func IDNotIn(ids ...int64) predicate.ScaAuthPermissionRule {
+func IDNotIn(ids ...int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldNotIn(FieldID, ids...))
 }
 
 // IDGT applies the GT predicate on the ID field.
-func IDGT(id int64) predicate.ScaAuthPermissionRule {
+func IDGT(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldGT(FieldID, id))
 }
 
 // IDGTE applies the GTE predicate on the ID field.
-func IDGTE(id int64) predicate.ScaAuthPermissionRule {
+func IDGTE(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldGTE(FieldID, id))
 }
 
 // IDLT applies the LT predicate on the ID field.
-func IDLT(id int64) predicate.ScaAuthPermissionRule {
+func IDLT(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldLT(FieldID, id))
 }
 
 // IDLTE applies the LTE predicate on the ID field.
-func IDLTE(id int64) predicate.ScaAuthPermissionRule {
+func IDLTE(id int) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldLTE(FieldID, id))
 }
 
@@ -144,6 +143,16 @@ func PtypeHasSuffix(v string) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldHasSuffix(FieldPtype, v))
 }
 
+// PtypeIsNil applies the IsNil predicate on the "ptype" field.
+func PtypeIsNil() predicate.ScaAuthPermissionRule {
+	return predicate.ScaAuthPermissionRule(sql.FieldIsNull(FieldPtype))
+}
+
+// PtypeNotNil applies the NotNil predicate on the "ptype" field.
+func PtypeNotNil() predicate.ScaAuthPermissionRule {
+	return predicate.ScaAuthPermissionRule(sql.FieldNotNull(FieldPtype))
+}
+
 // PtypeEqualFold applies the EqualFold predicate on the "ptype" field.
 func PtypeEqualFold(v string) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldEqualFold(FieldPtype, v))
@@ -209,6 +218,16 @@ func V0HasSuffix(v string) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldHasSuffix(FieldV0, v))
 }
 
+// V0IsNil applies the IsNil predicate on the "v0" field.
+func V0IsNil() predicate.ScaAuthPermissionRule {
+	return predicate.ScaAuthPermissionRule(sql.FieldIsNull(FieldV0))
+}
+
+// V0NotNil applies the NotNil predicate on the "v0" field.
+func V0NotNil() predicate.ScaAuthPermissionRule {
+	return predicate.ScaAuthPermissionRule(sql.FieldNotNull(FieldV0))
+}
+
 // V0EqualFold applies the EqualFold predicate on the "v0" field.
 func V0EqualFold(v string) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldEqualFold(FieldV0, v))
@@ -272,6 +291,16 @@ func V1HasPrefix(v string) predicate.ScaAuthPermissionRule {
 // V1HasSuffix applies the HasSuffix predicate on the "v1" field.
 func V1HasSuffix(v string) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldHasSuffix(FieldV1, v))
+}
+
+// V1IsNil applies the IsNil predicate on the "v1" field.
+func V1IsNil() predicate.ScaAuthPermissionRule {
+	return predicate.ScaAuthPermissionRule(sql.FieldIsNull(FieldV1))
+}
+
+// V1NotNil applies the NotNil predicate on the "v1" field.
+func V1NotNil() predicate.ScaAuthPermissionRule {
+	return predicate.ScaAuthPermissionRule(sql.FieldNotNull(FieldV1))
 }
 
 // V1EqualFold applies the EqualFold predicate on the "v1" field.
@@ -582,29 +611,6 @@ func V5EqualFold(v string) predicate.ScaAuthPermissionRule {
 // V5ContainsFold applies the ContainsFold predicate on the "v5" field.
 func V5ContainsFold(v string) predicate.ScaAuthPermissionRule {
 	return predicate.ScaAuthPermissionRule(sql.FieldContainsFold(FieldV5, v))
-}
-
-// HasScaAuthRole applies the HasEdge predicate on the "sca_auth_role" edge.
-func HasScaAuthRole() predicate.ScaAuthPermissionRule {
-	return predicate.ScaAuthPermissionRule(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ScaAuthRoleTable, ScaAuthRoleColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasScaAuthRoleWith applies the HasEdge predicate on the "sca_auth_role" edge with a given conditions (other predicates).
-func HasScaAuthRoleWith(preds ...predicate.ScaAuthRole) predicate.ScaAuthPermissionRule {
-	return predicate.ScaAuthPermissionRule(func(s *sql.Selector) {
-		step := newScaAuthRoleStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

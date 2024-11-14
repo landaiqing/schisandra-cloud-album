@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -42,6 +41,12 @@ func (sapru *ScaAuthPermissionRuleUpdate) SetNillablePtype(s *string) *ScaAuthPe
 	return sapru
 }
 
+// ClearPtype clears the value of the "ptype" field.
+func (sapru *ScaAuthPermissionRuleUpdate) ClearPtype() *ScaAuthPermissionRuleUpdate {
+	sapru.mutation.ClearPtype()
+	return sapru
+}
+
 // SetV0 sets the "v0" field.
 func (sapru *ScaAuthPermissionRuleUpdate) SetV0(s string) *ScaAuthPermissionRuleUpdate {
 	sapru.mutation.SetV0(s)
@@ -56,6 +61,12 @@ func (sapru *ScaAuthPermissionRuleUpdate) SetNillableV0(s *string) *ScaAuthPermi
 	return sapru
 }
 
+// ClearV0 clears the value of the "v0" field.
+func (sapru *ScaAuthPermissionRuleUpdate) ClearV0() *ScaAuthPermissionRuleUpdate {
+	sapru.mutation.ClearV0()
+	return sapru
+}
+
 // SetV1 sets the "v1" field.
 func (sapru *ScaAuthPermissionRuleUpdate) SetV1(s string) *ScaAuthPermissionRuleUpdate {
 	sapru.mutation.SetV1(s)
@@ -67,6 +78,12 @@ func (sapru *ScaAuthPermissionRuleUpdate) SetNillableV1(s *string) *ScaAuthPermi
 	if s != nil {
 		sapru.SetV1(*s)
 	}
+	return sapru
+}
+
+// ClearV1 clears the value of the "v1" field.
+func (sapru *ScaAuthPermissionRuleUpdate) ClearV1() *ScaAuthPermissionRuleUpdate {
+	sapru.mutation.ClearV1()
 	return sapru
 }
 
@@ -150,34 +167,9 @@ func (sapru *ScaAuthPermissionRuleUpdate) ClearV5() *ScaAuthPermissionRuleUpdate
 	return sapru
 }
 
-// SetScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by ID.
-func (sapru *ScaAuthPermissionRuleUpdate) SetScaAuthRoleID(id int64) *ScaAuthPermissionRuleUpdate {
-	sapru.mutation.SetScaAuthRoleID(id)
-	return sapru
-}
-
-// SetNillableScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by ID if the given value is not nil.
-func (sapru *ScaAuthPermissionRuleUpdate) SetNillableScaAuthRoleID(id *int64) *ScaAuthPermissionRuleUpdate {
-	if id != nil {
-		sapru = sapru.SetScaAuthRoleID(*id)
-	}
-	return sapru
-}
-
-// SetScaAuthRole sets the "sca_auth_role" edge to the ScaAuthRole entity.
-func (sapru *ScaAuthPermissionRuleUpdate) SetScaAuthRole(s *ScaAuthRole) *ScaAuthPermissionRuleUpdate {
-	return sapru.SetScaAuthRoleID(s.ID)
-}
-
 // Mutation returns the ScaAuthPermissionRuleMutation object of the builder.
 func (sapru *ScaAuthPermissionRuleUpdate) Mutation() *ScaAuthPermissionRuleMutation {
 	return sapru.mutation
-}
-
-// ClearScaAuthRole clears the "sca_auth_role" edge to the ScaAuthRole entity.
-func (sapru *ScaAuthPermissionRuleUpdate) ClearScaAuthRole() *ScaAuthPermissionRuleUpdate {
-	sapru.mutation.ClearScaAuthRole()
-	return sapru
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -251,7 +243,7 @@ func (sapru *ScaAuthPermissionRuleUpdate) sqlSave(ctx context.Context) (n int, e
 	if err := sapru.check(); err != nil {
 		return n, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(scaauthpermissionrule.Table, scaauthpermissionrule.Columns, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(scaauthpermissionrule.Table, scaauthpermissionrule.Columns, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt))
 	if ps := sapru.mutation.predicates; len(ps) > 0 {
 		_spec.Predicate = func(selector *sql.Selector) {
 			for i := range ps {
@@ -262,11 +254,20 @@ func (sapru *ScaAuthPermissionRuleUpdate) sqlSave(ctx context.Context) (n int, e
 	if value, ok := sapru.mutation.Ptype(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldPtype, field.TypeString, value)
 	}
+	if sapru.mutation.PtypeCleared() {
+		_spec.ClearField(scaauthpermissionrule.FieldPtype, field.TypeString)
+	}
 	if value, ok := sapru.mutation.V0(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV0, field.TypeString, value)
 	}
+	if sapru.mutation.V0Cleared() {
+		_spec.ClearField(scaauthpermissionrule.FieldV0, field.TypeString)
+	}
 	if value, ok := sapru.mutation.V1(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV1, field.TypeString, value)
+	}
+	if sapru.mutation.V1Cleared() {
+		_spec.ClearField(scaauthpermissionrule.FieldV1, field.TypeString)
 	}
 	if value, ok := sapru.mutation.V2(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV2, field.TypeString, value)
@@ -291,35 +292,6 @@ func (sapru *ScaAuthPermissionRuleUpdate) sqlSave(ctx context.Context) (n int, e
 	}
 	if sapru.mutation.V5Cleared() {
 		_spec.ClearField(scaauthpermissionrule.FieldV5, field.TypeString)
-	}
-	if sapru.mutation.ScaAuthRoleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthpermissionrule.ScaAuthRoleTable,
-			Columns: []string{scaauthpermissionrule.ScaAuthRoleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthrole.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sapru.mutation.ScaAuthRoleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthpermissionrule.ScaAuthRoleTable,
-			Columns: []string{scaauthpermissionrule.ScaAuthRoleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthrole.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, sapru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -355,6 +327,12 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) SetNillablePtype(s *string) *ScaAu
 	return sapruo
 }
 
+// ClearPtype clears the value of the "ptype" field.
+func (sapruo *ScaAuthPermissionRuleUpdateOne) ClearPtype() *ScaAuthPermissionRuleUpdateOne {
+	sapruo.mutation.ClearPtype()
+	return sapruo
+}
+
 // SetV0 sets the "v0" field.
 func (sapruo *ScaAuthPermissionRuleUpdateOne) SetV0(s string) *ScaAuthPermissionRuleUpdateOne {
 	sapruo.mutation.SetV0(s)
@@ -369,6 +347,12 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) SetNillableV0(s *string) *ScaAuthP
 	return sapruo
 }
 
+// ClearV0 clears the value of the "v0" field.
+func (sapruo *ScaAuthPermissionRuleUpdateOne) ClearV0() *ScaAuthPermissionRuleUpdateOne {
+	sapruo.mutation.ClearV0()
+	return sapruo
+}
+
 // SetV1 sets the "v1" field.
 func (sapruo *ScaAuthPermissionRuleUpdateOne) SetV1(s string) *ScaAuthPermissionRuleUpdateOne {
 	sapruo.mutation.SetV1(s)
@@ -380,6 +364,12 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) SetNillableV1(s *string) *ScaAuthP
 	if s != nil {
 		sapruo.SetV1(*s)
 	}
+	return sapruo
+}
+
+// ClearV1 clears the value of the "v1" field.
+func (sapruo *ScaAuthPermissionRuleUpdateOne) ClearV1() *ScaAuthPermissionRuleUpdateOne {
+	sapruo.mutation.ClearV1()
 	return sapruo
 }
 
@@ -463,34 +453,9 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) ClearV5() *ScaAuthPermissionRuleUp
 	return sapruo
 }
 
-// SetScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by ID.
-func (sapruo *ScaAuthPermissionRuleUpdateOne) SetScaAuthRoleID(id int64) *ScaAuthPermissionRuleUpdateOne {
-	sapruo.mutation.SetScaAuthRoleID(id)
-	return sapruo
-}
-
-// SetNillableScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by ID if the given value is not nil.
-func (sapruo *ScaAuthPermissionRuleUpdateOne) SetNillableScaAuthRoleID(id *int64) *ScaAuthPermissionRuleUpdateOne {
-	if id != nil {
-		sapruo = sapruo.SetScaAuthRoleID(*id)
-	}
-	return sapruo
-}
-
-// SetScaAuthRole sets the "sca_auth_role" edge to the ScaAuthRole entity.
-func (sapruo *ScaAuthPermissionRuleUpdateOne) SetScaAuthRole(s *ScaAuthRole) *ScaAuthPermissionRuleUpdateOne {
-	return sapruo.SetScaAuthRoleID(s.ID)
-}
-
 // Mutation returns the ScaAuthPermissionRuleMutation object of the builder.
 func (sapruo *ScaAuthPermissionRuleUpdateOne) Mutation() *ScaAuthPermissionRuleMutation {
 	return sapruo.mutation
-}
-
-// ClearScaAuthRole clears the "sca_auth_role" edge to the ScaAuthRole entity.
-func (sapruo *ScaAuthPermissionRuleUpdateOne) ClearScaAuthRole() *ScaAuthPermissionRuleUpdateOne {
-	sapruo.mutation.ClearScaAuthRole()
-	return sapruo
 }
 
 // Where appends a list predicates to the ScaAuthPermissionRuleUpdate builder.
@@ -577,7 +542,7 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) sqlSave(ctx context.Context) (_nod
 	if err := sapruo.check(); err != nil {
 		return _node, err
 	}
-	_spec := sqlgraph.NewUpdateSpec(scaauthpermissionrule.Table, scaauthpermissionrule.Columns, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64))
+	_spec := sqlgraph.NewUpdateSpec(scaauthpermissionrule.Table, scaauthpermissionrule.Columns, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt))
 	id, ok := sapruo.mutation.ID()
 	if !ok {
 		return nil, &ValidationError{Name: "id", err: errors.New(`ent: missing "ScaAuthPermissionRule.id" for update`)}
@@ -605,11 +570,20 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) sqlSave(ctx context.Context) (_nod
 	if value, ok := sapruo.mutation.Ptype(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldPtype, field.TypeString, value)
 	}
+	if sapruo.mutation.PtypeCleared() {
+		_spec.ClearField(scaauthpermissionrule.FieldPtype, field.TypeString)
+	}
 	if value, ok := sapruo.mutation.V0(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV0, field.TypeString, value)
 	}
+	if sapruo.mutation.V0Cleared() {
+		_spec.ClearField(scaauthpermissionrule.FieldV0, field.TypeString)
+	}
 	if value, ok := sapruo.mutation.V1(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV1, field.TypeString, value)
+	}
+	if sapruo.mutation.V1Cleared() {
+		_spec.ClearField(scaauthpermissionrule.FieldV1, field.TypeString)
 	}
 	if value, ok := sapruo.mutation.V2(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV2, field.TypeString, value)
@@ -634,35 +608,6 @@ func (sapruo *ScaAuthPermissionRuleUpdateOne) sqlSave(ctx context.Context) (_nod
 	}
 	if sapruo.mutation.V5Cleared() {
 		_spec.ClearField(scaauthpermissionrule.FieldV5, field.TypeString)
-	}
-	if sapruo.mutation.ScaAuthRoleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthpermissionrule.ScaAuthRoleTable,
-			Columns: []string{scaauthpermissionrule.ScaAuthRoleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthrole.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := sapruo.mutation.ScaAuthRoleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthpermissionrule.ScaAuthRoleTable,
-			Columns: []string{scaauthpermissionrule.ScaAuthRoleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthrole.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &ScaAuthPermissionRule{config: sapruo.config}
 	_spec.Assign = _node.assignValues

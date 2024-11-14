@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -46,26 +45,8 @@ const (
 	FieldLocation = "location"
 	// FieldCompany holds the string denoting the company field in the database.
 	FieldCompany = "company"
-	// EdgeScaAuthUserSocial holds the string denoting the sca_auth_user_social edge name in mutations.
-	EdgeScaAuthUserSocial = "sca_auth_user_social"
-	// EdgeScaAuthUserDevice holds the string denoting the sca_auth_user_device edge name in mutations.
-	EdgeScaAuthUserDevice = "sca_auth_user_device"
 	// Table holds the table name of the scaauthuser in the database.
 	Table = "sca_auth_user"
-	// ScaAuthUserSocialTable is the table that holds the sca_auth_user_social relation/edge.
-	ScaAuthUserSocialTable = "sca_auth_user_social"
-	// ScaAuthUserSocialInverseTable is the table name for the ScaAuthUserSocial entity.
-	// It exists in this package in order to avoid circular dependency with the "scaauthusersocial" package.
-	ScaAuthUserSocialInverseTable = "sca_auth_user_social"
-	// ScaAuthUserSocialColumn is the table column denoting the sca_auth_user_social relation/edge.
-	ScaAuthUserSocialColumn = "sca_auth_user_sca_auth_user_social"
-	// ScaAuthUserDeviceTable is the table that holds the sca_auth_user_device relation/edge.
-	ScaAuthUserDeviceTable = "sca_auth_user_device"
-	// ScaAuthUserDeviceInverseTable is the table name for the ScaAuthUserDevice entity.
-	// It exists in this package in order to avoid circular dependency with the "scaauthuserdevice" package.
-	ScaAuthUserDeviceInverseTable = "sca_auth_user_device"
-	// ScaAuthUserDeviceColumn is the table column denoting the sca_auth_user_device relation/edge.
-	ScaAuthUserDeviceColumn = "sca_auth_user_sca_auth_user_device"
 )
 
 // Columns holds all SQL columns for scaauthuser fields.
@@ -122,8 +103,6 @@ var (
 	PhoneValidator func(string) error
 	// PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	PasswordValidator func(string) error
-	// GenderValidator is a validator for the "gender" field. It is called by the builders before save.
-	GenderValidator func(string) error
 	// DefaultStatus holds the default value on creation for the "status" field.
 	DefaultStatus int8
 	// IntroduceValidator is a validator for the "introduce" field. It is called by the builders before save.
@@ -222,46 +201,4 @@ func ByLocation(opts ...sql.OrderTermOption) OrderOption {
 // ByCompany orders the results by the company field.
 func ByCompany(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldCompany, opts...).ToFunc()
-}
-
-// ByScaAuthUserSocialCount orders the results by sca_auth_user_social count.
-func ByScaAuthUserSocialCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newScaAuthUserSocialStep(), opts...)
-	}
-}
-
-// ByScaAuthUserSocial orders the results by sca_auth_user_social terms.
-func ByScaAuthUserSocial(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newScaAuthUserSocialStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-
-// ByScaAuthUserDeviceCount orders the results by sca_auth_user_device count.
-func ByScaAuthUserDeviceCount(opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborsCount(s, newScaAuthUserDeviceStep(), opts...)
-	}
-}
-
-// ByScaAuthUserDevice orders the results by sca_auth_user_device terms.
-func ByScaAuthUserDevice(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newScaAuthUserDeviceStep(), append([]sql.OrderTerm{term}, terms...)...)
-	}
-}
-func newScaAuthUserSocialStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ScaAuthUserSocialInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ScaAuthUserSocialTable, ScaAuthUserSocialColumn),
-	)
-}
-func newScaAuthUserDeviceStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ScaAuthUserDeviceInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.O2M, false, ScaAuthUserDeviceTable, ScaAuthUserDeviceColumn),
-	)
 }

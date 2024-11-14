@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
 	"time"
 
@@ -99,25 +98,6 @@ func (sausc *ScaAuthUserSocialCreate) SetNillableStatus(i *int) *ScaAuthUserSoci
 func (sausc *ScaAuthUserSocialCreate) SetID(i int64) *ScaAuthUserSocialCreate {
 	sausc.mutation.SetID(i)
 	return sausc
-}
-
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
-func (sausc *ScaAuthUserSocialCreate) SetScaAuthUserID(id int64) *ScaAuthUserSocialCreate {
-	sausc.mutation.SetScaAuthUserID(id)
-	return sausc
-}
-
-// SetNillableScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID if the given value is not nil.
-func (sausc *ScaAuthUserSocialCreate) SetNillableScaAuthUserID(id *int64) *ScaAuthUserSocialCreate {
-	if id != nil {
-		sausc = sausc.SetScaAuthUserID(*id)
-	}
-	return sausc
-}
-
-// SetScaAuthUser sets the "sca_auth_user" edge to the ScaAuthUser entity.
-func (sausc *ScaAuthUserSocialCreate) SetScaAuthUser(s *ScaAuthUser) *ScaAuthUserSocialCreate {
-	return sausc.SetScaAuthUserID(s.ID)
 }
 
 // Mutation returns the ScaAuthUserSocialMutation object of the builder.
@@ -272,23 +252,6 @@ func (sausc *ScaAuthUserSocialCreate) createSpec() (*ScaAuthUserSocial, *sqlgrap
 	if value, ok := sausc.mutation.Status(); ok {
 		_spec.SetField(scaauthusersocial.FieldStatus, field.TypeInt, value)
 		_node.Status = value
-	}
-	if nodes := sausc.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthusersocial.ScaAuthUserTable,
-			Columns: []string{scaauthusersocial.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.sca_auth_user_sca_auth_user_social = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

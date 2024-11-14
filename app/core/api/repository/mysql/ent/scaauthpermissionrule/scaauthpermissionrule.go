@@ -4,7 +4,6 @@ package scaauthpermissionrule
 
 import (
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -26,17 +25,8 @@ const (
 	FieldV4 = "v4"
 	// FieldV5 holds the string denoting the v5 field in the database.
 	FieldV5 = "v5"
-	// EdgeScaAuthRole holds the string denoting the sca_auth_role edge name in mutations.
-	EdgeScaAuthRole = "sca_auth_role"
 	// Table holds the table name of the scaauthpermissionrule in the database.
 	Table = "sca_auth_permission_rule"
-	// ScaAuthRoleTable is the table that holds the sca_auth_role relation/edge.
-	ScaAuthRoleTable = "sca_auth_permission_rule"
-	// ScaAuthRoleInverseTable is the table name for the ScaAuthRole entity.
-	// It exists in this package in order to avoid circular dependency with the "scaauthrole" package.
-	ScaAuthRoleInverseTable = "sca_auth_role"
-	// ScaAuthRoleColumn is the table column denoting the sca_auth_role relation/edge.
-	ScaAuthRoleColumn = "sca_auth_role_sca_auth_permission_rule"
 )
 
 // Columns holds all SQL columns for scaauthpermissionrule fields.
@@ -51,21 +41,10 @@ var Columns = []string{
 	FieldV5,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_permission_rule"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"sca_auth_role_sca_auth_permission_rule",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -130,18 +109,4 @@ func ByV4(opts ...sql.OrderTermOption) OrderOption {
 // ByV5 orders the results by the v5 field.
 func ByV5(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldV5, opts...).ToFunc()
-}
-
-// ByScaAuthRoleField orders the results by sca_auth_role field.
-func ByScaAuthRoleField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newScaAuthRoleStep(), sql.OrderByField(field, opts...))
-	}
-}
-func newScaAuthRoleStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ScaAuthRoleInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, ScaAuthRoleTable, ScaAuthRoleColumn),
-	)
 }

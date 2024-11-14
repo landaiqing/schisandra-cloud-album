@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -338,29 +337,6 @@ func RoleKeyEqualFold(v string) predicate.ScaAuthRole {
 // RoleKeyContainsFold applies the ContainsFold predicate on the "role_key" field.
 func RoleKeyContainsFold(v string) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldContainsFold(FieldRoleKey, v))
-}
-
-// HasScaAuthPermissionRule applies the HasEdge predicate on the "sca_auth_permission_rule" edge.
-func HasScaAuthPermissionRule() predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ScaAuthPermissionRuleTable, ScaAuthPermissionRuleColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasScaAuthPermissionRuleWith applies the HasEdge predicate on the "sca_auth_permission_rule" edge with a given conditions (other predicates).
-func HasScaAuthPermissionRuleWith(preds ...predicate.ScaAuthPermissionRule) predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(func(s *sql.Selector) {
-		step := newScaAuthPermissionRuleStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

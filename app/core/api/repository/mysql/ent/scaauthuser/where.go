@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -101,7 +100,7 @@ func Password(v string) predicate.ScaAuthUser {
 }
 
 // Gender applies equality check predicate on the "gender" field. It's identical to GenderEQ.
-func Gender(v string) predicate.ScaAuthUser {
+func Gender(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldEQ(FieldGender, v))
 }
 
@@ -706,58 +705,43 @@ func PasswordContainsFold(v string) predicate.ScaAuthUser {
 }
 
 // GenderEQ applies the EQ predicate on the "gender" field.
-func GenderEQ(v string) predicate.ScaAuthUser {
+func GenderEQ(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldEQ(FieldGender, v))
 }
 
 // GenderNEQ applies the NEQ predicate on the "gender" field.
-func GenderNEQ(v string) predicate.ScaAuthUser {
+func GenderNEQ(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldNEQ(FieldGender, v))
 }
 
 // GenderIn applies the In predicate on the "gender" field.
-func GenderIn(vs ...string) predicate.ScaAuthUser {
+func GenderIn(vs ...int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldIn(FieldGender, vs...))
 }
 
 // GenderNotIn applies the NotIn predicate on the "gender" field.
-func GenderNotIn(vs ...string) predicate.ScaAuthUser {
+func GenderNotIn(vs ...int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldNotIn(FieldGender, vs...))
 }
 
 // GenderGT applies the GT predicate on the "gender" field.
-func GenderGT(v string) predicate.ScaAuthUser {
+func GenderGT(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldGT(FieldGender, v))
 }
 
 // GenderGTE applies the GTE predicate on the "gender" field.
-func GenderGTE(v string) predicate.ScaAuthUser {
+func GenderGTE(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldGTE(FieldGender, v))
 }
 
 // GenderLT applies the LT predicate on the "gender" field.
-func GenderLT(v string) predicate.ScaAuthUser {
+func GenderLT(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldLT(FieldGender, v))
 }
 
 // GenderLTE applies the LTE predicate on the "gender" field.
-func GenderLTE(v string) predicate.ScaAuthUser {
+func GenderLTE(v int8) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldLTE(FieldGender, v))
-}
-
-// GenderContains applies the Contains predicate on the "gender" field.
-func GenderContains(v string) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(sql.FieldContains(FieldGender, v))
-}
-
-// GenderHasPrefix applies the HasPrefix predicate on the "gender" field.
-func GenderHasPrefix(v string) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(sql.FieldHasPrefix(FieldGender, v))
-}
-
-// GenderHasSuffix applies the HasSuffix predicate on the "gender" field.
-func GenderHasSuffix(v string) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(sql.FieldHasSuffix(FieldGender, v))
 }
 
 // GenderIsNil applies the IsNil predicate on the "gender" field.
@@ -768,16 +752,6 @@ func GenderIsNil() predicate.ScaAuthUser {
 // GenderNotNil applies the NotNil predicate on the "gender" field.
 func GenderNotNil() predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldNotNull(FieldGender))
-}
-
-// GenderEqualFold applies the EqualFold predicate on the "gender" field.
-func GenderEqualFold(v string) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(sql.FieldEqualFold(FieldGender, v))
-}
-
-// GenderContainsFold applies the ContainsFold predicate on the "gender" field.
-func GenderContainsFold(v string) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(sql.FieldContainsFold(FieldGender, v))
 }
 
 // AvatarEQ applies the EQ predicate on the "avatar" field.
@@ -1203,52 +1177,6 @@ func CompanyEqualFold(v string) predicate.ScaAuthUser {
 // CompanyContainsFold applies the ContainsFold predicate on the "company" field.
 func CompanyContainsFold(v string) predicate.ScaAuthUser {
 	return predicate.ScaAuthUser(sql.FieldContainsFold(FieldCompany, v))
-}
-
-// HasScaAuthUserSocial applies the HasEdge predicate on the "sca_auth_user_social" edge.
-func HasScaAuthUserSocial() predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ScaAuthUserSocialTable, ScaAuthUserSocialColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasScaAuthUserSocialWith applies the HasEdge predicate on the "sca_auth_user_social" edge with a given conditions (other predicates).
-func HasScaAuthUserSocialWith(preds ...predicate.ScaAuthUserSocial) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(func(s *sql.Selector) {
-		step := newScaAuthUserSocialStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
-}
-
-// HasScaAuthUserDevice applies the HasEdge predicate on the "sca_auth_user_device" edge.
-func HasScaAuthUserDevice() predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, ScaAuthUserDeviceTable, ScaAuthUserDeviceColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasScaAuthUserDeviceWith applies the HasEdge predicate on the "sca_auth_user_device" edge with a given conditions (other predicates).
-func HasScaAuthUserDeviceWith(preds ...predicate.ScaAuthUserDevice) predicate.ScaAuthUser {
-	return predicate.ScaAuthUser(func(s *sql.Selector) {
-		step := newScaAuthUserDeviceStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

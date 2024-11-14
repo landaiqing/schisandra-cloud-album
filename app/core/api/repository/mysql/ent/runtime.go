@@ -120,10 +120,6 @@ func init() {
 	scaauthuserDescPassword := scaauthuserFields[6].Descriptor()
 	// scaauthuser.PasswordValidator is a validator for the "password" field. It is called by the builders before save.
 	scaauthuser.PasswordValidator = scaauthuserDescPassword.Validators[0].(func(string) error)
-	// scaauthuserDescGender is the schema descriptor for gender field.
-	scaauthuserDescGender := scaauthuserFields[7].Descriptor()
-	// scaauthuser.GenderValidator is a validator for the "gender" field. It is called by the builders before save.
-	scaauthuser.GenderValidator = scaauthuserDescGender.Validators[0].(func(string) error)
 	// scaauthuserDescStatus is the schema descriptor for status field.
 	scaauthuserDescStatus := scaauthuserFields[9].Descriptor()
 	// scaauthuser.DefaultStatus holds the default value on creation for the status field.

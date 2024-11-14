@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 	"time"
 
@@ -79,21 +78,6 @@ func (sarc *ScaAuthRoleCreate) SetRoleKey(s string) *ScaAuthRoleCreate {
 func (sarc *ScaAuthRoleCreate) SetID(i int64) *ScaAuthRoleCreate {
 	sarc.mutation.SetID(i)
 	return sarc
-}
-
-// AddScaAuthPermissionRuleIDs adds the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity by IDs.
-func (sarc *ScaAuthRoleCreate) AddScaAuthPermissionRuleIDs(ids ...int64) *ScaAuthRoleCreate {
-	sarc.mutation.AddScaAuthPermissionRuleIDs(ids...)
-	return sarc
-}
-
-// AddScaAuthPermissionRule adds the "sca_auth_permission_rule" edges to the ScaAuthPermissionRule entity.
-func (sarc *ScaAuthRoleCreate) AddScaAuthPermissionRule(s ...*ScaAuthPermissionRule) *ScaAuthRoleCreate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return sarc.AddScaAuthPermissionRuleIDs(ids...)
 }
 
 // Mutation returns the ScaAuthRoleMutation object of the builder.
@@ -225,22 +209,6 @@ func (sarc *ScaAuthRoleCreate) createSpec() (*ScaAuthRole, *sqlgraph.CreateSpec)
 	if value, ok := sarc.mutation.RoleKey(); ok {
 		_spec.SetField(scaauthrole.FieldRoleKey, field.TypeString, value)
 		_node.RoleKey = value
-	}
-	if nodes := sarc.mutation.ScaAuthPermissionRuleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

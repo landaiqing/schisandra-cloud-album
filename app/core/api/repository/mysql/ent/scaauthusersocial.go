@@ -4,7 +4,6 @@ package ent
 
 import (
 	"fmt"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
 	"strings"
 	"time"
@@ -32,32 +31,8 @@ type ScaAuthUserSocial struct {
 	// 第三方用户来源
 	Source string `json:"source,omitempty"`
 	// 状态 0正常 1 封禁
-	Status int `json:"status,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ScaAuthUserSocialQuery when eager-loading is set.
-	Edges                              ScaAuthUserSocialEdges `json:"edges"`
-	sca_auth_user_sca_auth_user_social *int64
-	selectValues                       sql.SelectValues
-}
-
-// ScaAuthUserSocialEdges holds the relations/edges for other nodes in the graph.
-type ScaAuthUserSocialEdges struct {
-	// ScaAuthUser holds the value of the sca_auth_user edge.
-	ScaAuthUser *ScaAuthUser `json:"sca_auth_user,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// ScaAuthUserOrErr returns the ScaAuthUser value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ScaAuthUserSocialEdges) ScaAuthUserOrErr() (*ScaAuthUser, error) {
-	if e.ScaAuthUser != nil {
-		return e.ScaAuthUser, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: scaauthuser.Label}
-	}
-	return nil, &NotLoadedError{edge: "sca_auth_user"}
+	Status       int `json:"status,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -71,8 +46,6 @@ func (*ScaAuthUserSocial) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullString)
 		case scaauthusersocial.FieldCreatedAt, scaauthusersocial.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
-		case scaauthusersocial.ForeignKeys[0]: // sca_auth_user_sca_auth_user_social
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -136,13 +109,6 @@ func (saus *ScaAuthUserSocial) assignValues(columns []string, values []any) erro
 			} else if value.Valid {
 				saus.Status = int(value.Int64)
 			}
-		case scaauthusersocial.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field sca_auth_user_sca_auth_user_social", value)
-			} else if value.Valid {
-				saus.sca_auth_user_sca_auth_user_social = new(int64)
-				*saus.sca_auth_user_sca_auth_user_social = int64(value.Int64)
-			}
 		default:
 			saus.selectValues.Set(columns[i], values[i])
 		}
@@ -154,11 +120,6 @@ func (saus *ScaAuthUserSocial) assignValues(columns []string, values []any) erro
 // This includes values selected through modifiers, order, etc.
 func (saus *ScaAuthUserSocial) Value(name string) (ent.Value, error) {
 	return saus.selectValues.Get(name)
-}
-
-// QueryScaAuthUser queries the "sca_auth_user" edge of the ScaAuthUserSocial entity.
-func (saus *ScaAuthUserSocial) QueryScaAuthUser() *ScaAuthUserQuery {
-	return NewScaAuthUserSocialClient(saus.config).QueryScaAuthUser(saus)
 }
 
 // Update returns a builder for updating this ScaAuthUserSocial.

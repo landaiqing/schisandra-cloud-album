@@ -5,7 +5,6 @@ package ent
 import (
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 	"strings"
 
 	"entgo.io/ent"
@@ -16,46 +15,22 @@ import (
 type ScaAuthPermissionRule struct {
 	config `json:"-"`
 	// ID of the ent.
-	ID int64 `json:"id,omitempty"`
+	ID int `json:"id,omitempty"`
 	// Ptype holds the value of the "ptype" field.
-	Ptype *string `json:"ptype,omitempty"`
+	Ptype string `json:"ptype,omitempty"`
 	// V0 holds the value of the "v0" field.
-	V0 *string `json:"v0,omitempty"`
+	V0 string `json:"v0,omitempty"`
 	// V1 holds the value of the "v1" field.
-	V1 *string `json:"v1,omitempty"`
+	V1 string `json:"v1,omitempty"`
 	// V2 holds the value of the "v2" field.
-	V2 *string `json:"v2,omitempty"`
+	V2 string `json:"v2,omitempty"`
 	// V3 holds the value of the "v3" field.
-	V3 *string `json:"v3,omitempty"`
+	V3 string `json:"v3,omitempty"`
 	// V4 holds the value of the "v4" field.
-	V4 *string `json:"v4,omitempty"`
+	V4 string `json:"v4,omitempty"`
 	// V5 holds the value of the "v5" field.
-	V5 *string `json:"v5,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ScaAuthPermissionRuleQuery when eager-loading is set.
-	Edges                                  ScaAuthPermissionRuleEdges `json:"edges"`
-	sca_auth_role_sca_auth_permission_rule *int64
-	selectValues                           sql.SelectValues
-}
-
-// ScaAuthPermissionRuleEdges holds the relations/edges for other nodes in the graph.
-type ScaAuthPermissionRuleEdges struct {
-	// ScaAuthRole holds the value of the sca_auth_role edge.
-	ScaAuthRole *ScaAuthRole `json:"sca_auth_role,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [1]bool
-}
-
-// ScaAuthRoleOrErr returns the ScaAuthRole value or an error if the edge
-// was not loaded in eager-loading, or loaded but was not found.
-func (e ScaAuthPermissionRuleEdges) ScaAuthRoleOrErr() (*ScaAuthRole, error) {
-	if e.ScaAuthRole != nil {
-		return e.ScaAuthRole, nil
-	} else if e.loadedTypes[0] {
-		return nil, &NotFoundError{label: scaauthrole.Label}
-	}
-	return nil, &NotLoadedError{edge: "sca_auth_role"}
+	V5           string `json:"v5,omitempty"`
+	selectValues sql.SelectValues
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -67,8 +42,6 @@ func (*ScaAuthPermissionRule) scanValues(columns []string) ([]any, error) {
 			values[i] = new(sql.NullInt64)
 		case scaauthpermissionrule.FieldPtype, scaauthpermissionrule.FieldV0, scaauthpermissionrule.FieldV1, scaauthpermissionrule.FieldV2, scaauthpermissionrule.FieldV3, scaauthpermissionrule.FieldV4, scaauthpermissionrule.FieldV5:
 			values[i] = new(sql.NullString)
-		case scaauthpermissionrule.ForeignKeys[0]: // sca_auth_role_sca_auth_permission_rule
-			values[i] = new(sql.NullInt64)
 		default:
 			values[i] = new(sql.UnknownType)
 		}
@@ -89,62 +62,48 @@ func (sapr *ScaAuthPermissionRule) assignValues(columns []string, values []any) 
 			if !ok {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
-			sapr.ID = int64(value.Int64)
+			sapr.ID = int(value.Int64)
 		case scaauthpermissionrule.FieldPtype:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field ptype", values[i])
 			} else if value.Valid {
-				sapr.Ptype = new(string)
-				*sapr.Ptype = value.String
+				sapr.Ptype = value.String
 			}
 		case scaauthpermissionrule.FieldV0:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field v0", values[i])
 			} else if value.Valid {
-				sapr.V0 = new(string)
-				*sapr.V0 = value.String
+				sapr.V0 = value.String
 			}
 		case scaauthpermissionrule.FieldV1:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field v1", values[i])
 			} else if value.Valid {
-				sapr.V1 = new(string)
-				*sapr.V1 = value.String
+				sapr.V1 = value.String
 			}
 		case scaauthpermissionrule.FieldV2:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field v2", values[i])
 			} else if value.Valid {
-				sapr.V2 = new(string)
-				*sapr.V2 = value.String
+				sapr.V2 = value.String
 			}
 		case scaauthpermissionrule.FieldV3:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field v3", values[i])
 			} else if value.Valid {
-				sapr.V3 = new(string)
-				*sapr.V3 = value.String
+				sapr.V3 = value.String
 			}
 		case scaauthpermissionrule.FieldV4:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field v4", values[i])
 			} else if value.Valid {
-				sapr.V4 = new(string)
-				*sapr.V4 = value.String
+				sapr.V4 = value.String
 			}
 		case scaauthpermissionrule.FieldV5:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field v5", values[i])
 			} else if value.Valid {
-				sapr.V5 = new(string)
-				*sapr.V5 = value.String
-			}
-		case scaauthpermissionrule.ForeignKeys[0]:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for edge-field sca_auth_role_sca_auth_permission_rule", value)
-			} else if value.Valid {
-				sapr.sca_auth_role_sca_auth_permission_rule = new(int64)
-				*sapr.sca_auth_role_sca_auth_permission_rule = int64(value.Int64)
+				sapr.V5 = value.String
 			}
 		default:
 			sapr.selectValues.Set(columns[i], values[i])
@@ -157,11 +116,6 @@ func (sapr *ScaAuthPermissionRule) assignValues(columns []string, values []any) 
 // This includes values selected through modifiers, order, etc.
 func (sapr *ScaAuthPermissionRule) Value(name string) (ent.Value, error) {
 	return sapr.selectValues.Get(name)
-}
-
-// QueryScaAuthRole queries the "sca_auth_role" edge of the ScaAuthPermissionRule entity.
-func (sapr *ScaAuthPermissionRule) QueryScaAuthRole() *ScaAuthRoleQuery {
-	return NewScaAuthPermissionRuleClient(sapr.config).QueryScaAuthRole(sapr)
 }
 
 // Update returns a builder for updating this ScaAuthPermissionRule.
@@ -187,40 +141,26 @@ func (sapr *ScaAuthPermissionRule) String() string {
 	var builder strings.Builder
 	builder.WriteString("ScaAuthPermissionRule(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", sapr.ID))
-	if v := sapr.Ptype; v != nil {
-		builder.WriteString("ptype=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("ptype=")
+	builder.WriteString(sapr.Ptype)
 	builder.WriteString(", ")
-	if v := sapr.V0; v != nil {
-		builder.WriteString("v0=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("v0=")
+	builder.WriteString(sapr.V0)
 	builder.WriteString(", ")
-	if v := sapr.V1; v != nil {
-		builder.WriteString("v1=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("v1=")
+	builder.WriteString(sapr.V1)
 	builder.WriteString(", ")
-	if v := sapr.V2; v != nil {
-		builder.WriteString("v2=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("v2=")
+	builder.WriteString(sapr.V2)
 	builder.WriteString(", ")
-	if v := sapr.V3; v != nil {
-		builder.WriteString("v3=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("v3=")
+	builder.WriteString(sapr.V3)
 	builder.WriteString(", ")
-	if v := sapr.V4; v != nil {
-		builder.WriteString("v4=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("v4=")
+	builder.WriteString(sapr.V4)
 	builder.WriteString(", ")
-	if v := sapr.V5; v != nil {
-		builder.WriteString("v5=")
-		builder.WriteString(*v)
-	}
+	builder.WriteString("v5=")
+	builder.WriteString(sapr.V5)
 	builder.WriteByte(')')
 	return builder.String()
 }

@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
 
 	"entgo.io/ent"
@@ -19,12 +18,10 @@ import (
 // ScaAuthUserSocialQuery is the builder for querying ScaAuthUserSocial entities.
 type ScaAuthUserSocialQuery struct {
 	config
-	ctx             *QueryContext
-	order           []scaauthusersocial.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.ScaAuthUserSocial
-	withScaAuthUser *ScaAuthUserQuery
-	withFKs         bool
+	ctx        *QueryContext
+	order      []scaauthusersocial.OrderOption
+	inters     []Interceptor
+	predicates []predicate.ScaAuthUserSocial
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -59,28 +56,6 @@ func (sausq *ScaAuthUserSocialQuery) Unique(unique bool) *ScaAuthUserSocialQuery
 func (sausq *ScaAuthUserSocialQuery) Order(o ...scaauthusersocial.OrderOption) *ScaAuthUserSocialQuery {
 	sausq.order = append(sausq.order, o...)
 	return sausq
-}
-
-// QueryScaAuthUser chains the current query on the "sca_auth_user" edge.
-func (sausq *ScaAuthUserSocialQuery) QueryScaAuthUser() *ScaAuthUserQuery {
-	query := (&ScaAuthUserClient{config: sausq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := sausq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := sausq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthusersocial.Table, scaauthusersocial.FieldID, selector),
-			sqlgraph.To(scaauthuser.Table, scaauthuser.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, scaauthusersocial.ScaAuthUserTable, scaauthusersocial.ScaAuthUserColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(sausq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // First returns the first ScaAuthUserSocial entity from the query.
@@ -270,27 +245,15 @@ func (sausq *ScaAuthUserSocialQuery) Clone() *ScaAuthUserSocialQuery {
 		return nil
 	}
 	return &ScaAuthUserSocialQuery{
-		config:          sausq.config,
-		ctx:             sausq.ctx.Clone(),
-		order:           append([]scaauthusersocial.OrderOption{}, sausq.order...),
-		inters:          append([]Interceptor{}, sausq.inters...),
-		predicates:      append([]predicate.ScaAuthUserSocial{}, sausq.predicates...),
-		withScaAuthUser: sausq.withScaAuthUser.Clone(),
+		config:     sausq.config,
+		ctx:        sausq.ctx.Clone(),
+		order:      append([]scaauthusersocial.OrderOption{}, sausq.order...),
+		inters:     append([]Interceptor{}, sausq.inters...),
+		predicates: append([]predicate.ScaAuthUserSocial{}, sausq.predicates...),
 		// clone intermediate query.
 		sql:  sausq.sql.Clone(),
 		path: sausq.path,
 	}
-}
-
-// WithScaAuthUser tells the query-builder to eager-load the nodes that are connected to
-// the "sca_auth_user" edge. The optional arguments are used to configure the query builder of the edge.
-func (sausq *ScaAuthUserSocialQuery) WithScaAuthUser(opts ...func(*ScaAuthUserQuery)) *ScaAuthUserSocialQuery {
-	query := (&ScaAuthUserClient{config: sausq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	sausq.withScaAuthUser = query
-	return sausq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -369,26 +332,15 @@ func (sausq *ScaAuthUserSocialQuery) prepareQuery(ctx context.Context) error {
 
 func (sausq *ScaAuthUserSocialQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ScaAuthUserSocial, error) {
 	var (
-		nodes       = []*ScaAuthUserSocial{}
-		withFKs     = sausq.withFKs
-		_spec       = sausq.querySpec()
-		loadedTypes = [1]bool{
-			sausq.withScaAuthUser != nil,
-		}
+		nodes = []*ScaAuthUserSocial{}
+		_spec = sausq.querySpec()
 	)
-	if sausq.withScaAuthUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, scaauthusersocial.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*ScaAuthUserSocial).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &ScaAuthUserSocial{config: sausq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -400,46 +352,7 @@ func (sausq *ScaAuthUserSocialQuery) sqlAll(ctx context.Context, hooks ...queryH
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := sausq.withScaAuthUser; query != nil {
-		if err := sausq.loadScaAuthUser(ctx, query, nodes, nil,
-			func(n *ScaAuthUserSocial, e *ScaAuthUser) { n.Edges.ScaAuthUser = e }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (sausq *ScaAuthUserSocialQuery) loadScaAuthUser(ctx context.Context, query *ScaAuthUserQuery, nodes []*ScaAuthUserSocial, init func(*ScaAuthUserSocial), assign func(*ScaAuthUserSocial, *ScaAuthUser)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*ScaAuthUserSocial)
-	for i := range nodes {
-		if nodes[i].sca_auth_user_sca_auth_user_social == nil {
-			continue
-		}
-		fk := *nodes[i].sca_auth_user_sca_auth_user_social
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(scaauthuser.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "sca_auth_user_sca_auth_user_social" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
 }
 
 func (sausq *ScaAuthUserSocialQuery) sqlCount(ctx context.Context) (int, error) {

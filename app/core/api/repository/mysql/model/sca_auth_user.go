@@ -5,7 +5,6 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -57,8 +56,7 @@ func (ScaAuthUser) Fields() []ent.Field {
 			Optional().
 			Sensitive().
 			Comment("密码"),
-		field.String("gender").
-			MaxLen(32).
+		field.Int8("gender").
 			Optional().
 			Comment("性别"),
 		field.String("avatar").
@@ -95,10 +93,7 @@ func (ScaAuthUser) Fields() []ent.Field {
 
 // Edges of the ScaAuthUser.
 func (ScaAuthUser) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.To("sca_auth_user_social", ScaAuthUserSocial.Type),
-		edge.To("sca_auth_user_device", ScaAuthUserDevice.Type),
-	}
+	return nil
 }
 
 // Indexes of the ScaAuthUser.

@@ -20,7 +20,6 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // Client is the client that holds all ent builders.
@@ -299,7 +298,7 @@ func (c *ScaAuthPermissionRuleClient) UpdateOne(sapr *ScaAuthPermissionRule) *Sc
 }
 
 // UpdateOneID returns an update builder for the given id.
-func (c *ScaAuthPermissionRuleClient) UpdateOneID(id int64) *ScaAuthPermissionRuleUpdateOne {
+func (c *ScaAuthPermissionRuleClient) UpdateOneID(id int) *ScaAuthPermissionRuleUpdateOne {
 	mutation := newScaAuthPermissionRuleMutation(c.config, OpUpdateOne, withScaAuthPermissionRuleID(id))
 	return &ScaAuthPermissionRuleUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
 }
@@ -316,7 +315,7 @@ func (c *ScaAuthPermissionRuleClient) DeleteOne(sapr *ScaAuthPermissionRule) *Sc
 }
 
 // DeleteOneID returns a builder for deleting the given entity by its id.
-func (c *ScaAuthPermissionRuleClient) DeleteOneID(id int64) *ScaAuthPermissionRuleDeleteOne {
+func (c *ScaAuthPermissionRuleClient) DeleteOneID(id int) *ScaAuthPermissionRuleDeleteOne {
 	builder := c.Delete().Where(scaauthpermissionrule.ID(id))
 	builder.mutation.id = &id
 	builder.mutation.op = OpDeleteOne
@@ -333,33 +332,17 @@ func (c *ScaAuthPermissionRuleClient) Query() *ScaAuthPermissionRuleQuery {
 }
 
 // Get returns a ScaAuthPermissionRule entity by its id.
-func (c *ScaAuthPermissionRuleClient) Get(ctx context.Context, id int64) (*ScaAuthPermissionRule, error) {
+func (c *ScaAuthPermissionRuleClient) Get(ctx context.Context, id int) (*ScaAuthPermissionRule, error) {
 	return c.Query().Where(scaauthpermissionrule.ID(id)).Only(ctx)
 }
 
 // GetX is like Get, but panics if an error occurs.
-func (c *ScaAuthPermissionRuleClient) GetX(ctx context.Context, id int64) *ScaAuthPermissionRule {
+func (c *ScaAuthPermissionRuleClient) GetX(ctx context.Context, id int) *ScaAuthPermissionRule {
 	obj, err := c.Get(ctx, id)
 	if err != nil {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryScaAuthRole queries the sca_auth_role edge of a ScaAuthPermissionRule.
-func (c *ScaAuthPermissionRuleClient) QueryScaAuthRole(sapr *ScaAuthPermissionRule) *ScaAuthRoleQuery {
-	query := (&ScaAuthRoleClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sapr.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthpermissionrule.Table, scaauthpermissionrule.FieldID, id),
-			sqlgraph.To(scaauthrole.Table, scaauthrole.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, scaauthpermissionrule.ScaAuthRoleTable, scaauthpermissionrule.ScaAuthRoleColumn),
-		)
-		fromV = sqlgraph.Neighbors(sapr.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // Hooks returns the client hooks.
@@ -495,22 +478,6 @@ func (c *ScaAuthRoleClient) GetX(ctx context.Context, id int64) *ScaAuthRole {
 	return obj
 }
 
-// QueryScaAuthPermissionRule queries the sca_auth_permission_rule edge of a ScaAuthRole.
-func (c *ScaAuthRoleClient) QueryScaAuthPermissionRule(sar *ScaAuthRole) *ScaAuthPermissionRuleQuery {
-	query := (&ScaAuthPermissionRuleClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sar.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthrole.Table, scaauthrole.FieldID, id),
-			sqlgraph.To(scaauthpermissionrule.Table, scaauthpermissionrule.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, scaauthrole.ScaAuthPermissionRuleTable, scaauthrole.ScaAuthPermissionRuleColumn),
-		)
-		fromV = sqlgraph.Neighbors(sar.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *ScaAuthRoleClient) Hooks() []Hook {
 	return c.hooks.ScaAuthRole
@@ -642,38 +609,6 @@ func (c *ScaAuthUserClient) GetX(ctx context.Context, id int64) *ScaAuthUser {
 		panic(err)
 	}
 	return obj
-}
-
-// QueryScaAuthUserSocial queries the sca_auth_user_social edge of a ScaAuthUser.
-func (c *ScaAuthUserClient) QueryScaAuthUserSocial(sau *ScaAuthUser) *ScaAuthUserSocialQuery {
-	query := (&ScaAuthUserSocialClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sau.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthuser.Table, scaauthuser.FieldID, id),
-			sqlgraph.To(scaauthusersocial.Table, scaauthusersocial.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, scaauthuser.ScaAuthUserSocialTable, scaauthuser.ScaAuthUserSocialColumn),
-		)
-		fromV = sqlgraph.Neighbors(sau.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
-// QueryScaAuthUserDevice queries the sca_auth_user_device edge of a ScaAuthUser.
-func (c *ScaAuthUserClient) QueryScaAuthUserDevice(sau *ScaAuthUser) *ScaAuthUserDeviceQuery {
-	query := (&ScaAuthUserDeviceClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := sau.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthuser.Table, scaauthuser.FieldID, id),
-			sqlgraph.To(scaauthuserdevice.Table, scaauthuserdevice.FieldID),
-			sqlgraph.Edge(sqlgraph.O2M, false, scaauthuser.ScaAuthUserDeviceTable, scaauthuser.ScaAuthUserDeviceColumn),
-		)
-		fromV = sqlgraph.Neighbors(sau.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // Hooks returns the client hooks.
@@ -809,22 +744,6 @@ func (c *ScaAuthUserDeviceClient) GetX(ctx context.Context, id int64) *ScaAuthUs
 	return obj
 }
 
-// QueryScaAuthUser queries the sca_auth_user edge of a ScaAuthUserDevice.
-func (c *ScaAuthUserDeviceClient) QueryScaAuthUser(saud *ScaAuthUserDevice) *ScaAuthUserQuery {
-	query := (&ScaAuthUserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := saud.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthuserdevice.Table, scaauthuserdevice.FieldID, id),
-			sqlgraph.To(scaauthuser.Table, scaauthuser.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, scaauthuserdevice.ScaAuthUserTable, scaauthuserdevice.ScaAuthUserColumn),
-		)
-		fromV = sqlgraph.Neighbors(saud.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
-}
-
 // Hooks returns the client hooks.
 func (c *ScaAuthUserDeviceClient) Hooks() []Hook {
 	return c.hooks.ScaAuthUserDevice
@@ -956,22 +875,6 @@ func (c *ScaAuthUserSocialClient) GetX(ctx context.Context, id int64) *ScaAuthUs
 		panic(err)
 	}
 	return obj
-}
-
-// QueryScaAuthUser queries the sca_auth_user edge of a ScaAuthUserSocial.
-func (c *ScaAuthUserSocialClient) QueryScaAuthUser(saus *ScaAuthUserSocial) *ScaAuthUserQuery {
-	query := (&ScaAuthUserClient{config: c.config}).Query()
-	query.path = func(context.Context) (fromV *sql.Selector, _ error) {
-		id := saus.ID
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthusersocial.Table, scaauthusersocial.FieldID, id),
-			sqlgraph.To(scaauthuser.Table, scaauthuser.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, scaauthusersocial.ScaAuthUserTable, scaauthusersocial.ScaAuthUserColumn),
-		)
-		fromV = sqlgraph.Neighbors(saus.driver.Dialect(), step)
-		return fromV, nil
-	}
-	return query
 }
 
 // Hooks returns the client hooks.

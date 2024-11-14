@@ -5,7 +5,6 @@ import (
 	"entgo.io/ent/dialect"
 	"entgo.io/ent/dialect/entsql"
 	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/edge"
 	"entgo.io/ent/schema/field"
 	"entgo.io/ent/schema/index"
 
@@ -51,11 +50,7 @@ func (ScaAuthUserSocial) Fields() []ent.Field {
 
 // Edges of the ScaAuthUserSocial.
 func (ScaAuthUserSocial) Edges() []ent.Edge {
-	return []ent.Edge{
-		edge.From("sca_auth_user", ScaAuthUser.Type).
-			Ref("sca_auth_user_social").
-			Unique(),
-	}
+	return nil
 }
 
 // Indexes of the ScaAuthUserSocial.

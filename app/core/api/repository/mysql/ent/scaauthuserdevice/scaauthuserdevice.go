@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -46,17 +45,8 @@ const (
 	FieldEngineName = "engine_name"
 	// FieldEngineVersion holds the string denoting the engine_version field in the database.
 	FieldEngineVersion = "engine_version"
-	// EdgeScaAuthUser holds the string denoting the sca_auth_user edge name in mutations.
-	EdgeScaAuthUser = "sca_auth_user"
 	// Table holds the table name of the scaauthuserdevice in the database.
 	Table = "sca_auth_user_device"
-	// ScaAuthUserTable is the table that holds the sca_auth_user relation/edge.
-	ScaAuthUserTable = "sca_auth_user_device"
-	// ScaAuthUserInverseTable is the table name for the ScaAuthUser entity.
-	// It exists in this package in order to avoid circular dependency with the "scaauthuser" package.
-	ScaAuthUserInverseTable = "sca_auth_user"
-	// ScaAuthUserColumn is the table column denoting the sca_auth_user relation/edge.
-	ScaAuthUserColumn = "sca_auth_user_sca_auth_user_device"
 )
 
 // Columns holds all SQL columns for scaauthuserdevice fields.
@@ -80,21 +70,10 @@ var Columns = []string{
 	FieldEngineVersion,
 }
 
-// ForeignKeys holds the SQL foreign-keys that are owned by the "sca_auth_user_device"
-// table and are not defined as standalone fields in the schema.
-var ForeignKeys = []string{
-	"sca_auth_user_sca_auth_user_device",
-}
-
 // ValidColumn reports if the column name is valid (part of the table columns).
 func ValidColumn(column string) bool {
 	for i := range Columns {
 		if column == Columns[i] {
-			return true
-		}
-	}
-	for i := range ForeignKeys {
-		if column == ForeignKeys[i] {
 			return true
 		}
 	}
@@ -222,18 +201,4 @@ func ByEngineName(opts ...sql.OrderTermOption) OrderOption {
 // ByEngineVersion orders the results by the engine_version field.
 func ByEngineVersion(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldEngineVersion, opts...).ToFunc()
-}
-
-// ByScaAuthUserField orders the results by sca_auth_user field.
-func ByScaAuthUserField(field string, opts ...sql.OrderTermOption) OrderOption {
-	return func(s *sql.Selector) {
-		sqlgraph.OrderByNeighborTerms(s, newScaAuthUserStep(), sql.OrderByField(field, opts...))
-	}
-}
-func newScaAuthUserStep() *sqlgraph.Step {
-	return sqlgraph.NewStep(
-		sqlgraph.From(Table, FieldID),
-		sqlgraph.To(ScaAuthUserInverseTable, FieldID),
-		sqlgraph.Edge(sqlgraph.M2O, true, ScaAuthUserTable, ScaAuthUserColumn),
-	)
 }

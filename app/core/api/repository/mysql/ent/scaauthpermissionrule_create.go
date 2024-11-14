@@ -4,10 +4,8 @@ package ent
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
@@ -26,15 +24,39 @@ func (saprc *ScaAuthPermissionRuleCreate) SetPtype(s string) *ScaAuthPermissionR
 	return saprc
 }
 
+// SetNillablePtype sets the "ptype" field if the given value is not nil.
+func (saprc *ScaAuthPermissionRuleCreate) SetNillablePtype(s *string) *ScaAuthPermissionRuleCreate {
+	if s != nil {
+		saprc.SetPtype(*s)
+	}
+	return saprc
+}
+
 // SetV0 sets the "v0" field.
 func (saprc *ScaAuthPermissionRuleCreate) SetV0(s string) *ScaAuthPermissionRuleCreate {
 	saprc.mutation.SetV0(s)
 	return saprc
 }
 
+// SetNillableV0 sets the "v0" field if the given value is not nil.
+func (saprc *ScaAuthPermissionRuleCreate) SetNillableV0(s *string) *ScaAuthPermissionRuleCreate {
+	if s != nil {
+		saprc.SetV0(*s)
+	}
+	return saprc
+}
+
 // SetV1 sets the "v1" field.
 func (saprc *ScaAuthPermissionRuleCreate) SetV1(s string) *ScaAuthPermissionRuleCreate {
 	saprc.mutation.SetV1(s)
+	return saprc
+}
+
+// SetNillableV1 sets the "v1" field if the given value is not nil.
+func (saprc *ScaAuthPermissionRuleCreate) SetNillableV1(s *string) *ScaAuthPermissionRuleCreate {
+	if s != nil {
+		saprc.SetV1(*s)
+	}
 	return saprc
 }
 
@@ -95,28 +117,9 @@ func (saprc *ScaAuthPermissionRuleCreate) SetNillableV5(s *string) *ScaAuthPermi
 }
 
 // SetID sets the "id" field.
-func (saprc *ScaAuthPermissionRuleCreate) SetID(i int64) *ScaAuthPermissionRuleCreate {
+func (saprc *ScaAuthPermissionRuleCreate) SetID(i int) *ScaAuthPermissionRuleCreate {
 	saprc.mutation.SetID(i)
 	return saprc
-}
-
-// SetScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by ID.
-func (saprc *ScaAuthPermissionRuleCreate) SetScaAuthRoleID(id int64) *ScaAuthPermissionRuleCreate {
-	saprc.mutation.SetScaAuthRoleID(id)
-	return saprc
-}
-
-// SetNillableScaAuthRoleID sets the "sca_auth_role" edge to the ScaAuthRole entity by ID if the given value is not nil.
-func (saprc *ScaAuthPermissionRuleCreate) SetNillableScaAuthRoleID(id *int64) *ScaAuthPermissionRuleCreate {
-	if id != nil {
-		saprc = saprc.SetScaAuthRoleID(*id)
-	}
-	return saprc
-}
-
-// SetScaAuthRole sets the "sca_auth_role" edge to the ScaAuthRole entity.
-func (saprc *ScaAuthPermissionRuleCreate) SetScaAuthRole(s *ScaAuthRole) *ScaAuthPermissionRuleCreate {
-	return saprc.SetScaAuthRoleID(s.ID)
 }
 
 // Mutation returns the ScaAuthPermissionRuleMutation object of the builder.
@@ -153,24 +156,15 @@ func (saprc *ScaAuthPermissionRuleCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (saprc *ScaAuthPermissionRuleCreate) check() error {
-	if _, ok := saprc.mutation.Ptype(); !ok {
-		return &ValidationError{Name: "ptype", err: errors.New(`ent: missing required field "ScaAuthPermissionRule.ptype"`)}
-	}
 	if v, ok := saprc.mutation.Ptype(); ok {
 		if err := scaauthpermissionrule.PtypeValidator(v); err != nil {
 			return &ValidationError{Name: "ptype", err: fmt.Errorf(`ent: validator failed for field "ScaAuthPermissionRule.ptype": %w`, err)}
 		}
 	}
-	if _, ok := saprc.mutation.V0(); !ok {
-		return &ValidationError{Name: "v0", err: errors.New(`ent: missing required field "ScaAuthPermissionRule.v0"`)}
-	}
 	if v, ok := saprc.mutation.V0(); ok {
 		if err := scaauthpermissionrule.V0Validator(v); err != nil {
 			return &ValidationError{Name: "v0", err: fmt.Errorf(`ent: validator failed for field "ScaAuthPermissionRule.v0": %w`, err)}
 		}
-	}
-	if _, ok := saprc.mutation.V1(); !ok {
-		return &ValidationError{Name: "v1", err: errors.New(`ent: missing required field "ScaAuthPermissionRule.v1"`)}
 	}
 	if v, ok := saprc.mutation.V1(); ok {
 		if err := scaauthpermissionrule.V1Validator(v); err != nil {
@@ -213,7 +207,7 @@ func (saprc *ScaAuthPermissionRuleCreate) sqlSave(ctx context.Context) (*ScaAuth
 	}
 	if _spec.ID.Value != _node.ID {
 		id := _spec.ID.Value.(int64)
-		_node.ID = int64(id)
+		_node.ID = int(id)
 	}
 	saprc.mutation.id = &_node.ID
 	saprc.mutation.done = true
@@ -223,7 +217,7 @@ func (saprc *ScaAuthPermissionRuleCreate) sqlSave(ctx context.Context) (*ScaAuth
 func (saprc *ScaAuthPermissionRuleCreate) createSpec() (*ScaAuthPermissionRule, *sqlgraph.CreateSpec) {
 	var (
 		_node = &ScaAuthPermissionRule{config: saprc.config}
-		_spec = sqlgraph.NewCreateSpec(scaauthpermissionrule.Table, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64))
+		_spec = sqlgraph.NewCreateSpec(scaauthpermissionrule.Table, sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt))
 	)
 	if id, ok := saprc.mutation.ID(); ok {
 		_node.ID = id
@@ -231,48 +225,31 @@ func (saprc *ScaAuthPermissionRuleCreate) createSpec() (*ScaAuthPermissionRule, 
 	}
 	if value, ok := saprc.mutation.Ptype(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldPtype, field.TypeString, value)
-		_node.Ptype = &value
+		_node.Ptype = value
 	}
 	if value, ok := saprc.mutation.V0(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV0, field.TypeString, value)
-		_node.V0 = &value
+		_node.V0 = value
 	}
 	if value, ok := saprc.mutation.V1(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV1, field.TypeString, value)
-		_node.V1 = &value
+		_node.V1 = value
 	}
 	if value, ok := saprc.mutation.V2(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV2, field.TypeString, value)
-		_node.V2 = &value
+		_node.V2 = value
 	}
 	if value, ok := saprc.mutation.V3(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV3, field.TypeString, value)
-		_node.V3 = &value
+		_node.V3 = value
 	}
 	if value, ok := saprc.mutation.V4(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV4, field.TypeString, value)
-		_node.V4 = &value
+		_node.V4 = value
 	}
 	if value, ok := saprc.mutation.V5(); ok {
 		_spec.SetField(scaauthpermissionrule.FieldV5, field.TypeString, value)
-		_node.V5 = &value
-	}
-	if nodes := saprc.mutation.ScaAuthRoleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthpermissionrule.ScaAuthRoleTable,
-			Columns: []string{scaauthpermissionrule.ScaAuthRoleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthrole.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.sca_auth_role_sca_auth_permission_rule = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
+		_node.V5 = value
 	}
 	return _node, _spec
 }
@@ -323,7 +300,7 @@ func (saprcb *ScaAuthPermissionRuleCreateBulk) Save(ctx context.Context) ([]*Sca
 				mutation.id = &nodes[i].ID
 				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
 					id := specs[i].ID.Value.(int64)
-					nodes[i].ID = int64(id)
+					nodes[i].ID = int(id)
 				}
 				mutation.done = true
 				return nodes[i], nil

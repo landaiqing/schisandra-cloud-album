@@ -1,11 +1,9 @@
 package jwt
 
 import (
-	"context"
 	"time"
 
-	"github.com/golang-jwt/jwt/v4"
-	"github.com/zeromicro/go-zero/core/logc"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type RefreshJWTPayload struct {
@@ -30,23 +28,21 @@ func GenerateRefreshToken(secret string, payload RefreshJWTPayload, days time.Du
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, refreshClaims)
 	refreshTokenString, err := refreshToken.SignedString([]byte(secret))
 	if err != nil {
-		logc.Error(context.Background(), err)
 		return ""
 	}
 	return refreshTokenString
 }
 
 // ParseRefreshToken parses a JWT token and returns the payload
-func ParseRefreshToken(secret string, refreshTokenString string) *RefreshJWTPayload {
+func ParseRefreshToken(secret string, refreshTokenString string) (*RefreshJWTPayload, bool) {
 	token, err := jwt.ParseWithClaims(refreshTokenString, &RefreshJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})
 	if err != nil {
-		logc.Error(context.Background(), err)
-		return nil
+		return nil, false
 	}
 	if claims, ok := token.Claims.(*RefreshJWTClaims); ok && token.Valid {
-		return &claims.RefreshJWTPayload
+		return &claims.RefreshJWTPayload, true
 	}
-	return nil
+	return nil, false
 }

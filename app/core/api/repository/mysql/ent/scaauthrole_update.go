@@ -7,7 +7,6 @@ import (
 	"errors"
 	"fmt"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthpermissionrule"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthrole"
 	"time"
 
@@ -90,45 +89,9 @@ func (saru *ScaAuthRoleUpdate) SetNillableRoleKey(s *string) *ScaAuthRoleUpdate 
 	return saru
 }
 
-// AddScaAuthPermissionRuleIDs adds the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity by IDs.
-func (saru *ScaAuthRoleUpdate) AddScaAuthPermissionRuleIDs(ids ...int64) *ScaAuthRoleUpdate {
-	saru.mutation.AddScaAuthPermissionRuleIDs(ids...)
-	return saru
-}
-
-// AddScaAuthPermissionRule adds the "sca_auth_permission_rule" edges to the ScaAuthPermissionRule entity.
-func (saru *ScaAuthRoleUpdate) AddScaAuthPermissionRule(s ...*ScaAuthPermissionRule) *ScaAuthRoleUpdate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return saru.AddScaAuthPermissionRuleIDs(ids...)
-}
-
 // Mutation returns the ScaAuthRoleMutation object of the builder.
 func (saru *ScaAuthRoleUpdate) Mutation() *ScaAuthRoleMutation {
 	return saru.mutation
-}
-
-// ClearScaAuthPermissionRule clears all "sca_auth_permission_rule" edges to the ScaAuthPermissionRule entity.
-func (saru *ScaAuthRoleUpdate) ClearScaAuthPermissionRule() *ScaAuthRoleUpdate {
-	saru.mutation.ClearScaAuthPermissionRule()
-	return saru
-}
-
-// RemoveScaAuthPermissionRuleIDs removes the "sca_auth_permission_rule" edge to ScaAuthPermissionRule entities by IDs.
-func (saru *ScaAuthRoleUpdate) RemoveScaAuthPermissionRuleIDs(ids ...int64) *ScaAuthRoleUpdate {
-	saru.mutation.RemoveScaAuthPermissionRuleIDs(ids...)
-	return saru
-}
-
-// RemoveScaAuthPermissionRule removes "sca_auth_permission_rule" edges to ScaAuthPermissionRule entities.
-func (saru *ScaAuthRoleUpdate) RemoveScaAuthPermissionRule(s ...*ScaAuthPermissionRule) *ScaAuthRoleUpdate {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return saru.RemoveScaAuthPermissionRuleIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -217,51 +180,6 @@ func (saru *ScaAuthRoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := saru.mutation.RoleKey(); ok {
 		_spec.SetField(scaauthrole.FieldRoleKey, field.TypeString, value)
 	}
-	if saru.mutation.ScaAuthPermissionRuleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := saru.mutation.RemovedScaAuthPermissionRuleIDs(); len(nodes) > 0 && !saru.mutation.ScaAuthPermissionRuleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := saru.mutation.ScaAuthPermissionRuleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
-	}
 	if n, err = sqlgraph.UpdateNodes(ctx, saru.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
 			err = &NotFoundError{scaauthrole.Label}
@@ -343,45 +261,9 @@ func (saruo *ScaAuthRoleUpdateOne) SetNillableRoleKey(s *string) *ScaAuthRoleUpd
 	return saruo
 }
 
-// AddScaAuthPermissionRuleIDs adds the "sca_auth_permission_rule" edge to the ScaAuthPermissionRule entity by IDs.
-func (saruo *ScaAuthRoleUpdateOne) AddScaAuthPermissionRuleIDs(ids ...int64) *ScaAuthRoleUpdateOne {
-	saruo.mutation.AddScaAuthPermissionRuleIDs(ids...)
-	return saruo
-}
-
-// AddScaAuthPermissionRule adds the "sca_auth_permission_rule" edges to the ScaAuthPermissionRule entity.
-func (saruo *ScaAuthRoleUpdateOne) AddScaAuthPermissionRule(s ...*ScaAuthPermissionRule) *ScaAuthRoleUpdateOne {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return saruo.AddScaAuthPermissionRuleIDs(ids...)
-}
-
 // Mutation returns the ScaAuthRoleMutation object of the builder.
 func (saruo *ScaAuthRoleUpdateOne) Mutation() *ScaAuthRoleMutation {
 	return saruo.mutation
-}
-
-// ClearScaAuthPermissionRule clears all "sca_auth_permission_rule" edges to the ScaAuthPermissionRule entity.
-func (saruo *ScaAuthRoleUpdateOne) ClearScaAuthPermissionRule() *ScaAuthRoleUpdateOne {
-	saruo.mutation.ClearScaAuthPermissionRule()
-	return saruo
-}
-
-// RemoveScaAuthPermissionRuleIDs removes the "sca_auth_permission_rule" edge to ScaAuthPermissionRule entities by IDs.
-func (saruo *ScaAuthRoleUpdateOne) RemoveScaAuthPermissionRuleIDs(ids ...int64) *ScaAuthRoleUpdateOne {
-	saruo.mutation.RemoveScaAuthPermissionRuleIDs(ids...)
-	return saruo
-}
-
-// RemoveScaAuthPermissionRule removes "sca_auth_permission_rule" edges to ScaAuthPermissionRule entities.
-func (saruo *ScaAuthRoleUpdateOne) RemoveScaAuthPermissionRule(s ...*ScaAuthPermissionRule) *ScaAuthRoleUpdateOne {
-	ids := make([]int64, len(s))
-	for i := range s {
-		ids[i] = s[i].ID
-	}
-	return saruo.RemoveScaAuthPermissionRuleIDs(ids...)
 }
 
 // Where appends a list predicates to the ScaAuthRoleUpdate builder.
@@ -499,51 +381,6 @@ func (saruo *ScaAuthRoleUpdateOne) sqlSave(ctx context.Context) (_node *ScaAuthR
 	}
 	if value, ok := saruo.mutation.RoleKey(); ok {
 		_spec.SetField(scaauthrole.FieldRoleKey, field.TypeString, value)
-	}
-	if saruo.mutation.ScaAuthPermissionRuleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := saruo.mutation.RemovedScaAuthPermissionRuleIDs(); len(nodes) > 0 && !saruo.mutation.ScaAuthPermissionRuleCleared() {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
-	}
-	if nodes := saruo.mutation.ScaAuthPermissionRuleIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.O2M,
-			Inverse: false,
-			Table:   scaauthrole.ScaAuthPermissionRuleTable,
-			Columns: []string{scaauthrole.ScaAuthPermissionRuleColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthpermissionrule.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &ScaAuthRole{config: saruo.config}
 	_spec.Assign = _node.assignValues

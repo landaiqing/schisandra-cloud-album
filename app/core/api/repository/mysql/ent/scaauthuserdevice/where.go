@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"entgo.io/ent/dialect/sql"
-	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 // ID filters vertices based on their ID field.
@@ -998,29 +997,6 @@ func EngineVersionEqualFold(v string) predicate.ScaAuthUserDevice {
 // EngineVersionContainsFold applies the ContainsFold predicate on the "engine_version" field.
 func EngineVersionContainsFold(v string) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldContainsFold(FieldEngineVersion, v))
-}
-
-// HasScaAuthUser applies the HasEdge predicate on the "sca_auth_user" edge.
-func HasScaAuthUser() predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(func(s *sql.Selector) {
-		step := sqlgraph.NewStep(
-			sqlgraph.From(Table, FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, ScaAuthUserTable, ScaAuthUserColumn),
-		)
-		sqlgraph.HasNeighbors(s, step)
-	})
-}
-
-// HasScaAuthUserWith applies the HasEdge predicate on the "sca_auth_user" edge with a given conditions (other predicates).
-func HasScaAuthUserWith(preds ...predicate.ScaAuthUser) predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(func(s *sql.Selector) {
-		step := newScaAuthUserStep()
-		sqlgraph.HasNeighborsWith(s, step, func(s *sql.Selector) {
-			for _, p := range preds {
-				p(s)
-			}
-		})
-	})
 }
 
 // And groups predicates with the AND operator between them.

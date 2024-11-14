@@ -11,15 +11,14 @@ import (
 var (
 	// ScaAuthPermissionRuleColumns holds the columns for the "sca_auth_permission_rule" table.
 	ScaAuthPermissionRuleColumns = []*schema.Column{
-		{Name: "id", Type: field.TypeInt64, Increment: true, SchemaType: map[string]string{"mysql": "bigint(20) unsigned"}},
-		{Name: "ptype", Type: field.TypeString, Size: 100},
-		{Name: "v0", Type: field.TypeString, Size: 100},
-		{Name: "v1", Type: field.TypeString, Size: 100},
+		{Name: "id", Type: field.TypeInt, Increment: true, SchemaType: map[string]string{"mysql": "int(11)"}},
+		{Name: "ptype", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "v0", Type: field.TypeString, Nullable: true, Size: 100},
+		{Name: "v1", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "v2", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "v3", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "v4", Type: field.TypeString, Nullable: true, Size: 100},
 		{Name: "v5", Type: field.TypeString, Nullable: true, Size: 100},
-		{Name: "sca_auth_role_sca_auth_permission_rule", Type: field.TypeInt64, Nullable: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
 	}
 	// ScaAuthPermissionRuleTable holds the schema information for the "sca_auth_permission_rule" table.
 	ScaAuthPermissionRuleTable = &schema.Table{
@@ -27,14 +26,6 @@ var (
 		Comment:    "角色权限规则表",
 		Columns:    ScaAuthPermissionRuleColumns,
 		PrimaryKey: []*schema.Column{ScaAuthPermissionRuleColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "sca_auth_permission_rule_sca_auth_role_sca_auth_permission_rule",
-				Columns:    []*schema.Column{ScaAuthPermissionRuleColumns[8]},
-				RefColumns: []*schema.Column{ScaAuthRoleColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 	}
 	// ScaAuthRoleColumns holds the columns for the "sca_auth_role" table.
 	ScaAuthRoleColumns = []*schema.Column{
@@ -64,7 +55,7 @@ var (
 		{Name: "email", Type: field.TypeString, Nullable: true, Size: 32, Comment: "邮箱"},
 		{Name: "phone", Type: field.TypeString, Nullable: true, Size: 32, Comment: "电话"},
 		{Name: "password", Type: field.TypeString, Nullable: true, Size: 64, Comment: "密码"},
-		{Name: "gender", Type: field.TypeString, Nullable: true, Size: 32, Comment: "性别"},
+		{Name: "gender", Type: field.TypeInt8, Nullable: true, Comment: "性别"},
 		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "头像"},
 		{Name: "status", Type: field.TypeInt8, Nullable: true, Comment: "状态 0 正常 1 封禁", Default: 0},
 		{Name: "introduce", Type: field.TypeString, Nullable: true, Size: 255, Comment: "介绍"},
@@ -115,7 +106,6 @@ var (
 		{Name: "platform", Type: field.TypeString, Size: 20, Comment: "平台"},
 		{Name: "engine_name", Type: field.TypeString, Size: 20, Comment: "引擎名称"},
 		{Name: "engine_version", Type: field.TypeString, Size: 20, Comment: "引擎版本"},
-		{Name: "sca_auth_user_sca_auth_user_device", Type: field.TypeInt64, Nullable: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
 	}
 	// ScaAuthUserDeviceTable holds the schema information for the "sca_auth_user_device" table.
 	ScaAuthUserDeviceTable = &schema.Table{
@@ -123,14 +113,6 @@ var (
 		Comment:    "用户设备表",
 		Columns:    ScaAuthUserDeviceColumns,
 		PrimaryKey: []*schema.Column{ScaAuthUserDeviceColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "sca_auth_user_device_sca_auth_user_sca_auth_user_device",
-				Columns:    []*schema.Column{ScaAuthUserDeviceColumns[17]},
-				RefColumns: []*schema.Column{ScaAuthUserColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "scaauthuserdevice_id",
@@ -149,7 +131,6 @@ var (
 		{Name: "open_id", Type: field.TypeString, Size: 50, Comment: "第三方用户的 open id"},
 		{Name: "source", Type: field.TypeString, Size: 10, Comment: "第三方用户来源"},
 		{Name: "status", Type: field.TypeInt, Comment: "状态 0正常 1 封禁", Default: 0},
-		{Name: "sca_auth_user_sca_auth_user_social", Type: field.TypeInt64, Nullable: true, SchemaType: map[string]string{"mysql": "bigint(20)"}},
 	}
 	// ScaAuthUserSocialTable holds the schema information for the "sca_auth_user_social" table.
 	ScaAuthUserSocialTable = &schema.Table{
@@ -157,14 +138,6 @@ var (
 		Comment:    "用户第三方登录信息",
 		Columns:    ScaAuthUserSocialColumns,
 		PrimaryKey: []*schema.Column{ScaAuthUserSocialColumns[0]},
-		ForeignKeys: []*schema.ForeignKey{
-			{
-				Symbol:     "sca_auth_user_social_sca_auth_user_sca_auth_user_social",
-				Columns:    []*schema.Column{ScaAuthUserSocialColumns[8]},
-				RefColumns: []*schema.Column{ScaAuthUserColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-		},
 		Indexes: []*schema.Index{
 			{
 				Name:    "scaauthusersocial_id",
@@ -194,7 +167,6 @@ var (
 )
 
 func init() {
-	ScaAuthPermissionRuleTable.ForeignKeys[0].RefTable = ScaAuthRoleTable
 	ScaAuthPermissionRuleTable.Annotation = &entsql.Annotation{
 		Table: "sca_auth_permission_rule",
 	}
@@ -204,11 +176,9 @@ func init() {
 	ScaAuthUserTable.Annotation = &entsql.Annotation{
 		Table: "sca_auth_user",
 	}
-	ScaAuthUserDeviceTable.ForeignKeys[0].RefTable = ScaAuthUserTable
 	ScaAuthUserDeviceTable.Annotation = &entsql.Annotation{
 		Table: "sca_auth_user_device",
 	}
-	ScaAuthUserSocialTable.ForeignKeys[0].RefTable = ScaAuthUserTable
 	ScaAuthUserSocialTable.Annotation = &entsql.Annotation{
 		Table: "sca_auth_user_social",
 	}

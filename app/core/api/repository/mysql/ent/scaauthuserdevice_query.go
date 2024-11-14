@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"math"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/predicate"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 
 	"entgo.io/ent"
@@ -19,12 +18,10 @@ import (
 // ScaAuthUserDeviceQuery is the builder for querying ScaAuthUserDevice entities.
 type ScaAuthUserDeviceQuery struct {
 	config
-	ctx             *QueryContext
-	order           []scaauthuserdevice.OrderOption
-	inters          []Interceptor
-	predicates      []predicate.ScaAuthUserDevice
-	withScaAuthUser *ScaAuthUserQuery
-	withFKs         bool
+	ctx        *QueryContext
+	order      []scaauthuserdevice.OrderOption
+	inters     []Interceptor
+	predicates []predicate.ScaAuthUserDevice
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -59,28 +56,6 @@ func (saudq *ScaAuthUserDeviceQuery) Unique(unique bool) *ScaAuthUserDeviceQuery
 func (saudq *ScaAuthUserDeviceQuery) Order(o ...scaauthuserdevice.OrderOption) *ScaAuthUserDeviceQuery {
 	saudq.order = append(saudq.order, o...)
 	return saudq
-}
-
-// QueryScaAuthUser chains the current query on the "sca_auth_user" edge.
-func (saudq *ScaAuthUserDeviceQuery) QueryScaAuthUser() *ScaAuthUserQuery {
-	query := (&ScaAuthUserClient{config: saudq.config}).Query()
-	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
-		if err := saudq.prepareQuery(ctx); err != nil {
-			return nil, err
-		}
-		selector := saudq.sqlQuery(ctx)
-		if err := selector.Err(); err != nil {
-			return nil, err
-		}
-		step := sqlgraph.NewStep(
-			sqlgraph.From(scaauthuserdevice.Table, scaauthuserdevice.FieldID, selector),
-			sqlgraph.To(scaauthuser.Table, scaauthuser.FieldID),
-			sqlgraph.Edge(sqlgraph.M2O, true, scaauthuserdevice.ScaAuthUserTable, scaauthuserdevice.ScaAuthUserColumn),
-		)
-		fromU = sqlgraph.SetNeighbors(saudq.driver.Dialect(), step)
-		return fromU, nil
-	}
-	return query
 }
 
 // First returns the first ScaAuthUserDevice entity from the query.
@@ -270,27 +245,15 @@ func (saudq *ScaAuthUserDeviceQuery) Clone() *ScaAuthUserDeviceQuery {
 		return nil
 	}
 	return &ScaAuthUserDeviceQuery{
-		config:          saudq.config,
-		ctx:             saudq.ctx.Clone(),
-		order:           append([]scaauthuserdevice.OrderOption{}, saudq.order...),
-		inters:          append([]Interceptor{}, saudq.inters...),
-		predicates:      append([]predicate.ScaAuthUserDevice{}, saudq.predicates...),
-		withScaAuthUser: saudq.withScaAuthUser.Clone(),
+		config:     saudq.config,
+		ctx:        saudq.ctx.Clone(),
+		order:      append([]scaauthuserdevice.OrderOption{}, saudq.order...),
+		inters:     append([]Interceptor{}, saudq.inters...),
+		predicates: append([]predicate.ScaAuthUserDevice{}, saudq.predicates...),
 		// clone intermediate query.
 		sql:  saudq.sql.Clone(),
 		path: saudq.path,
 	}
-}
-
-// WithScaAuthUser tells the query-builder to eager-load the nodes that are connected to
-// the "sca_auth_user" edge. The optional arguments are used to configure the query builder of the edge.
-func (saudq *ScaAuthUserDeviceQuery) WithScaAuthUser(opts ...func(*ScaAuthUserQuery)) *ScaAuthUserDeviceQuery {
-	query := (&ScaAuthUserClient{config: saudq.config}).Query()
-	for _, opt := range opts {
-		opt(query)
-	}
-	saudq.withScaAuthUser = query
-	return saudq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -369,26 +332,15 @@ func (saudq *ScaAuthUserDeviceQuery) prepareQuery(ctx context.Context) error {
 
 func (saudq *ScaAuthUserDeviceQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*ScaAuthUserDevice, error) {
 	var (
-		nodes       = []*ScaAuthUserDevice{}
-		withFKs     = saudq.withFKs
-		_spec       = saudq.querySpec()
-		loadedTypes = [1]bool{
-			saudq.withScaAuthUser != nil,
-		}
+		nodes = []*ScaAuthUserDevice{}
+		_spec = saudq.querySpec()
 	)
-	if saudq.withScaAuthUser != nil {
-		withFKs = true
-	}
-	if withFKs {
-		_spec.Node.Columns = append(_spec.Node.Columns, scaauthuserdevice.ForeignKeys...)
-	}
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*ScaAuthUserDevice).scanValues(nil, columns)
 	}
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &ScaAuthUserDevice{config: saudq.config}
 		nodes = append(nodes, node)
-		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -400,46 +352,7 @@ func (saudq *ScaAuthUserDeviceQuery) sqlAll(ctx context.Context, hooks ...queryH
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
-	if query := saudq.withScaAuthUser; query != nil {
-		if err := saudq.loadScaAuthUser(ctx, query, nodes, nil,
-			func(n *ScaAuthUserDevice, e *ScaAuthUser) { n.Edges.ScaAuthUser = e }); err != nil {
-			return nil, err
-		}
-	}
 	return nodes, nil
-}
-
-func (saudq *ScaAuthUserDeviceQuery) loadScaAuthUser(ctx context.Context, query *ScaAuthUserQuery, nodes []*ScaAuthUserDevice, init func(*ScaAuthUserDevice), assign func(*ScaAuthUserDevice, *ScaAuthUser)) error {
-	ids := make([]int64, 0, len(nodes))
-	nodeids := make(map[int64][]*ScaAuthUserDevice)
-	for i := range nodes {
-		if nodes[i].sca_auth_user_sca_auth_user_device == nil {
-			continue
-		}
-		fk := *nodes[i].sca_auth_user_sca_auth_user_device
-		if _, ok := nodeids[fk]; !ok {
-			ids = append(ids, fk)
-		}
-		nodeids[fk] = append(nodeids[fk], nodes[i])
-	}
-	if len(ids) == 0 {
-		return nil
-	}
-	query.Where(scaauthuser.IDIn(ids...))
-	neighbors, err := query.All(ctx)
-	if err != nil {
-		return err
-	}
-	for _, n := range neighbors {
-		nodes, ok := nodeids[n.ID]
-		if !ok {
-			return fmt.Errorf(`unexpected foreign-key "sca_auth_user_sca_auth_user_device" returned %v`, n.ID)
-		}
-		for i := range nodes {
-			assign(nodes[i], n)
-		}
-	}
-	return nil
 }
 
 func (saudq *ScaAuthUserDeviceQuery) sqlCount(ctx context.Context) (int, error) {

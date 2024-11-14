@@ -6,7 +6,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"time"
 
@@ -145,25 +144,6 @@ func (saudc *ScaAuthUserDeviceCreate) SetEngineVersion(s string) *ScaAuthUserDev
 func (saudc *ScaAuthUserDeviceCreate) SetID(i int64) *ScaAuthUserDeviceCreate {
 	saudc.mutation.SetID(i)
 	return saudc
-}
-
-// SetScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID.
-func (saudc *ScaAuthUserDeviceCreate) SetScaAuthUserID(id int64) *ScaAuthUserDeviceCreate {
-	saudc.mutation.SetScaAuthUserID(id)
-	return saudc
-}
-
-// SetNillableScaAuthUserID sets the "sca_auth_user" edge to the ScaAuthUser entity by ID if the given value is not nil.
-func (saudc *ScaAuthUserDeviceCreate) SetNillableScaAuthUserID(id *int64) *ScaAuthUserDeviceCreate {
-	if id != nil {
-		saudc = saudc.SetScaAuthUserID(*id)
-	}
-	return saudc
-}
-
-// SetScaAuthUser sets the "sca_auth_user" edge to the ScaAuthUser entity.
-func (saudc *ScaAuthUserDeviceCreate) SetScaAuthUser(s *ScaAuthUser) *ScaAuthUserDeviceCreate {
-	return saudc.SetScaAuthUserID(s.ID)
 }
 
 // Mutation returns the ScaAuthUserDeviceMutation object of the builder.
@@ -417,23 +397,6 @@ func (saudc *ScaAuthUserDeviceCreate) createSpec() (*ScaAuthUserDevice, *sqlgrap
 	if value, ok := saudc.mutation.EngineVersion(); ok {
 		_spec.SetField(scaauthuserdevice.FieldEngineVersion, field.TypeString, value)
 		_node.EngineVersion = value
-	}
-	if nodes := saudc.mutation.ScaAuthUserIDs(); len(nodes) > 0 {
-		edge := &sqlgraph.EdgeSpec{
-			Rel:     sqlgraph.M2O,
-			Inverse: true,
-			Table:   scaauthuserdevice.ScaAuthUserTable,
-			Columns: []string{scaauthuserdevice.ScaAuthUserColumn},
-			Bidi:    false,
-			Target: &sqlgraph.EdgeTarget{
-				IDSpec: sqlgraph.NewFieldSpec(scaauthuser.FieldID, field.TypeInt64),
-			},
-		}
-		for _, k := range nodes {
-			edge.Target.Nodes = append(edge.Target.Nodes, k)
-		}
-		_node.sca_auth_user_sca_auth_user_device = &nodes[0]
-		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }

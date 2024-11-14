@@ -50,6 +50,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Path:    "/reset_password",
 					Handler: user.ResetPasswordHandler(serverCtx),
 				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/token/refresh",
+					Handler: user.RefreshTokenHandler(serverCtx),
+				},
 			}...,
 		),
 		rest.WithSignature(serverCtx.Config.Signature),

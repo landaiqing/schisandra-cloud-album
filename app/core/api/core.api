@@ -74,6 +74,9 @@ service core {
 	// 重置密码
 	@handler resetPassword
 	post /reset_password (ResetPasswordRequest) returns (Response)
+
+	@handler refreshToken
+	post /token/refresh returns (Response)
 }
 
 // 客户端服务

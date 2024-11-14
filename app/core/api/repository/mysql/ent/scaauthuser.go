@@ -37,7 +37,7 @@ type ScaAuthUser struct {
 	// 密码
 	Password string `json:"-"`
 	// 性别
-	Gender string `json:"gender,omitempty"`
+	Gender int8 `json:"gender,omitempty"`
 	// 头像
 	Avatar string `json:"avatar,omitempty"`
 	// 状态 0 正常 1 封禁
@@ -49,40 +49,8 @@ type ScaAuthUser struct {
 	// 地址
 	Location *string `json:"location,omitempty"`
 	// 公司
-	Company *string `json:"company,omitempty"`
-	// Edges holds the relations/edges for other nodes in the graph.
-	// The values are being populated by the ScaAuthUserQuery when eager-loading is set.
-	Edges        ScaAuthUserEdges `json:"edges"`
+	Company      *string `json:"company,omitempty"`
 	selectValues sql.SelectValues
-}
-
-// ScaAuthUserEdges holds the relations/edges for other nodes in the graph.
-type ScaAuthUserEdges struct {
-	// ScaAuthUserSocial holds the value of the sca_auth_user_social edge.
-	ScaAuthUserSocial []*ScaAuthUserSocial `json:"sca_auth_user_social,omitempty"`
-	// ScaAuthUserDevice holds the value of the sca_auth_user_device edge.
-	ScaAuthUserDevice []*ScaAuthUserDevice `json:"sca_auth_user_device,omitempty"`
-	// loadedTypes holds the information for reporting if a
-	// type was loaded (or requested) in eager-loading or not.
-	loadedTypes [2]bool
-}
-
-// ScaAuthUserSocialOrErr returns the ScaAuthUserSocial value or an error if the edge
-// was not loaded in eager-loading.
-func (e ScaAuthUserEdges) ScaAuthUserSocialOrErr() ([]*ScaAuthUserSocial, error) {
-	if e.loadedTypes[0] {
-		return e.ScaAuthUserSocial, nil
-	}
-	return nil, &NotLoadedError{edge: "sca_auth_user_social"}
-}
-
-// ScaAuthUserDeviceOrErr returns the ScaAuthUserDevice value or an error if the edge
-// was not loaded in eager-loading.
-func (e ScaAuthUserEdges) ScaAuthUserDeviceOrErr() ([]*ScaAuthUserDevice, error) {
-	if e.loadedTypes[1] {
-		return e.ScaAuthUserDevice, nil
-	}
-	return nil, &NotLoadedError{edge: "sca_auth_user_device"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -90,9 +58,9 @@ func (*ScaAuthUser) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case scaauthuser.FieldID, scaauthuser.FieldDeleted, scaauthuser.FieldStatus:
+		case scaauthuser.FieldID, scaauthuser.FieldDeleted, scaauthuser.FieldGender, scaauthuser.FieldStatus:
 			values[i] = new(sql.NullInt64)
-		case scaauthuser.FieldUID, scaauthuser.FieldUsername, scaauthuser.FieldNickname, scaauthuser.FieldEmail, scaauthuser.FieldPhone, scaauthuser.FieldPassword, scaauthuser.FieldGender, scaauthuser.FieldAvatar, scaauthuser.FieldIntroduce, scaauthuser.FieldBlog, scaauthuser.FieldLocation, scaauthuser.FieldCompany:
+		case scaauthuser.FieldUID, scaauthuser.FieldUsername, scaauthuser.FieldNickname, scaauthuser.FieldEmail, scaauthuser.FieldPhone, scaauthuser.FieldPassword, scaauthuser.FieldAvatar, scaauthuser.FieldIntroduce, scaauthuser.FieldBlog, scaauthuser.FieldLocation, scaauthuser.FieldCompany:
 			values[i] = new(sql.NullString)
 		case scaauthuser.FieldCreatedAt, scaauthuser.FieldUpdatedAt:
 			values[i] = new(sql.NullTime)
@@ -172,10 +140,10 @@ func (sau *ScaAuthUser) assignValues(columns []string, values []any) error {
 				sau.Password = value.String
 			}
 		case scaauthuser.FieldGender:
-			if value, ok := values[i].(*sql.NullString); !ok {
+			if value, ok := values[i].(*sql.NullInt64); !ok {
 				return fmt.Errorf("unexpected type %T for field gender", values[i])
 			} else if value.Valid {
-				sau.Gender = value.String
+				sau.Gender = int8(value.Int64)
 			}
 		case scaauthuser.FieldAvatar:
 			if value, ok := values[i].(*sql.NullString); !ok {
@@ -229,16 +197,6 @@ func (sau *ScaAuthUser) Value(name string) (ent.Value, error) {
 	return sau.selectValues.Get(name)
 }
 
-// QueryScaAuthUserSocial queries the "sca_auth_user_social" edge of the ScaAuthUser entity.
-func (sau *ScaAuthUser) QueryScaAuthUserSocial() *ScaAuthUserSocialQuery {
-	return NewScaAuthUserClient(sau.config).QueryScaAuthUserSocial(sau)
-}
-
-// QueryScaAuthUserDevice queries the "sca_auth_user_device" edge of the ScaAuthUser entity.
-func (sau *ScaAuthUser) QueryScaAuthUserDevice() *ScaAuthUserDeviceQuery {
-	return NewScaAuthUserClient(sau.config).QueryScaAuthUserDevice(sau)
-}
-
 // Update returns a builder for updating this ScaAuthUser.
 // Note that you need to call ScaAuthUser.Unwrap() before calling this method if this ScaAuthUser
 // was returned from a transaction, and the transaction was committed or rolled back.
@@ -289,7 +247,7 @@ func (sau *ScaAuthUser) String() string {
 	builder.WriteString("password=<sensitive>")
 	builder.WriteString(", ")
 	builder.WriteString("gender=")
-	builder.WriteString(sau.Gender)
+	builder.WriteString(fmt.Sprintf("%v", sau.Gender))
 	builder.WriteString(", ")
 	builder.WriteString("avatar=")
 	builder.WriteString(sau.Avatar)
