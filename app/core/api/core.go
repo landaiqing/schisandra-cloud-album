@@ -10,6 +10,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/middleware"
 	"schisandra-album-cloud-microservices/app/core/api/internal/config"
 	"schisandra-album-cloud-microservices/app/core/api/internal/handler"
+	"schisandra-album-cloud-microservices/app/core/api/internal/logic/websocket"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/repository/idgenerator"
 )
@@ -30,6 +31,8 @@ func main() {
 	handler.RegisterHandlers(server, ctx)
 	// init id generator
 	idgenerator.NewIDGenerator()
+	// init websocket handler
+	websocket.InitializeWebSocketHandler(ctx)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

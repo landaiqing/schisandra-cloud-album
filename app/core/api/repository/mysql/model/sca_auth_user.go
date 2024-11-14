@@ -59,7 +59,7 @@ func (ScaAuthUser) Fields() []ent.Field {
 		field.Int8("gender").
 			Optional().
 			Comment("性别"),
-		field.String("avatar").
+		field.Text("avatar").
 			Optional().
 			Comment("头像"),
 		field.Int8("status").

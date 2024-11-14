@@ -159,6 +159,16 @@ func UpdatedAtLTE(v time.Time) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.ScaAuthRole {
+	return predicate.ScaAuthRole(sql.FieldNotNull(FieldUpdatedAt))
+}
+
 // DeletedEQ applies the EQ predicate on the "deleted" field.
 func DeletedEQ(v int8) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldEQ(FieldDeleted, v))
@@ -197,16 +207,6 @@ func DeletedLT(v int8) predicate.ScaAuthRole {
 // DeletedLTE applies the LTE predicate on the "deleted" field.
 func DeletedLTE(v int8) predicate.ScaAuthRole {
 	return predicate.ScaAuthRole(sql.FieldLTE(FieldDeleted, v))
-}
-
-// DeletedIsNil applies the IsNil predicate on the "deleted" field.
-func DeletedIsNil() predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldIsNull(FieldDeleted))
-}
-
-// DeletedNotNil applies the NotNil predicate on the "deleted" field.
-func DeletedNotNil() predicate.ScaAuthRole {
-	return predicate.ScaAuthRole(sql.FieldNotNull(FieldDeleted))
 }
 
 // RoleNameEQ applies the EQ predicate on the "role_name" field.

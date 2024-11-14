@@ -26,8 +26,6 @@ func NewMySQL(url string) *ent.Client {
 	drv := entsql.OpenDB("mysql", db)
 	client := ent.NewClient(ent.Driver(drv), ent.Debug())
 
-	defer client.Close()
-
 	if err = client.Schema.Create(context.Background()); err != nil {
 		log.Panicf("failed creating model resources: %v", err)
 	}

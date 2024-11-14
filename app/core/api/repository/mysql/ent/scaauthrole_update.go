@@ -34,6 +34,12 @@ func (saru *ScaAuthRoleUpdate) SetUpdatedAt(t time.Time) *ScaAuthRoleUpdate {
 	return saru
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (saru *ScaAuthRoleUpdate) ClearUpdatedAt() *ScaAuthRoleUpdate {
+	saru.mutation.ClearUpdatedAt()
+	return saru
+}
+
 // SetDeleted sets the "deleted" field.
 func (saru *ScaAuthRoleUpdate) SetDeleted(i int8) *ScaAuthRoleUpdate {
 	saru.mutation.ResetDeleted()
@@ -52,12 +58,6 @@ func (saru *ScaAuthRoleUpdate) SetNillableDeleted(i *int8) *ScaAuthRoleUpdate {
 // AddDeleted adds i to the "deleted" field.
 func (saru *ScaAuthRoleUpdate) AddDeleted(i int8) *ScaAuthRoleUpdate {
 	saru.mutation.AddDeleted(i)
-	return saru
-}
-
-// ClearDeleted clears the value of the "deleted" field.
-func (saru *ScaAuthRoleUpdate) ClearDeleted() *ScaAuthRoleUpdate {
-	saru.mutation.ClearDeleted()
 	return saru
 }
 
@@ -124,7 +124,7 @@ func (saru *ScaAuthRoleUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (saru *ScaAuthRoleUpdate) defaults() {
-	if _, ok := saru.mutation.UpdatedAt(); !ok {
+	if _, ok := saru.mutation.UpdatedAt(); !ok && !saru.mutation.UpdatedAtCleared() {
 		v := scaauthrole.UpdateDefaultUpdatedAt()
 		saru.mutation.SetUpdatedAt(v)
 	}
@@ -165,14 +165,14 @@ func (saru *ScaAuthRoleUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := saru.mutation.UpdatedAt(); ok {
 		_spec.SetField(scaauthrole.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if saru.mutation.UpdatedAtCleared() {
+		_spec.ClearField(scaauthrole.FieldUpdatedAt, field.TypeTime)
+	}
 	if value, ok := saru.mutation.Deleted(); ok {
 		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt8, value)
 	}
 	if value, ok := saru.mutation.AddedDeleted(); ok {
 		_spec.AddField(scaauthrole.FieldDeleted, field.TypeInt8, value)
-	}
-	if saru.mutation.DeletedCleared() {
-		_spec.ClearField(scaauthrole.FieldDeleted, field.TypeInt8)
 	}
 	if value, ok := saru.mutation.RoleName(); ok {
 		_spec.SetField(scaauthrole.FieldRoleName, field.TypeString, value)
@@ -206,6 +206,12 @@ func (saruo *ScaAuthRoleUpdateOne) SetUpdatedAt(t time.Time) *ScaAuthRoleUpdateO
 	return saruo
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (saruo *ScaAuthRoleUpdateOne) ClearUpdatedAt() *ScaAuthRoleUpdateOne {
+	saruo.mutation.ClearUpdatedAt()
+	return saruo
+}
+
 // SetDeleted sets the "deleted" field.
 func (saruo *ScaAuthRoleUpdateOne) SetDeleted(i int8) *ScaAuthRoleUpdateOne {
 	saruo.mutation.ResetDeleted()
@@ -224,12 +230,6 @@ func (saruo *ScaAuthRoleUpdateOne) SetNillableDeleted(i *int8) *ScaAuthRoleUpdat
 // AddDeleted adds i to the "deleted" field.
 func (saruo *ScaAuthRoleUpdateOne) AddDeleted(i int8) *ScaAuthRoleUpdateOne {
 	saruo.mutation.AddDeleted(i)
-	return saruo
-}
-
-// ClearDeleted clears the value of the "deleted" field.
-func (saruo *ScaAuthRoleUpdateOne) ClearDeleted() *ScaAuthRoleUpdateOne {
-	saruo.mutation.ClearDeleted()
 	return saruo
 }
 
@@ -309,7 +309,7 @@ func (saruo *ScaAuthRoleUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (saruo *ScaAuthRoleUpdateOne) defaults() {
-	if _, ok := saruo.mutation.UpdatedAt(); !ok {
+	if _, ok := saruo.mutation.UpdatedAt(); !ok && !saruo.mutation.UpdatedAtCleared() {
 		v := scaauthrole.UpdateDefaultUpdatedAt()
 		saruo.mutation.SetUpdatedAt(v)
 	}
@@ -367,14 +367,14 @@ func (saruo *ScaAuthRoleUpdateOne) sqlSave(ctx context.Context) (_node *ScaAuthR
 	if value, ok := saruo.mutation.UpdatedAt(); ok {
 		_spec.SetField(scaauthrole.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if saruo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(scaauthrole.FieldUpdatedAt, field.TypeTime)
+	}
 	if value, ok := saruo.mutation.Deleted(); ok {
 		_spec.SetField(scaauthrole.FieldDeleted, field.TypeInt8, value)
 	}
 	if value, ok := saruo.mutation.AddedDeleted(); ok {
 		_spec.AddField(scaauthrole.FieldDeleted, field.TypeInt8, value)
-	}
-	if saruo.mutation.DeletedCleared() {
-		_spec.ClearField(scaauthrole.FieldDeleted, field.TypeInt8)
 	}
 	if value, ok := saruo.mutation.RoleName(); ok {
 		_spec.SetField(scaauthrole.FieldRoleName, field.TypeString, value)

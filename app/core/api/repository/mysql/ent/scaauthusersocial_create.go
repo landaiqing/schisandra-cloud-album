@@ -139,10 +139,6 @@ func (sausc *ScaAuthUserSocialCreate) defaults() {
 		v := scaauthusersocial.DefaultCreatedAt()
 		sausc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := sausc.mutation.UpdatedAt(); !ok {
-		v := scaauthusersocial.DefaultUpdatedAt()
-		sausc.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := sausc.mutation.Deleted(); !ok {
 		v := scaauthusersocial.DefaultDeleted
 		sausc.mutation.SetDeleted(v)
@@ -158,8 +154,8 @@ func (sausc *ScaAuthUserSocialCreate) check() error {
 	if _, ok := sausc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthUserSocial.created_at"`)}
 	}
-	if _, ok := sausc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthUserSocial.updated_at"`)}
+	if _, ok := sausc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthUserSocial.deleted"`)}
 	}
 	if v, ok := sausc.mutation.Deleted(); ok {
 		if err := scaauthusersocial.DeletedValidator(v); err != nil {

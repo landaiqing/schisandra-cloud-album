@@ -281,10 +281,6 @@ func (sauc *ScaAuthUserCreate) defaults() {
 		v := scaauthuser.DefaultCreatedAt()
 		sauc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := sauc.mutation.UpdatedAt(); !ok {
-		v := scaauthuser.DefaultUpdatedAt()
-		sauc.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := sauc.mutation.Deleted(); !ok {
 		v := scaauthuser.DefaultDeleted
 		sauc.mutation.SetDeleted(v)
@@ -300,8 +296,8 @@ func (sauc *ScaAuthUserCreate) check() error {
 	if _, ok := sauc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthUser.created_at"`)}
 	}
-	if _, ok := sauc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthUser.updated_at"`)}
+	if _, ok := sauc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthUser.deleted"`)}
 	}
 	if v, ok := sauc.mutation.Deleted(); ok {
 		if err := scaauthuser.DeletedValidator(v); err != nil {

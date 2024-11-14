@@ -43,7 +43,7 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 	if req.Captcha != code {
 		return response.ErrorWithI18n(l.ctx, "login.captchaError", "验证码错误"), nil
 	}
-	user, err := l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.Phone(req.Phone), scaauthuser.Deleted(0)).Only(l.ctx)
+	user, err := l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.Phone(req.Phone), scaauthuser.Deleted(0)).First(l.ctx)
 	tx, wrong := l.svcCtx.MySQLClient.Tx(l.ctx)
 	if wrong != nil {
 		return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败"), err
@@ -54,7 +54,7 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
 
-		addUser, wrong := l.svcCtx.MySQLClient.ScaAuthUser.Create().
+		addUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Create().
 			SetUID(uidStr).
 			SetPhone(req.Phone).
 			SetAvatar(avatar).
@@ -62,7 +62,12 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 			SetDeleted(constant.NotDeleted).
 			SetGender(constant.Male).
 			Save(l.ctx)
-		if wrong != nil {
+		if fault != nil {
+			err = tx.Rollback()
+			return response.ErrorWithI18n(l.ctx, "login.registerError", "注册失败"), err
+		}
+		_, err = l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User)
+		if err != nil {
 			err = tx.Rollback()
 			return response.ErrorWithI18n(l.ctx, "login.registerError", "注册失败"), err
 		}
@@ -72,15 +77,21 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 			return response.ErrorWithI18n(l.ctx, "login.registerError", "注册失败"), err
 		}
 		err = tx.Commit()
-		return response.SuccessWithData(data), err
-	} else if err != nil {
+		if err != nil {
+			tx.Rollback()
+		}
+		return response.SuccessWithData(data), nil
+	} else if err == nil {
 		data, result := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 		if !result {
 			err = tx.Rollback()
 			return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败"), err
 		}
 		err = tx.Commit()
-		return response.SuccessWithData(data), err
+		if err != nil {
+			tx.Rollback()
+		}
+		return response.SuccessWithData(data), nil
 	} else {
 		return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败"), nil
 	}

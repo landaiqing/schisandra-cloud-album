@@ -2,7 +2,7 @@ Name: main
 Host: 0.0.0.0
 Port: 80
 Web:
-  Addr: localhost:8080
+  URL: http://localhost:5173
 Middlewares:
   Log: true
 Mysql:
@@ -20,3 +20,55 @@ Mongo:
   Password: LDQ20020618xxx
   Database: schisandra-cloud-album
   AuthSource: admin
+Wechat:
+  # 微信公众号APPID
+  AppID: wx55251c2f83b9fc25
+  # 微信公众号APPSECRET
+  AppSecret: d511800cd53d248afe1260bb8aeed230
+  # 微信公众号Token
+  Token: LDQ20020618xxx
+  # 微信公众号EncodingAESKey
+  AESKey:
+OAuth:
+  # Github配置
+  Github:
+    # Github客户端ID
+    ClientID: Ov23limqLtbVhBngctSl
+    # Github客户端密钥
+    ClientSecret: 84a5be0317b8f4c6b55039a0eb23ea4606676e66
+    # Github回调地址
+    RedirectURI: https://landaiqing.cn/api/oauth/github/callback
+  # Gitee配置
+  Gitee:
+    # Gitee客户端ID
+    ClientID: bd2ff03b5f644242d862832b8cc749015d0a7c8f163fbd5ab67886d436fb198b
+    # Gitee客户端密钥
+    ClientSecret: 3994b463aa962c878a58a1255f59a92e050e205e9204cffe48a25ad17a758f97
+    # Gitee回调地址
+    RedirectURI: https://landaiqing.cn/api/oauth/gitee/callback
+  # QQ配置
+  QQ:
+    # QQ客户端ID
+    ClientID: '102296211'
+    # QQ客户端密钥
+    ClientSecret: ukOo10SggRxHVVIr
+    # QQ回调地址
+    RedirectURI: https://landaiqing.cn/api/oauth/qq/callback
+# 短信配置
+SMS:
+  Ali:
+    # 阿里云API地址
+    Host: http://dysmsapi.aliyuncs.com
+    # 阿里云AccessKeyId
+    AccessKeyId: LTAI5tDy2edL9LhW43rnus69
+    # 阿里云AccessKeySecret
+    AccessKeySecret: YWp44dcFrBICrjZgqvJBE7ZHArZfIP
+    # 短信模板ID
+    TemplateCode: SMS_154950909
+    # 短信签名
+    Signature: 阿里云短信测试
+  SMSBao:
+    # 短信宝用户账号
+    Username: landaiqing
+    # 短信宝用户密码
+    Password: $LDQ20020618xxx$

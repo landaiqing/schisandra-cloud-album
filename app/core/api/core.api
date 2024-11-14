@@ -42,6 +42,29 @@ type (
 	}
 )
 
+// OAuth请求参数
+type (
+	// OAuth请求参数
+	OAuthRequest {
+		state string `form:"state"`
+	}
+	// OAuth回调请求参数
+	OAuthCallbackRequest {
+		Code string `form:"code"`
+	}
+	OAuthWechatRequest {
+		client_id string `form:"client_id"`
+	}
+)
+
+type (
+	SmsSendRequest {
+		Phone string `json:"phone"`
+		Angle int64  `json:"angle"`
+		Key   string `json:"key"`
+	}
+)
+
 // 统一响应参数
 type (
 	Response {
@@ -54,7 +77,7 @@ type (
 // 用户服务
 @server (
 	group:      user // 微服务分组
-	prefix:     /api/auth/user // 微服务前缀
+	prefix:     /api/user // 微服务前缀
 	timeout:    10s // 超时时间
 	maxBytes:   1048576 // 最大请求大小
 	signature:  true // 是否开启签名验证
@@ -69,14 +92,17 @@ service core {
 
 	// 手机号登录
 	@handler phoneLogin
-	post /phone_login (PhoneLoginRequest) returns (Response)
+	post /phone/login (PhoneLoginRequest) returns (Response)
 
 	// 重置密码
 	@handler resetPassword
-	post /reset_password (ResetPasswordRequest) returns (Response)
+	post /reset/password (ResetPasswordRequest) returns (Response)
 
 	@handler refreshToken
 	post /token/refresh returns (Response)
+
+	@handler getUserDevice
+	get /device
 }
 
 // 客户端服务
@@ -92,6 +118,95 @@ service core {
 )
 service core {
 	@handler generateClientId
-	get /generate_client_id returns (Response)
+	get /generate returns (Response)
+}
+
+@server (
+	group:   websocket // 微服务分组
+	prefix:  /api/ws // 微服务前缀
+	timeout: 10s // 超时时间
+	Recover: true // 是否开启自动恢复
+)
+service core {
+	@handler qrcodeWebsocket
+	get /qrcode
+
+	@handler messageWebsocket
+	get /message
+}
+
+@server (
+	group:      oauth // 微服务分组
+	prefix:     /api/oauth // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	@handler getGiteeOauthUrl
+	get /gitee/url returns (Response)
+
+	@handler getGithubOauthUrl
+	get /github/url (OAuthRequest) returns (Response)
+
+	@handler getQqOauthUrl
+	get /qq/url (OAuthRequest) returns (Response)
+
+	@handler giteeCallback
+	get /gitee/callback (OAuthCallbackRequest)
+
+	@handler githubCallback
+	get /github/callback (OAuthCallbackRequest)
+
+	@handler qqCallback
+	get /qq/callback (OAuthCallbackRequest)
+
+	@handler wechatCallback
+	get /wechat/callback
+
+	@handler getWechatQrcode
+	get /wechat/qrcode (OAuthWechatRequest) returns (Response)
+}
+
+@server (
+	group:      sms // 微服务分组
+	prefix:     /api/sms // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	@handler sendSmsByAliyun
+	post /ali/send (SmsSendRequest) returns (Response)
+
+	@handler sendSmsBySmsbao
+	post /smsbao/send (SmsSendRequest) returns (Response)
+
+	@handler sendSmsByTest
+	post /test/send (SmsSendRequest) returns (Response)
+}
+
+@server (
+	group:      captcha // 微服务分组
+	prefix:     /api/captcha // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	@handler generateRotateCaptcha
+	get /rotate/generate returns (Response)
+
+	@handler generateSlideBasicCaptcha
+	get /slide/generate returns (Response)
 }
 

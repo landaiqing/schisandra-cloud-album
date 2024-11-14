@@ -20,6 +20,18 @@ type LoginResponse struct {
 	Status      int8   `json:"status"`
 }
 
+type OAuthCallbackRequest struct {
+	Code string `form:"code"`
+}
+
+type OAuthRequest struct {
+	State string `form:"state"`
+}
+
+type OAuthWechatRequest struct {
+	Client_id string `form:"client_id"`
+}
+
 type PhoneLoginRequest struct {
 	Phone     string `json:"phone"`
 	Captcha   string `json:"captcha"`
@@ -37,4 +49,10 @@ type Response struct {
 	Code    int64       `json:"code"`
 	Message string      `json:"message"`
 	Data    interface{} `json:"data,optional"`
+}
+
+type SmsSendRequest struct {
+	Phone string `json:"phone"`
+	Angle int64  `json:"angle"`
+	Key   string `json:"key"`
 }

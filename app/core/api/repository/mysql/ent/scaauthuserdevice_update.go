@@ -34,6 +34,12 @@ func (saudu *ScaAuthUserDeviceUpdate) SetUpdatedAt(t time.Time) *ScaAuthUserDevi
 	return saudu
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (saudu *ScaAuthUserDeviceUpdate) ClearUpdatedAt() *ScaAuthUserDeviceUpdate {
+	saudu.mutation.ClearUpdatedAt()
+	return saudu
+}
+
 // SetDeleted sets the "deleted" field.
 func (saudu *ScaAuthUserDeviceUpdate) SetDeleted(i int8) *ScaAuthUserDeviceUpdate {
 	saudu.mutation.ResetDeleted()
@@ -52,12 +58,6 @@ func (saudu *ScaAuthUserDeviceUpdate) SetNillableDeleted(i *int8) *ScaAuthUserDe
 // AddDeleted adds i to the "deleted" field.
 func (saudu *ScaAuthUserDeviceUpdate) AddDeleted(i int8) *ScaAuthUserDeviceUpdate {
 	saudu.mutation.AddDeleted(i)
-	return saudu
-}
-
-// ClearDeleted clears the value of the "deleted" field.
-func (saudu *ScaAuthUserDeviceUpdate) ClearDeleted() *ScaAuthUserDeviceUpdate {
-	saudu.mutation.ClearDeleted()
 	return saudu
 }
 
@@ -278,7 +278,7 @@ func (saudu *ScaAuthUserDeviceUpdate) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (saudu *ScaAuthUserDeviceUpdate) defaults() {
-	if _, ok := saudu.mutation.UpdatedAt(); !ok {
+	if _, ok := saudu.mutation.UpdatedAt(); !ok && !saudu.mutation.UpdatedAtCleared() {
 		v := scaauthuserdevice.UpdateDefaultUpdatedAt()
 		saudu.mutation.SetUpdatedAt(v)
 	}
@@ -364,14 +364,14 @@ func (saudu *ScaAuthUserDeviceUpdate) sqlSave(ctx context.Context) (n int, err e
 	if value, ok := saudu.mutation.UpdatedAt(); ok {
 		_spec.SetField(scaauthuserdevice.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if saudu.mutation.UpdatedAtCleared() {
+		_spec.ClearField(scaauthuserdevice.FieldUpdatedAt, field.TypeTime)
+	}
 	if value, ok := saudu.mutation.Deleted(); ok {
 		_spec.SetField(scaauthuserdevice.FieldDeleted, field.TypeInt8, value)
 	}
 	if value, ok := saudu.mutation.AddedDeleted(); ok {
 		_spec.AddField(scaauthuserdevice.FieldDeleted, field.TypeInt8, value)
-	}
-	if saudu.mutation.DeletedCleared() {
-		_spec.ClearField(scaauthuserdevice.FieldDeleted, field.TypeInt8)
 	}
 	if value, ok := saudu.mutation.UserID(); ok {
 		_spec.SetField(scaauthuserdevice.FieldUserID, field.TypeString, value)
@@ -438,6 +438,12 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) SetUpdatedAt(t time.Time) *ScaAuthUser
 	return sauduo
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (sauduo *ScaAuthUserDeviceUpdateOne) ClearUpdatedAt() *ScaAuthUserDeviceUpdateOne {
+	sauduo.mutation.ClearUpdatedAt()
+	return sauduo
+}
+
 // SetDeleted sets the "deleted" field.
 func (sauduo *ScaAuthUserDeviceUpdateOne) SetDeleted(i int8) *ScaAuthUserDeviceUpdateOne {
 	sauduo.mutation.ResetDeleted()
@@ -456,12 +462,6 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) SetNillableDeleted(i *int8) *ScaAuthUs
 // AddDeleted adds i to the "deleted" field.
 func (sauduo *ScaAuthUserDeviceUpdateOne) AddDeleted(i int8) *ScaAuthUserDeviceUpdateOne {
 	sauduo.mutation.AddDeleted(i)
-	return sauduo
-}
-
-// ClearDeleted clears the value of the "deleted" field.
-func (sauduo *ScaAuthUserDeviceUpdateOne) ClearDeleted() *ScaAuthUserDeviceUpdateOne {
-	sauduo.mutation.ClearDeleted()
 	return sauduo
 }
 
@@ -695,7 +695,7 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) ExecX(ctx context.Context) {
 
 // defaults sets the default values of the builder before save.
 func (sauduo *ScaAuthUserDeviceUpdateOne) defaults() {
-	if _, ok := sauduo.mutation.UpdatedAt(); !ok {
+	if _, ok := sauduo.mutation.UpdatedAt(); !ok && !sauduo.mutation.UpdatedAtCleared() {
 		v := scaauthuserdevice.UpdateDefaultUpdatedAt()
 		sauduo.mutation.SetUpdatedAt(v)
 	}
@@ -798,14 +798,14 @@ func (sauduo *ScaAuthUserDeviceUpdateOne) sqlSave(ctx context.Context) (_node *S
 	if value, ok := sauduo.mutation.UpdatedAt(); ok {
 		_spec.SetField(scaauthuserdevice.FieldUpdatedAt, field.TypeTime, value)
 	}
+	if sauduo.mutation.UpdatedAtCleared() {
+		_spec.ClearField(scaauthuserdevice.FieldUpdatedAt, field.TypeTime)
+	}
 	if value, ok := sauduo.mutation.Deleted(); ok {
 		_spec.SetField(scaauthuserdevice.FieldDeleted, field.TypeInt8, value)
 	}
 	if value, ok := sauduo.mutation.AddedDeleted(); ok {
 		_spec.AddField(scaauthuserdevice.FieldDeleted, field.TypeInt8, value)
-	}
-	if sauduo.mutation.DeletedCleared() {
-		_spec.ClearField(scaauthuserdevice.FieldDeleted, field.TypeInt8)
 	}
 	if value, ok := sauduo.mutation.UserID(); ok {
 		_spec.SetField(scaauthuserdevice.FieldUserID, field.TypeString, value)

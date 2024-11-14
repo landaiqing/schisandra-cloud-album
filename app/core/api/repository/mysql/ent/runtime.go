@@ -57,8 +57,6 @@ func init() {
 	scaauthrole.DefaultCreatedAt = scaauthroleDescCreatedAt.Default.(func() time.Time)
 	// scaauthroleDescUpdatedAt is the schema descriptor for updated_at field.
 	scaauthroleDescUpdatedAt := scaauthroleMixinFields0[1].Descriptor()
-	// scaauthrole.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	scaauthrole.DefaultUpdatedAt = scaauthroleDescUpdatedAt.Default.(func() time.Time)
 	// scaauthrole.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	scaauthrole.UpdateDefaultUpdatedAt = scaauthroleDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// scaauthroleDescDeleted is the schema descriptor for deleted field.
@@ -86,8 +84,6 @@ func init() {
 	scaauthuser.DefaultCreatedAt = scaauthuserDescCreatedAt.Default.(func() time.Time)
 	// scaauthuserDescUpdatedAt is the schema descriptor for updated_at field.
 	scaauthuserDescUpdatedAt := scaauthuserMixinFields0[1].Descriptor()
-	// scaauthuser.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	scaauthuser.DefaultUpdatedAt = scaauthuserDescUpdatedAt.Default.(func() time.Time)
 	// scaauthuser.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	scaauthuser.UpdateDefaultUpdatedAt = scaauthuserDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// scaauthuserDescDeleted is the schema descriptor for deleted field.
@@ -151,8 +147,6 @@ func init() {
 	scaauthuserdevice.DefaultCreatedAt = scaauthuserdeviceDescCreatedAt.Default.(func() time.Time)
 	// scaauthuserdeviceDescUpdatedAt is the schema descriptor for updated_at field.
 	scaauthuserdeviceDescUpdatedAt := scaauthuserdeviceMixinFields0[1].Descriptor()
-	// scaauthuserdevice.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	scaauthuserdevice.DefaultUpdatedAt = scaauthuserdeviceDescUpdatedAt.Default.(func() time.Time)
 	// scaauthuserdevice.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	scaauthuserdevice.UpdateDefaultUpdatedAt = scaauthuserdeviceDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// scaauthuserdeviceDescDeleted is the schema descriptor for deleted field.
@@ -216,8 +210,6 @@ func init() {
 	scaauthusersocial.DefaultCreatedAt = scaauthusersocialDescCreatedAt.Default.(func() time.Time)
 	// scaauthusersocialDescUpdatedAt is the schema descriptor for updated_at field.
 	scaauthusersocialDescUpdatedAt := scaauthusersocialMixinFields0[1].Descriptor()
-	// scaauthusersocial.DefaultUpdatedAt holds the default value on creation for the updated_at field.
-	scaauthusersocial.DefaultUpdatedAt = scaauthusersocialDescUpdatedAt.Default.(func() time.Time)
 	// scaauthusersocial.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
 	scaauthusersocial.UpdateDefaultUpdatedAt = scaauthusersocialDescUpdatedAt.UpdateDefault.(func() time.Time)
 	// scaauthusersocialDescDeleted is the schema descriptor for deleted field.

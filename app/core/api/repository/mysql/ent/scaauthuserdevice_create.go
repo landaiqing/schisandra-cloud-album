@@ -185,10 +185,6 @@ func (saudc *ScaAuthUserDeviceCreate) defaults() {
 		v := scaauthuserdevice.DefaultCreatedAt()
 		saudc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := saudc.mutation.UpdatedAt(); !ok {
-		v := scaauthuserdevice.DefaultUpdatedAt()
-		saudc.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := saudc.mutation.Deleted(); !ok {
 		v := scaauthuserdevice.DefaultDeleted
 		saudc.mutation.SetDeleted(v)
@@ -200,8 +196,8 @@ func (saudc *ScaAuthUserDeviceCreate) check() error {
 	if _, ok := saudc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthUserDevice.created_at"`)}
 	}
-	if _, ok := saudc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthUserDevice.updated_at"`)}
+	if _, ok := saudc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthUserDevice.deleted"`)}
 	}
 	if v, ok := saudc.mutation.Deleted(); ok {
 		if err := scaauthuserdevice.DeletedValidator(v); err != nil {

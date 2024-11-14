@@ -5,8 +5,6 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
-	"github.com/mssola/useragent"
 	"github.com/zeromicro/go-zero/core/logc"
 	"github.com/zeromicro/go-zero/core/logx"
 
@@ -19,7 +17,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 )
 
 type AccountLoginLogic struct {
@@ -116,87 +113,14 @@ func HandleUserLogin(user *ent.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogi
 		return nil, false
 	}
 	session.Values[constant.SESSION_KEY] = sessionData
-	if err = session.Save(r, w); err != nil {
-		logc.Error(ctx, err)
+	err = session.Save(r, w)
+	if err != nil {
 		return nil, false
 	}
 	// 记录用户登录设备
-	if !getUserLoginDevice(user.UID, r, svcCtx.Ip2Region, svcCtx.MySQLClient, ctx) {
+	if !GetUserLoginDevice(user.UID, r, svcCtx.Ip2Region, svcCtx.MySQLClient, ctx) {
 		return nil, false
 	}
 	return &data, true
 
-}
-
-// getUserLoginDevice 获取用户登录设备
-func getUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searcher, entClient *ent.Client, ctx context.Context) bool {
-	userAgent := r.Header.Get("User-Agent")
-	if userAgent == "" {
-		return false
-	}
-	ip := utils.GetClientIP(r)
-	location, err := ip2location.SearchByStr(ip)
-	if err != nil {
-		return false
-	}
-	location = utils.RemoveZeroAndAdjust(location)
-
-	ua := useragent.New(userAgent)
-	isBot := ua.Bot()
-	browser, browserVersion := ua.Browser()
-	os := ua.OS()
-	mobile := ua.Mobile()
-	mozilla := ua.Mozilla()
-	platform := ua.Platform()
-	engine, engineVersion := ua.Engine()
-
-	device, err := entClient.ScaAuthUserDevice.Query().
-		Where(scaauthuserdevice.UserID(userId), scaauthuserdevice.IP(ip), scaauthuserdevice.Agent(userAgent)).
-		Only(ctx)
-
-	// 如果有错误，表示设备不存在，执行插入
-	if ent.IsNotFound(err) {
-		// 创建新的设备记录
-		err = entClient.ScaAuthUserDevice.Create().
-			SetBot(isBot).
-			SetAgent(userAgent).
-			SetBrowser(browser).
-			SetBrowserVersion(browserVersion).
-			SetEngineName(engine).
-			SetEngineVersion(engineVersion).
-			SetIP(ip).
-			SetLocation(location).
-			SetOperatingSystem(os).
-			SetMobile(mobile).
-			SetMozilla(mozilla).
-			SetPlatform(platform).
-			Exec(ctx)
-		if err != nil {
-			return false
-		}
-		return true
-	} else if err == nil {
-		// 如果设备存在，执行更新
-		err = device.Update().
-			SetBot(isBot).
-			SetAgent(userAgent).
-			SetBrowser(browser).
-			SetBrowserVersion(browserVersion).
-			SetEngineName(engine).
-			SetEngineVersion(engineVersion).
-			SetIP(ip).
-			SetLocation(location).
-			SetOperatingSystem(os).
-			SetMobile(mobile).
-			SetMozilla(mozilla).
-			SetPlatform(platform).
-			Exec(ctx)
-		if err != nil {
-			return false
-		}
-		return true
-	} else {
-		logc.Error(ctx, err)
-		return false
-	}
 }

@@ -119,10 +119,6 @@ func (sarc *ScaAuthRoleCreate) defaults() {
 		v := scaauthrole.DefaultCreatedAt()
 		sarc.mutation.SetCreatedAt(v)
 	}
-	if _, ok := sarc.mutation.UpdatedAt(); !ok {
-		v := scaauthrole.DefaultUpdatedAt()
-		sarc.mutation.SetUpdatedAt(v)
-	}
 	if _, ok := sarc.mutation.Deleted(); !ok {
 		v := scaauthrole.DefaultDeleted
 		sarc.mutation.SetDeleted(v)
@@ -134,8 +130,8 @@ func (sarc *ScaAuthRoleCreate) check() error {
 	if _, ok := sarc.mutation.CreatedAt(); !ok {
 		return &ValidationError{Name: "created_at", err: errors.New(`ent: missing required field "ScaAuthRole.created_at"`)}
 	}
-	if _, ok := sarc.mutation.UpdatedAt(); !ok {
-		return &ValidationError{Name: "updated_at", err: errors.New(`ent: missing required field "ScaAuthRole.updated_at"`)}
+	if _, ok := sarc.mutation.Deleted(); !ok {
+		return &ValidationError{Name: "deleted", err: errors.New(`ent: missing required field "ScaAuthRole.deleted"`)}
 	}
 	if v, ok := sarc.mutation.Deleted(); ok {
 		if err := scaauthrole.DeletedValidator(v); err != nil {

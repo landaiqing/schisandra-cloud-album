@@ -1016,9 +1016,22 @@ func (m *ScaAuthRoleMutation) OldUpdatedAt(ctx context.Context) (v time.Time, er
 	return oldValue.UpdatedAt, nil
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ScaAuthRoleMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[scaauthrole.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ScaAuthRoleMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[scaauthrole.FieldUpdatedAt]
+	return ok
+}
+
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *ScaAuthRoleMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+	delete(m.clearedFields, scaauthrole.FieldUpdatedAt)
 }
 
 // SetDeleted sets the "deleted" field.
@@ -1071,24 +1084,10 @@ func (m *ScaAuthRoleMutation) AddedDeleted() (r int8, exists bool) {
 	return *v, true
 }
 
-// ClearDeleted clears the value of the "deleted" field.
-func (m *ScaAuthRoleMutation) ClearDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
-	m.clearedFields[scaauthrole.FieldDeleted] = struct{}{}
-}
-
-// DeletedCleared returns if the "deleted" field was cleared in this mutation.
-func (m *ScaAuthRoleMutation) DeletedCleared() bool {
-	_, ok := m.clearedFields[scaauthrole.FieldDeleted]
-	return ok
-}
-
 // ResetDeleted resets all changes to the "deleted" field.
 func (m *ScaAuthRoleMutation) ResetDeleted() {
 	m.deleted = nil
 	m.adddeleted = nil
-	delete(m.clearedFields, scaauthrole.FieldDeleted)
 }
 
 // SetRoleName sets the "role_name" field.
@@ -1339,8 +1338,8 @@ func (m *ScaAuthRoleMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ScaAuthRoleMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(scaauthrole.FieldDeleted) {
-		fields = append(fields, scaauthrole.FieldDeleted)
+	if m.FieldCleared(scaauthrole.FieldUpdatedAt) {
+		fields = append(fields, scaauthrole.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -1356,8 +1355,8 @@ func (m *ScaAuthRoleMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthRoleMutation) ClearField(name string) error {
 	switch name {
-	case scaauthrole.FieldDeleted:
-		m.ClearDeleted()
+	case scaauthrole.FieldUpdatedAt:
+		m.ClearUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthRole nullable field %s", name)
@@ -1636,9 +1635,22 @@ func (m *ScaAuthUserMutation) OldUpdatedAt(ctx context.Context) (v time.Time, er
 	return oldValue.UpdatedAt, nil
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ScaAuthUserMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[scaauthuser.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ScaAuthUserMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[scaauthuser.FieldUpdatedAt]
+	return ok
+}
+
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *ScaAuthUserMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+	delete(m.clearedFields, scaauthuser.FieldUpdatedAt)
 }
 
 // SetDeleted sets the "deleted" field.
@@ -1691,24 +1703,10 @@ func (m *ScaAuthUserMutation) AddedDeleted() (r int8, exists bool) {
 	return *v, true
 }
 
-// ClearDeleted clears the value of the "deleted" field.
-func (m *ScaAuthUserMutation) ClearDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
-	m.clearedFields[scaauthuser.FieldDeleted] = struct{}{}
-}
-
-// DeletedCleared returns if the "deleted" field was cleared in this mutation.
-func (m *ScaAuthUserMutation) DeletedCleared() bool {
-	_, ok := m.clearedFields[scaauthuser.FieldDeleted]
-	return ok
-}
-
 // ResetDeleted resets all changes to the "deleted" field.
 func (m *ScaAuthUserMutation) ResetDeleted() {
 	m.deleted = nil
 	m.adddeleted = nil
-	delete(m.clearedFields, scaauthuser.FieldDeleted)
 }
 
 // SetUID sets the "uid" field.
@@ -2731,8 +2729,8 @@ func (m *ScaAuthUserMutation) AddField(name string, value ent.Value) error {
 // mutation.
 func (m *ScaAuthUserMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(scaauthuser.FieldDeleted) {
-		fields = append(fields, scaauthuser.FieldDeleted)
+	if m.FieldCleared(scaauthuser.FieldUpdatedAt) {
+		fields = append(fields, scaauthuser.FieldUpdatedAt)
 	}
 	if m.FieldCleared(scaauthuser.FieldUsername) {
 		fields = append(fields, scaauthuser.FieldUsername)
@@ -2784,8 +2782,8 @@ func (m *ScaAuthUserMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthUserMutation) ClearField(name string) error {
 	switch name {
-	case scaauthuser.FieldDeleted:
-		m.ClearDeleted()
+	case scaauthuser.FieldUpdatedAt:
+		m.ClearUpdatedAt()
 		return nil
 	case scaauthuser.FieldUsername:
 		m.ClearUsername()
@@ -3131,9 +3129,22 @@ func (m *ScaAuthUserDeviceMutation) OldUpdatedAt(ctx context.Context) (v time.Ti
 	return oldValue.UpdatedAt, nil
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ScaAuthUserDeviceMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[scaauthuserdevice.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ScaAuthUserDeviceMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[scaauthuserdevice.FieldUpdatedAt]
+	return ok
+}
+
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *ScaAuthUserDeviceMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+	delete(m.clearedFields, scaauthuserdevice.FieldUpdatedAt)
 }
 
 // SetDeleted sets the "deleted" field.
@@ -3186,24 +3197,10 @@ func (m *ScaAuthUserDeviceMutation) AddedDeleted() (r int8, exists bool) {
 	return *v, true
 }
 
-// ClearDeleted clears the value of the "deleted" field.
-func (m *ScaAuthUserDeviceMutation) ClearDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
-	m.clearedFields[scaauthuserdevice.FieldDeleted] = struct{}{}
-}
-
-// DeletedCleared returns if the "deleted" field was cleared in this mutation.
-func (m *ScaAuthUserDeviceMutation) DeletedCleared() bool {
-	_, ok := m.clearedFields[scaauthuserdevice.FieldDeleted]
-	return ok
-}
-
 // ResetDeleted resets all changes to the "deleted" field.
 func (m *ScaAuthUserDeviceMutation) ResetDeleted() {
 	m.deleted = nil
 	m.adddeleted = nil
-	delete(m.clearedFields, scaauthuserdevice.FieldDeleted)
 }
 
 // SetUserID sets the "user_id" field.
@@ -4004,8 +4001,8 @@ func (m *ScaAuthUserDeviceMutation) AddField(name string, value ent.Value) error
 // mutation.
 func (m *ScaAuthUserDeviceMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(scaauthuserdevice.FieldDeleted) {
-		fields = append(fields, scaauthuserdevice.FieldDeleted)
+	if m.FieldCleared(scaauthuserdevice.FieldUpdatedAt) {
+		fields = append(fields, scaauthuserdevice.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -4021,8 +4018,8 @@ func (m *ScaAuthUserDeviceMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthUserDeviceMutation) ClearField(name string) error {
 	switch name {
-	case scaauthuserdevice.FieldDeleted:
-		m.ClearDeleted()
+	case scaauthuserdevice.FieldUpdatedAt:
+		m.ClearUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserDevice nullable field %s", name)
@@ -4324,9 +4321,22 @@ func (m *ScaAuthUserSocialMutation) OldUpdatedAt(ctx context.Context) (v time.Ti
 	return oldValue.UpdatedAt, nil
 }
 
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ScaAuthUserSocialMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[scaauthusersocial.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ScaAuthUserSocialMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[scaauthusersocial.FieldUpdatedAt]
+	return ok
+}
+
 // ResetUpdatedAt resets all changes to the "updated_at" field.
 func (m *ScaAuthUserSocialMutation) ResetUpdatedAt() {
 	m.updated_at = nil
+	delete(m.clearedFields, scaauthusersocial.FieldUpdatedAt)
 }
 
 // SetDeleted sets the "deleted" field.
@@ -4379,24 +4389,10 @@ func (m *ScaAuthUserSocialMutation) AddedDeleted() (r int8, exists bool) {
 	return *v, true
 }
 
-// ClearDeleted clears the value of the "deleted" field.
-func (m *ScaAuthUserSocialMutation) ClearDeleted() {
-	m.deleted = nil
-	m.adddeleted = nil
-	m.clearedFields[scaauthusersocial.FieldDeleted] = struct{}{}
-}
-
-// DeletedCleared returns if the "deleted" field was cleared in this mutation.
-func (m *ScaAuthUserSocialMutation) DeletedCleared() bool {
-	_, ok := m.clearedFields[scaauthusersocial.FieldDeleted]
-	return ok
-}
-
 // ResetDeleted resets all changes to the "deleted" field.
 func (m *ScaAuthUserSocialMutation) ResetDeleted() {
 	m.deleted = nil
 	m.adddeleted = nil
-	delete(m.clearedFields, scaauthusersocial.FieldDeleted)
 }
 
 // SetUserID sets the "user_id" field.
@@ -4779,8 +4775,8 @@ func (m *ScaAuthUserSocialMutation) AddField(name string, value ent.Value) error
 // mutation.
 func (m *ScaAuthUserSocialMutation) ClearedFields() []string {
 	var fields []string
-	if m.FieldCleared(scaauthusersocial.FieldDeleted) {
-		fields = append(fields, scaauthusersocial.FieldDeleted)
+	if m.FieldCleared(scaauthusersocial.FieldUpdatedAt) {
+		fields = append(fields, scaauthusersocial.FieldUpdatedAt)
 	}
 	return fields
 }
@@ -4796,8 +4792,8 @@ func (m *ScaAuthUserSocialMutation) FieldCleared(name string) bool {
 // error if the field is not defined in the schema.
 func (m *ScaAuthUserSocialMutation) ClearField(name string) error {
 	switch name {
-	case scaauthusersocial.FieldDeleted:
-		m.ClearDeleted()
+	case scaauthusersocial.FieldUpdatedAt:
+		m.ClearUpdatedAt()
 		return nil
 	}
 	return fmt.Errorf("unknown ScaAuthUserSocial nullable field %s", name)

@@ -13,3 +13,9 @@ registerError = "register error！"
 passwordNotMatch = "password not match！"
 passwordFormatError = "password format error！"
 resetPasswordError = "reset password error！"
+loginSuccess = "login success！"
+
+[sms]
+smsSendTooFrequently = "sms send too frequently！"
+smsSendFailed = "sms send failed！"
+smsSendSuccess = "sms send success！"

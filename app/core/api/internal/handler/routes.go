@@ -7,8 +7,12 @@ import (
 	"net/http"
 	"time"
 
+	captcha "schisandra-album-cloud-microservices/app/core/api/internal/handler/captcha"
 	client "schisandra-album-cloud-microservices/app/core/api/internal/handler/client"
+	oauth "schisandra-album-cloud-microservices/app/core/api/internal/handler/oauth"
+	sms "schisandra-album-cloud-microservices/app/core/api/internal/handler/sms"
 	user "schisandra-album-cloud-microservices/app/core/api/internal/handler/user"
+	websocket "schisandra-album-cloud-microservices/app/core/api/internal/handler/websocket"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -21,7 +25,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
-					Path:    "/generate_client_id",
+					Path:    "/rotate/generate",
+					Handler: captcha.GenerateRotateCaptchaHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/slide/generate",
+					Handler: captcha.GenerateSlideBasicCaptchaHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/captcha"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(1048576),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/generate",
 					Handler: client.GenerateClientIdHandler(serverCtx),
 				},
 			}...,
@@ -36,18 +61,100 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
 			[]rest.Route{
 				{
+					Method:  http.MethodGet,
+					Path:    "/gitee/callback",
+					Handler: oauth.GiteeCallbackHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/gitee/url",
+					Handler: oauth.GetGiteeOauthUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/github/callback",
+					Handler: oauth.GithubCallbackHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/github/url",
+					Handler: oauth.GetGithubOauthUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/qq/callback",
+					Handler: oauth.QqCallbackHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/qq/url",
+					Handler: oauth.GetQqOauthUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/wechat/callback",
+					Handler: oauth.WechatCallbackHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/wechat/qrcode",
+					Handler: oauth.GetWechatQrcodeHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/oauth"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(1048576),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/ali/send",
+					Handler: sms.SendSmsByAliyunHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/smsbao/send",
+					Handler: sms.SendSmsBySmsbaoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/test/send",
+					Handler: sms.SendSmsByTestHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/sms"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(1048576),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodGet,
+					Path:    "/device",
+					Handler: user.GetUserDeviceHandler(serverCtx),
+				},
+				{
 					Method:  http.MethodPost,
 					Path:    "/login",
 					Handler: user.AccountLoginHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/phone_login",
+					Path:    "/phone/login",
 					Handler: user.PhoneLoginHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/reset_password",
+					Path:    "/reset/password",
 					Handler: user.ResetPasswordHandler(serverCtx),
 				},
 				{
@@ -58,8 +165,25 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithSignature(serverCtx.Config.Signature),
-		rest.WithPrefix("/api/auth/user"),
+		rest.WithPrefix("/api/user"),
 		rest.WithTimeout(10000*time.Millisecond),
 		rest.WithMaxBytes(1048576),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/message",
+				Handler: websocket.MessageWebsocketHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/qrcode",
+				Handler: websocket.QrcodeWebsocketHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/api/ws"),
+		rest.WithTimeout(10000*time.Millisecond),
 	)
 }

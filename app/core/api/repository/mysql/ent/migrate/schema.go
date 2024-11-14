@@ -31,8 +31,8 @@ var (
 	ScaAuthRoleColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
-		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
 		{Name: "role_name", Type: field.TypeString, Size: 32, Comment: "角色名称"},
 		{Name: "role_key", Type: field.TypeString, Size: 64, Comment: "角色关键字"},
 	}
@@ -47,8 +47,8 @@ var (
 	ScaAuthUserColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "自增ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
-		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
 		{Name: "uid", Type: field.TypeString, Unique: true, Size: 20, Comment: "唯一ID"},
 		{Name: "username", Type: field.TypeString, Nullable: true, Size: 32, Comment: "用户名"},
 		{Name: "nickname", Type: field.TypeString, Nullable: true, Size: 32, Comment: "昵称"},
@@ -56,7 +56,7 @@ var (
 		{Name: "phone", Type: field.TypeString, Nullable: true, Size: 32, Comment: "电话"},
 		{Name: "password", Type: field.TypeString, Nullable: true, Size: 64, Comment: "密码"},
 		{Name: "gender", Type: field.TypeInt8, Nullable: true, Comment: "性别"},
-		{Name: "avatar", Type: field.TypeString, Nullable: true, Comment: "头像"},
+		{Name: "avatar", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "头像"},
 		{Name: "status", Type: field.TypeInt8, Nullable: true, Comment: "状态 0 正常 1 封禁", Default: 0},
 		{Name: "introduce", Type: field.TypeString, Nullable: true, Size: 255, Comment: "介绍"},
 		{Name: "blog", Type: field.TypeString, Nullable: true, Size: 30, Comment: "博客"},
@@ -91,8 +91,8 @@ var (
 	ScaAuthUserDeviceColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
-		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
 		{Name: "user_id", Type: field.TypeString, Size: 20, Comment: "用户ID"},
 		{Name: "ip", Type: field.TypeString, Size: 20, Comment: "登录IP"},
 		{Name: "location", Type: field.TypeString, Size: 20, Comment: "地址"},
@@ -125,8 +125,8 @@ var (
 	ScaAuthUserSocialColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
 		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
-		{Name: "updated_at", Type: field.TypeTime, Comment: "更新时间"},
-		{Name: "deleted", Type: field.TypeInt8, Nullable: true, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
 		{Name: "user_id", Type: field.TypeString, Size: 20, Comment: "用户ID"},
 		{Name: "open_id", Type: field.TypeString, Size: 50, Comment: "第三方用户的 open id"},
 		{Name: "source", Type: field.TypeString, Size: 10, Comment: "第三方用户来源"},

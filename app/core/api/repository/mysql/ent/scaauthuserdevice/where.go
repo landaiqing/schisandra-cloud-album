@@ -214,6 +214,16 @@ func UpdatedAtLTE(v time.Time) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldUpdatedAt, v))
 }
 
+// UpdatedAtIsNil applies the IsNil predicate on the "updated_at" field.
+func UpdatedAtIsNil() predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldIsNull(FieldUpdatedAt))
+}
+
+// UpdatedAtNotNil applies the NotNil predicate on the "updated_at" field.
+func UpdatedAtNotNil() predicate.ScaAuthUserDevice {
+	return predicate.ScaAuthUserDevice(sql.FieldNotNull(FieldUpdatedAt))
+}
+
 // DeletedEQ applies the EQ predicate on the "deleted" field.
 func DeletedEQ(v int8) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldEQ(FieldDeleted, v))
@@ -252,16 +262,6 @@ func DeletedLT(v int8) predicate.ScaAuthUserDevice {
 // DeletedLTE applies the LTE predicate on the "deleted" field.
 func DeletedLTE(v int8) predicate.ScaAuthUserDevice {
 	return predicate.ScaAuthUserDevice(sql.FieldLTE(FieldDeleted, v))
-}
-
-// DeletedIsNil applies the IsNil predicate on the "deleted" field.
-func DeletedIsNil() predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldIsNull(FieldDeleted))
-}
-
-// DeletedNotNil applies the NotNil predicate on the "deleted" field.
-func DeletedNotNil() predicate.ScaAuthUserDevice {
-	return predicate.ScaAuthUserDevice(sql.FieldNotNull(FieldDeleted))
 }
 
 // UserIDEQ applies the EQ predicate on the "user_id" field.

@@ -19,13 +19,12 @@ func (DefaultMixin) Fields() []ent.Field {
 			Default(time.Now).
 			Comment("创建时间"),
 		field.Time("updated_at").
-			Default(time.Now).
 			Comment("更新时间").
+			Optional().
 			UpdateDefault(time.Now),
 		field.Int8("deleted").
 			Default(0).
 			Max(1).
-			Optional().
 			Comment("是否删除 0 未删除 1 已删除"),
 	}
 }

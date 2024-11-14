@@ -4,6 +4,9 @@ import "github.com/zeromicro/go-zero/rest"
 
 type Config struct {
 	rest.RestConf
+	Web struct {
+		URL string
+	}
 	Auth struct {
 		AccessSecret string
 		AccessExpire int64
@@ -22,5 +25,41 @@ type Config struct {
 		Password   string
 		AuthSource string
 		Database   string
+	}
+	Wechat struct {
+		AppID     string
+		AppSecret string
+		Token     string
+		AESKey    string
+	}
+	OAuth struct {
+		Github struct {
+			ClientID     string
+			ClientSecret string
+			RedirectURI  string
+		}
+		QQ struct {
+			ClientID     string
+			ClientSecret string
+			RedirectURI  string
+		}
+		Gitee struct {
+			ClientID     string
+			ClientSecret string
+			RedirectURI  string
+		}
+	}
+	SMS struct {
+		Ali struct {
+			Host            string
+			AccessKeyId     string
+			AccessKeySecret string
+			Signature       string
+			TemplateCode    string
+		}
+		SMSBao struct {
+			Username string
+			Password string
+		}
 	}
 }
