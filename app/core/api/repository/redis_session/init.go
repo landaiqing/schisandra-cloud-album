@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/rbcervilla/redisstore/v9"
 	"github.com/redis/go-redis/v9"
-	"github.com/zeromicro/go-zero/core/logc"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
@@ -22,12 +21,11 @@ func NewRedisSession(addr string, password string) *redisstore.RedisStore {
 	})
 	store, err := redisstore.NewRedisStore(context.Background(), client)
 	if err != nil {
-		logc.Error(context.Background(), err)
+		panic(err)
 	}
 	store.KeyPrefix(constant.UserSessionPrefix)
 	store.Options(sessions.Options{
-		Path: "/",
-		// Domain: global.CONFIG.System.Web,
+		Path:     "/",
 		MaxAge:   86400 * 7,
 		HttpOnly: true,
 		Secure:   true,

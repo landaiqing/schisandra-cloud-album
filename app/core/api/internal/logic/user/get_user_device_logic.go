@@ -39,7 +39,7 @@ func (l *GetUserDeviceLogic) GetUserDevice(r *http.Request) error {
 	}
 	sessionData, ok := session.Values[constant.SESSION_KEY]
 	if !ok {
-		return errors.New("User not found or device not found")
+		return errors.New("user session not found")
 	}
 	var data types.SessionData
 	err = json.Unmarshal(sessionData.([]byte), &data)
@@ -49,7 +49,7 @@ func (l *GetUserDeviceLogic) GetUserDevice(r *http.Request) error {
 
 	res := GetUserLoginDevice(data.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx)
 	if !res {
-		return errors.New("User not found or device not found")
+		return errors.New("user device not found")
 	}
 	return nil
 }

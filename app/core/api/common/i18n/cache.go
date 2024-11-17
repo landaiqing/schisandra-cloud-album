@@ -9,13 +9,6 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-/*
-type Cache interface {
-	GetLocalizer() (*i18n2.Localizer, bool)
-	SetLocalizer(l *i18n2.Localizer)
-}
-*/
-
 func getLocalizer(ctx context.Context) (*i18n2.Localizer, bool) {
 	v := ctx.Value(I18nKey)
 	if l, b := v.(*i18n2.Localizer); b {
@@ -49,14 +42,3 @@ func IsHasI18n(ctx context.Context) bool {
 	}
 	return false
 }
-
-// func isHasI18n(ctx context.Context) bool {
-//	if use, exist := ctx.Value(isUseI18n).(bool); exist {
-//		return use
-//	}
-//	return false
-// }
-//
-// func setHasI18n(ctx context.Context, use bool) context.Context {
-//	return context.WithValue(ctx, isUseI18n, use)
-// }

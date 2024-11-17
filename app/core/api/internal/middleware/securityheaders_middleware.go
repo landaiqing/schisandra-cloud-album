@@ -15,7 +15,7 @@ func NewSecurityHeadersMiddleware() *SecurityHeadersMiddleware {
 
 func (m *SecurityHeadersMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		middleware.SecurityHeadersMiddleware(w, r)
+		middleware.SecurityHeadersMiddleware(r)
 		next(w, r)
 	}
 }

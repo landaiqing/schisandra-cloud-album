@@ -36,7 +36,7 @@ func NewAccountLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Acco
 func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request, req *types.AccountLoginRequest) (resp *types.Response, err error) {
 	verifyResult := verify.VerifyRotateCaptcha(l.ctx, l.svcCtx.RedisClient, req.Angle, req.Key)
 	if !verifyResult {
-		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure", "验证失败！"), nil
+		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure"), nil
 	}
 	var user *ent.ScaAuthUser
 	var query *ent.ScaAuthUserQuery
@@ -49,23 +49,27 @@ func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request,
 	case utils.IsUsername(req.Account):
 		query = l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.UsernameEQ(req.Account), scaauthuser.DeletedEQ(0))
 	default:
-		return response.ErrorWithI18n(l.ctx, "login.invalidAccount", "无效账号！"), nil
+		return response.ErrorWithI18n(l.ctx, "login.invalidAccount"), nil
 	}
 
 	user, err = query.First(l.ctx)
 	if err != nil {
 		if ent.IsNotFound(err) {
-			return response.ErrorWithI18n(l.ctx, "login.userNotRegistered", "用户未注册！"), nil
+			return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), nil
 		}
 		return nil, err
 	}
 
 	if !utils.Verify(user.Password, req.Password) {
-		return response.ErrorWithI18n(l.ctx, "login.invalidPassword", "密码错误！"), nil
+		return response.ErrorWithI18n(l.ctx, "login.invalidPassword"), nil
 	}
 	data, result := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 	if !result {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败！"), nil
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+	}
+	// 记录用户登录设备
+	if !GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx) {
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
 	}
 	return response.SuccessWithData(data), nil
 }
@@ -95,30 +99,24 @@ func HandleUserLogin(user *ent.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogi
 	}
 
 	redisToken := types.RedisToken{
-		AccessToken: accessToken,
-		UID:         user.UID,
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+		UID:          user.UID,
 	}
 	err := svcCtx.RedisClient.Set(ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
 	if err != nil {
 		logc.Error(ctx, err)
 		return nil, false
 	}
-	sessionData := types.SessionData{
-		RefreshToken: refreshToken,
-		UID:          user.UID,
-	}
 	session, err := svcCtx.Session.Get(r, constant.SESSION_KEY)
 	if err != nil {
 		logc.Error(ctx, err)
 		return nil, false
 	}
-	session.Values[constant.SESSION_KEY] = sessionData
+	session.Values["refresh_token"] = refreshToken
+	session.Values["uid"] = user.UID
 	err = session.Save(r, w)
 	if err != nil {
-		return nil, false
-	}
-	// 记录用户登录设备
-	if !GetUserLoginDevice(user.UID, r, svcCtx.Ip2Region, svcCtx.MySQLClient, ctx) {
 		return nil, false
 	}
 	return &data, true

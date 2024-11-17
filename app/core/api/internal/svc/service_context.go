@@ -30,6 +30,7 @@ import (
 type ServiceContext struct {
 	Config                    config.Config
 	SecurityHeadersMiddleware rest.Middleware
+	CasbinVerifyMiddleware    rest.Middleware
 	MySQLClient               *ent.Client
 	RedisClient               *redis.Client
 	MongoClient               *mongo.Database
@@ -43,15 +44,17 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
+	casbinEnforcer := casbinx.NewCasbin(c.Mysql.DataSource)
 	return &ServiceContext{
 		Config:                    c,
 		SecurityHeadersMiddleware: middleware.NewSecurityHeadersMiddleware().Handle,
+		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer).Handle,
 		MySQLClient:               mysql.NewMySQL(c.Mysql.DataSource),
 		RedisClient:               redisx.NewRedis(c.Redis.Host, c.Redis.Pass, c.Redis.DB),
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),
 		Session:                   redis_session.NewRedisSession(c.Redis.Host, c.Redis.Pass),
 		Ip2Region:                 ip2region.NewIP2Region(),
-		CasbinEnforcer:            casbinx.NewCasbin(c.Mysql.DataSource),
+		CasbinEnforcer:            casbinEnforcer,
 		WechatPublic:              wechat_public.NewWechatPublic(c.Wechat.AppID, c.Wechat.AppSecret, c.Wechat.Token, c.Wechat.AESKey, c.Redis.Host, c.Redis.Pass, c.Redis.DB),
 		Sensitive:                 sensitivex.NewSensitive(),
 		RotateCaptcha:             captcha.NewRotateCaptcha(),

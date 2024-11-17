@@ -3,8 +3,9 @@ package types
 import "encoding/json"
 
 type RedisToken struct {
-	AccessToken string `json:"access_token"`
-	UID         string `json:"uid"`
+	AccessToken  string `json:"access_token"`
+	RefreshToken string `json:"refresh_token"`
+	UID          string `json:"uid"`
 }
 
 func (res RedisToken) MarshalBinary() ([]byte, error) {

@@ -1,7 +1,7 @@
 package i18n
 
 const I18nKey = "i18n"
-const I18nCurrentLangKey = "lang"
+const I18nCurrentLangKey = "language"
 
 var (
 	defaultLangHeaderKey        = "Accept-Language"

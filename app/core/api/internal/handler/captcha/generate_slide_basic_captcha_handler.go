@@ -3,7 +3,9 @@ package captcha
 import (
 	"net/http"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/captcha"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 )
@@ -13,7 +15,8 @@ func GenerateSlideBasicCaptchaHandler(svcCtx *svc.ServiceContext) http.HandlerFu
 		l := captcha.NewGenerateSlideBasicCaptchaLogic(r.Context(), svcCtx)
 		resp, err := l.GenerateSlideBasicCaptcha()
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			logx.Error(err)
+			httpx.WriteJsonCtx(r.Context(), w, http.StatusInternalServerError, resp)
 		} else {
 			httpx.OkJsonCtx(r.Context(), w, resp)
 		}

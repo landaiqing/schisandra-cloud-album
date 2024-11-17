@@ -42,7 +42,7 @@ var MessageWebSocketHandler *MessageWebSocket
 func InitializeWebSocketHandler(svcCtx *svc.ServiceContext) {
 	MessageWebSocketHandler = NewMessageWebSocket(svcCtx)
 }
-func (l *MessageWebsocketLogic) MessageWebsocket(w http.ResponseWriter, r *http.Request) error {
+func (l *MessageWebsocketLogic) MessageWebsocket(w http.ResponseWriter, r *http.Request) {
 	upgrader := gws.NewUpgrader(MessageWebSocketHandler, &gws.ServerOption{
 		HandshakeTimeout: 5 * time.Second, // 握手超时时间
 		ReadBufferSize:   1024,            // 读缓冲区大小
@@ -71,12 +71,11 @@ func (l *MessageWebsocketLogic) MessageWebsocket(w http.ResponseWriter, r *http.
 	})
 	socket, err := upgrader.Upgrade(w, r)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	go func() {
 		socket.ReadLoop() // 此处阻塞会使请求上下文不能顺利被GC
 	}()
-	return nil
 }
 
 // NewMessageWebSocket 创建WebSocket实例

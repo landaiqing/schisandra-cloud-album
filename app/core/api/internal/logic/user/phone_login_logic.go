@@ -34,19 +34,19 @@ func NewPhoneLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PhoneL
 
 func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req *types.PhoneLoginRequest) (resp *types.Response, err error) {
 	if !utils.IsPhone(req.Phone) {
-		return response.ErrorWithI18n(l.ctx, "login.phoneFormatError", "手机号格式错误"), nil
+		return response.ErrorWithI18n(l.ctx, "login.phoneFormatError"), nil
 	}
 	code := l.svcCtx.RedisClient.Get(l.ctx, constant.UserSmsRedisPrefix+req.Phone).Val()
 	if code == "" {
-		return response.ErrorWithI18n(l.ctx, "login.captchaExpired", "验证码已过期"), nil
+		return response.ErrorWithI18n(l.ctx, "login.captchaExpired"), nil
 	}
 	if req.Captcha != code {
-		return response.ErrorWithI18n(l.ctx, "login.captchaError", "验证码错误"), nil
+		return response.ErrorWithI18n(l.ctx, "login.captchaError"), nil
 	}
 	user, err := l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.Phone(req.Phone), scaauthuser.Deleted(0)).First(l.ctx)
 	tx, wrong := l.svcCtx.MySQLClient.Tx(l.ctx)
 	if wrong != nil {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败"), err
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), err
 	}
 	if ent.IsNotFound(err) {
 		uid := idgen.NextId()
@@ -64,17 +64,21 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 			Save(l.ctx)
 		if fault != nil {
 			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.registerError", "注册失败"), err
+			return response.ErrorWithI18n(l.ctx, "login.registerError"), err
 		}
 		_, err = l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User)
 		if err != nil {
 			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.registerError", "注册失败"), err
+			return response.ErrorWithI18n(l.ctx, "login.registerError"), err
 		}
 		data, result := HandleUserLogin(addUser, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 		if !result {
 			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.registerError", "注册失败"), err
+			return response.ErrorWithI18n(l.ctx, "login.registerError"), err
+		}
+		// 记录用户登录设备
+		if !GetUserLoginDevice(addUser.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx) {
+			return response.ErrorWithI18n(l.ctx, "login.registerError"), nil
 		}
 		err = tx.Commit()
 		if err != nil {
@@ -85,7 +89,11 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		data, result := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 		if !result {
 			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败"), err
+			return response.ErrorWithI18n(l.ctx, "login.loginFailed"), err
+		}
+		// 记录用户登录设备
+		if !GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx) {
+			return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
 		}
 		err = tx.Commit()
 		if err != nil {
@@ -93,6 +101,6 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		}
 		return response.SuccessWithData(data), nil
 	} else {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed", "登录失败"), nil
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
 	}
 }

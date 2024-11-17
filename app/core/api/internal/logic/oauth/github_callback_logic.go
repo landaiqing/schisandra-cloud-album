@@ -3,7 +3,6 @@ package oauth
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -79,7 +78,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 	}
 	if token == nil {
 
-		return errors.New("failed to get token")
+		return nil
 	}
 
 	// 获取用户信息
@@ -90,7 +89,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 	}
 
 	if userInfo == nil {
-		return errors.New("failed to get user info")
+		return nil
 	}
 
 	// 处理用户信息

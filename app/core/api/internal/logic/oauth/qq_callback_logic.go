@@ -3,7 +3,6 @@ package oauth
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
@@ -75,7 +74,7 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 		return err
 	}
 	if token == nil {
-		return errors.New("get qq token failed")
+		return nil
 	}
 
 	// 通过 token 获取 openid

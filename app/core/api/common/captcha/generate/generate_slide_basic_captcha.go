@@ -3,7 +3,6 @@ package generate
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -21,7 +20,7 @@ func GenerateSlideBasicCaptcha(slide slide.Captcha, redis *redis.Client, ctx con
 	}
 	blockData := captData.GetData()
 	if blockData == nil {
-		return nil, errors.New("block data is nil")
+		return nil, nil
 	}
 	var masterImageBase64, tileImageBase64 string
 	masterImageBase64 = captData.GetMasterImage().ToBase64()

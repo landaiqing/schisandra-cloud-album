@@ -10,7 +10,10 @@ func NewBundle(tag language.Tag, configs ...string) *i18n2.Bundle {
 	bundle := i18n2.NewBundle(tag)
 	bundle.RegisterUnmarshalFunc("toml", toml.Unmarshal)
 	for _, file := range configs {
-		bundle.LoadMessageFile(file)
+		_, err := bundle.LoadMessageFile(file)
+		if err != nil {
+			panic(err)
+		}
 	}
 	return bundle
 }

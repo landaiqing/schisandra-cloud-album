@@ -2,7 +2,7 @@ package middleware
 
 import "net/http"
 
-func SecurityHeadersMiddleware(w http.ResponseWriter, r *http.Request) {
+func SecurityHeadersMiddleware(r *http.Request) {
 	r.Header.Set("X-Frame-Options", "DENY")
 	r.Header.Set("Content-Security-Policy", "default-src 'self'; connect-src *; font-src *; script-src-elem * 'unsafe-inline'; img-src * data:; style-src * 'unsafe-inline';")
 	r.Header.Set("X-XSS-Protection", "1; mode=block")

@@ -71,8 +71,8 @@ func ErrorWithMessage(message string) *types.Response {
 }
 
 // ErrorWithI18n returns an error response with the given message.
-func ErrorWithI18n(ctx context.Context, msgId string, defaultMsg string) *types.Response {
-	message := i18n.FormatText(ctx, msgId, defaultMsg)
+func ErrorWithI18n(ctx context.Context, msgId string) *types.Response {
+	message := i18n.FormatText(ctx, msgId)
 	return &types.Response{
 		Code:    500,
 		Message: message,

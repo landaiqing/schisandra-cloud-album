@@ -1,8 +1,10 @@
 package oauth
 
 import (
+	"errors"
 	"net/http"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/oauth"
@@ -21,7 +23,8 @@ func GiteeCallbackHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		l := oauth.NewGiteeCallbackLogic(r.Context(), svcCtx)
 		err := l.GiteeCallback(w, r, &req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			logx.Error(err)
+			httpx.ErrorCtx(r.Context(), w, errors.New("server error"))
 		} else {
 			httpx.Ok(w)
 		}

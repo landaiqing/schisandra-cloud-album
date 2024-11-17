@@ -57,11 +57,71 @@ type (
 	}
 )
 
+// 短信发送请求参数
 type (
 	SmsSendRequest {
 		Phone string `json:"phone"`
 		Angle int64  `json:"angle"`
 		Key   string `json:"key"`
+	}
+)
+
+// 评论请求参数
+type (
+	// 评论提交请求参数
+	CommentRequest {
+		Content string   `json:"content"`
+		Images  []string `json:"images,optional"`
+		TopicId string   `json:"topic_id"`
+		Author  string   `json:"author"`
+		Key     string   `json:"key"`
+		Point   []int64  `json:"point"`
+	}
+	// 回复评论提交请求参数
+	ReplyCommentRequest {
+		Content   string   `json:"content"`
+		Images    []string `json:"images,optional"`
+		TopicId   string   `json:"topic_id" `
+		ReplyId   int64    `json:"reply_id" `
+		ReplyUser string   `json:"reply_user" `
+		Author    string   `json:"author"`
+		Key       string   `json:"key"`
+		Point     []int64  `json:"point"`
+	}
+	//  回复回复请求参数
+	ReplyReplyRequest {
+		Content   string   `json:"content"`
+		Images    []string `json:"images,optional"`
+		TopicId   string   `json:"topic_id"`
+		ReplyTo   int64    `json:"reply_to"`
+		ReplyId   int64    `json:"reply_id"`
+		ReplyUser string   `json:"reply_user" `
+		Author    string   `json:"author"`
+		Key       string   `json:"key"`
+		Point     []int64  `json:"point"`
+	}
+	// 评论列表请求参数
+	CommentListRequest {
+		TopicId string `json:"topic_id"`
+		Page    int    `json:"page,default=1,optional"`
+		Size    int    `json:"size,default=5,optional"`
+		IsHot   bool   `json:"is_hot,default=true,optional"`
+	}
+	// 回复列表请求参数
+	ReplyListRequest {
+		TopicId   string `json:"topic_id"`
+		CommentId int64  `json:"comment_id"`
+		Page      int    `json:"page,default=1,optional"`
+		Size      int    `json:"size,default=5,optional"`
+	}
+	// 点赞评论的请求参数
+	CommentLikeRequest {
+		TopicId   string `json:"topic_id"`
+		CommentId int64  `json:"comment_id"`
+	}
+	CommentDisLikeRequest {
+		TopicId   string `json:"topic_id"`
+		CommentId int64  `json:"comment_id"`
 	}
 )
 
@@ -122,10 +182,8 @@ service core {
 }
 
 @server (
-	group:   websocket // 微服务分组
-	prefix:  /api/ws // 微服务前缀
-	timeout: 10s // 超时时间
-	Recover: true // 是否开启自动恢复
+	group:  websocket // 微服务分组
+	prefix: /api/ws // 微服务前缀
 )
 service core {
 	@handler qrcodeWebsocket
@@ -208,5 +266,39 @@ service core {
 
 	@handler generateSlideBasicCaptcha
 	get /slide/generate returns (Response)
+}
+
+@server (
+	group:      comment // 微服务分组
+	prefix:     /api/auth/comment // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  true // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+	jwt:        Auth // 是否开启jwt验证
+)
+service core {
+	@handler getCommentList
+	post /list (CommentListRequest) returns (Response)
+
+	@handler getReplyList
+	post /reply/list (ReplyListRequest) returns (Response)
+
+	@handler submitComment
+	post /submit (CommentRequest) returns (Response)
+
+	@handler submitReplyComment
+	post /reply/submit (ReplyCommentRequest) returns (Response)
+
+	@handler submitReplyReply
+	post /reply/reply/submit (ReplyReplyRequest) returns (Response)
+
+	@handler likeComment
+	post /like (CommentLikeRequest) returns (Response)
+
+	@handler dislikeComment
+	post /dislike (CommentDisLikeRequest) returns (Response)
 }
 

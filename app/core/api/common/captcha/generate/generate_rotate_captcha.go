@@ -3,7 +3,6 @@ package generate
 import (
 	"context"
 	"encoding/json"
-	"errors"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -21,7 +20,7 @@ func GenerateRotateCaptcha(captcha rotate.Captcha, redis *redis.Client, ctx cont
 	}
 	blockData := captchaData.GetData()
 	if blockData == nil {
-		return nil, errors.New("captcha data is nil")
+		return nil, nil
 	}
 	masterImageBase64 := captchaData.GetMasterImage().ToBase64()
 	thumbImageBase64 := captchaData.GetThumbImage().ToBase64()

@@ -36,15 +36,15 @@ func (l *SendSmsByAliyunLogic) SendSmsByAliyun(req *types.SmsSendRequest) (resp 
 
 	checkRotateData := verify.VerifyRotateCaptcha(l.ctx, l.svcCtx.RedisClient, req.Angle, req.Key)
 	if !checkRotateData {
-		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure", "验证码错误"), nil
+		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure"), nil
 	}
 	isPhone := utils.IsPhone(req.Phone)
 	if !isPhone {
-		return response.ErrorWithI18n(l.ctx, "login.phoneFormatError", "手机号格式错误"), nil
+		return response.ErrorWithI18n(l.ctx, "login.phoneFormatError"), nil
 	}
 	val := l.svcCtx.RedisClient.Get(l.ctx, constant.UserSmsRedisPrefix+req.Phone).Val()
 	if val != "" {
-		return response.ErrorWithI18n(l.ctx, "sms.smsSendTooFrequently", "验证码发送过于频繁，请稍后再试"), nil
+		return response.ErrorWithI18n(l.ctx, "sms.smsSendTooFrequently"), nil
 	}
 	sms := gosms.NewParser(gateways.Gateways{
 		ALiYun: aliyun.ALiYun{
@@ -56,7 +56,7 @@ func (l *SendSmsByAliyunLogic) SendSmsByAliyun(req *types.SmsSendRequest) (resp 
 	code := utils.GenValidateCode(6)
 	wrong := l.svcCtx.RedisClient.Set(l.ctx, constant.UserSmsRedisPrefix+req.Phone, code, time.Minute).Err()
 	if wrong != nil {
-		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed", "验证码发送失败"), wrong
+		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed"), wrong
 	}
 	_, err = sms.Send(req.Phone, gosms.MapStringAny{
 		"content":  "您的验证码是：****。请不要把验证码泄露给其他人。",
@@ -67,7 +67,7 @@ func (l *SendSmsByAliyunLogic) SendSmsByAliyun(req *types.SmsSendRequest) (resp 
 		},
 	}, nil)
 	if err != nil {
-		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed", "验证码发送失败"), err
+		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed"), err
 	}
 	return response.Success(), nil
 }

@@ -40,7 +40,7 @@ type QrcodeWebSocket struct {
 
 var QrcodeWebSocketHandler = NewWebSocket()
 
-func (l *QrcodeWebsocketLogic) QrcodeWebsocket(w http.ResponseWriter, r *http.Request) error {
+func (l *QrcodeWebsocketLogic) QrcodeWebsocket(w http.ResponseWriter, r *http.Request) {
 	upgrader := gws.NewUpgrader(QrcodeWebSocketHandler, &gws.ServerOption{
 		HandshakeTimeout: 5 * time.Second, // 握手超时时间
 		ReadBufferSize:   1024,            // 读缓冲区大小
@@ -66,12 +66,11 @@ func (l *QrcodeWebsocketLogic) QrcodeWebsocket(w http.ResponseWriter, r *http.Re
 	})
 	socket, err := upgrader.Upgrade(w, r)
 	if err != nil {
-		return err
+		panic(err)
 	}
 	go func() {
 		socket.ReadLoop() // 此处阻塞会使请求上下文不能顺利被GC
 	}()
-	return nil
 }
 
 // MustLoad 从session中加载数据

@@ -9,6 +9,7 @@ import (
 
 	captcha "schisandra-album-cloud-microservices/app/core/api/internal/handler/captcha"
 	client "schisandra-album-cloud-microservices/app/core/api/internal/handler/client"
+	comment "schisandra-album-cloud-microservices/app/core/api/internal/handler/comment"
 	oauth "schisandra-album-cloud-microservices/app/core/api/internal/handler/oauth"
 	sms "schisandra-album-cloud-microservices/app/core/api/internal/handler/sms"
 	user "schisandra-album-cloud-microservices/app/core/api/internal/handler/user"
@@ -52,6 +53,54 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithPrefix("/api/client"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(1048576),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/dislike",
+					Handler: comment.DislikeCommentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/like",
+					Handler: comment.LikeCommentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/list",
+					Handler: comment.GetCommentListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/reply/list",
+					Handler: comment.GetReplyListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/reply/reply/submit",
+					Handler: comment.SubmitReplyReplyHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/reply/submit",
+					Handler: comment.SubmitReplyCommentHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/submit",
+					Handler: comment.SubmitCommentHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithSignature(serverCtx.Config.Signature),
+		rest.WithPrefix("/api/auth/comment"),
 		rest.WithTimeout(10000*time.Millisecond),
 		rest.WithMaxBytes(1048576),
 	)
@@ -184,6 +233,5 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/api/ws"),
-		rest.WithTimeout(10000*time.Millisecond),
 	)
 }

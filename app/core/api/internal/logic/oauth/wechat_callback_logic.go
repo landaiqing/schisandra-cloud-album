@@ -61,9 +61,9 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 				key := strings.TrimPrefix(msg.EventKey, "qrscene_")
 				err = l.HandlerWechatLogin(msg.FromUserName, key, w, r)
 				if err != nil {
-					return messages.NewText(i18n.FormatText(l.ctx, "login.loginFailed", "登录失败"))
+					return messages.NewText(i18n.FormatText(l.ctx, "login.loginFailed"))
 				}
-				return messages.NewText(i18n.FormatText(l.ctx, "login.loginSuccess", "登录成功"))
+				return messages.NewText(i18n.FormatText(l.ctx, "login.loginSuccess"))
 
 			case models.CALLBACK_EVENT_UNSUBSCRIBE:
 				msg := models.EventUnSubscribe{}
@@ -83,9 +83,9 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 				}
 				err = l.HandlerWechatLogin(msg.FromUserName, msg.EventKey, w, r)
 				if err != nil {
-					return messages.NewText(i18n.FormatText(l.ctx, "login.loginFailed", "登录失败"))
+					return messages.NewText(i18n.FormatText(l.ctx, "login.loginFailed"))
 				}
-				return messages.NewText(i18n.FormatText(l.ctx, "login.loginSuccess", "登录成功"))
+				return messages.NewText(i18n.FormatText(l.ctx, "login.loginSuccess"))
 
 			}
 
@@ -101,11 +101,11 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 
 	})
 	if err != nil {
-		panic(err)
+		return err
 	}
 	err = helper.HttpResponseSend(rs, w)
 	if err != nil {
-		panic(err)
+		return err
 	}
 	return nil
 }
