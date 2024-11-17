@@ -54,13 +54,13 @@ func (l *SendSmsBySmsbaoLogic) SendSmsBySmsbao(req *types.SmsSendRequest) (resp 
 	code := utils.GenValidateCode(6)
 	wrong := l.svcCtx.RedisClient.Set(l.ctx, constant.UserSmsRedisPrefix+req.Phone, code, time.Minute).Err()
 	if wrong != nil {
-		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed"), wrong
+		return nil, wrong
 	}
 	_, err = sms.Send(req.Phone, gosms.MapStringAny{
 		"content": "您的验证码是：" + code + "。请不要把验证码泄露给其他人。",
 	}, nil)
 	if err != nil {
-		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed"), err
+		return nil, err
 	}
 	return response.Success(), nil
 }

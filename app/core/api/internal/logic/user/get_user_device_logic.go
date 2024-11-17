@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"net/http"
 
@@ -13,7 +12,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
-	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 )
@@ -37,17 +35,12 @@ func (l *GetUserDeviceLogic) GetUserDevice(r *http.Request) error {
 	if err != nil {
 		return err
 	}
-	sessionData, ok := session.Values[constant.SESSION_KEY]
+	uid, ok := session.Values["uid"].(string)
 	if !ok {
 		return errors.New("user session not found")
 	}
-	var data types.SessionData
-	err = json.Unmarshal(sessionData.([]byte), &data)
-	if err != nil {
-		return err
-	}
 
-	res := GetUserLoginDevice(data.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx)
+	res := GetUserLoginDevice(uid, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx)
 	if !res {
 		return errors.New("user device not found")
 	}
@@ -63,7 +56,6 @@ func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searche
 	ip := utils.GetClientIP(r)
 	location, err := ip2location.SearchByStr(ip)
 	if err != nil {
-		logx.Error(err)
 		return false
 	}
 	location = utils.RemoveZeroAndAdjust(location)

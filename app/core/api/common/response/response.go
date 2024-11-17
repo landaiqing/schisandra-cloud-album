@@ -21,7 +21,6 @@ func Success() *types.Response {
 	return &types.Response{
 		Code:    200,
 		Message: "success",
-		Data:    nil,
 	}
 }
 
@@ -30,7 +29,6 @@ func SuccessWithMessage(message string) *types.Response {
 	return &types.Response{
 		Code:    200,
 		Message: message,
-		Data:    nil,
 	}
 }
 
@@ -39,7 +37,6 @@ func Error() *types.Response {
 	return &types.Response{
 		Code:    500,
 		Message: "error",
-		Data:    nil,
 	}
 }
 
@@ -48,7 +45,6 @@ func ErrorWithCode(code int64) *types.Response {
 	return &types.Response{
 		Code:    code,
 		Message: "error",
-		Data:    nil,
 	}
 }
 
@@ -57,7 +53,6 @@ func ErrorWithCodeMessage(code int64, message string) *types.Response {
 	return &types.Response{
 		Code:    code,
 		Message: message,
-		Data:    nil,
 	}
 }
 
@@ -66,7 +61,6 @@ func ErrorWithMessage(message string) *types.Response {
 	return &types.Response{
 		Code:    500,
 		Message: message,
-		Data:    nil,
 	}
 }
 
@@ -76,6 +70,5 @@ func ErrorWithI18n(ctx context.Context, msgId string) *types.Response {
 	return &types.Response{
 		Code:    500,
 		Message: message,
-		Data:    nil,
 	}
 }

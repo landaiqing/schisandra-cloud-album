@@ -47,19 +47,19 @@ func (l *ResetPasswordLogic) ResetPassword(req *types.ResetPasswordRequest) (res
 	}
 	// 验证码检查通过后立即删除或标记为已使用
 	if err = l.svcCtx.RedisClient.Del(l.ctx, constant.UserSmsRedisPrefix+req.Phone).Err(); err != nil {
-		return response.ErrorWithI18n(l.ctx, "login.captchaError"), err
+		return nil, err
 	}
 	user, err := l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.Phone(req.Phone), scaauthuser.Deleted(constant.NotDeleted)).First(l.ctx)
 	if err != nil && ent.IsNotFound(err) {
-		return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), err
+		return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), nil
 	}
 	encrypt, err := utils.Encrypt(req.Password)
 	if err != nil {
-		return response.ErrorWithI18n(l.ctx, "login.resetPasswordError"), err
+		return nil, err
 	}
 	err = user.Update().SetPassword(encrypt).Exec(l.ctx)
 	if err != nil {
-		return response.ErrorWithI18n(l.ctx, "login.resetPasswordError"), err
+		return nil, err
 	}
 	return response.Success(), nil
 }

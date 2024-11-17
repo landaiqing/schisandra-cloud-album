@@ -36,7 +36,7 @@ func (l *GenerateClientIdLogic) GenerateClientId(clientIP string) (resp *types.R
 	}
 	simpleUuid := kgo.SimpleUuid()
 	if err = l.svcCtx.RedisClient.SetEx(l.ctx, constant.UserClientPrefix+clientIP, simpleUuid, time.Hour*24*7).Err(); err != nil {
-		return response.Error(), err
+		return nil, err
 	}
 	return response.SuccessWithData(simpleUuid), nil
 }

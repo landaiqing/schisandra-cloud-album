@@ -40,7 +40,7 @@ func (l *GetWechatQrcodeLogic) GetWechatQrcode(r *http.Request, req *types.OAuth
 	if qrcode != "" {
 		data := new(response.ResponseQRCodeCreate)
 		if err = json.Unmarshal([]byte(qrcode), data); err != nil {
-			return response2.Error(), err
+			return nil, err
 		}
 		return response2.SuccessWithData(data.Url), nil
 	}
@@ -48,16 +48,16 @@ func (l *GetWechatQrcodeLogic) GetWechatQrcode(r *http.Request, req *types.OAuth
 	// 生成临时二维码
 	data, err := l.svcCtx.WechatPublic.QRCode.Temporary(l.ctx, req.Client_id, 7*24*3600)
 	if err != nil {
-		return response2.Error(), err
+		return nil, err
 	}
 
 	// 序列化数据并存储到Redis
 	serializedData, err := json.Marshal(data)
 	if err != nil {
-		return response2.Error(), err
+		return nil, err
 	}
 	if err = l.svcCtx.RedisClient.Set(l.ctx, key, serializedData, time.Hour*24*7).Err(); err != nil {
-		return response2.Error(), err
+		return nil, err
 	}
 
 	return response2.SuccessWithData(data.Url), nil

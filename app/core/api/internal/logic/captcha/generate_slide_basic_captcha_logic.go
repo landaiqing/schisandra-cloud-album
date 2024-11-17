@@ -28,7 +28,7 @@ func NewGenerateSlideBasicCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceC
 func (l *GenerateSlideBasicCaptchaLogic) GenerateSlideBasicCaptcha() (resp *types.Response, err error) {
 	captcha, err := generate.GenerateSlideBasicCaptcha(l.svcCtx.SlideCaptcha, l.svcCtx.RedisClient, l.ctx)
 	if err != nil {
-		return response.Error(), err
+		return nil, err
 	}
 	return response.SuccessWithData(captcha), nil
 }

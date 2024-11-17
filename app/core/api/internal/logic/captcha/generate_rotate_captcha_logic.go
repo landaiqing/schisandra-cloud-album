@@ -28,7 +28,7 @@ func NewGenerateRotateCaptchaLogic(ctx context.Context, svcCtx *svc.ServiceConte
 func (l *GenerateRotateCaptchaLogic) GenerateRotateCaptcha() (resp *types.Response, err error) {
 	captcha, err := generate.GenerateRotateCaptcha(l.svcCtx.RotateCaptcha, l.svcCtx.RedisClient, l.ctx)
 	if err != nil {
-		return response.Error(), err
+		return nil, err
 	}
 	return response.SuccessWithData(captcha), nil
 }

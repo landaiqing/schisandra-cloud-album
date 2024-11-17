@@ -32,7 +32,7 @@ func NewRefreshTokenLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Refr
 func (l *RefreshTokenLogic) RefreshToken(r *http.Request) (resp *types.Response, err error) {
 	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
 	if err != nil {
-		return response.ErrorWithCode(403), err
+		return nil, err
 	}
 	refreshSessionToken, ok := session.Values["refresh_token"].(string)
 	if !ok {
@@ -49,7 +49,7 @@ func (l *RefreshTokenLogic) RefreshToken(r *http.Request) (resp *types.Response,
 	redisTokenData := types.RedisToken{}
 	err = json.Unmarshal([]byte(tokenData), &redisTokenData)
 	if err != nil {
-		return response.ErrorWithCode(403), err
+		return nil, err
 	}
 	if redisTokenData.RefreshToken != refreshSessionToken {
 		return response.ErrorWithCode(403), nil
@@ -72,7 +72,7 @@ func (l *RefreshTokenLogic) RefreshToken(r *http.Request) (resp *types.Response,
 	}
 	err = l.svcCtx.RedisClient.Set(l.ctx, constant.UserTokenPrefix+refreshToken.UserID, redisToken, time.Hour*24*7).Err()
 	if err != nil {
-		return response.ErrorWithCode(403), err
+		return nil, err
 	}
 
 	return response.SuccessWithData(accessToken), nil

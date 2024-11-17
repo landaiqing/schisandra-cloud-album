@@ -3,6 +3,8 @@ package comment
 import (
 	"context"
 
+	"schisandra-album-cloud-microservices/app/core/api/common/captcha/verify"
+	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 
@@ -24,7 +26,11 @@ func NewSubmitCommentLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Sub
 }
 
 func (l *SubmitCommentLogic) SubmitComment(req *types.CommentRequest) (resp *types.Response, err error) {
-	// todo: add your logic here and delete this line
+
+	res := verify.VerifySlideCaptcha(l.ctx, l.svcCtx.RedisClient, req.Point, req.Key)
+	if !res {
+		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure"), nil
+	}
 
 	return
 }

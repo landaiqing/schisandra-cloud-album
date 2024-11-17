@@ -44,7 +44,7 @@ func (l *SendSmsByTestLogic) SendSmsByTest(req *types.SmsSendRequest) (resp *typ
 	code := utils.GenValidateCode(6)
 	wrong := l.svcCtx.RedisClient.Set(l.ctx, constant.UserSmsRedisPrefix+req.Phone, code, time.Minute).Err()
 	if wrong != nil {
-		return response.ErrorWithI18n(l.ctx, "sms.smsSendFailed"), wrong
+		return nil, wrong
 	}
 	return response.Success(), nil
 }

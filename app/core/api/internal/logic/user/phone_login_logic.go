@@ -46,7 +46,7 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 	user, err := l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.Phone(req.Phone), scaauthuser.Deleted(0)).First(l.ctx)
 	tx, wrong := l.svcCtx.MySQLClient.Tx(l.ctx)
 	if wrong != nil {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), err
+		return nil, err
 	}
 	if ent.IsNotFound(err) {
 		uid := idgen.NextId()
@@ -64,12 +64,12 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 			Save(l.ctx)
 		if fault != nil {
 			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.registerError"), err
+			return nil, err
 		}
 		_, err = l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User)
 		if err != nil {
 			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.registerError"), err
+			return nil, err
 		}
 		data, result := HandleUserLogin(addUser, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 		if !result {

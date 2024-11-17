@@ -13,12 +13,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 )
 
-func NewRedisSession(addr string, password string) *redisstore.RedisStore {
-	client := redis.NewClient(&redis.Options{
-		Addr:     addr,
-		Password: password,
-		DB:       0,
-	})
+func NewRedisSession(client *redis.Client) *redisstore.RedisStore {
 	store, err := redisstore.NewRedisStore(context.Background(), client)
 	if err != nil {
 		panic(err)

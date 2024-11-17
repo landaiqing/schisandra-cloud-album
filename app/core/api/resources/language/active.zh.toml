@@ -1,3 +1,5 @@
+[system]
+error = "系统错误！"
 [captcha]
 verificationFailure = "验证失败！"
 [login]
