@@ -46,14 +46,15 @@ type ServiceContext struct {
 func NewServiceContext(c config.Config) *ServiceContext {
 	casbinEnforcer := casbinx.NewCasbin(c.Mysql.DataSource)
 	redisClient := redisx.NewRedis(c.Redis.Host, c.Redis.Pass, c.Redis.DB)
+	session := redis_session.NewRedisSession(redisClient)
 	return &ServiceContext{
 		Config:                    c,
 		SecurityHeadersMiddleware: middleware.NewSecurityHeadersMiddleware().Handle,
-		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer).Handle,
+		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer, session).Handle,
 		MySQLClient:               mysql.NewMySQL(c.Mysql.DataSource),
 		RedisClient:               redisClient,
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),
-		Session:                   redis_session.NewRedisSession(redisClient),
+		Session:                   session,
 		Ip2Region:                 ip2region.NewIP2Region(),
 		CasbinEnforcer:            casbinEnforcer,
 		WechatPublic:              wechat_public.NewWechatPublic(c.Wechat.AppID, c.Wechat.AppSecret, c.Wechat.Token, c.Wechat.AESKey, c.Redis.Host, c.Redis.Pass, c.Redis.DB),

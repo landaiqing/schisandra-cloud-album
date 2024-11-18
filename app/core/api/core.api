@@ -158,11 +158,23 @@ service core {
 	@handler resetPassword
 	post /reset/password (ResetPasswordRequest) returns (Response)
 
-	@handler refreshToken
-	post /token/refresh returns (Response)
-
 	@handler getUserDevice
 	get /device
+}
+
+@server (
+	group:      token // 微服务分组
+	prefix:     /api/auth // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  true // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	@handler refreshToken
+	post /token/refresh returns (Response)
 }
 
 // 客户端服务
@@ -273,7 +285,7 @@ service core {
 	prefix:     /api/auth/comment // 微服务前缀
 	timeout:    10s // 超时时间
 	maxBytes:   1048576 // 最大请求大小
-	signature:  true // 是否开启签名验证
+	signature:  false // 是否开启签名验证
 	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复

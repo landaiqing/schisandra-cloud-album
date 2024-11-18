@@ -23,7 +23,10 @@ func main() {
 	var c config.Config
 	conf.MustLoad(*configFile, &c)
 
-	server := rest.MustNewServer(c.RestConf, rest.WithCustomCors(middleware.CORSMiddleware(), nil), rest.WithUnauthorizedCallback(middleware.UnauthorizedCallbackMiddleware()))
+	server := rest.MustNewServer(
+		c.RestConf,
+		rest.WithCustomCors(middleware.CORSMiddleware(), nil),
+		rest.WithUnauthorizedCallback(middleware.UnauthorizedCallbackMiddleware()))
 	defer server.Stop()
 	// i18n middleware
 	server.Use(middleware.I18nMiddleware)

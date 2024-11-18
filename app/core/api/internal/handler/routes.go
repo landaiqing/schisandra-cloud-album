@@ -12,6 +12,7 @@ import (
 	comment "schisandra-album-cloud-microservices/app/core/api/internal/handler/comment"
 	oauth "schisandra-album-cloud-microservices/app/core/api/internal/handler/oauth"
 	sms "schisandra-album-cloud-microservices/app/core/api/internal/handler/sms"
+	token "schisandra-album-cloud-microservices/app/core/api/internal/handler/token"
 	user "schisandra-album-cloud-microservices/app/core/api/internal/handler/user"
 	websocket "schisandra-album-cloud-microservices/app/core/api/internal/handler/websocket"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
@@ -99,7 +100,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			}...,
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithSignature(serverCtx.Config.Signature),
 		rest.WithPrefix("/api/auth/comment"),
 		rest.WithTimeout(10000*time.Millisecond),
 		rest.WithMaxBytes(1048576),
@@ -184,6 +184,23 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/token/refresh",
+					Handler: token.RefreshTokenHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithSignature(serverCtx.Config.Signature),
+		rest.WithPrefix("/api/auth"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(1048576),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
 			[]rest.Route{
 				{
@@ -205,11 +222,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/reset/password",
 					Handler: user.ResetPasswordHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
-					Path:    "/token/refresh",
-					Handler: user.RefreshTokenHandler(serverCtx),
 				},
 			}...,
 		),

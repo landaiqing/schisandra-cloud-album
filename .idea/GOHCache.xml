@@ -398,6 +398,7 @@
         <entry key="RefreshTokenLogic">
           <value>
             <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/token/refresh_token_logic.go" />
               <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/user/refresh_token_logic.go" />
             </set>
           </value>
@@ -1255,7 +1256,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/middleware/cors_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731733481847" />
+              <option name="lastModified" value="1731945430237" />
             </ScannedPath>
           </value>
         </entry>
@@ -1386,7 +1387,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/core.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731726797044" />
+              <option name="lastModified" value="1731946200690" />
             </ScannedPath>
           </value>
         </entry>
@@ -1538,35 +1539,42 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731724739502" />
+              <option name="lastModified" value="1731934439935" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/sms/send_sms_by_aliyun_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584763" />
+              <option name="lastModified" value="1731864135742" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/sms/send_sms_by_smsbao_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584790" />
+              <option name="lastModified" value="1731864135737" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/sms/send_sms_by_test_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584754" />
+              <option name="lastModified" value="1731864122783" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/token/refresh_token_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731927610027" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/account_login_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584722" />
+              <option name="lastModified" value="1731864135746" />
             </ScannedPath>
           </value>
         </entry>
@@ -1580,21 +1588,21 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/phone_login_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584794" />
+              <option name="lastModified" value="1731864275388" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/refresh_token_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584798" />
+              <option name="lastModified" value="1731864275394" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/reset_password_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862584716" />
+              <option name="lastModified" value="1731864275383" />
             </ScannedPath>
           </value>
         </entry>
@@ -1870,6 +1878,18 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/token/refresh_token_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1731927642595" />
+              <option name="schema">
+                <list>
+                  <option value="RefreshTokenLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/account_login_logic.go">
           <value>
             <ScannedPath>
@@ -1959,7 +1979,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/middleware/casbinverify_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731692954271" />
+              <option name="lastModified" value="1731933523737" />
               <option name="schema">
                 <list>
                   <option value="CasbinVerifyMiddleware" />
@@ -1983,7 +2003,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731845823841" />
+              <option name="lastModified" value="1731933535953" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -2019,7 +2039,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731724739499" />
+              <option name="lastModified" value="1731934439933" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -2957,6 +2977,6 @@
         <entry key="wechat_callback_logic" value="WechatCallbackLogic" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1731827465216" />
+    <option name="lastTimeChecked" value="1731920886467" />
   </component>
 </project>

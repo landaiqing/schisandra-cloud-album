@@ -1,4 +1,4 @@
-package user
+package token
 
 import (
 	"net/http"
@@ -7,13 +7,13 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
-	"schisandra-album-cloud-microservices/app/core/api/internal/logic/user"
+	"schisandra-album-cloud-microservices/app/core/api/internal/logic/token"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 )
 
 func RefreshTokenHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := user.NewRefreshTokenLogic(r.Context(), svcCtx)
+		l := token.NewRefreshTokenLogic(r.Context(), svcCtx)
 		resp, err := l.RefreshToken(r)
 		if err != nil {
 			logx.Error(err)

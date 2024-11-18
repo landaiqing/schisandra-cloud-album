@@ -9,6 +9,12 @@ Mysql:
   DataSource: root:LDQ20020618xxx@tcp(1.95.0.111:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local
 Auth:
   AccessSecret: uOvKLmVfztaXGpNYd4Z0I1SiT7MweJhl
+Signature:
+  Strict: true
+  Expiry: 1h
+  PrivateKeys:
+    - Fingerprint: idm0jdoau38lwourb4pbjk4dxkat0kcx
+      KeyFile: etc/rsa_private_key.pem
 Redis:
   Host: 1.95.0.111:6379
   Pass: LDQ20020618xxx
