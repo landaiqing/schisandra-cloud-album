@@ -12,6 +12,11 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentlikes"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentmessage"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentreply"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserfollows"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserlevel"
 	"sync"
 
 	"entgo.io/ent"
@@ -82,6 +87,11 @@ func checkColumn(table, column string) error {
 			scaauthuser.Table:           scaauthuser.ValidColumn,
 			scaauthuserdevice.Table:     scaauthuserdevice.ValidColumn,
 			scaauthusersocial.Table:     scaauthusersocial.ValidColumn,
+			scacommentlikes.Table:       scacommentlikes.ValidColumn,
+			scacommentmessage.Table:     scacommentmessage.ValidColumn,
+			scacommentreply.Table:       scacommentreply.ValidColumn,
+			scauserfollows.Table:        scauserfollows.ValidColumn,
+			scauserlevel.Table:          scauserlevel.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

@@ -20,3 +20,18 @@ type ScaAuthUserDevice func(*sql.Selector)
 
 // ScaAuthUserSocial is the predicate function for scaauthusersocial builders.
 type ScaAuthUserSocial func(*sql.Selector)
+
+// ScaCommentLikes is the predicate function for scacommentlikes builders.
+type ScaCommentLikes func(*sql.Selector)
+
+// ScaCommentMessage is the predicate function for scacommentmessage builders.
+type ScaCommentMessage func(*sql.Selector)
+
+// ScaCommentReply is the predicate function for scacommentreply builders.
+type ScaCommentReply func(*sql.Selector)
+
+// ScaUserFollows is the predicate function for scauserfollows builders.
+type ScaUserFollows func(*sql.Selector)
+
+// ScaUserLevel is the predicate function for scauserlevel builders.
+type ScaUserLevel func(*sql.Selector)

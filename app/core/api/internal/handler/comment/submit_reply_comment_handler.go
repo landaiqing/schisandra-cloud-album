@@ -21,7 +21,7 @@ func SubmitReplyCommentHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := comment.NewSubmitReplyCommentLogic(r.Context(), svcCtx)
-		resp, err := l.SubmitReplyComment(&req)
+		resp, err := l.SubmitReplyComment(r, &req)
 		if err != nil {
 			logx.Error(err)
 			httpx.WriteJsonCtx(

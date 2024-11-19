@@ -22,6 +22,16 @@ type Tx struct {
 	ScaAuthUserDevice *ScaAuthUserDeviceClient
 	// ScaAuthUserSocial is the client for interacting with the ScaAuthUserSocial builders.
 	ScaAuthUserSocial *ScaAuthUserSocialClient
+	// ScaCommentLikes is the client for interacting with the ScaCommentLikes builders.
+	ScaCommentLikes *ScaCommentLikesClient
+	// ScaCommentMessage is the client for interacting with the ScaCommentMessage builders.
+	ScaCommentMessage *ScaCommentMessageClient
+	// ScaCommentReply is the client for interacting with the ScaCommentReply builders.
+	ScaCommentReply *ScaCommentReplyClient
+	// ScaUserFollows is the client for interacting with the ScaUserFollows builders.
+	ScaUserFollows *ScaUserFollowsClient
+	// ScaUserLevel is the client for interacting with the ScaUserLevel builders.
+	ScaUserLevel *ScaUserLevelClient
 
 	// lazily loaded.
 	client     *Client
@@ -158,6 +168,11 @@ func (tx *Tx) init() {
 	tx.ScaAuthUser = NewScaAuthUserClient(tx.config)
 	tx.ScaAuthUserDevice = NewScaAuthUserDeviceClient(tx.config)
 	tx.ScaAuthUserSocial = NewScaAuthUserSocialClient(tx.config)
+	tx.ScaCommentLikes = NewScaCommentLikesClient(tx.config)
+	tx.ScaCommentMessage = NewScaCommentMessageClient(tx.config)
+	tx.ScaCommentReply = NewScaCommentReplyClient(tx.config)
+	tx.ScaUserFollows = NewScaUserFollowsClient(tx.config)
+	tx.ScaUserLevel = NewScaUserLevelClient(tx.config)
 }
 
 // txDriver wraps the given dialect.Tx with a nop dialect.Driver implementation.

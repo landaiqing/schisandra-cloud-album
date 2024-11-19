@@ -80,6 +80,13 @@
             </set>
           </value>
         </entry>
+        <entry key="CommentImages">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/types/comment_types.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="CommentLikeRequest">
           <value>
             <set>
@@ -97,7 +104,15 @@
         <entry key="CommentRequest">
           <value>
             <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/types/comment_types.go" />
               <option value="file://$PROJECT_DIR$/app/core/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CommentResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/types/comment_types.go" />
             </set>
           </value>
         </entry>
@@ -399,7 +414,6 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/token/refresh_token_logic.go" />
-              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/user/refresh_token_logic.go" />
             </set>
           </value>
         </entry>
@@ -905,6 +919,466 @@
             </set>
           </value>
         </entry>
+        <entry key="ScaCommentLikes">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_comment_likes.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesClient">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/client.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesCreate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesCreateBulk">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesDelete">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesDeleteOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesFilter">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/entql.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesGroupBy">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesMutation">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/mutation.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesQuery">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesSelect">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesUpdate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentLikesUpdateOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessage">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_comment_message.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageClient">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/client.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageCreate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageCreateBulk">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageDelete">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageDeleteOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageFilter">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/entql.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageGroupBy">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageMutation">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/mutation.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageQuery">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageSelect">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageUpdate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentMessageUpdateOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReply">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_comment_reply.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyClient">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/client.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyCreate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyCreateBulk">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyDelete">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyDeleteOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyFilter">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/entql.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyGroupBy">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyMutation">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/mutation.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyQuery">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplySelect">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyUpdate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaCommentReplyUpdateOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollows">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_user_follows.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsClient">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/client.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsCreate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsCreateBulk">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsDelete">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsDeleteOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsFilter">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/entql.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsGroupBy">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsMutation">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/mutation.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsQuery">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsSelect">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsUpdate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserFollowsUpdateOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevel">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_user_level.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelClient">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/client.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelCreate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelCreateBulk">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_create.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelDelete">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelDeleteOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_delete.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelFilter">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/entql.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelGroupBy">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelMutation">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/mutation.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelQuery">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelSelect">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_query.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelUpdate">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_update.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaUserLevelUpdateOne">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_update.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Schema">
           <value>
             <set>
@@ -1123,6 +1597,13 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1731520527208" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/common/constant/comment_type.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732020293264" />
             </ScannedPath>
           </value>
         </entry>
@@ -1359,7 +1840,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/utils/image_util.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1727599554439" />
+              <option name="lastModified" value="1732022358886" />
             </ScannedPath>
           </value>
         </entry>
@@ -1462,14 +1943,14 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/comment/submit_comment_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862645892" />
+              <option name="lastModified" value="1732011436667" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/comment/submit_reply_comment_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862645872" />
+              <option name="lastModified" value="1732022458204" />
             </ScannedPath>
           </value>
         </entry>
@@ -1539,7 +2020,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731934439935" />
+              <option name="lastModified" value="1731951296435" />
             </ScannedPath>
           </value>
         </entry>
@@ -1589,13 +2070,6 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1731864275388" />
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/refresh_token_handler.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731864275394" />
             </ScannedPath>
           </value>
         </entry>
@@ -1707,7 +2181,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/comment/submit_comment_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731861524784" />
+              <option name="lastModified" value="1732022218573" />
               <option name="schema">
                 <list>
                   <option value="SubmitCommentLogic" />
@@ -1719,7 +2193,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/comment/submit_reply_comment_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731649071025" />
+              <option name="lastModified" value="1732022453103" />
               <option name="schema">
                 <list>
                   <option value="SubmitReplyCommentLogic" />
@@ -1926,18 +2400,6 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/refresh_token_logic.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1731863341022" />
-              <option name="schema">
-                <list>
-                  <option value="RefreshTokenLogic" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/reset_password_logic.go">
           <value>
             <ScannedPath>
@@ -1953,7 +2415,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/websocket/message_websocket_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731725278175" />
+              <option name="lastModified" value="1732007142483" />
               <option name="schema">
                 <list>
                   <option value="MessageWebsocketLogic" />
@@ -2012,6 +2474,19 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/comment_types.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732021923267" />
+              <option name="schema">
+                <list>
+                  <option value="CommentResponse" />
+                  <option value="CommentImages" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/redis_token.go">
           <value>
             <ScannedPath>
@@ -2039,7 +2514,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731934439933" />
+              <option name="lastModified" value="1731951296432" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -2161,7 +2636,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/client.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252283" />
+              <option name="lastModified" value="1732015561842" />
               <option name="schema">
                 <list>
                   <option value="Client" />
@@ -2171,6 +2646,11 @@
                   <option value="ScaAuthUserClient" />
                   <option value="ScaAuthUserDeviceClient" />
                   <option value="ScaAuthUserSocialClient" />
+                  <option value="ScaCommentLikesClient" />
+                  <option value="ScaCommentMessageClient" />
+                  <option value="ScaCommentReplyClient" />
+                  <option value="ScaUserFollowsClient" />
+                  <option value="ScaUserLevelClient" />
                   <option value="hooks" />
                   <option value="inters" />
                 </list>
@@ -2181,7 +2661,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/ent.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252745" />
+              <option name="lastModified" value="1732015560823" />
               <option name="schema">
                 <list>
                   <option value="clientCtxKey" />
@@ -2200,7 +2680,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/entql.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252207" />
+              <option name="lastModified" value="1732015560828" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleFilter" />
@@ -2208,6 +2688,11 @@
                   <option value="ScaAuthUserFilter" />
                   <option value="ScaAuthUserDeviceFilter" />
                   <option value="ScaAuthUserSocialFilter" />
+                  <option value="ScaCommentLikesFilter" />
+                  <option value="ScaCommentMessageFilter" />
+                  <option value="ScaCommentReplyFilter" />
+                  <option value="ScaUserFollowsFilter" />
+                  <option value="ScaUserLevelFilter" />
                 </list>
               </option>
             </ScannedPath>
@@ -2216,7 +2701,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/enttest/enttest.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252166" />
+              <option name="lastModified" value="1732015562109" />
               <option name="schema">
                 <list>
                   <option value="options" />
@@ -2228,7 +2713,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/hook/hook.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252451" />
+              <option name="lastModified" value="1732015560775" />
               <option name="schema">
                 <list>
                   <option value="Chain" />
@@ -2240,7 +2725,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/migrate/migrate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252501" />
+              <option name="lastModified" value="1732015560445" />
               <option name="schema">
                 <list>
                   <option value="Schema" />
@@ -2252,14 +2737,14 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/migrate/schema.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252235" />
+              <option name="lastModified" value="1732015561631" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/mutation.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252494" />
+              <option name="lastModified" value="1732015561328" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleMutation" />
@@ -2267,6 +2752,11 @@
                   <option value="ScaAuthUserMutation" />
                   <option value="ScaAuthUserDeviceMutation" />
                   <option value="ScaAuthUserSocialMutation" />
+                  <option value="ScaCommentLikesMutation" />
+                  <option value="ScaCommentMessageMutation" />
+                  <option value="ScaCommentReplyMutation" />
+                  <option value="ScaUserFollowsMutation" />
+                  <option value="ScaUserLevelMutation" />
                 </list>
               </option>
             </ScannedPath>
@@ -2275,35 +2765,35 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/predicate/predicate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252677" />
+              <option name="lastModified" value="1732015560056" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/privacy/privacy.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253011" />
+              <option name="lastModified" value="1732015560425" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/runtime.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252750" />
+              <option name="lastModified" value="1732015560416" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/runtime/runtime.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252951" />
+              <option name="lastModified" value="1732015562111" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252994" />
+              <option name="lastModified" value="1732015561805" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRule" />
@@ -2315,21 +2805,21 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule/scaauthpermissionrule.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252757" />
+              <option name="lastModified" value="1732015560836" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252746" />
+              <option name="lastModified" value="1732015560427" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252481" />
+              <option name="lastModified" value="1732015561649" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleCreate" />
@@ -2342,7 +2832,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252455" />
+              <option name="lastModified" value="1732015562126" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleDelete" />
@@ -2355,7 +2845,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252528" />
+              <option name="lastModified" value="1732015561879" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleQuery" />
@@ -2369,7 +2859,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthpermissionrule_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252965" />
+              <option name="lastModified" value="1732015562160" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRuleUpdate" />
@@ -2382,7 +2872,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252785" />
+              <option name="lastModified" value="1732015561472" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRole" />
@@ -2394,21 +2884,21 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole/scaauthrole.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252456" />
+              <option name="lastModified" value="1732015561523" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253022" />
+              <option name="lastModified" value="1732015561498" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253049" />
+              <option name="lastModified" value="1732015562156" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleCreate" />
@@ -2421,7 +2911,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253020" />
+              <option name="lastModified" value="1732015561845" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleDelete" />
@@ -2434,7 +2924,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253048" />
+              <option name="lastModified" value="1732015561833" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleQuery" />
@@ -2448,7 +2938,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthrole_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252722" />
+              <option name="lastModified" value="1732015561049" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRoleUpdate" />
@@ -2461,7 +2951,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253008" />
+              <option name="lastModified" value="1732015560082" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUser" />
@@ -2473,21 +2963,21 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser/scaauthuser.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252471" />
+              <option name="lastModified" value="1732015560075" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252468" />
+              <option name="lastModified" value="1732015560833" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252235" />
+              <option name="lastModified" value="1732015562156" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserCreate" />
@@ -2500,7 +2990,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252458" />
+              <option name="lastModified" value="1732015561471" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDelete" />
@@ -2513,7 +3003,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252706" />
+              <option name="lastModified" value="1732015562157" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserQuery" />
@@ -2527,7 +3017,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuser_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253033" />
+              <option name="lastModified" value="1732015560780" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserUpdate" />
@@ -2540,7 +3030,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252763" />
+              <option name="lastModified" value="1732015560108" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDevice" />
@@ -2552,21 +3042,21 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice/scaauthuserdevice.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252224" />
+              <option name="lastModified" value="1732015561850" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252744" />
+              <option name="lastModified" value="1732015560085" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252477" />
+              <option name="lastModified" value="1732015561536" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceCreate" />
@@ -2579,7 +3069,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252181" />
+              <option name="lastModified" value="1732015560454" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceDelete" />
@@ -2592,7 +3082,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252783" />
+              <option name="lastModified" value="1732015560849" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceQuery" />
@@ -2606,7 +3096,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthuserdevice_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253045" />
+              <option name="lastModified" value="1732015561203" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDeviceUpdate" />
@@ -2619,7 +3109,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252197" />
+              <option name="lastModified" value="1732015560467" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocial" />
@@ -2631,21 +3121,21 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial/scaauthusersocial.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252208" />
+              <option name="lastModified" value="1732015560496" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial/where.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607253018" />
+              <option name="lastModified" value="1732015561356" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial_create.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252213" />
+              <option name="lastModified" value="1732015560096" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialCreate" />
@@ -2658,7 +3148,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial_delete.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252767" />
+              <option name="lastModified" value="1732015561935" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialDelete" />
@@ -2671,7 +3161,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial_query.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252234" />
+              <option name="lastModified" value="1732015561964" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialQuery" />
@@ -2685,7 +3175,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scaauthusersocial_update.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252477" />
+              <option name="lastModified" value="1732015561853" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocialUpdate" />
@@ -2695,10 +3185,405 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560495" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentLikes" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes/scacommentlikes.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560846" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes/where.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561141" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_create.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561316" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentLikesCreate" />
+                  <option value="ScaCommentLikesCreateBulk" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_delete.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561126" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentLikesDelete" />
+                  <option value="ScaCommentLikesDeleteOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_query.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560440" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentLikesQuery" />
+                  <option value="ScaCommentLikesGroupBy" />
+                  <option value="ScaCommentLikesSelect" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentlikes_update.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560435" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentLikesUpdate" />
+                  <option value="ScaCommentLikesUpdateOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561979" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentMessage" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage/scacommentmessage.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561224" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage/where.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560441" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_create.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560062" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentMessageCreate" />
+                  <option value="ScaCommentMessageCreateBulk" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_delete.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561444" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentMessageDelete" />
+                  <option value="ScaCommentMessageDeleteOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_query.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561004" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentMessageQuery" />
+                  <option value="ScaCommentMessageGroupBy" />
+                  <option value="ScaCommentMessageSelect" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentmessage_update.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561209" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentMessageUpdate" />
+                  <option value="ScaCommentMessageUpdateOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561685" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentReply" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply/scacommentreply.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560021" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply/where.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560794" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_create.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560094" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentReplyCreate" />
+                  <option value="ScaCommentReplyCreateBulk" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_delete.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560717" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentReplyDelete" />
+                  <option value="ScaCommentReplyDeleteOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_query.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561238" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentReplyQuery" />
+                  <option value="ScaCommentReplyGroupBy" />
+                  <option value="ScaCommentReplySelect" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scacommentreply_update.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561877" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentReplyUpdate" />
+                  <option value="ScaCommentReplyUpdateOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015562068" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserFollows" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows/scauserfollows.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560420" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows/where.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561460" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_create.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560794" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserFollowsCreate" />
+                  <option value="ScaUserFollowsCreateBulk" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_delete.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560057" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserFollowsDelete" />
+                  <option value="ScaUserFollowsDeleteOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_query.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561775" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserFollowsQuery" />
+                  <option value="ScaUserFollowsGroupBy" />
+                  <option value="ScaUserFollowsSelect" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserfollows_update.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561143" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserFollowsUpdate" />
+                  <option value="ScaUserFollowsUpdateOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560745" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserLevel" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel/scauserlevel.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561185" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel/where.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561173" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_create.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561556" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserLevelCreate" />
+                  <option value="ScaUserLevelCreateBulk" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_delete.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015560021" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserLevelDelete" />
+                  <option value="ScaUserLevelDeleteOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_query.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015562163" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserLevelQuery" />
+                  <option value="ScaUserLevelGroupBy" />
+                  <option value="ScaUserLevelSelect" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/scauserlevel_update.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015561565" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserLevelUpdate" />
+                  <option value="ScaUserLevelUpdateOne" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/ent/tx.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731607252187" />
+              <option name="lastModified" value="1732015560098" />
               <option name="schema">
                 <list>
                   <option value="Tx" />
@@ -2794,6 +3679,66 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_comment_likes.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732014241345" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentLikes" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_comment_message.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732014375350" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentMessage" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_comment_reply.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732014052012" />
+              <option name="schema">
+                <list>
+                  <option value="ScaCommentReply" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_user_follows.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015476856" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserFollows" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/model/sca_user_level.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1732015530163" />
+              <option name="schema">
+                <list>
+                  <option value="ScaUserLevel" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/redis_session/init.go">
           <value>
             <ScannedPath>
@@ -2838,9 +3783,11 @@
         <entry key="client_ctx_key" value="clientCtxKey" />
         <entry key="comment_dis_like_request" value="CommentDisLikeRequest" />
         <entry key="comment_image" value="CommentImage" />
+        <entry key="comment_images" value="CommentImages" />
         <entry key="comment_like_request" value="CommentLikeRequest" />
         <entry key="comment_list_request" value="CommentListRequest" />
         <entry key="comment_request" value="CommentRequest" />
+        <entry key="comment_response" value="CommentResponse" />
         <entry key="config" value="config" />
         <entry key="constraint_error" value="ConstraintError" />
         <entry key="default_mixin" value="DefaultMixin" />
@@ -2957,6 +3904,71 @@
         <entry key="sca_auth_user_social_update_one" value="ScaAuthUserSocialUpdateOne" />
         <entry key="sca_auth_user_update" value="ScaAuthUserUpdate" />
         <entry key="sca_auth_user_update_one" value="ScaAuthUserUpdateOne" />
+        <entry key="sca_comment_likes" value="ScaCommentLikes" />
+        <entry key="sca_comment_likes_client" value="ScaCommentLikesClient" />
+        <entry key="sca_comment_likes_create" value="ScaCommentLikesCreate" />
+        <entry key="sca_comment_likes_create_bulk" value="ScaCommentLikesCreateBulk" />
+        <entry key="sca_comment_likes_delete" value="ScaCommentLikesDelete" />
+        <entry key="sca_comment_likes_delete_one" value="ScaCommentLikesDeleteOne" />
+        <entry key="sca_comment_likes_filter" value="ScaCommentLikesFilter" />
+        <entry key="sca_comment_likes_group_by" value="ScaCommentLikesGroupBy" />
+        <entry key="sca_comment_likes_mutation" value="ScaCommentLikesMutation" />
+        <entry key="sca_comment_likes_query" value="ScaCommentLikesQuery" />
+        <entry key="sca_comment_likes_select" value="ScaCommentLikesSelect" />
+        <entry key="sca_comment_likes_update" value="ScaCommentLikesUpdate" />
+        <entry key="sca_comment_likes_update_one" value="ScaCommentLikesUpdateOne" />
+        <entry key="sca_comment_message" value="ScaCommentMessage" />
+        <entry key="sca_comment_message_client" value="ScaCommentMessageClient" />
+        <entry key="sca_comment_message_create" value="ScaCommentMessageCreate" />
+        <entry key="sca_comment_message_create_bulk" value="ScaCommentMessageCreateBulk" />
+        <entry key="sca_comment_message_delete" value="ScaCommentMessageDelete" />
+        <entry key="sca_comment_message_delete_one" value="ScaCommentMessageDeleteOne" />
+        <entry key="sca_comment_message_filter" value="ScaCommentMessageFilter" />
+        <entry key="sca_comment_message_group_by" value="ScaCommentMessageGroupBy" />
+        <entry key="sca_comment_message_mutation" value="ScaCommentMessageMutation" />
+        <entry key="sca_comment_message_query" value="ScaCommentMessageQuery" />
+        <entry key="sca_comment_message_select" value="ScaCommentMessageSelect" />
+        <entry key="sca_comment_message_update" value="ScaCommentMessageUpdate" />
+        <entry key="sca_comment_message_update_one" value="ScaCommentMessageUpdateOne" />
+        <entry key="sca_comment_reply" value="ScaCommentReply" />
+        <entry key="sca_comment_reply_client" value="ScaCommentReplyClient" />
+        <entry key="sca_comment_reply_create" value="ScaCommentReplyCreate" />
+        <entry key="sca_comment_reply_create_bulk" value="ScaCommentReplyCreateBulk" />
+        <entry key="sca_comment_reply_delete" value="ScaCommentReplyDelete" />
+        <entry key="sca_comment_reply_delete_one" value="ScaCommentReplyDeleteOne" />
+        <entry key="sca_comment_reply_filter" value="ScaCommentReplyFilter" />
+        <entry key="sca_comment_reply_group_by" value="ScaCommentReplyGroupBy" />
+        <entry key="sca_comment_reply_mutation" value="ScaCommentReplyMutation" />
+        <entry key="sca_comment_reply_query" value="ScaCommentReplyQuery" />
+        <entry key="sca_comment_reply_select" value="ScaCommentReplySelect" />
+        <entry key="sca_comment_reply_update" value="ScaCommentReplyUpdate" />
+        <entry key="sca_comment_reply_update_one" value="ScaCommentReplyUpdateOne" />
+        <entry key="sca_user_follows" value="ScaUserFollows" />
+        <entry key="sca_user_follows_client" value="ScaUserFollowsClient" />
+        <entry key="sca_user_follows_create" value="ScaUserFollowsCreate" />
+        <entry key="sca_user_follows_create_bulk" value="ScaUserFollowsCreateBulk" />
+        <entry key="sca_user_follows_delete" value="ScaUserFollowsDelete" />
+        <entry key="sca_user_follows_delete_one" value="ScaUserFollowsDeleteOne" />
+        <entry key="sca_user_follows_filter" value="ScaUserFollowsFilter" />
+        <entry key="sca_user_follows_group_by" value="ScaUserFollowsGroupBy" />
+        <entry key="sca_user_follows_mutation" value="ScaUserFollowsMutation" />
+        <entry key="sca_user_follows_query" value="ScaUserFollowsQuery" />
+        <entry key="sca_user_follows_select" value="ScaUserFollowsSelect" />
+        <entry key="sca_user_follows_update" value="ScaUserFollowsUpdate" />
+        <entry key="sca_user_follows_update_one" value="ScaUserFollowsUpdateOne" />
+        <entry key="sca_user_level" value="ScaUserLevel" />
+        <entry key="sca_user_level_client" value="ScaUserLevelClient" />
+        <entry key="sca_user_level_create" value="ScaUserLevelCreate" />
+        <entry key="sca_user_level_create_bulk" value="ScaUserLevelCreateBulk" />
+        <entry key="sca_user_level_delete" value="ScaUserLevelDelete" />
+        <entry key="sca_user_level_delete_one" value="ScaUserLevelDeleteOne" />
+        <entry key="sca_user_level_filter" value="ScaUserLevelFilter" />
+        <entry key="sca_user_level_group_by" value="ScaUserLevelGroupBy" />
+        <entry key="sca_user_level_mutation" value="ScaUserLevelMutation" />
+        <entry key="sca_user_level_query" value="ScaUserLevelQuery" />
+        <entry key="sca_user_level_select" value="ScaUserLevelSelect" />
+        <entry key="sca_user_level_update" value="ScaUserLevelUpdate" />
+        <entry key="sca_user_level_update_one" value="ScaUserLevelUpdateOne" />
         <entry key="schema" value="Schema" />
         <entry key="security_headers_middleware" value="SecurityHeadersMiddleware" />
         <entry key="selector" value="selector" />
@@ -2977,6 +3989,6 @@
         <entry key="wechat_callback_logic" value="WechatCallbackLogic" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1731920886467" />
+    <option name="lastTimeChecked" value="1732020117790" />
   </component>
 </project>

@@ -8,6 +8,11 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentlikes"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentmessage"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentreply"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserfollows"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserlevel"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
@@ -17,7 +22,7 @@ import (
 
 // schemaGraph holds a representation of ent/schema at runtime.
 var schemaGraph = func() *sqlgraph.Schema {
-	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 5)}
+	graph := &sqlgraph.Schema{Nodes: make([]*sqlgraph.Node, 10)}
 	graph.Nodes[0] = &sqlgraph.Node{
 		NodeSpec: sqlgraph.NodeSpec{
 			Table:   scaauthpermissionrule.Table,
@@ -132,6 +137,112 @@ var schemaGraph = func() *sqlgraph.Schema {
 			scaauthusersocial.FieldOpenID:    {Type: field.TypeString, Column: scaauthusersocial.FieldOpenID},
 			scaauthusersocial.FieldSource:    {Type: field.TypeString, Column: scaauthusersocial.FieldSource},
 			scaauthusersocial.FieldStatus:    {Type: field.TypeInt, Column: scaauthusersocial.FieldStatus},
+		},
+	}
+	graph.Nodes[5] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   scacommentlikes.Table,
+			Columns: scacommentlikes.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt64,
+				Column: scacommentlikes.FieldID,
+			},
+		},
+		Type: "ScaCommentLikes",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			scacommentlikes.FieldTopicID:   {Type: field.TypeString, Column: scacommentlikes.FieldTopicID},
+			scacommentlikes.FieldUserID:    {Type: field.TypeString, Column: scacommentlikes.FieldUserID},
+			scacommentlikes.FieldCommentID: {Type: field.TypeInt64, Column: scacommentlikes.FieldCommentID},
+			scacommentlikes.FieldLikeTime:  {Type: field.TypeTime, Column: scacommentlikes.FieldLikeTime},
+		},
+	}
+	graph.Nodes[6] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   scacommentmessage.Table,
+			Columns: scacommentmessage.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt64,
+				Column: scacommentmessage.FieldID,
+			},
+		},
+		Type: "ScaCommentMessage",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			scacommentmessage.FieldCreatedAt: {Type: field.TypeTime, Column: scacommentmessage.FieldCreatedAt},
+			scacommentmessage.FieldUpdatedAt: {Type: field.TypeTime, Column: scacommentmessage.FieldUpdatedAt},
+			scacommentmessage.FieldDeleted:   {Type: field.TypeInt8, Column: scacommentmessage.FieldDeleted},
+			scacommentmessage.FieldTopicID:   {Type: field.TypeString, Column: scacommentmessage.FieldTopicID},
+			scacommentmessage.FieldFromID:    {Type: field.TypeString, Column: scacommentmessage.FieldFromID},
+			scacommentmessage.FieldToID:      {Type: field.TypeString, Column: scacommentmessage.FieldToID},
+			scacommentmessage.FieldContent:   {Type: field.TypeString, Column: scacommentmessage.FieldContent},
+			scacommentmessage.FieldIsRead:    {Type: field.TypeInt, Column: scacommentmessage.FieldIsRead},
+		},
+	}
+	graph.Nodes[7] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   scacommentreply.Table,
+			Columns: scacommentreply.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt64,
+				Column: scacommentreply.FieldID,
+			},
+		},
+		Type: "ScaCommentReply",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			scacommentreply.FieldCreatedAt:       {Type: field.TypeTime, Column: scacommentreply.FieldCreatedAt},
+			scacommentreply.FieldUpdatedAt:       {Type: field.TypeTime, Column: scacommentreply.FieldUpdatedAt},
+			scacommentreply.FieldDeleted:         {Type: field.TypeInt8, Column: scacommentreply.FieldDeleted},
+			scacommentreply.FieldUserID:          {Type: field.TypeString, Column: scacommentreply.FieldUserID},
+			scacommentreply.FieldTopicID:         {Type: field.TypeString, Column: scacommentreply.FieldTopicID},
+			scacommentreply.FieldTopicType:       {Type: field.TypeInt, Column: scacommentreply.FieldTopicType},
+			scacommentreply.FieldContent:         {Type: field.TypeString, Column: scacommentreply.FieldContent},
+			scacommentreply.FieldCommentType:     {Type: field.TypeInt, Column: scacommentreply.FieldCommentType},
+			scacommentreply.FieldReplyTo:         {Type: field.TypeInt64, Column: scacommentreply.FieldReplyTo},
+			scacommentreply.FieldReplyID:         {Type: field.TypeInt64, Column: scacommentreply.FieldReplyID},
+			scacommentreply.FieldReplyUser:       {Type: field.TypeString, Column: scacommentreply.FieldReplyUser},
+			scacommentreply.FieldAuthor:          {Type: field.TypeInt, Column: scacommentreply.FieldAuthor},
+			scacommentreply.FieldLikes:           {Type: field.TypeInt64, Column: scacommentreply.FieldLikes},
+			scacommentreply.FieldReplyCount:      {Type: field.TypeInt64, Column: scacommentreply.FieldReplyCount},
+			scacommentreply.FieldBrowser:         {Type: field.TypeString, Column: scacommentreply.FieldBrowser},
+			scacommentreply.FieldOperatingSystem: {Type: field.TypeString, Column: scacommentreply.FieldOperatingSystem},
+			scacommentreply.FieldCommentIP:       {Type: field.TypeString, Column: scacommentreply.FieldCommentIP},
+			scacommentreply.FieldLocation:        {Type: field.TypeString, Column: scacommentreply.FieldLocation},
+			scacommentreply.FieldAgent:           {Type: field.TypeString, Column: scacommentreply.FieldAgent},
+		},
+	}
+	graph.Nodes[8] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   scauserfollows.Table,
+			Columns: scauserfollows.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt,
+				Column: scauserfollows.FieldID,
+			},
+		},
+		Type: "ScaUserFollows",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			scauserfollows.FieldFollowerID: {Type: field.TypeString, Column: scauserfollows.FieldFollowerID},
+			scauserfollows.FieldFolloweeID: {Type: field.TypeString, Column: scauserfollows.FieldFolloweeID},
+			scauserfollows.FieldStatus:     {Type: field.TypeUint8, Column: scauserfollows.FieldStatus},
+		},
+	}
+	graph.Nodes[9] = &sqlgraph.Node{
+		NodeSpec: sqlgraph.NodeSpec{
+			Table:   scauserlevel.Table,
+			Columns: scauserlevel.Columns,
+			ID: &sqlgraph.FieldSpec{
+				Type:   field.TypeInt64,
+				Column: scauserlevel.FieldID,
+			},
+		},
+		Type: "ScaUserLevel",
+		Fields: map[string]*sqlgraph.FieldSpec{
+			scauserlevel.FieldUserID:           {Type: field.TypeString, Column: scauserlevel.FieldUserID},
+			scauserlevel.FieldLevelType:        {Type: field.TypeUint8, Column: scauserlevel.FieldLevelType},
+			scauserlevel.FieldLevel:            {Type: field.TypeInt, Column: scauserlevel.FieldLevel},
+			scauserlevel.FieldLevelName:        {Type: field.TypeString, Column: scauserlevel.FieldLevelName},
+			scauserlevel.FieldExpStart:         {Type: field.TypeInt64, Column: scauserlevel.FieldExpStart},
+			scauserlevel.FieldExpEnd:           {Type: field.TypeInt64, Column: scauserlevel.FieldExpEnd},
+			scauserlevel.FieldLevelDescription: {Type: field.TypeString, Column: scauserlevel.FieldLevelDescription},
 		},
 	}
 	return graph
@@ -596,4 +707,409 @@ func (f *ScaAuthUserSocialFilter) WhereSource(p entql.StringP) {
 // WhereStatus applies the entql int predicate on the status field.
 func (f *ScaAuthUserSocialFilter) WhereStatus(p entql.IntP) {
 	f.Where(p.Field(scaauthusersocial.FieldStatus))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (sclq *ScaCommentLikesQuery) addPredicate(pred func(s *sql.Selector)) {
+	sclq.predicates = append(sclq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ScaCommentLikesQuery builder.
+func (sclq *ScaCommentLikesQuery) Filter() *ScaCommentLikesFilter {
+	return &ScaCommentLikesFilter{config: sclq.config, predicateAdder: sclq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ScaCommentLikesMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ScaCommentLikesMutation builder.
+func (m *ScaCommentLikesMutation) Filter() *ScaCommentLikesFilter {
+	return &ScaCommentLikesFilter{config: m.config, predicateAdder: m}
+}
+
+// ScaCommentLikesFilter provides a generic filtering capability at runtime for ScaCommentLikesQuery.
+type ScaCommentLikesFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ScaCommentLikesFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[5].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int64 predicate on the id field.
+func (f *ScaCommentLikesFilter) WhereID(p entql.Int64P) {
+	f.Where(p.Field(scacommentlikes.FieldID))
+}
+
+// WhereTopicID applies the entql string predicate on the topic_id field.
+func (f *ScaCommentLikesFilter) WhereTopicID(p entql.StringP) {
+	f.Where(p.Field(scacommentlikes.FieldTopicID))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *ScaCommentLikesFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(scacommentlikes.FieldUserID))
+}
+
+// WhereCommentID applies the entql int64 predicate on the comment_id field.
+func (f *ScaCommentLikesFilter) WhereCommentID(p entql.Int64P) {
+	f.Where(p.Field(scacommentlikes.FieldCommentID))
+}
+
+// WhereLikeTime applies the entql time.Time predicate on the like_time field.
+func (f *ScaCommentLikesFilter) WhereLikeTime(p entql.TimeP) {
+	f.Where(p.Field(scacommentlikes.FieldLikeTime))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (scmq *ScaCommentMessageQuery) addPredicate(pred func(s *sql.Selector)) {
+	scmq.predicates = append(scmq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ScaCommentMessageQuery builder.
+func (scmq *ScaCommentMessageQuery) Filter() *ScaCommentMessageFilter {
+	return &ScaCommentMessageFilter{config: scmq.config, predicateAdder: scmq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ScaCommentMessageMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ScaCommentMessageMutation builder.
+func (m *ScaCommentMessageMutation) Filter() *ScaCommentMessageFilter {
+	return &ScaCommentMessageFilter{config: m.config, predicateAdder: m}
+}
+
+// ScaCommentMessageFilter provides a generic filtering capability at runtime for ScaCommentMessageQuery.
+type ScaCommentMessageFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ScaCommentMessageFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[6].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int64 predicate on the id field.
+func (f *ScaCommentMessageFilter) WhereID(p entql.Int64P) {
+	f.Where(p.Field(scacommentmessage.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *ScaCommentMessageFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(scacommentmessage.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *ScaCommentMessageFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(scacommentmessage.FieldUpdatedAt))
+}
+
+// WhereDeleted applies the entql int8 predicate on the deleted field.
+func (f *ScaCommentMessageFilter) WhereDeleted(p entql.Int8P) {
+	f.Where(p.Field(scacommentmessage.FieldDeleted))
+}
+
+// WhereTopicID applies the entql string predicate on the topic_id field.
+func (f *ScaCommentMessageFilter) WhereTopicID(p entql.StringP) {
+	f.Where(p.Field(scacommentmessage.FieldTopicID))
+}
+
+// WhereFromID applies the entql string predicate on the from_id field.
+func (f *ScaCommentMessageFilter) WhereFromID(p entql.StringP) {
+	f.Where(p.Field(scacommentmessage.FieldFromID))
+}
+
+// WhereToID applies the entql string predicate on the to_id field.
+func (f *ScaCommentMessageFilter) WhereToID(p entql.StringP) {
+	f.Where(p.Field(scacommentmessage.FieldToID))
+}
+
+// WhereContent applies the entql string predicate on the content field.
+func (f *ScaCommentMessageFilter) WhereContent(p entql.StringP) {
+	f.Where(p.Field(scacommentmessage.FieldContent))
+}
+
+// WhereIsRead applies the entql int predicate on the is_read field.
+func (f *ScaCommentMessageFilter) WhereIsRead(p entql.IntP) {
+	f.Where(p.Field(scacommentmessage.FieldIsRead))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (scrq *ScaCommentReplyQuery) addPredicate(pred func(s *sql.Selector)) {
+	scrq.predicates = append(scrq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ScaCommentReplyQuery builder.
+func (scrq *ScaCommentReplyQuery) Filter() *ScaCommentReplyFilter {
+	return &ScaCommentReplyFilter{config: scrq.config, predicateAdder: scrq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ScaCommentReplyMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ScaCommentReplyMutation builder.
+func (m *ScaCommentReplyMutation) Filter() *ScaCommentReplyFilter {
+	return &ScaCommentReplyFilter{config: m.config, predicateAdder: m}
+}
+
+// ScaCommentReplyFilter provides a generic filtering capability at runtime for ScaCommentReplyQuery.
+type ScaCommentReplyFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ScaCommentReplyFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[7].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int64 predicate on the id field.
+func (f *ScaCommentReplyFilter) WhereID(p entql.Int64P) {
+	f.Where(p.Field(scacommentreply.FieldID))
+}
+
+// WhereCreatedAt applies the entql time.Time predicate on the created_at field.
+func (f *ScaCommentReplyFilter) WhereCreatedAt(p entql.TimeP) {
+	f.Where(p.Field(scacommentreply.FieldCreatedAt))
+}
+
+// WhereUpdatedAt applies the entql time.Time predicate on the updated_at field.
+func (f *ScaCommentReplyFilter) WhereUpdatedAt(p entql.TimeP) {
+	f.Where(p.Field(scacommentreply.FieldUpdatedAt))
+}
+
+// WhereDeleted applies the entql int8 predicate on the deleted field.
+func (f *ScaCommentReplyFilter) WhereDeleted(p entql.Int8P) {
+	f.Where(p.Field(scacommentreply.FieldDeleted))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *ScaCommentReplyFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldUserID))
+}
+
+// WhereTopicID applies the entql string predicate on the topic_id field.
+func (f *ScaCommentReplyFilter) WhereTopicID(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldTopicID))
+}
+
+// WhereTopicType applies the entql int predicate on the topic_type field.
+func (f *ScaCommentReplyFilter) WhereTopicType(p entql.IntP) {
+	f.Where(p.Field(scacommentreply.FieldTopicType))
+}
+
+// WhereContent applies the entql string predicate on the content field.
+func (f *ScaCommentReplyFilter) WhereContent(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldContent))
+}
+
+// WhereCommentType applies the entql int predicate on the comment_type field.
+func (f *ScaCommentReplyFilter) WhereCommentType(p entql.IntP) {
+	f.Where(p.Field(scacommentreply.FieldCommentType))
+}
+
+// WhereReplyTo applies the entql int64 predicate on the reply_to field.
+func (f *ScaCommentReplyFilter) WhereReplyTo(p entql.Int64P) {
+	f.Where(p.Field(scacommentreply.FieldReplyTo))
+}
+
+// WhereReplyID applies the entql int64 predicate on the reply_id field.
+func (f *ScaCommentReplyFilter) WhereReplyID(p entql.Int64P) {
+	f.Where(p.Field(scacommentreply.FieldReplyID))
+}
+
+// WhereReplyUser applies the entql string predicate on the reply_user field.
+func (f *ScaCommentReplyFilter) WhereReplyUser(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldReplyUser))
+}
+
+// WhereAuthor applies the entql int predicate on the author field.
+func (f *ScaCommentReplyFilter) WhereAuthor(p entql.IntP) {
+	f.Where(p.Field(scacommentreply.FieldAuthor))
+}
+
+// WhereLikes applies the entql int64 predicate on the likes field.
+func (f *ScaCommentReplyFilter) WhereLikes(p entql.Int64P) {
+	f.Where(p.Field(scacommentreply.FieldLikes))
+}
+
+// WhereReplyCount applies the entql int64 predicate on the reply_count field.
+func (f *ScaCommentReplyFilter) WhereReplyCount(p entql.Int64P) {
+	f.Where(p.Field(scacommentreply.FieldReplyCount))
+}
+
+// WhereBrowser applies the entql string predicate on the browser field.
+func (f *ScaCommentReplyFilter) WhereBrowser(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldBrowser))
+}
+
+// WhereOperatingSystem applies the entql string predicate on the operating_system field.
+func (f *ScaCommentReplyFilter) WhereOperatingSystem(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldOperatingSystem))
+}
+
+// WhereCommentIP applies the entql string predicate on the comment_ip field.
+func (f *ScaCommentReplyFilter) WhereCommentIP(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldCommentIP))
+}
+
+// WhereLocation applies the entql string predicate on the location field.
+func (f *ScaCommentReplyFilter) WhereLocation(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldLocation))
+}
+
+// WhereAgent applies the entql string predicate on the agent field.
+func (f *ScaCommentReplyFilter) WhereAgent(p entql.StringP) {
+	f.Where(p.Field(scacommentreply.FieldAgent))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (sufq *ScaUserFollowsQuery) addPredicate(pred func(s *sql.Selector)) {
+	sufq.predicates = append(sufq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ScaUserFollowsQuery builder.
+func (sufq *ScaUserFollowsQuery) Filter() *ScaUserFollowsFilter {
+	return &ScaUserFollowsFilter{config: sufq.config, predicateAdder: sufq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ScaUserFollowsMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ScaUserFollowsMutation builder.
+func (m *ScaUserFollowsMutation) Filter() *ScaUserFollowsFilter {
+	return &ScaUserFollowsFilter{config: m.config, predicateAdder: m}
+}
+
+// ScaUserFollowsFilter provides a generic filtering capability at runtime for ScaUserFollowsQuery.
+type ScaUserFollowsFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ScaUserFollowsFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[8].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int predicate on the id field.
+func (f *ScaUserFollowsFilter) WhereID(p entql.IntP) {
+	f.Where(p.Field(scauserfollows.FieldID))
+}
+
+// WhereFollowerID applies the entql string predicate on the follower_id field.
+func (f *ScaUserFollowsFilter) WhereFollowerID(p entql.StringP) {
+	f.Where(p.Field(scauserfollows.FieldFollowerID))
+}
+
+// WhereFolloweeID applies the entql string predicate on the followee_id field.
+func (f *ScaUserFollowsFilter) WhereFolloweeID(p entql.StringP) {
+	f.Where(p.Field(scauserfollows.FieldFolloweeID))
+}
+
+// WhereStatus applies the entql uint8 predicate on the status field.
+func (f *ScaUserFollowsFilter) WhereStatus(p entql.Uint8P) {
+	f.Where(p.Field(scauserfollows.FieldStatus))
+}
+
+// addPredicate implements the predicateAdder interface.
+func (sulq *ScaUserLevelQuery) addPredicate(pred func(s *sql.Selector)) {
+	sulq.predicates = append(sulq.predicates, pred)
+}
+
+// Filter returns a Filter implementation to apply filters on the ScaUserLevelQuery builder.
+func (sulq *ScaUserLevelQuery) Filter() *ScaUserLevelFilter {
+	return &ScaUserLevelFilter{config: sulq.config, predicateAdder: sulq}
+}
+
+// addPredicate implements the predicateAdder interface.
+func (m *ScaUserLevelMutation) addPredicate(pred func(s *sql.Selector)) {
+	m.predicates = append(m.predicates, pred)
+}
+
+// Filter returns an entql.Where implementation to apply filters on the ScaUserLevelMutation builder.
+func (m *ScaUserLevelMutation) Filter() *ScaUserLevelFilter {
+	return &ScaUserLevelFilter{config: m.config, predicateAdder: m}
+}
+
+// ScaUserLevelFilter provides a generic filtering capability at runtime for ScaUserLevelQuery.
+type ScaUserLevelFilter struct {
+	predicateAdder
+	config
+}
+
+// Where applies the entql predicate on the query filter.
+func (f *ScaUserLevelFilter) Where(p entql.P) {
+	f.addPredicate(func(s *sql.Selector) {
+		if err := schemaGraph.EvalP(schemaGraph.Nodes[9].Type, p, s); err != nil {
+			s.AddError(err)
+		}
+	})
+}
+
+// WhereID applies the entql int64 predicate on the id field.
+func (f *ScaUserLevelFilter) WhereID(p entql.Int64P) {
+	f.Where(p.Field(scauserlevel.FieldID))
+}
+
+// WhereUserID applies the entql string predicate on the user_id field.
+func (f *ScaUserLevelFilter) WhereUserID(p entql.StringP) {
+	f.Where(p.Field(scauserlevel.FieldUserID))
+}
+
+// WhereLevelType applies the entql uint8 predicate on the level_type field.
+func (f *ScaUserLevelFilter) WhereLevelType(p entql.Uint8P) {
+	f.Where(p.Field(scauserlevel.FieldLevelType))
+}
+
+// WhereLevel applies the entql int predicate on the level field.
+func (f *ScaUserLevelFilter) WhereLevel(p entql.IntP) {
+	f.Where(p.Field(scauserlevel.FieldLevel))
+}
+
+// WhereLevelName applies the entql string predicate on the level_name field.
+func (f *ScaUserLevelFilter) WhereLevelName(p entql.StringP) {
+	f.Where(p.Field(scauserlevel.FieldLevelName))
+}
+
+// WhereExpStart applies the entql int64 predicate on the exp_start field.
+func (f *ScaUserLevelFilter) WhereExpStart(p entql.Int64P) {
+	f.Where(p.Field(scauserlevel.FieldExpStart))
+}
+
+// WhereExpEnd applies the entql int64 predicate on the exp_end field.
+func (f *ScaUserLevelFilter) WhereExpEnd(p entql.Int64P) {
+	f.Where(p.Field(scauserlevel.FieldExpEnd))
+}
+
+// WhereLevelDescription applies the entql string predicate on the level_description field.
+func (f *ScaUserLevelFilter) WhereLevelDescription(p entql.StringP) {
+	f.Where(p.Field(scauserlevel.FieldLevelDescription))
 }

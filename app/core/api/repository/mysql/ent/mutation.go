@@ -12,6 +12,11 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentlikes"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentmessage"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentreply"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserfollows"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserlevel"
 	"sync"
 	"time"
 
@@ -33,6 +38,11 @@ const (
 	TypeScaAuthUser           = "ScaAuthUser"
 	TypeScaAuthUserDevice     = "ScaAuthUserDevice"
 	TypeScaAuthUserSocial     = "ScaAuthUserSocial"
+	TypeScaCommentLikes       = "ScaCommentLikes"
+	TypeScaCommentMessage     = "ScaCommentMessage"
+	TypeScaCommentReply       = "ScaCommentReply"
+	TypeScaUserFollows        = "ScaUserFollows"
+	TypeScaUserLevel          = "ScaUserLevel"
 )
 
 // ScaAuthPermissionRuleMutation represents an operation that mutates the ScaAuthPermissionRule nodes in the graph.
@@ -4874,4 +4884,4330 @@ func (m *ScaAuthUserSocialMutation) ClearEdge(name string) error {
 // It returns an error if the edge is not defined in the schema.
 func (m *ScaAuthUserSocialMutation) ResetEdge(name string) error {
 	return fmt.Errorf("unknown ScaAuthUserSocial edge %s", name)
+}
+
+// ScaCommentLikesMutation represents an operation that mutates the ScaCommentLikes nodes in the graph.
+type ScaCommentLikesMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	topic_id      *string
+	user_id       *string
+	comment_id    *int64
+	addcomment_id *int64
+	like_time     *time.Time
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaCommentLikes, error)
+	predicates    []predicate.ScaCommentLikes
+}
+
+var _ ent.Mutation = (*ScaCommentLikesMutation)(nil)
+
+// scacommentlikesOption allows management of the mutation configuration using functional options.
+type scacommentlikesOption func(*ScaCommentLikesMutation)
+
+// newScaCommentLikesMutation creates new mutation for the ScaCommentLikes entity.
+func newScaCommentLikesMutation(c config, op Op, opts ...scacommentlikesOption) *ScaCommentLikesMutation {
+	m := &ScaCommentLikesMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeScaCommentLikes,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withScaCommentLikesID sets the ID field of the mutation.
+func withScaCommentLikesID(id int64) scacommentlikesOption {
+	return func(m *ScaCommentLikesMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ScaCommentLikes
+		)
+		m.oldValue = func(ctx context.Context) (*ScaCommentLikes, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ScaCommentLikes.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withScaCommentLikes sets the old ScaCommentLikes of the mutation.
+func withScaCommentLikes(node *ScaCommentLikes) scacommentlikesOption {
+	return func(m *ScaCommentLikesMutation) {
+		m.oldValue = func(context.Context) (*ScaCommentLikes, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ScaCommentLikesMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ScaCommentLikesMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ScaCommentLikes entities.
+func (m *ScaCommentLikesMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ScaCommentLikesMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ScaCommentLikesMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ScaCommentLikes.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetTopicID sets the "topic_id" field.
+func (m *ScaCommentLikesMutation) SetTopicID(s string) {
+	m.topic_id = &s
+}
+
+// TopicID returns the value of the "topic_id" field in the mutation.
+func (m *ScaCommentLikesMutation) TopicID() (r string, exists bool) {
+	v := m.topic_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTopicID returns the old "topic_id" field's value of the ScaCommentLikes entity.
+// If the ScaCommentLikes object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentLikesMutation) OldTopicID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTopicID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTopicID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTopicID: %w", err)
+	}
+	return oldValue.TopicID, nil
+}
+
+// ResetTopicID resets all changes to the "topic_id" field.
+func (m *ScaCommentLikesMutation) ResetTopicID() {
+	m.topic_id = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *ScaCommentLikesMutation) SetUserID(s string) {
+	m.user_id = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *ScaCommentLikesMutation) UserID() (r string, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the ScaCommentLikes entity.
+// If the ScaCommentLikes object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentLikesMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *ScaCommentLikesMutation) ResetUserID() {
+	m.user_id = nil
+}
+
+// SetCommentID sets the "comment_id" field.
+func (m *ScaCommentLikesMutation) SetCommentID(i int64) {
+	m.comment_id = &i
+	m.addcomment_id = nil
+}
+
+// CommentID returns the value of the "comment_id" field in the mutation.
+func (m *ScaCommentLikesMutation) CommentID() (r int64, exists bool) {
+	v := m.comment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommentID returns the old "comment_id" field's value of the ScaCommentLikes entity.
+// If the ScaCommentLikes object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentLikesMutation) OldCommentID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommentID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommentID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommentID: %w", err)
+	}
+	return oldValue.CommentID, nil
+}
+
+// AddCommentID adds i to the "comment_id" field.
+func (m *ScaCommentLikesMutation) AddCommentID(i int64) {
+	if m.addcomment_id != nil {
+		*m.addcomment_id += i
+	} else {
+		m.addcomment_id = &i
+	}
+}
+
+// AddedCommentID returns the value that was added to the "comment_id" field in this mutation.
+func (m *ScaCommentLikesMutation) AddedCommentID() (r int64, exists bool) {
+	v := m.addcomment_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCommentID resets all changes to the "comment_id" field.
+func (m *ScaCommentLikesMutation) ResetCommentID() {
+	m.comment_id = nil
+	m.addcomment_id = nil
+}
+
+// SetLikeTime sets the "like_time" field.
+func (m *ScaCommentLikesMutation) SetLikeTime(t time.Time) {
+	m.like_time = &t
+}
+
+// LikeTime returns the value of the "like_time" field in the mutation.
+func (m *ScaCommentLikesMutation) LikeTime() (r time.Time, exists bool) {
+	v := m.like_time
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLikeTime returns the old "like_time" field's value of the ScaCommentLikes entity.
+// If the ScaCommentLikes object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentLikesMutation) OldLikeTime(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLikeTime is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLikeTime requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLikeTime: %w", err)
+	}
+	return oldValue.LikeTime, nil
+}
+
+// ResetLikeTime resets all changes to the "like_time" field.
+func (m *ScaCommentLikesMutation) ResetLikeTime() {
+	m.like_time = nil
+}
+
+// Where appends a list predicates to the ScaCommentLikesMutation builder.
+func (m *ScaCommentLikesMutation) Where(ps ...predicate.ScaCommentLikes) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ScaCommentLikesMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ScaCommentLikesMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ScaCommentLikes, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ScaCommentLikesMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ScaCommentLikesMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ScaCommentLikes).
+func (m *ScaCommentLikesMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ScaCommentLikesMutation) Fields() []string {
+	fields := make([]string, 0, 4)
+	if m.topic_id != nil {
+		fields = append(fields, scacommentlikes.FieldTopicID)
+	}
+	if m.user_id != nil {
+		fields = append(fields, scacommentlikes.FieldUserID)
+	}
+	if m.comment_id != nil {
+		fields = append(fields, scacommentlikes.FieldCommentID)
+	}
+	if m.like_time != nil {
+		fields = append(fields, scacommentlikes.FieldLikeTime)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ScaCommentLikesMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case scacommentlikes.FieldTopicID:
+		return m.TopicID()
+	case scacommentlikes.FieldUserID:
+		return m.UserID()
+	case scacommentlikes.FieldCommentID:
+		return m.CommentID()
+	case scacommentlikes.FieldLikeTime:
+		return m.LikeTime()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ScaCommentLikesMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case scacommentlikes.FieldTopicID:
+		return m.OldTopicID(ctx)
+	case scacommentlikes.FieldUserID:
+		return m.OldUserID(ctx)
+	case scacommentlikes.FieldCommentID:
+		return m.OldCommentID(ctx)
+	case scacommentlikes.FieldLikeTime:
+		return m.OldLikeTime(ctx)
+	}
+	return nil, fmt.Errorf("unknown ScaCommentLikes field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaCommentLikesMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case scacommentlikes.FieldTopicID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTopicID(v)
+		return nil
+	case scacommentlikes.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case scacommentlikes.FieldCommentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommentID(v)
+		return nil
+	case scacommentlikes.FieldLikeTime:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLikeTime(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentLikes field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ScaCommentLikesMutation) AddedFields() []string {
+	var fields []string
+	if m.addcomment_id != nil {
+		fields = append(fields, scacommentlikes.FieldCommentID)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ScaCommentLikesMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case scacommentlikes.FieldCommentID:
+		return m.AddedCommentID()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaCommentLikesMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case scacommentlikes.FieldCommentID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCommentID(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentLikes numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ScaCommentLikesMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ScaCommentLikesMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ScaCommentLikesMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ScaCommentLikes nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ScaCommentLikesMutation) ResetField(name string) error {
+	switch name {
+	case scacommentlikes.FieldTopicID:
+		m.ResetTopicID()
+		return nil
+	case scacommentlikes.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case scacommentlikes.FieldCommentID:
+		m.ResetCommentID()
+		return nil
+	case scacommentlikes.FieldLikeTime:
+		m.ResetLikeTime()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentLikes field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ScaCommentLikesMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ScaCommentLikesMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ScaCommentLikesMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ScaCommentLikesMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ScaCommentLikesMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ScaCommentLikesMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ScaCommentLikesMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ScaCommentLikes unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ScaCommentLikesMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ScaCommentLikes edge %s", name)
+}
+
+// ScaCommentMessageMutation represents an operation that mutates the ScaCommentMessage nodes in the graph.
+type ScaCommentMessageMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int64
+	created_at    *time.Time
+	updated_at    *time.Time
+	deleted       *int8
+	adddeleted    *int8
+	topic_id      *string
+	from_id       *string
+	to_id         *string
+	content       *string
+	is_read       *int
+	addis_read    *int
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaCommentMessage, error)
+	predicates    []predicate.ScaCommentMessage
+}
+
+var _ ent.Mutation = (*ScaCommentMessageMutation)(nil)
+
+// scacommentmessageOption allows management of the mutation configuration using functional options.
+type scacommentmessageOption func(*ScaCommentMessageMutation)
+
+// newScaCommentMessageMutation creates new mutation for the ScaCommentMessage entity.
+func newScaCommentMessageMutation(c config, op Op, opts ...scacommentmessageOption) *ScaCommentMessageMutation {
+	m := &ScaCommentMessageMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeScaCommentMessage,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withScaCommentMessageID sets the ID field of the mutation.
+func withScaCommentMessageID(id int64) scacommentmessageOption {
+	return func(m *ScaCommentMessageMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ScaCommentMessage
+		)
+		m.oldValue = func(ctx context.Context) (*ScaCommentMessage, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ScaCommentMessage.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withScaCommentMessage sets the old ScaCommentMessage of the mutation.
+func withScaCommentMessage(node *ScaCommentMessage) scacommentmessageOption {
+	return func(m *ScaCommentMessageMutation) {
+		m.oldValue = func(context.Context) (*ScaCommentMessage, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ScaCommentMessageMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ScaCommentMessageMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ScaCommentMessage entities.
+func (m *ScaCommentMessageMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ScaCommentMessageMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ScaCommentMessageMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ScaCommentMessage.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ScaCommentMessageMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScaCommentMessageMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScaCommentMessageMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScaCommentMessageMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScaCommentMessageMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ScaCommentMessageMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[scacommentmessage.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ScaCommentMessageMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[scacommentmessage.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScaCommentMessageMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, scacommentmessage.FieldUpdatedAt)
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *ScaCommentMessageMutation) SetDeleted(i int8) {
+	m.deleted = &i
+	m.adddeleted = nil
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *ScaCommentMessageMutation) Deleted() (r int8, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldDeleted(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (m *ScaCommentMessageMutation) AddDeleted(i int8) {
+	if m.adddeleted != nil {
+		*m.adddeleted += i
+	} else {
+		m.adddeleted = &i
+	}
+}
+
+// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
+func (m *ScaCommentMessageMutation) AddedDeleted() (r int8, exists bool) {
+	v := m.adddeleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *ScaCommentMessageMutation) ResetDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+}
+
+// SetTopicID sets the "topic_id" field.
+func (m *ScaCommentMessageMutation) SetTopicID(s string) {
+	m.topic_id = &s
+}
+
+// TopicID returns the value of the "topic_id" field in the mutation.
+func (m *ScaCommentMessageMutation) TopicID() (r string, exists bool) {
+	v := m.topic_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTopicID returns the old "topic_id" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldTopicID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTopicID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTopicID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTopicID: %w", err)
+	}
+	return oldValue.TopicID, nil
+}
+
+// ResetTopicID resets all changes to the "topic_id" field.
+func (m *ScaCommentMessageMutation) ResetTopicID() {
+	m.topic_id = nil
+}
+
+// SetFromID sets the "from_id" field.
+func (m *ScaCommentMessageMutation) SetFromID(s string) {
+	m.from_id = &s
+}
+
+// FromID returns the value of the "from_id" field in the mutation.
+func (m *ScaCommentMessageMutation) FromID() (r string, exists bool) {
+	v := m.from_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFromID returns the old "from_id" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldFromID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFromID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFromID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFromID: %w", err)
+	}
+	return oldValue.FromID, nil
+}
+
+// ResetFromID resets all changes to the "from_id" field.
+func (m *ScaCommentMessageMutation) ResetFromID() {
+	m.from_id = nil
+}
+
+// SetToID sets the "to_id" field.
+func (m *ScaCommentMessageMutation) SetToID(s string) {
+	m.to_id = &s
+}
+
+// ToID returns the value of the "to_id" field in the mutation.
+func (m *ScaCommentMessageMutation) ToID() (r string, exists bool) {
+	v := m.to_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldToID returns the old "to_id" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldToID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldToID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldToID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldToID: %w", err)
+	}
+	return oldValue.ToID, nil
+}
+
+// ResetToID resets all changes to the "to_id" field.
+func (m *ScaCommentMessageMutation) ResetToID() {
+	m.to_id = nil
+}
+
+// SetContent sets the "content" field.
+func (m *ScaCommentMessageMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *ScaCommentMessageMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldContent(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *ScaCommentMessageMutation) ResetContent() {
+	m.content = nil
+}
+
+// SetIsRead sets the "is_read" field.
+func (m *ScaCommentMessageMutation) SetIsRead(i int) {
+	m.is_read = &i
+	m.addis_read = nil
+}
+
+// IsRead returns the value of the "is_read" field in the mutation.
+func (m *ScaCommentMessageMutation) IsRead() (r int, exists bool) {
+	v := m.is_read
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldIsRead returns the old "is_read" field's value of the ScaCommentMessage entity.
+// If the ScaCommentMessage object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentMessageMutation) OldIsRead(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldIsRead is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldIsRead requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldIsRead: %w", err)
+	}
+	return oldValue.IsRead, nil
+}
+
+// AddIsRead adds i to the "is_read" field.
+func (m *ScaCommentMessageMutation) AddIsRead(i int) {
+	if m.addis_read != nil {
+		*m.addis_read += i
+	} else {
+		m.addis_read = &i
+	}
+}
+
+// AddedIsRead returns the value that was added to the "is_read" field in this mutation.
+func (m *ScaCommentMessageMutation) AddedIsRead() (r int, exists bool) {
+	v := m.addis_read
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearIsRead clears the value of the "is_read" field.
+func (m *ScaCommentMessageMutation) ClearIsRead() {
+	m.is_read = nil
+	m.addis_read = nil
+	m.clearedFields[scacommentmessage.FieldIsRead] = struct{}{}
+}
+
+// IsReadCleared returns if the "is_read" field was cleared in this mutation.
+func (m *ScaCommentMessageMutation) IsReadCleared() bool {
+	_, ok := m.clearedFields[scacommentmessage.FieldIsRead]
+	return ok
+}
+
+// ResetIsRead resets all changes to the "is_read" field.
+func (m *ScaCommentMessageMutation) ResetIsRead() {
+	m.is_read = nil
+	m.addis_read = nil
+	delete(m.clearedFields, scacommentmessage.FieldIsRead)
+}
+
+// Where appends a list predicates to the ScaCommentMessageMutation builder.
+func (m *ScaCommentMessageMutation) Where(ps ...predicate.ScaCommentMessage) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ScaCommentMessageMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ScaCommentMessageMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ScaCommentMessage, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ScaCommentMessageMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ScaCommentMessageMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ScaCommentMessage).
+func (m *ScaCommentMessageMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ScaCommentMessageMutation) Fields() []string {
+	fields := make([]string, 0, 8)
+	if m.created_at != nil {
+		fields = append(fields, scacommentmessage.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, scacommentmessage.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, scacommentmessage.FieldDeleted)
+	}
+	if m.topic_id != nil {
+		fields = append(fields, scacommentmessage.FieldTopicID)
+	}
+	if m.from_id != nil {
+		fields = append(fields, scacommentmessage.FieldFromID)
+	}
+	if m.to_id != nil {
+		fields = append(fields, scacommentmessage.FieldToID)
+	}
+	if m.content != nil {
+		fields = append(fields, scacommentmessage.FieldContent)
+	}
+	if m.is_read != nil {
+		fields = append(fields, scacommentmessage.FieldIsRead)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ScaCommentMessageMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case scacommentmessage.FieldCreatedAt:
+		return m.CreatedAt()
+	case scacommentmessage.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case scacommentmessage.FieldDeleted:
+		return m.Deleted()
+	case scacommentmessage.FieldTopicID:
+		return m.TopicID()
+	case scacommentmessage.FieldFromID:
+		return m.FromID()
+	case scacommentmessage.FieldToID:
+		return m.ToID()
+	case scacommentmessage.FieldContent:
+		return m.Content()
+	case scacommentmessage.FieldIsRead:
+		return m.IsRead()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ScaCommentMessageMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case scacommentmessage.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case scacommentmessage.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case scacommentmessage.FieldDeleted:
+		return m.OldDeleted(ctx)
+	case scacommentmessage.FieldTopicID:
+		return m.OldTopicID(ctx)
+	case scacommentmessage.FieldFromID:
+		return m.OldFromID(ctx)
+	case scacommentmessage.FieldToID:
+		return m.OldToID(ctx)
+	case scacommentmessage.FieldContent:
+		return m.OldContent(ctx)
+	case scacommentmessage.FieldIsRead:
+		return m.OldIsRead(ctx)
+	}
+	return nil, fmt.Errorf("unknown ScaCommentMessage field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaCommentMessageMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case scacommentmessage.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case scacommentmessage.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case scacommentmessage.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
+	case scacommentmessage.FieldTopicID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTopicID(v)
+		return nil
+	case scacommentmessage.FieldFromID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFromID(v)
+		return nil
+	case scacommentmessage.FieldToID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetToID(v)
+		return nil
+	case scacommentmessage.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	case scacommentmessage.FieldIsRead:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetIsRead(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentMessage field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ScaCommentMessageMutation) AddedFields() []string {
+	var fields []string
+	if m.adddeleted != nil {
+		fields = append(fields, scacommentmessage.FieldDeleted)
+	}
+	if m.addis_read != nil {
+		fields = append(fields, scacommentmessage.FieldIsRead)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ScaCommentMessageMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case scacommentmessage.FieldDeleted:
+		return m.AddedDeleted()
+	case scacommentmessage.FieldIsRead:
+		return m.AddedIsRead()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaCommentMessageMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case scacommentmessage.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeleted(v)
+		return nil
+	case scacommentmessage.FieldIsRead:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddIsRead(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentMessage numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ScaCommentMessageMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(scacommentmessage.FieldUpdatedAt) {
+		fields = append(fields, scacommentmessage.FieldUpdatedAt)
+	}
+	if m.FieldCleared(scacommentmessage.FieldIsRead) {
+		fields = append(fields, scacommentmessage.FieldIsRead)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ScaCommentMessageMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ScaCommentMessageMutation) ClearField(name string) error {
+	switch name {
+	case scacommentmessage.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case scacommentmessage.FieldIsRead:
+		m.ClearIsRead()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentMessage nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ScaCommentMessageMutation) ResetField(name string) error {
+	switch name {
+	case scacommentmessage.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case scacommentmessage.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case scacommentmessage.FieldDeleted:
+		m.ResetDeleted()
+		return nil
+	case scacommentmessage.FieldTopicID:
+		m.ResetTopicID()
+		return nil
+	case scacommentmessage.FieldFromID:
+		m.ResetFromID()
+		return nil
+	case scacommentmessage.FieldToID:
+		m.ResetToID()
+		return nil
+	case scacommentmessage.FieldContent:
+		m.ResetContent()
+		return nil
+	case scacommentmessage.FieldIsRead:
+		m.ResetIsRead()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentMessage field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ScaCommentMessageMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ScaCommentMessageMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ScaCommentMessageMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ScaCommentMessageMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ScaCommentMessageMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ScaCommentMessageMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ScaCommentMessageMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ScaCommentMessage unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ScaCommentMessageMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ScaCommentMessage edge %s", name)
+}
+
+// ScaCommentReplyMutation represents an operation that mutates the ScaCommentReply nodes in the graph.
+type ScaCommentReplyMutation struct {
+	config
+	op               Op
+	typ              string
+	id               *int64
+	created_at       *time.Time
+	updated_at       *time.Time
+	deleted          *int8
+	adddeleted       *int8
+	user_id          *string
+	topic_id         *string
+	topic_type       *int
+	addtopic_type    *int
+	content          *string
+	comment_type     *int
+	addcomment_type  *int
+	reply_to         *int64
+	addreply_to      *int64
+	reply_id         *int64
+	addreply_id      *int64
+	reply_user       *string
+	author           *int
+	addauthor        *int
+	likes            *int64
+	addlikes         *int64
+	reply_count      *int64
+	addreply_count   *int64
+	browser          *string
+	operating_system *string
+	comment_ip       *string
+	location         *string
+	agent            *string
+	clearedFields    map[string]struct{}
+	done             bool
+	oldValue         func(context.Context) (*ScaCommentReply, error)
+	predicates       []predicate.ScaCommentReply
+}
+
+var _ ent.Mutation = (*ScaCommentReplyMutation)(nil)
+
+// scacommentreplyOption allows management of the mutation configuration using functional options.
+type scacommentreplyOption func(*ScaCommentReplyMutation)
+
+// newScaCommentReplyMutation creates new mutation for the ScaCommentReply entity.
+func newScaCommentReplyMutation(c config, op Op, opts ...scacommentreplyOption) *ScaCommentReplyMutation {
+	m := &ScaCommentReplyMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeScaCommentReply,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withScaCommentReplyID sets the ID field of the mutation.
+func withScaCommentReplyID(id int64) scacommentreplyOption {
+	return func(m *ScaCommentReplyMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ScaCommentReply
+		)
+		m.oldValue = func(ctx context.Context) (*ScaCommentReply, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ScaCommentReply.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withScaCommentReply sets the old ScaCommentReply of the mutation.
+func withScaCommentReply(node *ScaCommentReply) scacommentreplyOption {
+	return func(m *ScaCommentReplyMutation) {
+		m.oldValue = func(context.Context) (*ScaCommentReply, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ScaCommentReplyMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ScaCommentReplyMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ScaCommentReply entities.
+func (m *ScaCommentReplyMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ScaCommentReplyMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ScaCommentReplyMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ScaCommentReply.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetCreatedAt sets the "created_at" field.
+func (m *ScaCommentReplyMutation) SetCreatedAt(t time.Time) {
+	m.created_at = &t
+}
+
+// CreatedAt returns the value of the "created_at" field in the mutation.
+func (m *ScaCommentReplyMutation) CreatedAt() (r time.Time, exists bool) {
+	v := m.created_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCreatedAt returns the old "created_at" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldCreatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCreatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCreatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCreatedAt: %w", err)
+	}
+	return oldValue.CreatedAt, nil
+}
+
+// ResetCreatedAt resets all changes to the "created_at" field.
+func (m *ScaCommentReplyMutation) ResetCreatedAt() {
+	m.created_at = nil
+}
+
+// SetUpdatedAt sets the "updated_at" field.
+func (m *ScaCommentReplyMutation) SetUpdatedAt(t time.Time) {
+	m.updated_at = &t
+}
+
+// UpdatedAt returns the value of the "updated_at" field in the mutation.
+func (m *ScaCommentReplyMutation) UpdatedAt() (r time.Time, exists bool) {
+	v := m.updated_at
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUpdatedAt returns the old "updated_at" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldUpdatedAt(ctx context.Context) (v time.Time, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUpdatedAt is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUpdatedAt requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUpdatedAt: %w", err)
+	}
+	return oldValue.UpdatedAt, nil
+}
+
+// ClearUpdatedAt clears the value of the "updated_at" field.
+func (m *ScaCommentReplyMutation) ClearUpdatedAt() {
+	m.updated_at = nil
+	m.clearedFields[scacommentreply.FieldUpdatedAt] = struct{}{}
+}
+
+// UpdatedAtCleared returns if the "updated_at" field was cleared in this mutation.
+func (m *ScaCommentReplyMutation) UpdatedAtCleared() bool {
+	_, ok := m.clearedFields[scacommentreply.FieldUpdatedAt]
+	return ok
+}
+
+// ResetUpdatedAt resets all changes to the "updated_at" field.
+func (m *ScaCommentReplyMutation) ResetUpdatedAt() {
+	m.updated_at = nil
+	delete(m.clearedFields, scacommentreply.FieldUpdatedAt)
+}
+
+// SetDeleted sets the "deleted" field.
+func (m *ScaCommentReplyMutation) SetDeleted(i int8) {
+	m.deleted = &i
+	m.adddeleted = nil
+}
+
+// Deleted returns the value of the "deleted" field in the mutation.
+func (m *ScaCommentReplyMutation) Deleted() (r int8, exists bool) {
+	v := m.deleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldDeleted returns the old "deleted" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldDeleted(ctx context.Context) (v int8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldDeleted is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldDeleted requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldDeleted: %w", err)
+	}
+	return oldValue.Deleted, nil
+}
+
+// AddDeleted adds i to the "deleted" field.
+func (m *ScaCommentReplyMutation) AddDeleted(i int8) {
+	if m.adddeleted != nil {
+		*m.adddeleted += i
+	} else {
+		m.adddeleted = &i
+	}
+}
+
+// AddedDeleted returns the value that was added to the "deleted" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedDeleted() (r int8, exists bool) {
+	v := m.adddeleted
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetDeleted resets all changes to the "deleted" field.
+func (m *ScaCommentReplyMutation) ResetDeleted() {
+	m.deleted = nil
+	m.adddeleted = nil
+}
+
+// SetUserID sets the "user_id" field.
+func (m *ScaCommentReplyMutation) SetUserID(s string) {
+	m.user_id = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *ScaCommentReplyMutation) UserID() (r string, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *ScaCommentReplyMutation) ResetUserID() {
+	m.user_id = nil
+}
+
+// SetTopicID sets the "topic_id" field.
+func (m *ScaCommentReplyMutation) SetTopicID(s string) {
+	m.topic_id = &s
+}
+
+// TopicID returns the value of the "topic_id" field in the mutation.
+func (m *ScaCommentReplyMutation) TopicID() (r string, exists bool) {
+	v := m.topic_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTopicID returns the old "topic_id" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldTopicID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTopicID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTopicID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTopicID: %w", err)
+	}
+	return oldValue.TopicID, nil
+}
+
+// ResetTopicID resets all changes to the "topic_id" field.
+func (m *ScaCommentReplyMutation) ResetTopicID() {
+	m.topic_id = nil
+}
+
+// SetTopicType sets the "topic_type" field.
+func (m *ScaCommentReplyMutation) SetTopicType(i int) {
+	m.topic_type = &i
+	m.addtopic_type = nil
+}
+
+// TopicType returns the value of the "topic_type" field in the mutation.
+func (m *ScaCommentReplyMutation) TopicType() (r int, exists bool) {
+	v := m.topic_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldTopicType returns the old "topic_type" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldTopicType(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldTopicType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldTopicType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldTopicType: %w", err)
+	}
+	return oldValue.TopicType, nil
+}
+
+// AddTopicType adds i to the "topic_type" field.
+func (m *ScaCommentReplyMutation) AddTopicType(i int) {
+	if m.addtopic_type != nil {
+		*m.addtopic_type += i
+	} else {
+		m.addtopic_type = &i
+	}
+}
+
+// AddedTopicType returns the value that was added to the "topic_type" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedTopicType() (r int, exists bool) {
+	v := m.addtopic_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetTopicType resets all changes to the "topic_type" field.
+func (m *ScaCommentReplyMutation) ResetTopicType() {
+	m.topic_type = nil
+	m.addtopic_type = nil
+}
+
+// SetContent sets the "content" field.
+func (m *ScaCommentReplyMutation) SetContent(s string) {
+	m.content = &s
+}
+
+// Content returns the value of the "content" field in the mutation.
+func (m *ScaCommentReplyMutation) Content() (r string, exists bool) {
+	v := m.content
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldContent returns the old "content" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldContent(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldContent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldContent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldContent: %w", err)
+	}
+	return oldValue.Content, nil
+}
+
+// ResetContent resets all changes to the "content" field.
+func (m *ScaCommentReplyMutation) ResetContent() {
+	m.content = nil
+}
+
+// SetCommentType sets the "comment_type" field.
+func (m *ScaCommentReplyMutation) SetCommentType(i int) {
+	m.comment_type = &i
+	m.addcomment_type = nil
+}
+
+// CommentType returns the value of the "comment_type" field in the mutation.
+func (m *ScaCommentReplyMutation) CommentType() (r int, exists bool) {
+	v := m.comment_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommentType returns the old "comment_type" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldCommentType(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommentType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommentType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommentType: %w", err)
+	}
+	return oldValue.CommentType, nil
+}
+
+// AddCommentType adds i to the "comment_type" field.
+func (m *ScaCommentReplyMutation) AddCommentType(i int) {
+	if m.addcomment_type != nil {
+		*m.addcomment_type += i
+	} else {
+		m.addcomment_type = &i
+	}
+}
+
+// AddedCommentType returns the value that was added to the "comment_type" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedCommentType() (r int, exists bool) {
+	v := m.addcomment_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetCommentType resets all changes to the "comment_type" field.
+func (m *ScaCommentReplyMutation) ResetCommentType() {
+	m.comment_type = nil
+	m.addcomment_type = nil
+}
+
+// SetReplyTo sets the "reply_to" field.
+func (m *ScaCommentReplyMutation) SetReplyTo(i int64) {
+	m.reply_to = &i
+	m.addreply_to = nil
+}
+
+// ReplyTo returns the value of the "reply_to" field in the mutation.
+func (m *ScaCommentReplyMutation) ReplyTo() (r int64, exists bool) {
+	v := m.reply_to
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReplyTo returns the old "reply_to" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldReplyTo(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReplyTo is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReplyTo requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReplyTo: %w", err)
+	}
+	return oldValue.ReplyTo, nil
+}
+
+// AddReplyTo adds i to the "reply_to" field.
+func (m *ScaCommentReplyMutation) AddReplyTo(i int64) {
+	if m.addreply_to != nil {
+		*m.addreply_to += i
+	} else {
+		m.addreply_to = &i
+	}
+}
+
+// AddedReplyTo returns the value that was added to the "reply_to" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedReplyTo() (r int64, exists bool) {
+	v := m.addreply_to
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReplyTo clears the value of the "reply_to" field.
+func (m *ScaCommentReplyMutation) ClearReplyTo() {
+	m.reply_to = nil
+	m.addreply_to = nil
+	m.clearedFields[scacommentreply.FieldReplyTo] = struct{}{}
+}
+
+// ReplyToCleared returns if the "reply_to" field was cleared in this mutation.
+func (m *ScaCommentReplyMutation) ReplyToCleared() bool {
+	_, ok := m.clearedFields[scacommentreply.FieldReplyTo]
+	return ok
+}
+
+// ResetReplyTo resets all changes to the "reply_to" field.
+func (m *ScaCommentReplyMutation) ResetReplyTo() {
+	m.reply_to = nil
+	m.addreply_to = nil
+	delete(m.clearedFields, scacommentreply.FieldReplyTo)
+}
+
+// SetReplyID sets the "reply_id" field.
+func (m *ScaCommentReplyMutation) SetReplyID(i int64) {
+	m.reply_id = &i
+	m.addreply_id = nil
+}
+
+// ReplyID returns the value of the "reply_id" field in the mutation.
+func (m *ScaCommentReplyMutation) ReplyID() (r int64, exists bool) {
+	v := m.reply_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReplyID returns the old "reply_id" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldReplyID(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReplyID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReplyID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReplyID: %w", err)
+	}
+	return oldValue.ReplyID, nil
+}
+
+// AddReplyID adds i to the "reply_id" field.
+func (m *ScaCommentReplyMutation) AddReplyID(i int64) {
+	if m.addreply_id != nil {
+		*m.addreply_id += i
+	} else {
+		m.addreply_id = &i
+	}
+}
+
+// AddedReplyID returns the value that was added to the "reply_id" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedReplyID() (r int64, exists bool) {
+	v := m.addreply_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReplyID clears the value of the "reply_id" field.
+func (m *ScaCommentReplyMutation) ClearReplyID() {
+	m.reply_id = nil
+	m.addreply_id = nil
+	m.clearedFields[scacommentreply.FieldReplyID] = struct{}{}
+}
+
+// ReplyIDCleared returns if the "reply_id" field was cleared in this mutation.
+func (m *ScaCommentReplyMutation) ReplyIDCleared() bool {
+	_, ok := m.clearedFields[scacommentreply.FieldReplyID]
+	return ok
+}
+
+// ResetReplyID resets all changes to the "reply_id" field.
+func (m *ScaCommentReplyMutation) ResetReplyID() {
+	m.reply_id = nil
+	m.addreply_id = nil
+	delete(m.clearedFields, scacommentreply.FieldReplyID)
+}
+
+// SetReplyUser sets the "reply_user" field.
+func (m *ScaCommentReplyMutation) SetReplyUser(s string) {
+	m.reply_user = &s
+}
+
+// ReplyUser returns the value of the "reply_user" field in the mutation.
+func (m *ScaCommentReplyMutation) ReplyUser() (r string, exists bool) {
+	v := m.reply_user
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReplyUser returns the old "reply_user" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldReplyUser(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReplyUser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReplyUser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReplyUser: %w", err)
+	}
+	return oldValue.ReplyUser, nil
+}
+
+// ClearReplyUser clears the value of the "reply_user" field.
+func (m *ScaCommentReplyMutation) ClearReplyUser() {
+	m.reply_user = nil
+	m.clearedFields[scacommentreply.FieldReplyUser] = struct{}{}
+}
+
+// ReplyUserCleared returns if the "reply_user" field was cleared in this mutation.
+func (m *ScaCommentReplyMutation) ReplyUserCleared() bool {
+	_, ok := m.clearedFields[scacommentreply.FieldReplyUser]
+	return ok
+}
+
+// ResetReplyUser resets all changes to the "reply_user" field.
+func (m *ScaCommentReplyMutation) ResetReplyUser() {
+	m.reply_user = nil
+	delete(m.clearedFields, scacommentreply.FieldReplyUser)
+}
+
+// SetAuthor sets the "author" field.
+func (m *ScaCommentReplyMutation) SetAuthor(i int) {
+	m.author = &i
+	m.addauthor = nil
+}
+
+// Author returns the value of the "author" field in the mutation.
+func (m *ScaCommentReplyMutation) Author() (r int, exists bool) {
+	v := m.author
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAuthor returns the old "author" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldAuthor(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAuthor is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAuthor requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAuthor: %w", err)
+	}
+	return oldValue.Author, nil
+}
+
+// AddAuthor adds i to the "author" field.
+func (m *ScaCommentReplyMutation) AddAuthor(i int) {
+	if m.addauthor != nil {
+		*m.addauthor += i
+	} else {
+		m.addauthor = &i
+	}
+}
+
+// AddedAuthor returns the value that was added to the "author" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedAuthor() (r int, exists bool) {
+	v := m.addauthor
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetAuthor resets all changes to the "author" field.
+func (m *ScaCommentReplyMutation) ResetAuthor() {
+	m.author = nil
+	m.addauthor = nil
+}
+
+// SetLikes sets the "likes" field.
+func (m *ScaCommentReplyMutation) SetLikes(i int64) {
+	m.likes = &i
+	m.addlikes = nil
+}
+
+// Likes returns the value of the "likes" field in the mutation.
+func (m *ScaCommentReplyMutation) Likes() (r int64, exists bool) {
+	v := m.likes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLikes returns the old "likes" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldLikes(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLikes is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLikes requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLikes: %w", err)
+	}
+	return oldValue.Likes, nil
+}
+
+// AddLikes adds i to the "likes" field.
+func (m *ScaCommentReplyMutation) AddLikes(i int64) {
+	if m.addlikes != nil {
+		*m.addlikes += i
+	} else {
+		m.addlikes = &i
+	}
+}
+
+// AddedLikes returns the value that was added to the "likes" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedLikes() (r int64, exists bool) {
+	v := m.addlikes
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearLikes clears the value of the "likes" field.
+func (m *ScaCommentReplyMutation) ClearLikes() {
+	m.likes = nil
+	m.addlikes = nil
+	m.clearedFields[scacommentreply.FieldLikes] = struct{}{}
+}
+
+// LikesCleared returns if the "likes" field was cleared in this mutation.
+func (m *ScaCommentReplyMutation) LikesCleared() bool {
+	_, ok := m.clearedFields[scacommentreply.FieldLikes]
+	return ok
+}
+
+// ResetLikes resets all changes to the "likes" field.
+func (m *ScaCommentReplyMutation) ResetLikes() {
+	m.likes = nil
+	m.addlikes = nil
+	delete(m.clearedFields, scacommentreply.FieldLikes)
+}
+
+// SetReplyCount sets the "reply_count" field.
+func (m *ScaCommentReplyMutation) SetReplyCount(i int64) {
+	m.reply_count = &i
+	m.addreply_count = nil
+}
+
+// ReplyCount returns the value of the "reply_count" field in the mutation.
+func (m *ScaCommentReplyMutation) ReplyCount() (r int64, exists bool) {
+	v := m.reply_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldReplyCount returns the old "reply_count" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldReplyCount(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldReplyCount is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldReplyCount requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldReplyCount: %w", err)
+	}
+	return oldValue.ReplyCount, nil
+}
+
+// AddReplyCount adds i to the "reply_count" field.
+func (m *ScaCommentReplyMutation) AddReplyCount(i int64) {
+	if m.addreply_count != nil {
+		*m.addreply_count += i
+	} else {
+		m.addreply_count = &i
+	}
+}
+
+// AddedReplyCount returns the value that was added to the "reply_count" field in this mutation.
+func (m *ScaCommentReplyMutation) AddedReplyCount() (r int64, exists bool) {
+	v := m.addreply_count
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ClearReplyCount clears the value of the "reply_count" field.
+func (m *ScaCommentReplyMutation) ClearReplyCount() {
+	m.reply_count = nil
+	m.addreply_count = nil
+	m.clearedFields[scacommentreply.FieldReplyCount] = struct{}{}
+}
+
+// ReplyCountCleared returns if the "reply_count" field was cleared in this mutation.
+func (m *ScaCommentReplyMutation) ReplyCountCleared() bool {
+	_, ok := m.clearedFields[scacommentreply.FieldReplyCount]
+	return ok
+}
+
+// ResetReplyCount resets all changes to the "reply_count" field.
+func (m *ScaCommentReplyMutation) ResetReplyCount() {
+	m.reply_count = nil
+	m.addreply_count = nil
+	delete(m.clearedFields, scacommentreply.FieldReplyCount)
+}
+
+// SetBrowser sets the "browser" field.
+func (m *ScaCommentReplyMutation) SetBrowser(s string) {
+	m.browser = &s
+}
+
+// Browser returns the value of the "browser" field in the mutation.
+func (m *ScaCommentReplyMutation) Browser() (r string, exists bool) {
+	v := m.browser
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldBrowser returns the old "browser" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldBrowser(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldBrowser is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldBrowser requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldBrowser: %w", err)
+	}
+	return oldValue.Browser, nil
+}
+
+// ResetBrowser resets all changes to the "browser" field.
+func (m *ScaCommentReplyMutation) ResetBrowser() {
+	m.browser = nil
+}
+
+// SetOperatingSystem sets the "operating_system" field.
+func (m *ScaCommentReplyMutation) SetOperatingSystem(s string) {
+	m.operating_system = &s
+}
+
+// OperatingSystem returns the value of the "operating_system" field in the mutation.
+func (m *ScaCommentReplyMutation) OperatingSystem() (r string, exists bool) {
+	v := m.operating_system
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldOperatingSystem returns the old "operating_system" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldOperatingSystem(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldOperatingSystem is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldOperatingSystem requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldOperatingSystem: %w", err)
+	}
+	return oldValue.OperatingSystem, nil
+}
+
+// ResetOperatingSystem resets all changes to the "operating_system" field.
+func (m *ScaCommentReplyMutation) ResetOperatingSystem() {
+	m.operating_system = nil
+}
+
+// SetCommentIP sets the "comment_ip" field.
+func (m *ScaCommentReplyMutation) SetCommentIP(s string) {
+	m.comment_ip = &s
+}
+
+// CommentIP returns the value of the "comment_ip" field in the mutation.
+func (m *ScaCommentReplyMutation) CommentIP() (r string, exists bool) {
+	v := m.comment_ip
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldCommentIP returns the old "comment_ip" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldCommentIP(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldCommentIP is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldCommentIP requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldCommentIP: %w", err)
+	}
+	return oldValue.CommentIP, nil
+}
+
+// ResetCommentIP resets all changes to the "comment_ip" field.
+func (m *ScaCommentReplyMutation) ResetCommentIP() {
+	m.comment_ip = nil
+}
+
+// SetLocation sets the "location" field.
+func (m *ScaCommentReplyMutation) SetLocation(s string) {
+	m.location = &s
+}
+
+// Location returns the value of the "location" field in the mutation.
+func (m *ScaCommentReplyMutation) Location() (r string, exists bool) {
+	v := m.location
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLocation returns the old "location" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldLocation(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLocation is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLocation requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLocation: %w", err)
+	}
+	return oldValue.Location, nil
+}
+
+// ResetLocation resets all changes to the "location" field.
+func (m *ScaCommentReplyMutation) ResetLocation() {
+	m.location = nil
+}
+
+// SetAgent sets the "agent" field.
+func (m *ScaCommentReplyMutation) SetAgent(s string) {
+	m.agent = &s
+}
+
+// Agent returns the value of the "agent" field in the mutation.
+func (m *ScaCommentReplyMutation) Agent() (r string, exists bool) {
+	v := m.agent
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldAgent returns the old "agent" field's value of the ScaCommentReply entity.
+// If the ScaCommentReply object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaCommentReplyMutation) OldAgent(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldAgent is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldAgent requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldAgent: %w", err)
+	}
+	return oldValue.Agent, nil
+}
+
+// ResetAgent resets all changes to the "agent" field.
+func (m *ScaCommentReplyMutation) ResetAgent() {
+	m.agent = nil
+}
+
+// Where appends a list predicates to the ScaCommentReplyMutation builder.
+func (m *ScaCommentReplyMutation) Where(ps ...predicate.ScaCommentReply) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ScaCommentReplyMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ScaCommentReplyMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ScaCommentReply, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ScaCommentReplyMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ScaCommentReplyMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ScaCommentReply).
+func (m *ScaCommentReplyMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ScaCommentReplyMutation) Fields() []string {
+	fields := make([]string, 0, 19)
+	if m.created_at != nil {
+		fields = append(fields, scacommentreply.FieldCreatedAt)
+	}
+	if m.updated_at != nil {
+		fields = append(fields, scacommentreply.FieldUpdatedAt)
+	}
+	if m.deleted != nil {
+		fields = append(fields, scacommentreply.FieldDeleted)
+	}
+	if m.user_id != nil {
+		fields = append(fields, scacommentreply.FieldUserID)
+	}
+	if m.topic_id != nil {
+		fields = append(fields, scacommentreply.FieldTopicID)
+	}
+	if m.topic_type != nil {
+		fields = append(fields, scacommentreply.FieldTopicType)
+	}
+	if m.content != nil {
+		fields = append(fields, scacommentreply.FieldContent)
+	}
+	if m.comment_type != nil {
+		fields = append(fields, scacommentreply.FieldCommentType)
+	}
+	if m.reply_to != nil {
+		fields = append(fields, scacommentreply.FieldReplyTo)
+	}
+	if m.reply_id != nil {
+		fields = append(fields, scacommentreply.FieldReplyID)
+	}
+	if m.reply_user != nil {
+		fields = append(fields, scacommentreply.FieldReplyUser)
+	}
+	if m.author != nil {
+		fields = append(fields, scacommentreply.FieldAuthor)
+	}
+	if m.likes != nil {
+		fields = append(fields, scacommentreply.FieldLikes)
+	}
+	if m.reply_count != nil {
+		fields = append(fields, scacommentreply.FieldReplyCount)
+	}
+	if m.browser != nil {
+		fields = append(fields, scacommentreply.FieldBrowser)
+	}
+	if m.operating_system != nil {
+		fields = append(fields, scacommentreply.FieldOperatingSystem)
+	}
+	if m.comment_ip != nil {
+		fields = append(fields, scacommentreply.FieldCommentIP)
+	}
+	if m.location != nil {
+		fields = append(fields, scacommentreply.FieldLocation)
+	}
+	if m.agent != nil {
+		fields = append(fields, scacommentreply.FieldAgent)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ScaCommentReplyMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case scacommentreply.FieldCreatedAt:
+		return m.CreatedAt()
+	case scacommentreply.FieldUpdatedAt:
+		return m.UpdatedAt()
+	case scacommentreply.FieldDeleted:
+		return m.Deleted()
+	case scacommentreply.FieldUserID:
+		return m.UserID()
+	case scacommentreply.FieldTopicID:
+		return m.TopicID()
+	case scacommentreply.FieldTopicType:
+		return m.TopicType()
+	case scacommentreply.FieldContent:
+		return m.Content()
+	case scacommentreply.FieldCommentType:
+		return m.CommentType()
+	case scacommentreply.FieldReplyTo:
+		return m.ReplyTo()
+	case scacommentreply.FieldReplyID:
+		return m.ReplyID()
+	case scacommentreply.FieldReplyUser:
+		return m.ReplyUser()
+	case scacommentreply.FieldAuthor:
+		return m.Author()
+	case scacommentreply.FieldLikes:
+		return m.Likes()
+	case scacommentreply.FieldReplyCount:
+		return m.ReplyCount()
+	case scacommentreply.FieldBrowser:
+		return m.Browser()
+	case scacommentreply.FieldOperatingSystem:
+		return m.OperatingSystem()
+	case scacommentreply.FieldCommentIP:
+		return m.CommentIP()
+	case scacommentreply.FieldLocation:
+		return m.Location()
+	case scacommentreply.FieldAgent:
+		return m.Agent()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ScaCommentReplyMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case scacommentreply.FieldCreatedAt:
+		return m.OldCreatedAt(ctx)
+	case scacommentreply.FieldUpdatedAt:
+		return m.OldUpdatedAt(ctx)
+	case scacommentreply.FieldDeleted:
+		return m.OldDeleted(ctx)
+	case scacommentreply.FieldUserID:
+		return m.OldUserID(ctx)
+	case scacommentreply.FieldTopicID:
+		return m.OldTopicID(ctx)
+	case scacommentreply.FieldTopicType:
+		return m.OldTopicType(ctx)
+	case scacommentreply.FieldContent:
+		return m.OldContent(ctx)
+	case scacommentreply.FieldCommentType:
+		return m.OldCommentType(ctx)
+	case scacommentreply.FieldReplyTo:
+		return m.OldReplyTo(ctx)
+	case scacommentreply.FieldReplyID:
+		return m.OldReplyID(ctx)
+	case scacommentreply.FieldReplyUser:
+		return m.OldReplyUser(ctx)
+	case scacommentreply.FieldAuthor:
+		return m.OldAuthor(ctx)
+	case scacommentreply.FieldLikes:
+		return m.OldLikes(ctx)
+	case scacommentreply.FieldReplyCount:
+		return m.OldReplyCount(ctx)
+	case scacommentreply.FieldBrowser:
+		return m.OldBrowser(ctx)
+	case scacommentreply.FieldOperatingSystem:
+		return m.OldOperatingSystem(ctx)
+	case scacommentreply.FieldCommentIP:
+		return m.OldCommentIP(ctx)
+	case scacommentreply.FieldLocation:
+		return m.OldLocation(ctx)
+	case scacommentreply.FieldAgent:
+		return m.OldAgent(ctx)
+	}
+	return nil, fmt.Errorf("unknown ScaCommentReply field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaCommentReplyMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case scacommentreply.FieldCreatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCreatedAt(v)
+		return nil
+	case scacommentreply.FieldUpdatedAt:
+		v, ok := value.(time.Time)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUpdatedAt(v)
+		return nil
+	case scacommentreply.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetDeleted(v)
+		return nil
+	case scacommentreply.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case scacommentreply.FieldTopicID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTopicID(v)
+		return nil
+	case scacommentreply.FieldTopicType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetTopicType(v)
+		return nil
+	case scacommentreply.FieldContent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetContent(v)
+		return nil
+	case scacommentreply.FieldCommentType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommentType(v)
+		return nil
+	case scacommentreply.FieldReplyTo:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReplyTo(v)
+		return nil
+	case scacommentreply.FieldReplyID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReplyID(v)
+		return nil
+	case scacommentreply.FieldReplyUser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReplyUser(v)
+		return nil
+	case scacommentreply.FieldAuthor:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAuthor(v)
+		return nil
+	case scacommentreply.FieldLikes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLikes(v)
+		return nil
+	case scacommentreply.FieldReplyCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetReplyCount(v)
+		return nil
+	case scacommentreply.FieldBrowser:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetBrowser(v)
+		return nil
+	case scacommentreply.FieldOperatingSystem:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetOperatingSystem(v)
+		return nil
+	case scacommentreply.FieldCommentIP:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetCommentIP(v)
+		return nil
+	case scacommentreply.FieldLocation:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLocation(v)
+		return nil
+	case scacommentreply.FieldAgent:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetAgent(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentReply field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ScaCommentReplyMutation) AddedFields() []string {
+	var fields []string
+	if m.adddeleted != nil {
+		fields = append(fields, scacommentreply.FieldDeleted)
+	}
+	if m.addtopic_type != nil {
+		fields = append(fields, scacommentreply.FieldTopicType)
+	}
+	if m.addcomment_type != nil {
+		fields = append(fields, scacommentreply.FieldCommentType)
+	}
+	if m.addreply_to != nil {
+		fields = append(fields, scacommentreply.FieldReplyTo)
+	}
+	if m.addreply_id != nil {
+		fields = append(fields, scacommentreply.FieldReplyID)
+	}
+	if m.addauthor != nil {
+		fields = append(fields, scacommentreply.FieldAuthor)
+	}
+	if m.addlikes != nil {
+		fields = append(fields, scacommentreply.FieldLikes)
+	}
+	if m.addreply_count != nil {
+		fields = append(fields, scacommentreply.FieldReplyCount)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ScaCommentReplyMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case scacommentreply.FieldDeleted:
+		return m.AddedDeleted()
+	case scacommentreply.FieldTopicType:
+		return m.AddedTopicType()
+	case scacommentreply.FieldCommentType:
+		return m.AddedCommentType()
+	case scacommentreply.FieldReplyTo:
+		return m.AddedReplyTo()
+	case scacommentreply.FieldReplyID:
+		return m.AddedReplyID()
+	case scacommentreply.FieldAuthor:
+		return m.AddedAuthor()
+	case scacommentreply.FieldLikes:
+		return m.AddedLikes()
+	case scacommentreply.FieldReplyCount:
+		return m.AddedReplyCount()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaCommentReplyMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case scacommentreply.FieldDeleted:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddDeleted(v)
+		return nil
+	case scacommentreply.FieldTopicType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddTopicType(v)
+		return nil
+	case scacommentreply.FieldCommentType:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddCommentType(v)
+		return nil
+	case scacommentreply.FieldReplyTo:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReplyTo(v)
+		return nil
+	case scacommentreply.FieldReplyID:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReplyID(v)
+		return nil
+	case scacommentreply.FieldAuthor:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddAuthor(v)
+		return nil
+	case scacommentreply.FieldLikes:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLikes(v)
+		return nil
+	case scacommentreply.FieldReplyCount:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddReplyCount(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentReply numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ScaCommentReplyMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(scacommentreply.FieldUpdatedAt) {
+		fields = append(fields, scacommentreply.FieldUpdatedAt)
+	}
+	if m.FieldCleared(scacommentreply.FieldReplyTo) {
+		fields = append(fields, scacommentreply.FieldReplyTo)
+	}
+	if m.FieldCleared(scacommentreply.FieldReplyID) {
+		fields = append(fields, scacommentreply.FieldReplyID)
+	}
+	if m.FieldCleared(scacommentreply.FieldReplyUser) {
+		fields = append(fields, scacommentreply.FieldReplyUser)
+	}
+	if m.FieldCleared(scacommentreply.FieldLikes) {
+		fields = append(fields, scacommentreply.FieldLikes)
+	}
+	if m.FieldCleared(scacommentreply.FieldReplyCount) {
+		fields = append(fields, scacommentreply.FieldReplyCount)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ScaCommentReplyMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ScaCommentReplyMutation) ClearField(name string) error {
+	switch name {
+	case scacommentreply.FieldUpdatedAt:
+		m.ClearUpdatedAt()
+		return nil
+	case scacommentreply.FieldReplyTo:
+		m.ClearReplyTo()
+		return nil
+	case scacommentreply.FieldReplyID:
+		m.ClearReplyID()
+		return nil
+	case scacommentreply.FieldReplyUser:
+		m.ClearReplyUser()
+		return nil
+	case scacommentreply.FieldLikes:
+		m.ClearLikes()
+		return nil
+	case scacommentreply.FieldReplyCount:
+		m.ClearReplyCount()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentReply nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ScaCommentReplyMutation) ResetField(name string) error {
+	switch name {
+	case scacommentreply.FieldCreatedAt:
+		m.ResetCreatedAt()
+		return nil
+	case scacommentreply.FieldUpdatedAt:
+		m.ResetUpdatedAt()
+		return nil
+	case scacommentreply.FieldDeleted:
+		m.ResetDeleted()
+		return nil
+	case scacommentreply.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case scacommentreply.FieldTopicID:
+		m.ResetTopicID()
+		return nil
+	case scacommentreply.FieldTopicType:
+		m.ResetTopicType()
+		return nil
+	case scacommentreply.FieldContent:
+		m.ResetContent()
+		return nil
+	case scacommentreply.FieldCommentType:
+		m.ResetCommentType()
+		return nil
+	case scacommentreply.FieldReplyTo:
+		m.ResetReplyTo()
+		return nil
+	case scacommentreply.FieldReplyID:
+		m.ResetReplyID()
+		return nil
+	case scacommentreply.FieldReplyUser:
+		m.ResetReplyUser()
+		return nil
+	case scacommentreply.FieldAuthor:
+		m.ResetAuthor()
+		return nil
+	case scacommentreply.FieldLikes:
+		m.ResetLikes()
+		return nil
+	case scacommentreply.FieldReplyCount:
+		m.ResetReplyCount()
+		return nil
+	case scacommentreply.FieldBrowser:
+		m.ResetBrowser()
+		return nil
+	case scacommentreply.FieldOperatingSystem:
+		m.ResetOperatingSystem()
+		return nil
+	case scacommentreply.FieldCommentIP:
+		m.ResetCommentIP()
+		return nil
+	case scacommentreply.FieldLocation:
+		m.ResetLocation()
+		return nil
+	case scacommentreply.FieldAgent:
+		m.ResetAgent()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaCommentReply field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ScaCommentReplyMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ScaCommentReplyMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ScaCommentReplyMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ScaCommentReplyMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ScaCommentReplyMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ScaCommentReplyMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ScaCommentReplyMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ScaCommentReply unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ScaCommentReplyMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ScaCommentReply edge %s", name)
+}
+
+// ScaUserFollowsMutation represents an operation that mutates the ScaUserFollows nodes in the graph.
+type ScaUserFollowsMutation struct {
+	config
+	op            Op
+	typ           string
+	id            *int
+	follower_id   *string
+	followee_id   *string
+	status        *uint8
+	addstatus     *int8
+	clearedFields map[string]struct{}
+	done          bool
+	oldValue      func(context.Context) (*ScaUserFollows, error)
+	predicates    []predicate.ScaUserFollows
+}
+
+var _ ent.Mutation = (*ScaUserFollowsMutation)(nil)
+
+// scauserfollowsOption allows management of the mutation configuration using functional options.
+type scauserfollowsOption func(*ScaUserFollowsMutation)
+
+// newScaUserFollowsMutation creates new mutation for the ScaUserFollows entity.
+func newScaUserFollowsMutation(c config, op Op, opts ...scauserfollowsOption) *ScaUserFollowsMutation {
+	m := &ScaUserFollowsMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeScaUserFollows,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withScaUserFollowsID sets the ID field of the mutation.
+func withScaUserFollowsID(id int) scauserfollowsOption {
+	return func(m *ScaUserFollowsMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ScaUserFollows
+		)
+		m.oldValue = func(ctx context.Context) (*ScaUserFollows, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ScaUserFollows.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withScaUserFollows sets the old ScaUserFollows of the mutation.
+func withScaUserFollows(node *ScaUserFollows) scauserfollowsOption {
+	return func(m *ScaUserFollowsMutation) {
+		m.oldValue = func(context.Context) (*ScaUserFollows, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ScaUserFollowsMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ScaUserFollowsMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ScaUserFollowsMutation) ID() (id int, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ScaUserFollowsMutation) IDs(ctx context.Context) ([]int, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ScaUserFollows.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetFollowerID sets the "follower_id" field.
+func (m *ScaUserFollowsMutation) SetFollowerID(s string) {
+	m.follower_id = &s
+}
+
+// FollowerID returns the value of the "follower_id" field in the mutation.
+func (m *ScaUserFollowsMutation) FollowerID() (r string, exists bool) {
+	v := m.follower_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFollowerID returns the old "follower_id" field's value of the ScaUserFollows entity.
+// If the ScaUserFollows object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserFollowsMutation) OldFollowerID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFollowerID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFollowerID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFollowerID: %w", err)
+	}
+	return oldValue.FollowerID, nil
+}
+
+// ResetFollowerID resets all changes to the "follower_id" field.
+func (m *ScaUserFollowsMutation) ResetFollowerID() {
+	m.follower_id = nil
+}
+
+// SetFolloweeID sets the "followee_id" field.
+func (m *ScaUserFollowsMutation) SetFolloweeID(s string) {
+	m.followee_id = &s
+}
+
+// FolloweeID returns the value of the "followee_id" field in the mutation.
+func (m *ScaUserFollowsMutation) FolloweeID() (r string, exists bool) {
+	v := m.followee_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFolloweeID returns the old "followee_id" field's value of the ScaUserFollows entity.
+// If the ScaUserFollows object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserFollowsMutation) OldFolloweeID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFolloweeID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFolloweeID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFolloweeID: %w", err)
+	}
+	return oldValue.FolloweeID, nil
+}
+
+// ResetFolloweeID resets all changes to the "followee_id" field.
+func (m *ScaUserFollowsMutation) ResetFolloweeID() {
+	m.followee_id = nil
+}
+
+// SetStatus sets the "status" field.
+func (m *ScaUserFollowsMutation) SetStatus(u uint8) {
+	m.status = &u
+	m.addstatus = nil
+}
+
+// Status returns the value of the "status" field in the mutation.
+func (m *ScaUserFollowsMutation) Status() (r uint8, exists bool) {
+	v := m.status
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldStatus returns the old "status" field's value of the ScaUserFollows entity.
+// If the ScaUserFollows object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserFollowsMutation) OldStatus(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldStatus is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldStatus requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldStatus: %w", err)
+	}
+	return oldValue.Status, nil
+}
+
+// AddStatus adds u to the "status" field.
+func (m *ScaUserFollowsMutation) AddStatus(u int8) {
+	if m.addstatus != nil {
+		*m.addstatus += u
+	} else {
+		m.addstatus = &u
+	}
+}
+
+// AddedStatus returns the value that was added to the "status" field in this mutation.
+func (m *ScaUserFollowsMutation) AddedStatus() (r int8, exists bool) {
+	v := m.addstatus
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetStatus resets all changes to the "status" field.
+func (m *ScaUserFollowsMutation) ResetStatus() {
+	m.status = nil
+	m.addstatus = nil
+}
+
+// Where appends a list predicates to the ScaUserFollowsMutation builder.
+func (m *ScaUserFollowsMutation) Where(ps ...predicate.ScaUserFollows) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ScaUserFollowsMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ScaUserFollowsMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ScaUserFollows, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ScaUserFollowsMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ScaUserFollowsMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ScaUserFollows).
+func (m *ScaUserFollowsMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ScaUserFollowsMutation) Fields() []string {
+	fields := make([]string, 0, 3)
+	if m.follower_id != nil {
+		fields = append(fields, scauserfollows.FieldFollowerID)
+	}
+	if m.followee_id != nil {
+		fields = append(fields, scauserfollows.FieldFolloweeID)
+	}
+	if m.status != nil {
+		fields = append(fields, scauserfollows.FieldStatus)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ScaUserFollowsMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case scauserfollows.FieldFollowerID:
+		return m.FollowerID()
+	case scauserfollows.FieldFolloweeID:
+		return m.FolloweeID()
+	case scauserfollows.FieldStatus:
+		return m.Status()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ScaUserFollowsMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case scauserfollows.FieldFollowerID:
+		return m.OldFollowerID(ctx)
+	case scauserfollows.FieldFolloweeID:
+		return m.OldFolloweeID(ctx)
+	case scauserfollows.FieldStatus:
+		return m.OldStatus(ctx)
+	}
+	return nil, fmt.Errorf("unknown ScaUserFollows field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaUserFollowsMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case scauserfollows.FieldFollowerID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFollowerID(v)
+		return nil
+	case scauserfollows.FieldFolloweeID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFolloweeID(v)
+		return nil
+	case scauserfollows.FieldStatus:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserFollows field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ScaUserFollowsMutation) AddedFields() []string {
+	var fields []string
+	if m.addstatus != nil {
+		fields = append(fields, scauserfollows.FieldStatus)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ScaUserFollowsMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case scauserfollows.FieldStatus:
+		return m.AddedStatus()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaUserFollowsMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case scauserfollows.FieldStatus:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddStatus(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserFollows numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ScaUserFollowsMutation) ClearedFields() []string {
+	return nil
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ScaUserFollowsMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ScaUserFollowsMutation) ClearField(name string) error {
+	return fmt.Errorf("unknown ScaUserFollows nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ScaUserFollowsMutation) ResetField(name string) error {
+	switch name {
+	case scauserfollows.FieldFollowerID:
+		m.ResetFollowerID()
+		return nil
+	case scauserfollows.FieldFolloweeID:
+		m.ResetFolloweeID()
+		return nil
+	case scauserfollows.FieldStatus:
+		m.ResetStatus()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserFollows field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ScaUserFollowsMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ScaUserFollowsMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ScaUserFollowsMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ScaUserFollowsMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ScaUserFollowsMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ScaUserFollowsMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ScaUserFollowsMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ScaUserFollows unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ScaUserFollowsMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ScaUserFollows edge %s", name)
+}
+
+// ScaUserLevelMutation represents an operation that mutates the ScaUserLevel nodes in the graph.
+type ScaUserLevelMutation struct {
+	config
+	op                Op
+	typ               string
+	id                *int64
+	user_id           *string
+	level_type        *uint8
+	addlevel_type     *int8
+	level             *int
+	addlevel          *int
+	level_name        *string
+	exp_start         *int64
+	addexp_start      *int64
+	exp_end           *int64
+	addexp_end        *int64
+	level_description *string
+	clearedFields     map[string]struct{}
+	done              bool
+	oldValue          func(context.Context) (*ScaUserLevel, error)
+	predicates        []predicate.ScaUserLevel
+}
+
+var _ ent.Mutation = (*ScaUserLevelMutation)(nil)
+
+// scauserlevelOption allows management of the mutation configuration using functional options.
+type scauserlevelOption func(*ScaUserLevelMutation)
+
+// newScaUserLevelMutation creates new mutation for the ScaUserLevel entity.
+func newScaUserLevelMutation(c config, op Op, opts ...scauserlevelOption) *ScaUserLevelMutation {
+	m := &ScaUserLevelMutation{
+		config:        c,
+		op:            op,
+		typ:           TypeScaUserLevel,
+		clearedFields: make(map[string]struct{}),
+	}
+	for _, opt := range opts {
+		opt(m)
+	}
+	return m
+}
+
+// withScaUserLevelID sets the ID field of the mutation.
+func withScaUserLevelID(id int64) scauserlevelOption {
+	return func(m *ScaUserLevelMutation) {
+		var (
+			err   error
+			once  sync.Once
+			value *ScaUserLevel
+		)
+		m.oldValue = func(ctx context.Context) (*ScaUserLevel, error) {
+			once.Do(func() {
+				if m.done {
+					err = errors.New("querying old values post mutation is not allowed")
+				} else {
+					value, err = m.Client().ScaUserLevel.Get(ctx, id)
+				}
+			})
+			return value, err
+		}
+		m.id = &id
+	}
+}
+
+// withScaUserLevel sets the old ScaUserLevel of the mutation.
+func withScaUserLevel(node *ScaUserLevel) scauserlevelOption {
+	return func(m *ScaUserLevelMutation) {
+		m.oldValue = func(context.Context) (*ScaUserLevel, error) {
+			return node, nil
+		}
+		m.id = &node.ID
+	}
+}
+
+// Client returns a new `ent.Client` from the mutation. If the mutation was
+// executed in a transaction (ent.Tx), a transactional client is returned.
+func (m ScaUserLevelMutation) Client() *Client {
+	client := &Client{config: m.config}
+	client.init()
+	return client
+}
+
+// Tx returns an `ent.Tx` for mutations that were executed in transactions;
+// it returns an error otherwise.
+func (m ScaUserLevelMutation) Tx() (*Tx, error) {
+	if _, ok := m.driver.(*txDriver); !ok {
+		return nil, errors.New("ent: mutation is not running in a transaction")
+	}
+	tx := &Tx{config: m.config}
+	tx.init()
+	return tx, nil
+}
+
+// SetID sets the value of the id field. Note that this
+// operation is only accepted on creation of ScaUserLevel entities.
+func (m *ScaUserLevelMutation) SetID(id int64) {
+	m.id = &id
+}
+
+// ID returns the ID value in the mutation. Note that the ID is only available
+// if it was provided to the builder or after it was returned from the database.
+func (m *ScaUserLevelMutation) ID() (id int64, exists bool) {
+	if m.id == nil {
+		return
+	}
+	return *m.id, true
+}
+
+// IDs queries the database and returns the entity ids that match the mutation's predicate.
+// That means, if the mutation is applied within a transaction with an isolation level such
+// as sql.LevelSerializable, the returned ids match the ids of the rows that will be updated
+// or updated by the mutation.
+func (m *ScaUserLevelMutation) IDs(ctx context.Context) ([]int64, error) {
+	switch {
+	case m.op.Is(OpUpdateOne | OpDeleteOne):
+		id, exists := m.ID()
+		if exists {
+			return []int64{id}, nil
+		}
+		fallthrough
+	case m.op.Is(OpUpdate | OpDelete):
+		return m.Client().ScaUserLevel.Query().Where(m.predicates...).IDs(ctx)
+	default:
+		return nil, fmt.Errorf("IDs is not allowed on %s operations", m.op)
+	}
+}
+
+// SetUserID sets the "user_id" field.
+func (m *ScaUserLevelMutation) SetUserID(s string) {
+	m.user_id = &s
+}
+
+// UserID returns the value of the "user_id" field in the mutation.
+func (m *ScaUserLevelMutation) UserID() (r string, exists bool) {
+	v := m.user_id
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldUserID returns the old "user_id" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldUserID(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldUserID is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldUserID requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldUserID: %w", err)
+	}
+	return oldValue.UserID, nil
+}
+
+// ResetUserID resets all changes to the "user_id" field.
+func (m *ScaUserLevelMutation) ResetUserID() {
+	m.user_id = nil
+}
+
+// SetLevelType sets the "level_type" field.
+func (m *ScaUserLevelMutation) SetLevelType(u uint8) {
+	m.level_type = &u
+	m.addlevel_type = nil
+}
+
+// LevelType returns the value of the "level_type" field in the mutation.
+func (m *ScaUserLevelMutation) LevelType() (r uint8, exists bool) {
+	v := m.level_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevelType returns the old "level_type" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldLevelType(ctx context.Context) (v uint8, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevelType is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevelType requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevelType: %w", err)
+	}
+	return oldValue.LevelType, nil
+}
+
+// AddLevelType adds u to the "level_type" field.
+func (m *ScaUserLevelMutation) AddLevelType(u int8) {
+	if m.addlevel_type != nil {
+		*m.addlevel_type += u
+	} else {
+		m.addlevel_type = &u
+	}
+}
+
+// AddedLevelType returns the value that was added to the "level_type" field in this mutation.
+func (m *ScaUserLevelMutation) AddedLevelType() (r int8, exists bool) {
+	v := m.addlevel_type
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLevelType resets all changes to the "level_type" field.
+func (m *ScaUserLevelMutation) ResetLevelType() {
+	m.level_type = nil
+	m.addlevel_type = nil
+}
+
+// SetLevel sets the "level" field.
+func (m *ScaUserLevelMutation) SetLevel(i int) {
+	m.level = &i
+	m.addlevel = nil
+}
+
+// Level returns the value of the "level" field in the mutation.
+func (m *ScaUserLevelMutation) Level() (r int, exists bool) {
+	v := m.level
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevel returns the old "level" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldLevel(ctx context.Context) (v int, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevel is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevel requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevel: %w", err)
+	}
+	return oldValue.Level, nil
+}
+
+// AddLevel adds i to the "level" field.
+func (m *ScaUserLevelMutation) AddLevel(i int) {
+	if m.addlevel != nil {
+		*m.addlevel += i
+	} else {
+		m.addlevel = &i
+	}
+}
+
+// AddedLevel returns the value that was added to the "level" field in this mutation.
+func (m *ScaUserLevelMutation) AddedLevel() (r int, exists bool) {
+	v := m.addlevel
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetLevel resets all changes to the "level" field.
+func (m *ScaUserLevelMutation) ResetLevel() {
+	m.level = nil
+	m.addlevel = nil
+}
+
+// SetLevelName sets the "level_name" field.
+func (m *ScaUserLevelMutation) SetLevelName(s string) {
+	m.level_name = &s
+}
+
+// LevelName returns the value of the "level_name" field in the mutation.
+func (m *ScaUserLevelMutation) LevelName() (r string, exists bool) {
+	v := m.level_name
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevelName returns the old "level_name" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldLevelName(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevelName is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevelName requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevelName: %w", err)
+	}
+	return oldValue.LevelName, nil
+}
+
+// ResetLevelName resets all changes to the "level_name" field.
+func (m *ScaUserLevelMutation) ResetLevelName() {
+	m.level_name = nil
+}
+
+// SetExpStart sets the "exp_start" field.
+func (m *ScaUserLevelMutation) SetExpStart(i int64) {
+	m.exp_start = &i
+	m.addexp_start = nil
+}
+
+// ExpStart returns the value of the "exp_start" field in the mutation.
+func (m *ScaUserLevelMutation) ExpStart() (r int64, exists bool) {
+	v := m.exp_start
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpStart returns the old "exp_start" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldExpStart(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpStart is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpStart requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpStart: %w", err)
+	}
+	return oldValue.ExpStart, nil
+}
+
+// AddExpStart adds i to the "exp_start" field.
+func (m *ScaUserLevelMutation) AddExpStart(i int64) {
+	if m.addexp_start != nil {
+		*m.addexp_start += i
+	} else {
+		m.addexp_start = &i
+	}
+}
+
+// AddedExpStart returns the value that was added to the "exp_start" field in this mutation.
+func (m *ScaUserLevelMutation) AddedExpStart() (r int64, exists bool) {
+	v := m.addexp_start
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpStart resets all changes to the "exp_start" field.
+func (m *ScaUserLevelMutation) ResetExpStart() {
+	m.exp_start = nil
+	m.addexp_start = nil
+}
+
+// SetExpEnd sets the "exp_end" field.
+func (m *ScaUserLevelMutation) SetExpEnd(i int64) {
+	m.exp_end = &i
+	m.addexp_end = nil
+}
+
+// ExpEnd returns the value of the "exp_end" field in the mutation.
+func (m *ScaUserLevelMutation) ExpEnd() (r int64, exists bool) {
+	v := m.exp_end
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldExpEnd returns the old "exp_end" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldExpEnd(ctx context.Context) (v int64, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldExpEnd is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldExpEnd requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldExpEnd: %w", err)
+	}
+	return oldValue.ExpEnd, nil
+}
+
+// AddExpEnd adds i to the "exp_end" field.
+func (m *ScaUserLevelMutation) AddExpEnd(i int64) {
+	if m.addexp_end != nil {
+		*m.addexp_end += i
+	} else {
+		m.addexp_end = &i
+	}
+}
+
+// AddedExpEnd returns the value that was added to the "exp_end" field in this mutation.
+func (m *ScaUserLevelMutation) AddedExpEnd() (r int64, exists bool) {
+	v := m.addexp_end
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// ResetExpEnd resets all changes to the "exp_end" field.
+func (m *ScaUserLevelMutation) ResetExpEnd() {
+	m.exp_end = nil
+	m.addexp_end = nil
+}
+
+// SetLevelDescription sets the "level_description" field.
+func (m *ScaUserLevelMutation) SetLevelDescription(s string) {
+	m.level_description = &s
+}
+
+// LevelDescription returns the value of the "level_description" field in the mutation.
+func (m *ScaUserLevelMutation) LevelDescription() (r string, exists bool) {
+	v := m.level_description
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldLevelDescription returns the old "level_description" field's value of the ScaUserLevel entity.
+// If the ScaUserLevel object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ScaUserLevelMutation) OldLevelDescription(ctx context.Context) (v string, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldLevelDescription is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldLevelDescription requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldLevelDescription: %w", err)
+	}
+	return oldValue.LevelDescription, nil
+}
+
+// ClearLevelDescription clears the value of the "level_description" field.
+func (m *ScaUserLevelMutation) ClearLevelDescription() {
+	m.level_description = nil
+	m.clearedFields[scauserlevel.FieldLevelDescription] = struct{}{}
+}
+
+// LevelDescriptionCleared returns if the "level_description" field was cleared in this mutation.
+func (m *ScaUserLevelMutation) LevelDescriptionCleared() bool {
+	_, ok := m.clearedFields[scauserlevel.FieldLevelDescription]
+	return ok
+}
+
+// ResetLevelDescription resets all changes to the "level_description" field.
+func (m *ScaUserLevelMutation) ResetLevelDescription() {
+	m.level_description = nil
+	delete(m.clearedFields, scauserlevel.FieldLevelDescription)
+}
+
+// Where appends a list predicates to the ScaUserLevelMutation builder.
+func (m *ScaUserLevelMutation) Where(ps ...predicate.ScaUserLevel) {
+	m.predicates = append(m.predicates, ps...)
+}
+
+// WhereP appends storage-level predicates to the ScaUserLevelMutation builder. Using this method,
+// users can use type-assertion to append predicates that do not depend on any generated package.
+func (m *ScaUserLevelMutation) WhereP(ps ...func(*sql.Selector)) {
+	p := make([]predicate.ScaUserLevel, len(ps))
+	for i := range ps {
+		p[i] = ps[i]
+	}
+	m.Where(p...)
+}
+
+// Op returns the operation name.
+func (m *ScaUserLevelMutation) Op() Op {
+	return m.op
+}
+
+// SetOp allows setting the mutation operation.
+func (m *ScaUserLevelMutation) SetOp(op Op) {
+	m.op = op
+}
+
+// Type returns the node type of this mutation (ScaUserLevel).
+func (m *ScaUserLevelMutation) Type() string {
+	return m.typ
+}
+
+// Fields returns all fields that were changed during this mutation. Note that in
+// order to get all numeric fields that were incremented/decremented, call
+// AddedFields().
+func (m *ScaUserLevelMutation) Fields() []string {
+	fields := make([]string, 0, 7)
+	if m.user_id != nil {
+		fields = append(fields, scauserlevel.FieldUserID)
+	}
+	if m.level_type != nil {
+		fields = append(fields, scauserlevel.FieldLevelType)
+	}
+	if m.level != nil {
+		fields = append(fields, scauserlevel.FieldLevel)
+	}
+	if m.level_name != nil {
+		fields = append(fields, scauserlevel.FieldLevelName)
+	}
+	if m.exp_start != nil {
+		fields = append(fields, scauserlevel.FieldExpStart)
+	}
+	if m.exp_end != nil {
+		fields = append(fields, scauserlevel.FieldExpEnd)
+	}
+	if m.level_description != nil {
+		fields = append(fields, scauserlevel.FieldLevelDescription)
+	}
+	return fields
+}
+
+// Field returns the value of a field with the given name. The second boolean
+// return value indicates that this field was not set, or was not defined in the
+// schema.
+func (m *ScaUserLevelMutation) Field(name string) (ent.Value, bool) {
+	switch name {
+	case scauserlevel.FieldUserID:
+		return m.UserID()
+	case scauserlevel.FieldLevelType:
+		return m.LevelType()
+	case scauserlevel.FieldLevel:
+		return m.Level()
+	case scauserlevel.FieldLevelName:
+		return m.LevelName()
+	case scauserlevel.FieldExpStart:
+		return m.ExpStart()
+	case scauserlevel.FieldExpEnd:
+		return m.ExpEnd()
+	case scauserlevel.FieldLevelDescription:
+		return m.LevelDescription()
+	}
+	return nil, false
+}
+
+// OldField returns the old value of the field from the database. An error is
+// returned if the mutation operation is not UpdateOne, or the query to the
+// database failed.
+func (m *ScaUserLevelMutation) OldField(ctx context.Context, name string) (ent.Value, error) {
+	switch name {
+	case scauserlevel.FieldUserID:
+		return m.OldUserID(ctx)
+	case scauserlevel.FieldLevelType:
+		return m.OldLevelType(ctx)
+	case scauserlevel.FieldLevel:
+		return m.OldLevel(ctx)
+	case scauserlevel.FieldLevelName:
+		return m.OldLevelName(ctx)
+	case scauserlevel.FieldExpStart:
+		return m.OldExpStart(ctx)
+	case scauserlevel.FieldExpEnd:
+		return m.OldExpEnd(ctx)
+	case scauserlevel.FieldLevelDescription:
+		return m.OldLevelDescription(ctx)
+	}
+	return nil, fmt.Errorf("unknown ScaUserLevel field %s", name)
+}
+
+// SetField sets the value of a field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaUserLevelMutation) SetField(name string, value ent.Value) error {
+	switch name {
+	case scauserlevel.FieldUserID:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetUserID(v)
+		return nil
+	case scauserlevel.FieldLevelType:
+		v, ok := value.(uint8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevelType(v)
+		return nil
+	case scauserlevel.FieldLevel:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevel(v)
+		return nil
+	case scauserlevel.FieldLevelName:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevelName(v)
+		return nil
+	case scauserlevel.FieldExpStart:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpStart(v)
+		return nil
+	case scauserlevel.FieldExpEnd:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetExpEnd(v)
+		return nil
+	case scauserlevel.FieldLevelDescription:
+		v, ok := value.(string)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetLevelDescription(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserLevel field %s", name)
+}
+
+// AddedFields returns all numeric fields that were incremented/decremented during
+// this mutation.
+func (m *ScaUserLevelMutation) AddedFields() []string {
+	var fields []string
+	if m.addlevel_type != nil {
+		fields = append(fields, scauserlevel.FieldLevelType)
+	}
+	if m.addlevel != nil {
+		fields = append(fields, scauserlevel.FieldLevel)
+	}
+	if m.addexp_start != nil {
+		fields = append(fields, scauserlevel.FieldExpStart)
+	}
+	if m.addexp_end != nil {
+		fields = append(fields, scauserlevel.FieldExpEnd)
+	}
+	return fields
+}
+
+// AddedField returns the numeric value that was incremented/decremented on a field
+// with the given name. The second boolean return value indicates that this field
+// was not set, or was not defined in the schema.
+func (m *ScaUserLevelMutation) AddedField(name string) (ent.Value, bool) {
+	switch name {
+	case scauserlevel.FieldLevelType:
+		return m.AddedLevelType()
+	case scauserlevel.FieldLevel:
+		return m.AddedLevel()
+	case scauserlevel.FieldExpStart:
+		return m.AddedExpStart()
+	case scauserlevel.FieldExpEnd:
+		return m.AddedExpEnd()
+	}
+	return nil, false
+}
+
+// AddField adds the value to the field with the given name. It returns an error if
+// the field is not defined in the schema, or if the type mismatched the field
+// type.
+func (m *ScaUserLevelMutation) AddField(name string, value ent.Value) error {
+	switch name {
+	case scauserlevel.FieldLevelType:
+		v, ok := value.(int8)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLevelType(v)
+		return nil
+	case scauserlevel.FieldLevel:
+		v, ok := value.(int)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddLevel(v)
+		return nil
+	case scauserlevel.FieldExpStart:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpStart(v)
+		return nil
+	case scauserlevel.FieldExpEnd:
+		v, ok := value.(int64)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.AddExpEnd(v)
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserLevel numeric field %s", name)
+}
+
+// ClearedFields returns all nullable fields that were cleared during this
+// mutation.
+func (m *ScaUserLevelMutation) ClearedFields() []string {
+	var fields []string
+	if m.FieldCleared(scauserlevel.FieldLevelDescription) {
+		fields = append(fields, scauserlevel.FieldLevelDescription)
+	}
+	return fields
+}
+
+// FieldCleared returns a boolean indicating if a field with the given name was
+// cleared in this mutation.
+func (m *ScaUserLevelMutation) FieldCleared(name string) bool {
+	_, ok := m.clearedFields[name]
+	return ok
+}
+
+// ClearField clears the value of the field with the given name. It returns an
+// error if the field is not defined in the schema.
+func (m *ScaUserLevelMutation) ClearField(name string) error {
+	switch name {
+	case scauserlevel.FieldLevelDescription:
+		m.ClearLevelDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserLevel nullable field %s", name)
+}
+
+// ResetField resets all changes in the mutation for the field with the given name.
+// It returns an error if the field is not defined in the schema.
+func (m *ScaUserLevelMutation) ResetField(name string) error {
+	switch name {
+	case scauserlevel.FieldUserID:
+		m.ResetUserID()
+		return nil
+	case scauserlevel.FieldLevelType:
+		m.ResetLevelType()
+		return nil
+	case scauserlevel.FieldLevel:
+		m.ResetLevel()
+		return nil
+	case scauserlevel.FieldLevelName:
+		m.ResetLevelName()
+		return nil
+	case scauserlevel.FieldExpStart:
+		m.ResetExpStart()
+		return nil
+	case scauserlevel.FieldExpEnd:
+		m.ResetExpEnd()
+		return nil
+	case scauserlevel.FieldLevelDescription:
+		m.ResetLevelDescription()
+		return nil
+	}
+	return fmt.Errorf("unknown ScaUserLevel field %s", name)
+}
+
+// AddedEdges returns all edge names that were set/added in this mutation.
+func (m *ScaUserLevelMutation) AddedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// AddedIDs returns all IDs (to other nodes) that were added for the given edge
+// name in this mutation.
+func (m *ScaUserLevelMutation) AddedIDs(name string) []ent.Value {
+	return nil
+}
+
+// RemovedEdges returns all edge names that were removed in this mutation.
+func (m *ScaUserLevelMutation) RemovedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// RemovedIDs returns all IDs (to other nodes) that were removed for the edge with
+// the given name in this mutation.
+func (m *ScaUserLevelMutation) RemovedIDs(name string) []ent.Value {
+	return nil
+}
+
+// ClearedEdges returns all edge names that were cleared in this mutation.
+func (m *ScaUserLevelMutation) ClearedEdges() []string {
+	edges := make([]string, 0, 0)
+	return edges
+}
+
+// EdgeCleared returns a boolean which indicates if the edge with the given name
+// was cleared in this mutation.
+func (m *ScaUserLevelMutation) EdgeCleared(name string) bool {
+	return false
+}
+
+// ClearEdge clears the value of the edge with the given name. It returns an error
+// if that edge is not defined in the schema.
+func (m *ScaUserLevelMutation) ClearEdge(name string) error {
+	return fmt.Errorf("unknown ScaUserLevel unique edge %s", name)
+}
+
+// ResetEdge resets all changes to the edge with the given name in this mutation.
+// It returns an error if the edge is not defined in the schema.
+func (m *ScaUserLevelMutation) ResetEdge(name string) error {
+	return fmt.Errorf("unknown ScaUserLevel edge %s", name)
 }

@@ -21,3 +21,6 @@ loginSuccess = "login success！"
 smsSendTooFrequently = "sms send too frequently！"
 smsSendFailed = "sms send failed！"
 smsSendSuccess = "sms send success！"
+[comment]
+tooManyImages = "too many images！"
+commentError = "comment error！"

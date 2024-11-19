@@ -52,27 +52,27 @@ func GetMimeType(data []byte) string {
 // ProcessImages 处理图片，将 base64 字符串转换为字节数组
 func ProcessImages(images []string) ([][]byte, error) {
 	var imagesData [][]byte
-	dataChan := make(chan []byte, len(images)) // 创建一个带缓冲的 channel
+	dataChan := make(chan []byte, len(images))
 	re := regexp.MustCompile(`^data:image/\w+;base64,`)
 
 	for _, img := range images {
-		wg.Add(1) // 增加 WaitGroup 的计数
+		wg.Add(1)
 		go func(img string) {
-			defer wg.Done() // 函数结束时减少计数
+			defer wg.Done()
 
 			imgWithoutPrefix := re.ReplaceAllString(img, "")
 			data, err := Base64ToBytes(imgWithoutPrefix)
 			if err != nil {
 				return // 出错时直接返回
 			}
-			dataChan <- data // 将结果发送到 channel
+			dataChan <- data
 		}(img)
 	}
 
-	wg.Wait()       // 等待所有 goroutine 完成
-	close(dataChan) // 关闭 channel
+	wg.Wait()
+	close(dataChan)
 
-	for data := range dataChan { // 收集所有结果
+	for data := range dataChan {
 		imagesData = append(imagesData, data)
 	}
 

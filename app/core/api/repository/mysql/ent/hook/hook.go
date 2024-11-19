@@ -68,6 +68,66 @@ func (f ScaAuthUserSocialFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.
 	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScaAuthUserSocialMutation", m)
 }
 
+// The ScaCommentLikesFunc type is an adapter to allow the use of ordinary
+// function as ScaCommentLikes mutator.
+type ScaCommentLikesFunc func(context.Context, *ent.ScaCommentLikesMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScaCommentLikesFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScaCommentLikesMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScaCommentLikesMutation", m)
+}
+
+// The ScaCommentMessageFunc type is an adapter to allow the use of ordinary
+// function as ScaCommentMessage mutator.
+type ScaCommentMessageFunc func(context.Context, *ent.ScaCommentMessageMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScaCommentMessageFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScaCommentMessageMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScaCommentMessageMutation", m)
+}
+
+// The ScaCommentReplyFunc type is an adapter to allow the use of ordinary
+// function as ScaCommentReply mutator.
+type ScaCommentReplyFunc func(context.Context, *ent.ScaCommentReplyMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScaCommentReplyFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScaCommentReplyMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScaCommentReplyMutation", m)
+}
+
+// The ScaUserFollowsFunc type is an adapter to allow the use of ordinary
+// function as ScaUserFollows mutator.
+type ScaUserFollowsFunc func(context.Context, *ent.ScaUserFollowsMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScaUserFollowsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScaUserFollowsMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScaUserFollowsMutation", m)
+}
+
+// The ScaUserLevelFunc type is an adapter to allow the use of ordinary
+// function as ScaUserLevel mutator.
+type ScaUserLevelFunc func(context.Context, *ent.ScaUserLevelMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ScaUserLevelFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ScaUserLevelMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ScaUserLevelMutation", m)
+}
+
 // Condition is a hook condition function.
 type Condition func(context.Context, ent.Mutation) bool
 

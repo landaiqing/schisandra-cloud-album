@@ -231,6 +231,126 @@ func (f ScaAuthUserSocialMutationRuleFunc) EvalMutation(ctx context.Context, m e
 	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScaAuthUserSocialMutation", m)
 }
 
+// The ScaCommentLikesQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScaCommentLikesQueryRuleFunc func(context.Context, *ent.ScaCommentLikesQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScaCommentLikesQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScaCommentLikesQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScaCommentLikesQuery", q)
+}
+
+// The ScaCommentLikesMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScaCommentLikesMutationRuleFunc func(context.Context, *ent.ScaCommentLikesMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScaCommentLikesMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScaCommentLikesMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScaCommentLikesMutation", m)
+}
+
+// The ScaCommentMessageQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScaCommentMessageQueryRuleFunc func(context.Context, *ent.ScaCommentMessageQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScaCommentMessageQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScaCommentMessageQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScaCommentMessageQuery", q)
+}
+
+// The ScaCommentMessageMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScaCommentMessageMutationRuleFunc func(context.Context, *ent.ScaCommentMessageMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScaCommentMessageMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScaCommentMessageMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScaCommentMessageMutation", m)
+}
+
+// The ScaCommentReplyQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScaCommentReplyQueryRuleFunc func(context.Context, *ent.ScaCommentReplyQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScaCommentReplyQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScaCommentReplyQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScaCommentReplyQuery", q)
+}
+
+// The ScaCommentReplyMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScaCommentReplyMutationRuleFunc func(context.Context, *ent.ScaCommentReplyMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScaCommentReplyMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScaCommentReplyMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScaCommentReplyMutation", m)
+}
+
+// The ScaUserFollowsQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScaUserFollowsQueryRuleFunc func(context.Context, *ent.ScaUserFollowsQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScaUserFollowsQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScaUserFollowsQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScaUserFollowsQuery", q)
+}
+
+// The ScaUserFollowsMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScaUserFollowsMutationRuleFunc func(context.Context, *ent.ScaUserFollowsMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScaUserFollowsMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScaUserFollowsMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScaUserFollowsMutation", m)
+}
+
+// The ScaUserLevelQueryRuleFunc type is an adapter to allow the use of ordinary
+// functions as a query rule.
+type ScaUserLevelQueryRuleFunc func(context.Context, *ent.ScaUserLevelQuery) error
+
+// EvalQuery return f(ctx, q).
+func (f ScaUserLevelQueryRuleFunc) EvalQuery(ctx context.Context, q ent.Query) error {
+	if q, ok := q.(*ent.ScaUserLevelQuery); ok {
+		return f(ctx, q)
+	}
+	return Denyf("ent/privacy: unexpected query type %T, expect *ent.ScaUserLevelQuery", q)
+}
+
+// The ScaUserLevelMutationRuleFunc type is an adapter to allow the use of ordinary
+// functions as a mutation rule.
+type ScaUserLevelMutationRuleFunc func(context.Context, *ent.ScaUserLevelMutation) error
+
+// EvalMutation calls f(ctx, m).
+func (f ScaUserLevelMutationRuleFunc) EvalMutation(ctx context.Context, m ent.Mutation) error {
+	if m, ok := m.(*ent.ScaUserLevelMutation); ok {
+		return f(ctx, m)
+	}
+	return Denyf("ent/privacy: unexpected mutation type %T, expect *ent.ScaUserLevelMutation", m)
+}
+
 type (
 	// Filter is the interface that wraps the Where function
 	// for filtering nodes in queries and mutations.
@@ -276,6 +396,16 @@ func queryFilter(q ent.Query) (Filter, error) {
 		return q.Filter(), nil
 	case *ent.ScaAuthUserSocialQuery:
 		return q.Filter(), nil
+	case *ent.ScaCommentLikesQuery:
+		return q.Filter(), nil
+	case *ent.ScaCommentMessageQuery:
+		return q.Filter(), nil
+	case *ent.ScaCommentReplyQuery:
+		return q.Filter(), nil
+	case *ent.ScaUserFollowsQuery:
+		return q.Filter(), nil
+	case *ent.ScaUserLevelQuery:
+		return q.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected query type %T for query filter", q)
 	}
@@ -292,6 +422,16 @@ func mutationFilter(m ent.Mutation) (Filter, error) {
 	case *ent.ScaAuthUserDeviceMutation:
 		return m.Filter(), nil
 	case *ent.ScaAuthUserSocialMutation:
+		return m.Filter(), nil
+	case *ent.ScaCommentLikesMutation:
+		return m.Filter(), nil
+	case *ent.ScaCommentMessageMutation:
+		return m.Filter(), nil
+	case *ent.ScaCommentReplyMutation:
+		return m.Filter(), nil
+	case *ent.ScaUserFollowsMutation:
+		return m.Filter(), nil
+	case *ent.ScaUserLevelMutation:
 		return m.Filter(), nil
 	default:
 		return nil, Denyf("ent/privacy: unexpected mutation type %T for mutation filter", m)

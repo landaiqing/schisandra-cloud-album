@@ -122,6 +122,7 @@ func (c *MessageWebSocket) OnMessage(socket *gws.Conn, message *gws.Message) {
 	if conn, ok := c.sessions.Load(clientId); ok {
 		_ = conn.WriteMessage(gws.OpcodeText, message.Bytes())
 	}
+	// fmt.Printf("received message from client %s\n", message.Data)
 }
 
 // SendMessageToClient 向指定客户端发送消息

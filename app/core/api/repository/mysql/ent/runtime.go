@@ -8,6 +8,11 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentlikes"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentmessage"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentreply"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserfollows"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserlevel"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 	"time"
 )
@@ -234,4 +239,76 @@ func init() {
 	scaauthusersocialDescStatus := scaauthusersocialFields[4].Descriptor()
 	// scaauthusersocial.DefaultStatus holds the default value on creation for the status field.
 	scaauthusersocial.DefaultStatus = scaauthusersocialDescStatus.Default.(int)
+	scacommentlikesFields := model.ScaCommentLikes{}.Fields()
+	_ = scacommentlikesFields
+	// scacommentlikesDescLikeTime is the schema descriptor for like_time field.
+	scacommentlikesDescLikeTime := scacommentlikesFields[4].Descriptor()
+	// scacommentlikes.DefaultLikeTime holds the default value on creation for the like_time field.
+	scacommentlikes.DefaultLikeTime = scacommentlikesDescLikeTime.Default.(func() time.Time)
+	scacommentmessageMixin := model.ScaCommentMessage{}.Mixin()
+	scacommentmessageMixinFields0 := scacommentmessageMixin[0].Fields()
+	_ = scacommentmessageMixinFields0
+	scacommentmessageFields := model.ScaCommentMessage{}.Fields()
+	_ = scacommentmessageFields
+	// scacommentmessageDescCreatedAt is the schema descriptor for created_at field.
+	scacommentmessageDescCreatedAt := scacommentmessageMixinFields0[0].Descriptor()
+	// scacommentmessage.DefaultCreatedAt holds the default value on creation for the created_at field.
+	scacommentmessage.DefaultCreatedAt = scacommentmessageDescCreatedAt.Default.(func() time.Time)
+	// scacommentmessageDescUpdatedAt is the schema descriptor for updated_at field.
+	scacommentmessageDescUpdatedAt := scacommentmessageMixinFields0[1].Descriptor()
+	// scacommentmessage.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	scacommentmessage.UpdateDefaultUpdatedAt = scacommentmessageDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// scacommentmessageDescDeleted is the schema descriptor for deleted field.
+	scacommentmessageDescDeleted := scacommentmessageMixinFields0[2].Descriptor()
+	// scacommentmessage.DefaultDeleted holds the default value on creation for the deleted field.
+	scacommentmessage.DefaultDeleted = scacommentmessageDescDeleted.Default.(int8)
+	// scacommentmessage.DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	scacommentmessage.DeletedValidator = scacommentmessageDescDeleted.Validators[0].(func(int8) error)
+	scacommentreplyMixin := model.ScaCommentReply{}.Mixin()
+	scacommentreplyMixinFields0 := scacommentreplyMixin[0].Fields()
+	_ = scacommentreplyMixinFields0
+	scacommentreplyFields := model.ScaCommentReply{}.Fields()
+	_ = scacommentreplyFields
+	// scacommentreplyDescCreatedAt is the schema descriptor for created_at field.
+	scacommentreplyDescCreatedAt := scacommentreplyMixinFields0[0].Descriptor()
+	// scacommentreply.DefaultCreatedAt holds the default value on creation for the created_at field.
+	scacommentreply.DefaultCreatedAt = scacommentreplyDescCreatedAt.Default.(func() time.Time)
+	// scacommentreplyDescUpdatedAt is the schema descriptor for updated_at field.
+	scacommentreplyDescUpdatedAt := scacommentreplyMixinFields0[1].Descriptor()
+	// scacommentreply.UpdateDefaultUpdatedAt holds the default value on update for the updated_at field.
+	scacommentreply.UpdateDefaultUpdatedAt = scacommentreplyDescUpdatedAt.UpdateDefault.(func() time.Time)
+	// scacommentreplyDescDeleted is the schema descriptor for deleted field.
+	scacommentreplyDescDeleted := scacommentreplyMixinFields0[2].Descriptor()
+	// scacommentreply.DefaultDeleted holds the default value on creation for the deleted field.
+	scacommentreply.DefaultDeleted = scacommentreplyDescDeleted.Default.(int8)
+	// scacommentreply.DeletedValidator is a validator for the "deleted" field. It is called by the builders before save.
+	scacommentreply.DeletedValidator = scacommentreplyDescDeleted.Validators[0].(func(int8) error)
+	// scacommentreplyDescAuthor is the schema descriptor for author field.
+	scacommentreplyDescAuthor := scacommentreplyFields[9].Descriptor()
+	// scacommentreply.DefaultAuthor holds the default value on creation for the author field.
+	scacommentreply.DefaultAuthor = scacommentreplyDescAuthor.Default.(int)
+	// scacommentreplyDescLikes is the schema descriptor for likes field.
+	scacommentreplyDescLikes := scacommentreplyFields[10].Descriptor()
+	// scacommentreply.DefaultLikes holds the default value on creation for the likes field.
+	scacommentreply.DefaultLikes = scacommentreplyDescLikes.Default.(int64)
+	// scacommentreplyDescReplyCount is the schema descriptor for reply_count field.
+	scacommentreplyDescReplyCount := scacommentreplyFields[11].Descriptor()
+	// scacommentreply.DefaultReplyCount holds the default value on creation for the reply_count field.
+	scacommentreply.DefaultReplyCount = scacommentreplyDescReplyCount.Default.(int64)
+	// scacommentreplyDescAgent is the schema descriptor for agent field.
+	scacommentreplyDescAgent := scacommentreplyFields[16].Descriptor()
+	// scacommentreply.AgentValidator is a validator for the "agent" field. It is called by the builders before save.
+	scacommentreply.AgentValidator = scacommentreplyDescAgent.Validators[0].(func(string) error)
+	scauserfollowsFields := model.ScaUserFollows{}.Fields()
+	_ = scauserfollowsFields
+	// scauserfollowsDescStatus is the schema descriptor for status field.
+	scauserfollowsDescStatus := scauserfollowsFields[2].Descriptor()
+	// scauserfollows.DefaultStatus holds the default value on creation for the status field.
+	scauserfollows.DefaultStatus = scauserfollowsDescStatus.Default.(uint8)
+	scauserlevelFields := model.ScaUserLevel{}.Fields()
+	_ = scauserlevelFields
+	// scauserlevelDescLevelName is the schema descriptor for level_name field.
+	scauserlevelDescLevelName := scauserlevelFields[4].Descriptor()
+	// scauserlevel.LevelNameValidator is a validator for the "level_name" field. It is called by the builders before save.
+	scauserlevel.LevelNameValidator = scauserlevelDescLevelName.Validators[0].(func(string) error)
 }

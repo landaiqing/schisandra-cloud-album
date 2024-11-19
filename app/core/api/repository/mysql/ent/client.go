@@ -16,6 +16,11 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentlikes"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentmessage"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scacommentreply"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserfollows"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scauserlevel"
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect"
@@ -37,6 +42,16 @@ type Client struct {
 	ScaAuthUserDevice *ScaAuthUserDeviceClient
 	// ScaAuthUserSocial is the client for interacting with the ScaAuthUserSocial builders.
 	ScaAuthUserSocial *ScaAuthUserSocialClient
+	// ScaCommentLikes is the client for interacting with the ScaCommentLikes builders.
+	ScaCommentLikes *ScaCommentLikesClient
+	// ScaCommentMessage is the client for interacting with the ScaCommentMessage builders.
+	ScaCommentMessage *ScaCommentMessageClient
+	// ScaCommentReply is the client for interacting with the ScaCommentReply builders.
+	ScaCommentReply *ScaCommentReplyClient
+	// ScaUserFollows is the client for interacting with the ScaUserFollows builders.
+	ScaUserFollows *ScaUserFollowsClient
+	// ScaUserLevel is the client for interacting with the ScaUserLevel builders.
+	ScaUserLevel *ScaUserLevelClient
 }
 
 // NewClient creates a new client configured with the given options.
@@ -53,6 +68,11 @@ func (c *Client) init() {
 	c.ScaAuthUser = NewScaAuthUserClient(c.config)
 	c.ScaAuthUserDevice = NewScaAuthUserDeviceClient(c.config)
 	c.ScaAuthUserSocial = NewScaAuthUserSocialClient(c.config)
+	c.ScaCommentLikes = NewScaCommentLikesClient(c.config)
+	c.ScaCommentMessage = NewScaCommentMessageClient(c.config)
+	c.ScaCommentReply = NewScaCommentReplyClient(c.config)
+	c.ScaUserFollows = NewScaUserFollowsClient(c.config)
+	c.ScaUserLevel = NewScaUserLevelClient(c.config)
 }
 
 type (
@@ -150,6 +170,11 @@ func (c *Client) Tx(ctx context.Context) (*Tx, error) {
 		ScaAuthUser:           NewScaAuthUserClient(cfg),
 		ScaAuthUserDevice:     NewScaAuthUserDeviceClient(cfg),
 		ScaAuthUserSocial:     NewScaAuthUserSocialClient(cfg),
+		ScaCommentLikes:       NewScaCommentLikesClient(cfg),
+		ScaCommentMessage:     NewScaCommentMessageClient(cfg),
+		ScaCommentReply:       NewScaCommentReplyClient(cfg),
+		ScaUserFollows:        NewScaUserFollowsClient(cfg),
+		ScaUserLevel:          NewScaUserLevelClient(cfg),
 	}, nil
 }
 
@@ -174,6 +199,11 @@ func (c *Client) BeginTx(ctx context.Context, opts *sql.TxOptions) (*Tx, error) 
 		ScaAuthUser:           NewScaAuthUserClient(cfg),
 		ScaAuthUserDevice:     NewScaAuthUserDeviceClient(cfg),
 		ScaAuthUserSocial:     NewScaAuthUserSocialClient(cfg),
+		ScaCommentLikes:       NewScaCommentLikesClient(cfg),
+		ScaCommentMessage:     NewScaCommentMessageClient(cfg),
+		ScaCommentReply:       NewScaCommentReplyClient(cfg),
+		ScaUserFollows:        NewScaUserFollowsClient(cfg),
+		ScaUserLevel:          NewScaUserLevelClient(cfg),
 	}, nil
 }
 
@@ -202,21 +232,25 @@ func (c *Client) Close() error {
 // Use adds the mutation hooks to all the entity clients.
 // In order to add hooks to a specific client, call: `client.Node.Use(...)`.
 func (c *Client) Use(hooks ...Hook) {
-	c.ScaAuthPermissionRule.Use(hooks...)
-	c.ScaAuthRole.Use(hooks...)
-	c.ScaAuthUser.Use(hooks...)
-	c.ScaAuthUserDevice.Use(hooks...)
-	c.ScaAuthUserSocial.Use(hooks...)
+	for _, n := range []interface{ Use(...Hook) }{
+		c.ScaAuthPermissionRule, c.ScaAuthRole, c.ScaAuthUser, c.ScaAuthUserDevice,
+		c.ScaAuthUserSocial, c.ScaCommentLikes, c.ScaCommentMessage, c.ScaCommentReply,
+		c.ScaUserFollows, c.ScaUserLevel,
+	} {
+		n.Use(hooks...)
+	}
 }
 
 // Intercept adds the query interceptors to all the entity clients.
 // In order to add interceptors to a specific client, call: `client.Node.Intercept(...)`.
 func (c *Client) Intercept(interceptors ...Interceptor) {
-	c.ScaAuthPermissionRule.Intercept(interceptors...)
-	c.ScaAuthRole.Intercept(interceptors...)
-	c.ScaAuthUser.Intercept(interceptors...)
-	c.ScaAuthUserDevice.Intercept(interceptors...)
-	c.ScaAuthUserSocial.Intercept(interceptors...)
+	for _, n := range []interface{ Intercept(...Interceptor) }{
+		c.ScaAuthPermissionRule, c.ScaAuthRole, c.ScaAuthUser, c.ScaAuthUserDevice,
+		c.ScaAuthUserSocial, c.ScaCommentLikes, c.ScaCommentMessage, c.ScaCommentReply,
+		c.ScaUserFollows, c.ScaUserLevel,
+	} {
+		n.Intercept(interceptors...)
+	}
 }
 
 // Mutate implements the ent.Mutator interface.
@@ -232,6 +266,16 @@ func (c *Client) Mutate(ctx context.Context, m Mutation) (Value, error) {
 		return c.ScaAuthUserDevice.mutate(ctx, m)
 	case *ScaAuthUserSocialMutation:
 		return c.ScaAuthUserSocial.mutate(ctx, m)
+	case *ScaCommentLikesMutation:
+		return c.ScaCommentLikes.mutate(ctx, m)
+	case *ScaCommentMessageMutation:
+		return c.ScaCommentMessage.mutate(ctx, m)
+	case *ScaCommentReplyMutation:
+		return c.ScaCommentReply.mutate(ctx, m)
+	case *ScaUserFollowsMutation:
+		return c.ScaUserFollows.mutate(ctx, m)
+	case *ScaUserLevelMutation:
+		return c.ScaUserLevel.mutate(ctx, m)
 	default:
 		return nil, fmt.Errorf("ent: unknown mutation type %T", m)
 	}
@@ -902,14 +946,681 @@ func (c *ScaAuthUserSocialClient) mutate(ctx context.Context, m *ScaAuthUserSoci
 	}
 }
 
+// ScaCommentLikesClient is a client for the ScaCommentLikes schema.
+type ScaCommentLikesClient struct {
+	config
+}
+
+// NewScaCommentLikesClient returns a client for the ScaCommentLikes from the given config.
+func NewScaCommentLikesClient(c config) *ScaCommentLikesClient {
+	return &ScaCommentLikesClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scacommentlikes.Hooks(f(g(h())))`.
+func (c *ScaCommentLikesClient) Use(hooks ...Hook) {
+	c.hooks.ScaCommentLikes = append(c.hooks.ScaCommentLikes, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scacommentlikes.Intercept(f(g(h())))`.
+func (c *ScaCommentLikesClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScaCommentLikes = append(c.inters.ScaCommentLikes, interceptors...)
+}
+
+// Create returns a builder for creating a ScaCommentLikes entity.
+func (c *ScaCommentLikesClient) Create() *ScaCommentLikesCreate {
+	mutation := newScaCommentLikesMutation(c.config, OpCreate)
+	return &ScaCommentLikesCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScaCommentLikes entities.
+func (c *ScaCommentLikesClient) CreateBulk(builders ...*ScaCommentLikesCreate) *ScaCommentLikesCreateBulk {
+	return &ScaCommentLikesCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScaCommentLikesClient) MapCreateBulk(slice any, setFunc func(*ScaCommentLikesCreate, int)) *ScaCommentLikesCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScaCommentLikesCreateBulk{err: fmt.Errorf("calling to ScaCommentLikesClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScaCommentLikesCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScaCommentLikesCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScaCommentLikes.
+func (c *ScaCommentLikesClient) Update() *ScaCommentLikesUpdate {
+	mutation := newScaCommentLikesMutation(c.config, OpUpdate)
+	return &ScaCommentLikesUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScaCommentLikesClient) UpdateOne(scl *ScaCommentLikes) *ScaCommentLikesUpdateOne {
+	mutation := newScaCommentLikesMutation(c.config, OpUpdateOne, withScaCommentLikes(scl))
+	return &ScaCommentLikesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScaCommentLikesClient) UpdateOneID(id int64) *ScaCommentLikesUpdateOne {
+	mutation := newScaCommentLikesMutation(c.config, OpUpdateOne, withScaCommentLikesID(id))
+	return &ScaCommentLikesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScaCommentLikes.
+func (c *ScaCommentLikesClient) Delete() *ScaCommentLikesDelete {
+	mutation := newScaCommentLikesMutation(c.config, OpDelete)
+	return &ScaCommentLikesDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScaCommentLikesClient) DeleteOne(scl *ScaCommentLikes) *ScaCommentLikesDeleteOne {
+	return c.DeleteOneID(scl.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScaCommentLikesClient) DeleteOneID(id int64) *ScaCommentLikesDeleteOne {
+	builder := c.Delete().Where(scacommentlikes.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScaCommentLikesDeleteOne{builder}
+}
+
+// Query returns a query builder for ScaCommentLikes.
+func (c *ScaCommentLikesClient) Query() *ScaCommentLikesQuery {
+	return &ScaCommentLikesQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScaCommentLikes},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScaCommentLikes entity by its id.
+func (c *ScaCommentLikesClient) Get(ctx context.Context, id int64) (*ScaCommentLikes, error) {
+	return c.Query().Where(scacommentlikes.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScaCommentLikesClient) GetX(ctx context.Context, id int64) *ScaCommentLikes {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScaCommentLikesClient) Hooks() []Hook {
+	return c.hooks.ScaCommentLikes
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScaCommentLikesClient) Interceptors() []Interceptor {
+	return c.inters.ScaCommentLikes
+}
+
+func (c *ScaCommentLikesClient) mutate(ctx context.Context, m *ScaCommentLikesMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScaCommentLikesCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScaCommentLikesUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScaCommentLikesUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScaCommentLikesDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScaCommentLikes mutation op: %q", m.Op())
+	}
+}
+
+// ScaCommentMessageClient is a client for the ScaCommentMessage schema.
+type ScaCommentMessageClient struct {
+	config
+}
+
+// NewScaCommentMessageClient returns a client for the ScaCommentMessage from the given config.
+func NewScaCommentMessageClient(c config) *ScaCommentMessageClient {
+	return &ScaCommentMessageClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scacommentmessage.Hooks(f(g(h())))`.
+func (c *ScaCommentMessageClient) Use(hooks ...Hook) {
+	c.hooks.ScaCommentMessage = append(c.hooks.ScaCommentMessage, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scacommentmessage.Intercept(f(g(h())))`.
+func (c *ScaCommentMessageClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScaCommentMessage = append(c.inters.ScaCommentMessage, interceptors...)
+}
+
+// Create returns a builder for creating a ScaCommentMessage entity.
+func (c *ScaCommentMessageClient) Create() *ScaCommentMessageCreate {
+	mutation := newScaCommentMessageMutation(c.config, OpCreate)
+	return &ScaCommentMessageCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScaCommentMessage entities.
+func (c *ScaCommentMessageClient) CreateBulk(builders ...*ScaCommentMessageCreate) *ScaCommentMessageCreateBulk {
+	return &ScaCommentMessageCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScaCommentMessageClient) MapCreateBulk(slice any, setFunc func(*ScaCommentMessageCreate, int)) *ScaCommentMessageCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScaCommentMessageCreateBulk{err: fmt.Errorf("calling to ScaCommentMessageClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScaCommentMessageCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScaCommentMessageCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScaCommentMessage.
+func (c *ScaCommentMessageClient) Update() *ScaCommentMessageUpdate {
+	mutation := newScaCommentMessageMutation(c.config, OpUpdate)
+	return &ScaCommentMessageUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScaCommentMessageClient) UpdateOne(scm *ScaCommentMessage) *ScaCommentMessageUpdateOne {
+	mutation := newScaCommentMessageMutation(c.config, OpUpdateOne, withScaCommentMessage(scm))
+	return &ScaCommentMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScaCommentMessageClient) UpdateOneID(id int64) *ScaCommentMessageUpdateOne {
+	mutation := newScaCommentMessageMutation(c.config, OpUpdateOne, withScaCommentMessageID(id))
+	return &ScaCommentMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScaCommentMessage.
+func (c *ScaCommentMessageClient) Delete() *ScaCommentMessageDelete {
+	mutation := newScaCommentMessageMutation(c.config, OpDelete)
+	return &ScaCommentMessageDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScaCommentMessageClient) DeleteOne(scm *ScaCommentMessage) *ScaCommentMessageDeleteOne {
+	return c.DeleteOneID(scm.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScaCommentMessageClient) DeleteOneID(id int64) *ScaCommentMessageDeleteOne {
+	builder := c.Delete().Where(scacommentmessage.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScaCommentMessageDeleteOne{builder}
+}
+
+// Query returns a query builder for ScaCommentMessage.
+func (c *ScaCommentMessageClient) Query() *ScaCommentMessageQuery {
+	return &ScaCommentMessageQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScaCommentMessage},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScaCommentMessage entity by its id.
+func (c *ScaCommentMessageClient) Get(ctx context.Context, id int64) (*ScaCommentMessage, error) {
+	return c.Query().Where(scacommentmessage.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScaCommentMessageClient) GetX(ctx context.Context, id int64) *ScaCommentMessage {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScaCommentMessageClient) Hooks() []Hook {
+	return c.hooks.ScaCommentMessage
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScaCommentMessageClient) Interceptors() []Interceptor {
+	return c.inters.ScaCommentMessage
+}
+
+func (c *ScaCommentMessageClient) mutate(ctx context.Context, m *ScaCommentMessageMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScaCommentMessageCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScaCommentMessageUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScaCommentMessageUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScaCommentMessageDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScaCommentMessage mutation op: %q", m.Op())
+	}
+}
+
+// ScaCommentReplyClient is a client for the ScaCommentReply schema.
+type ScaCommentReplyClient struct {
+	config
+}
+
+// NewScaCommentReplyClient returns a client for the ScaCommentReply from the given config.
+func NewScaCommentReplyClient(c config) *ScaCommentReplyClient {
+	return &ScaCommentReplyClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scacommentreply.Hooks(f(g(h())))`.
+func (c *ScaCommentReplyClient) Use(hooks ...Hook) {
+	c.hooks.ScaCommentReply = append(c.hooks.ScaCommentReply, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scacommentreply.Intercept(f(g(h())))`.
+func (c *ScaCommentReplyClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScaCommentReply = append(c.inters.ScaCommentReply, interceptors...)
+}
+
+// Create returns a builder for creating a ScaCommentReply entity.
+func (c *ScaCommentReplyClient) Create() *ScaCommentReplyCreate {
+	mutation := newScaCommentReplyMutation(c.config, OpCreate)
+	return &ScaCommentReplyCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScaCommentReply entities.
+func (c *ScaCommentReplyClient) CreateBulk(builders ...*ScaCommentReplyCreate) *ScaCommentReplyCreateBulk {
+	return &ScaCommentReplyCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScaCommentReplyClient) MapCreateBulk(slice any, setFunc func(*ScaCommentReplyCreate, int)) *ScaCommentReplyCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScaCommentReplyCreateBulk{err: fmt.Errorf("calling to ScaCommentReplyClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScaCommentReplyCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScaCommentReplyCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScaCommentReply.
+func (c *ScaCommentReplyClient) Update() *ScaCommentReplyUpdate {
+	mutation := newScaCommentReplyMutation(c.config, OpUpdate)
+	return &ScaCommentReplyUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScaCommentReplyClient) UpdateOne(scr *ScaCommentReply) *ScaCommentReplyUpdateOne {
+	mutation := newScaCommentReplyMutation(c.config, OpUpdateOne, withScaCommentReply(scr))
+	return &ScaCommentReplyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScaCommentReplyClient) UpdateOneID(id int64) *ScaCommentReplyUpdateOne {
+	mutation := newScaCommentReplyMutation(c.config, OpUpdateOne, withScaCommentReplyID(id))
+	return &ScaCommentReplyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScaCommentReply.
+func (c *ScaCommentReplyClient) Delete() *ScaCommentReplyDelete {
+	mutation := newScaCommentReplyMutation(c.config, OpDelete)
+	return &ScaCommentReplyDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScaCommentReplyClient) DeleteOne(scr *ScaCommentReply) *ScaCommentReplyDeleteOne {
+	return c.DeleteOneID(scr.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScaCommentReplyClient) DeleteOneID(id int64) *ScaCommentReplyDeleteOne {
+	builder := c.Delete().Where(scacommentreply.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScaCommentReplyDeleteOne{builder}
+}
+
+// Query returns a query builder for ScaCommentReply.
+func (c *ScaCommentReplyClient) Query() *ScaCommentReplyQuery {
+	return &ScaCommentReplyQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScaCommentReply},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScaCommentReply entity by its id.
+func (c *ScaCommentReplyClient) Get(ctx context.Context, id int64) (*ScaCommentReply, error) {
+	return c.Query().Where(scacommentreply.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScaCommentReplyClient) GetX(ctx context.Context, id int64) *ScaCommentReply {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScaCommentReplyClient) Hooks() []Hook {
+	return c.hooks.ScaCommentReply
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScaCommentReplyClient) Interceptors() []Interceptor {
+	return c.inters.ScaCommentReply
+}
+
+func (c *ScaCommentReplyClient) mutate(ctx context.Context, m *ScaCommentReplyMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScaCommentReplyCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScaCommentReplyUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScaCommentReplyUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScaCommentReplyDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScaCommentReply mutation op: %q", m.Op())
+	}
+}
+
+// ScaUserFollowsClient is a client for the ScaUserFollows schema.
+type ScaUserFollowsClient struct {
+	config
+}
+
+// NewScaUserFollowsClient returns a client for the ScaUserFollows from the given config.
+func NewScaUserFollowsClient(c config) *ScaUserFollowsClient {
+	return &ScaUserFollowsClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scauserfollows.Hooks(f(g(h())))`.
+func (c *ScaUserFollowsClient) Use(hooks ...Hook) {
+	c.hooks.ScaUserFollows = append(c.hooks.ScaUserFollows, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scauserfollows.Intercept(f(g(h())))`.
+func (c *ScaUserFollowsClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScaUserFollows = append(c.inters.ScaUserFollows, interceptors...)
+}
+
+// Create returns a builder for creating a ScaUserFollows entity.
+func (c *ScaUserFollowsClient) Create() *ScaUserFollowsCreate {
+	mutation := newScaUserFollowsMutation(c.config, OpCreate)
+	return &ScaUserFollowsCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScaUserFollows entities.
+func (c *ScaUserFollowsClient) CreateBulk(builders ...*ScaUserFollowsCreate) *ScaUserFollowsCreateBulk {
+	return &ScaUserFollowsCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScaUserFollowsClient) MapCreateBulk(slice any, setFunc func(*ScaUserFollowsCreate, int)) *ScaUserFollowsCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScaUserFollowsCreateBulk{err: fmt.Errorf("calling to ScaUserFollowsClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScaUserFollowsCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScaUserFollowsCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScaUserFollows.
+func (c *ScaUserFollowsClient) Update() *ScaUserFollowsUpdate {
+	mutation := newScaUserFollowsMutation(c.config, OpUpdate)
+	return &ScaUserFollowsUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScaUserFollowsClient) UpdateOne(suf *ScaUserFollows) *ScaUserFollowsUpdateOne {
+	mutation := newScaUserFollowsMutation(c.config, OpUpdateOne, withScaUserFollows(suf))
+	return &ScaUserFollowsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScaUserFollowsClient) UpdateOneID(id int) *ScaUserFollowsUpdateOne {
+	mutation := newScaUserFollowsMutation(c.config, OpUpdateOne, withScaUserFollowsID(id))
+	return &ScaUserFollowsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScaUserFollows.
+func (c *ScaUserFollowsClient) Delete() *ScaUserFollowsDelete {
+	mutation := newScaUserFollowsMutation(c.config, OpDelete)
+	return &ScaUserFollowsDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScaUserFollowsClient) DeleteOne(suf *ScaUserFollows) *ScaUserFollowsDeleteOne {
+	return c.DeleteOneID(suf.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScaUserFollowsClient) DeleteOneID(id int) *ScaUserFollowsDeleteOne {
+	builder := c.Delete().Where(scauserfollows.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScaUserFollowsDeleteOne{builder}
+}
+
+// Query returns a query builder for ScaUserFollows.
+func (c *ScaUserFollowsClient) Query() *ScaUserFollowsQuery {
+	return &ScaUserFollowsQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScaUserFollows},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScaUserFollows entity by its id.
+func (c *ScaUserFollowsClient) Get(ctx context.Context, id int) (*ScaUserFollows, error) {
+	return c.Query().Where(scauserfollows.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScaUserFollowsClient) GetX(ctx context.Context, id int) *ScaUserFollows {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScaUserFollowsClient) Hooks() []Hook {
+	return c.hooks.ScaUserFollows
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScaUserFollowsClient) Interceptors() []Interceptor {
+	return c.inters.ScaUserFollows
+}
+
+func (c *ScaUserFollowsClient) mutate(ctx context.Context, m *ScaUserFollowsMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScaUserFollowsCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScaUserFollowsUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScaUserFollowsUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScaUserFollowsDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScaUserFollows mutation op: %q", m.Op())
+	}
+}
+
+// ScaUserLevelClient is a client for the ScaUserLevel schema.
+type ScaUserLevelClient struct {
+	config
+}
+
+// NewScaUserLevelClient returns a client for the ScaUserLevel from the given config.
+func NewScaUserLevelClient(c config) *ScaUserLevelClient {
+	return &ScaUserLevelClient{config: c}
+}
+
+// Use adds a list of mutation hooks to the hooks stack.
+// A call to `Use(f, g, h)` equals to `scauserlevel.Hooks(f(g(h())))`.
+func (c *ScaUserLevelClient) Use(hooks ...Hook) {
+	c.hooks.ScaUserLevel = append(c.hooks.ScaUserLevel, hooks...)
+}
+
+// Intercept adds a list of query interceptors to the interceptors stack.
+// A call to `Intercept(f, g, h)` equals to `scauserlevel.Intercept(f(g(h())))`.
+func (c *ScaUserLevelClient) Intercept(interceptors ...Interceptor) {
+	c.inters.ScaUserLevel = append(c.inters.ScaUserLevel, interceptors...)
+}
+
+// Create returns a builder for creating a ScaUserLevel entity.
+func (c *ScaUserLevelClient) Create() *ScaUserLevelCreate {
+	mutation := newScaUserLevelMutation(c.config, OpCreate)
+	return &ScaUserLevelCreate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// CreateBulk returns a builder for creating a bulk of ScaUserLevel entities.
+func (c *ScaUserLevelClient) CreateBulk(builders ...*ScaUserLevelCreate) *ScaUserLevelCreateBulk {
+	return &ScaUserLevelCreateBulk{config: c.config, builders: builders}
+}
+
+// MapCreateBulk creates a bulk creation builder from the given slice. For each item in the slice, the function creates
+// a builder and applies setFunc on it.
+func (c *ScaUserLevelClient) MapCreateBulk(slice any, setFunc func(*ScaUserLevelCreate, int)) *ScaUserLevelCreateBulk {
+	rv := reflect.ValueOf(slice)
+	if rv.Kind() != reflect.Slice {
+		return &ScaUserLevelCreateBulk{err: fmt.Errorf("calling to ScaUserLevelClient.MapCreateBulk with wrong type %T, need slice", slice)}
+	}
+	builders := make([]*ScaUserLevelCreate, rv.Len())
+	for i := 0; i < rv.Len(); i++ {
+		builders[i] = c.Create()
+		setFunc(builders[i], i)
+	}
+	return &ScaUserLevelCreateBulk{config: c.config, builders: builders}
+}
+
+// Update returns an update builder for ScaUserLevel.
+func (c *ScaUserLevelClient) Update() *ScaUserLevelUpdate {
+	mutation := newScaUserLevelMutation(c.config, OpUpdate)
+	return &ScaUserLevelUpdate{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOne returns an update builder for the given entity.
+func (c *ScaUserLevelClient) UpdateOne(sul *ScaUserLevel) *ScaUserLevelUpdateOne {
+	mutation := newScaUserLevelMutation(c.config, OpUpdateOne, withScaUserLevel(sul))
+	return &ScaUserLevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// UpdateOneID returns an update builder for the given id.
+func (c *ScaUserLevelClient) UpdateOneID(id int64) *ScaUserLevelUpdateOne {
+	mutation := newScaUserLevelMutation(c.config, OpUpdateOne, withScaUserLevelID(id))
+	return &ScaUserLevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// Delete returns a delete builder for ScaUserLevel.
+func (c *ScaUserLevelClient) Delete() *ScaUserLevelDelete {
+	mutation := newScaUserLevelMutation(c.config, OpDelete)
+	return &ScaUserLevelDelete{config: c.config, hooks: c.Hooks(), mutation: mutation}
+}
+
+// DeleteOne returns a builder for deleting the given entity.
+func (c *ScaUserLevelClient) DeleteOne(sul *ScaUserLevel) *ScaUserLevelDeleteOne {
+	return c.DeleteOneID(sul.ID)
+}
+
+// DeleteOneID returns a builder for deleting the given entity by its id.
+func (c *ScaUserLevelClient) DeleteOneID(id int64) *ScaUserLevelDeleteOne {
+	builder := c.Delete().Where(scauserlevel.ID(id))
+	builder.mutation.id = &id
+	builder.mutation.op = OpDeleteOne
+	return &ScaUserLevelDeleteOne{builder}
+}
+
+// Query returns a query builder for ScaUserLevel.
+func (c *ScaUserLevelClient) Query() *ScaUserLevelQuery {
+	return &ScaUserLevelQuery{
+		config: c.config,
+		ctx:    &QueryContext{Type: TypeScaUserLevel},
+		inters: c.Interceptors(),
+	}
+}
+
+// Get returns a ScaUserLevel entity by its id.
+func (c *ScaUserLevelClient) Get(ctx context.Context, id int64) (*ScaUserLevel, error) {
+	return c.Query().Where(scauserlevel.ID(id)).Only(ctx)
+}
+
+// GetX is like Get, but panics if an error occurs.
+func (c *ScaUserLevelClient) GetX(ctx context.Context, id int64) *ScaUserLevel {
+	obj, err := c.Get(ctx, id)
+	if err != nil {
+		panic(err)
+	}
+	return obj
+}
+
+// Hooks returns the client hooks.
+func (c *ScaUserLevelClient) Hooks() []Hook {
+	return c.hooks.ScaUserLevel
+}
+
+// Interceptors returns the client interceptors.
+func (c *ScaUserLevelClient) Interceptors() []Interceptor {
+	return c.inters.ScaUserLevel
+}
+
+func (c *ScaUserLevelClient) mutate(ctx context.Context, m *ScaUserLevelMutation) (Value, error) {
+	switch m.Op() {
+	case OpCreate:
+		return (&ScaUserLevelCreate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdate:
+		return (&ScaUserLevelUpdate{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpUpdateOne:
+		return (&ScaUserLevelUpdateOne{config: c.config, hooks: c.Hooks(), mutation: m}).Save(ctx)
+	case OpDelete, OpDeleteOne:
+		return (&ScaUserLevelDelete{config: c.config, hooks: c.Hooks(), mutation: m}).Exec(ctx)
+	default:
+		return nil, fmt.Errorf("ent: unknown ScaUserLevel mutation op: %q", m.Op())
+	}
+}
+
 // hooks and interceptors per client, for fast access.
 type (
 	hooks struct {
 		ScaAuthPermissionRule, ScaAuthRole, ScaAuthUser, ScaAuthUserDevice,
-		ScaAuthUserSocial []ent.Hook
+		ScaAuthUserSocial, ScaCommentLikes, ScaCommentMessage, ScaCommentReply,
+		ScaUserFollows, ScaUserLevel []ent.Hook
 	}
 	inters struct {
 		ScaAuthPermissionRule, ScaAuthRole, ScaAuthUser, ScaAuthUserDevice,
-		ScaAuthUserSocial []ent.Interceptor
+		ScaAuthUserSocial, ScaCommentLikes, ScaCommentMessage, ScaCommentReply,
+		ScaUserFollows, ScaUserLevel []ent.Interceptor
 	}
 )

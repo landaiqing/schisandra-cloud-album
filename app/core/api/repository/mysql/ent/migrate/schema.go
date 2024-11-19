@@ -156,6 +156,121 @@ var (
 			},
 		},
 	}
+	// ScaCommentLikesColumns holds the columns for the "sca_comment_likes" table.
+	ScaCommentLikesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键id"},
+		{Name: "topic_id", Type: field.TypeString, Comment: "话题ID"},
+		{Name: "user_id", Type: field.TypeString, Comment: "用户ID"},
+		{Name: "comment_id", Type: field.TypeInt64, Comment: "评论ID"},
+		{Name: "like_time", Type: field.TypeTime, Comment: "点赞时间"},
+	}
+	// ScaCommentLikesTable holds the schema information for the "sca_comment_likes" table.
+	ScaCommentLikesTable = &schema.Table{
+		Name:       "sca_comment_likes",
+		Comment:    "评论点赞表",
+		Columns:    ScaCommentLikesColumns,
+		PrimaryKey: []*schema.Column{ScaCommentLikesColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "scacommentlikes_user_id",
+				Unique:  false,
+				Columns: []*schema.Column{ScaCommentLikesColumns[2]},
+			},
+			{
+				Name:    "scacommentlikes_comment_id",
+				Unique:  false,
+				Columns: []*schema.Column{ScaCommentLikesColumns[3]},
+			},
+		},
+	}
+	// ScaCommentMessageColumns holds the columns for the "sca_comment_message" table.
+	ScaCommentMessageColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键"},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "topic_id", Type: field.TypeString, Comment: "话题Id"},
+		{Name: "from_id", Type: field.TypeString, Comment: "来自人"},
+		{Name: "to_id", Type: field.TypeString, Comment: "送达人"},
+		{Name: "content", Type: field.TypeString, Comment: "消息内容"},
+		{Name: "is_read", Type: field.TypeInt, Nullable: true, Comment: "是否已读"},
+	}
+	// ScaCommentMessageTable holds the schema information for the "sca_comment_message" table.
+	ScaCommentMessageTable = &schema.Table{
+		Name:       "sca_comment_message",
+		Comment:    "评论消息表",
+		Columns:    ScaCommentMessageColumns,
+		PrimaryKey: []*schema.Column{ScaCommentMessageColumns[0]},
+	}
+	// ScaCommentReplyColumns holds the columns for the "sca_comment_reply" table.
+	ScaCommentReplyColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键id", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "created_at", Type: field.TypeTime, Comment: "创建时间"},
+		{Name: "updated_at", Type: field.TypeTime, Nullable: true, Comment: "更新时间"},
+		{Name: "deleted", Type: field.TypeInt8, Comment: "是否删除 0 未删除 1 已删除", Default: 0},
+		{Name: "user_id", Type: field.TypeString, Comment: "评论用户id"},
+		{Name: "topic_id", Type: field.TypeString, Comment: "评论话题id"},
+		{Name: "topic_type", Type: field.TypeInt, Comment: "话题类型"},
+		{Name: "content", Type: field.TypeString, Comment: "评论内容"},
+		{Name: "comment_type", Type: field.TypeInt, Comment: "评论类型 0评论 1 回复"},
+		{Name: "reply_to", Type: field.TypeInt64, Nullable: true, Comment: "回复子评论ID", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "reply_id", Type: field.TypeInt64, Nullable: true, Comment: "回复父评论Id", SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "reply_user", Type: field.TypeString, Nullable: true, Comment: "回复人id"},
+		{Name: "author", Type: field.TypeInt, Comment: "评论回复是否作者  0否 1是", Default: 0},
+		{Name: "likes", Type: field.TypeInt64, Nullable: true, Comment: "点赞数", Default: 0, SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "reply_count", Type: field.TypeInt64, Nullable: true, Comment: "回复数量", Default: 0, SchemaType: map[string]string{"mysql": "bigint(20)"}},
+		{Name: "browser", Type: field.TypeString, Comment: "浏览器"},
+		{Name: "operating_system", Type: field.TypeString, Comment: "操作系统"},
+		{Name: "comment_ip", Type: field.TypeString, Comment: "IP地址"},
+		{Name: "location", Type: field.TypeString, Comment: "地址"},
+		{Name: "agent", Type: field.TypeString, Size: 255, Comment: "设备信息"},
+	}
+	// ScaCommentReplyTable holds the schema information for the "sca_comment_reply" table.
+	ScaCommentReplyTable = &schema.Table{
+		Name:       "sca_comment_reply",
+		Comment:    "评论回复表",
+		Columns:    ScaCommentReplyColumns,
+		PrimaryKey: []*schema.Column{ScaCommentReplyColumns[0]},
+		Indexes: []*schema.Index{
+			{
+				Name:    "scacommentreply_id",
+				Unique:  true,
+				Columns: []*schema.Column{ScaCommentReplyColumns[0]},
+			},
+		},
+	}
+	// ScaUserFollowsColumns holds the columns for the "sca_user_follows" table.
+	ScaUserFollowsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "follower_id", Type: field.TypeString, Comment: "关注者"},
+		{Name: "followee_id", Type: field.TypeString, Comment: "被关注者"},
+		{Name: "status", Type: field.TypeUint8, Comment: "关注状态（0 未互关 1 互关）", Default: 0},
+	}
+	// ScaUserFollowsTable holds the schema information for the "sca_user_follows" table.
+	ScaUserFollowsTable = &schema.Table{
+		Name:       "sca_user_follows",
+		Comment:    "用户关注表",
+		Columns:    ScaUserFollowsColumns,
+		PrimaryKey: []*schema.Column{ScaUserFollowsColumns[0]},
+	}
+	// ScaUserLevelColumns holds the columns for the "sca_user_level" table.
+	ScaUserLevelColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt64, Increment: true, Comment: "主键"},
+		{Name: "user_id", Type: field.TypeString, Comment: "用户Id"},
+		{Name: "level_type", Type: field.TypeUint8, Comment: "等级类型"},
+		{Name: "level", Type: field.TypeInt, Comment: "等级"},
+		{Name: "level_name", Type: field.TypeString, Size: 50, Comment: "等级名称"},
+		{Name: "exp_start", Type: field.TypeInt64, Comment: "开始经验值"},
+		{Name: "exp_end", Type: field.TypeInt64, Comment: "结束经验值"},
+		{Name: "level_description", Type: field.TypeString, Nullable: true, Size: 2147483647, Comment: "等级描述"},
+	}
+	// ScaUserLevelTable holds the schema information for the "sca_user_level" table.
+	ScaUserLevelTable = &schema.Table{
+		Name:       "sca_user_level",
+		Comment:    "用户等级表",
+		Columns:    ScaUserLevelColumns,
+		PrimaryKey: []*schema.Column{ScaUserLevelColumns[0]},
+	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
 		ScaAuthPermissionRuleTable,
@@ -163,6 +278,11 @@ var (
 		ScaAuthUserTable,
 		ScaAuthUserDeviceTable,
 		ScaAuthUserSocialTable,
+		ScaCommentLikesTable,
+		ScaCommentMessageTable,
+		ScaCommentReplyTable,
+		ScaUserFollowsTable,
+		ScaUserLevelTable,
 	}
 )
 
@@ -181,5 +301,20 @@ func init() {
 	}
 	ScaAuthUserSocialTable.Annotation = &entsql.Annotation{
 		Table: "sca_auth_user_social",
+	}
+	ScaCommentLikesTable.Annotation = &entsql.Annotation{
+		Table: "sca_comment_likes",
+	}
+	ScaCommentMessageTable.Annotation = &entsql.Annotation{
+		Table: "sca_comment_message",
+	}
+	ScaCommentReplyTable.Annotation = &entsql.Annotation{
+		Table: "sca_comment_reply",
+	}
+	ScaUserFollowsTable.Annotation = &entsql.Annotation{
+		Table: "sca_user_follows",
+	}
+	ScaUserLevelTable.Annotation = &entsql.Annotation{
+		Table: "sca_user_level",
 	}
 }
