@@ -2,6 +2,7 @@ package types
 
 import "time"
 
+// CommentResponse 评论响应
 type CommentResponse struct {
 	Id              int64     `json:"id"`
 	Content         string    `json:"content"`
@@ -12,6 +13,9 @@ type CommentResponse struct {
 	Browser         string    `json:"browser"`
 	OperatingSystem string    `json:"operating_system"`
 	CreatedTime     time.Time `json:"created_time"`
+	ReplyId         int64     `json:"reply_id,omitempty"`
+	ReplyUser       string    `json:"reply_user,omitempty"`
+	ReplyTo         int64     `json:"reply_to,omitempty"`
 }
 
 // CommentImages 评论图片

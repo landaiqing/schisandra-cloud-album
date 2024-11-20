@@ -3,11 +3,10 @@ package comment
 import (
 	"context"
 
-	"schisandra-album-cloud-microservices/app/core/api/common/response"
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetCommentListLogic struct {
@@ -25,7 +24,12 @@ func NewGetCommentListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Ge
 }
 
 func (l *GetCommentListLogic) GetCommentList(req *types.CommentListRequest) (resp *types.Response, err error) {
-	// todo: add your logic here and delete this line
+	// 获取用户ID
+	// uid, ok := l.ctx.Value("user_id").(string)
+	// if !ok {
+	// 	return nil, errors.New("user_id not found in context")
+	// }
 
-	return response.Success(), nil
+	// 查询评论列表
+	return
 }

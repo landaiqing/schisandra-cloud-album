@@ -12,9 +12,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -102,70 +100,76 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		return err
 	}
-	tx, err := l.svcCtx.MySQLClient.Tx(l.ctx)
+	Id := strconv.Itoa(gitHubUser.ID)
+	tx := l.svcCtx.DB.NewSession()
+	defer tx.Close()
+	if err = tx.Begin(); err != nil {
+		return err
+	}
+	userSocial := model.ScaAuthUserSocial{
+		OpenId:  Id,
+		Source:  constant.OAuthSourceGithub,
+		Deleted: constant.NotDeleted,
+	}
+	has, err := tx.Get(&userSocial)
 	if err != nil {
 		return err
 	}
-	Id := strconv.Itoa(gitHubUser.ID)
-	socialUser, err := l.svcCtx.MySQLClient.ScaAuthUserSocial.Query().
-		Where(scaauthusersocial.OpenID(Id),
-			scaauthusersocial.Source(constant.OAuthSourceGithub),
-			scaauthusersocial.Deleted(constant.NotDeleted)).
-		First(l.ctx)
 
-	if err != nil && !ent.IsNotFound(err) {
-		return err
-	}
-
-	if ent.IsNotFound(err) {
+	if !has {
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 
-		addUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Create().
-			SetUID(uidStr).
-			SetAvatar(gitHubUser.AvatarURL).
-			SetUsername(gitHubUser.Login).
-			SetNickname(gitHubUser.Name).
-			SetBlog(gitHubUser.Blog).
-			SetEmail(gitHubUser.Email).
-			SetDeleted(constant.NotDeleted).
-			SetGender(constant.Male).
-			Save(l.ctx)
-		if fault != nil {
-			return tx.Rollback()
+		addUser := model.ScaAuthUser{
+			UID:      uidStr,
+			Avatar:   gitHubUser.AvatarURL,
+			Username: gitHubUser.Login,
+			Nickname: gitHubUser.Name,
+			Blog:     gitHubUser.Blog,
+			Email:    gitHubUser.Email,
+			Deleted:  constant.NotDeleted,
+			Gender:   constant.Male,
+		}
+		affected, err := tx.Insert(&addUser)
+		if err != nil || affected == 0 {
+			return err
 		}
 
-		if err = l.svcCtx.MySQLClient.ScaAuthUserSocial.Create().
-			SetUserID(uidStr).
-			SetOpenID(Id).
-			SetSource(constant.OAuthSourceGithub).
-			Exec(l.ctx); err != nil {
-			return tx.Rollback()
+		socialUser := model.ScaAuthUserSocial{
+			UserId: uidStr,
+			OpenId: Id,
+			Source: constant.OAuthSourceGithub,
+		}
+		insert, err := tx.Insert(&socialUser)
+		if err != nil || insert == 0 {
+			return err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
-			return tx.Rollback()
+			return err
 		}
 
-		if result := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); !result {
-			return tx.Rollback()
+		if err = HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); err != nil {
+			return err
 		}
 	} else {
-		sacAuthUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Query().
-			Where(scaauthuser.UID(socialUser.UserID), scaauthuser.Deleted(constant.NotDeleted)).
-			First(l.ctx)
-		if fault != nil {
-			return tx.Rollback()
+		user := model.ScaAuthUser{
+			UID:     userSocial.UserId,
+			Deleted: constant.NotDeleted,
+		}
+		have, err := tx.Get(&user)
+		if err != nil || !have {
+			return err
 		}
 
-		if result := HandleOauthLoginResponse(sacAuthUser, l.svcCtx, r, w, l.ctx); !result {
-			return tx.Rollback()
+		if err = HandleOauthLoginResponse(user, l.svcCtx, r, w, l.ctx); err != nil {
+			return err
 		}
 	}
 
 	if err := tx.Commit(); err != nil {
-		return tx.Rollback()
+		return err
 	}
 	return nil
 }

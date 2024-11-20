@@ -1,64 +1,17 @@
 package model
 
-import (
-	"entgo.io/ent"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/field"
+import "time"
 
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model/mixin"
-)
-
-// ScaAuthRole holds the model definition for the ScaAuthRole entity.
 type ScaAuthRole struct {
-	ent.Schema
+	Id        int64     `xorm:"bigint(20) 'id' comment('主键ID') pk autoincr notnull " json:"id"`                     // 主键ID
+	RoleName  string    `xorm:"varchar(32) 'role_name' comment('角色名称') notnull " json:"role_name"`                  // 角色名称
+	RoleKey   string    `xorm:"varchar(64) 'role_key' comment('角色关键字') notnull " json:"role_key"`                   // 角色关键字
+	CreatedAt time.Time `xorm:"timestamp 'created_at' created  comment('创建时间') default NULL " json:"created_at"`    // 创建时间
+	Deleted   int8      `xorm:"tinyint(4) 'deleted' comment('是否删除 0 未删除 1 已删除') notnull default 0 " json:"deleted"` // 是否删除 0 未删除 1 已删除
+	UpdatedAt time.Time `xorm:"timestamp 'updated_at' updated comment('更新时间') default NULL " json:"updated_at"`     // 更新时间
+	DeletedAt time.Time `xorm:"datetime 'deleted_at' deleted comment('删除时间') default NULL " json:"deleted_at"`      // 删除时间
 }
 
-func (ScaAuthRole) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		mixin.DefaultMixin{},
-	}
-}
-
-// Fields of the ScaAuthRole.
-func (ScaAuthRole) Fields() []ent.Field {
-	return []ent.Field{
-		field.Int64("id").
-			SchemaType(map[string]string{
-				dialect.MySQL: "bigint(20)",
-			}).
-			Unique().
-			Comment("主键ID"),
-		field.String("role_name").
-			MaxLen(32).
-			Comment("角色名称"),
-		field.String("role_key").
-			MaxLen(64).
-			Comment("角色关键字").
-			Annotations(
-				entsql.WithComments(true),
-			),
-	}
-}
-
-// Edges of the ScaAuthRole.
-func (ScaAuthRole) Edges() []ent.Edge {
-	return nil
-}
-
-// Indexes of the ScaAuthRole.
-func (ScaAuthRole) Indexes() []ent.Index {
-	return nil
-}
-
-// Annotations of the ScaAuthRole.
-func (ScaAuthRole) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.WithComments(true),
-		schema.Comment("角色表"),
-		entsql.Annotation{
-			Table: "sca_auth_role",
-		},
-	}
+func (s *ScaAuthRole) TableName() string {
+	return "sca_auth_role"
 }

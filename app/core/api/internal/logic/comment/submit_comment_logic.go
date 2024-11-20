@@ -14,6 +14,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -57,11 +58,14 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 	browser, _ := ua.Browser()
 	operatingSystem := ua.OS()
 	isAuthor := 0
-	session, wrong := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
-	if wrong == nil {
-		return nil, wrong
+	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
+	if err == nil {
+		return nil, err
 	}
-	uid := session.Values["uid"].(string)
+	uid, ok := session.Values["uid"].(string)
+	if !ok {
+		return nil, errors.New("uid not found in session")
+	}
 	if uid == req.Author {
 		isAuthor = 1
 	}
@@ -70,39 +74,36 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
 	}
 	commentContent := l.svcCtx.Sensitive.Replace(xssFilterContent, '*')
-	comment, err := l.svcCtx.MySQLClient.ScaCommentReply.Create().
-		SetContent(commentContent).
-		SetUserID(uid).
-		SetTopicID(req.TopicId).
-		SetCommentType(constant.CommentTopicType).
-		SetCommentType(constant.COMMENT).
-		SetAuthor(isAuthor).
-		SetCommentIP(ip).
-		SetLocation(location).
-		SetBrowser(browser).
-		SetOperatingSystem(operatingSystem).
-		SetAgent(userAgent).Save(l.ctx)
+	comment := model.ScaCommentReply{
+		Content:         commentContent,
+		UserId:          uid,
+		TopicId:         req.TopicId,
+		TopicType:       constant.CommentTopicType,
+		CommentType:     constant.COMMENT,
+		Author:          isAuthor,
+		CommentIp:       ip,
+		Location:        location,
+		Browser:         browser,
+		OperatingSystem: operatingSystem,
+		Agent:           userAgent,
+	}
+	affected, err := l.svcCtx.DB.InsertOne(&comment)
 	if err != nil {
 		return nil, err
 	}
+	if affected == 0 {
+		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
+	}
+
 	if len(req.Images) > 0 {
-		imagesDataCh := make(chan [][]byte)
-		go func() {
-			imagesData, err := utils.ProcessImages(req.Images)
-			if err != nil {
-				imagesDataCh <- nil
-				return
-			}
-			imagesDataCh <- imagesData
-		}()
-		imagesData := <-imagesDataCh
-		if imagesData == nil {
-			return nil, errors.New("process images failed")
+		imagesData, err := utils.ProcessImages(req.Images)
+		if err != nil {
+			return nil, err
 		}
 		commentImages := types.CommentImages{
 			UserId:    uid,
 			TopicId:   req.TopicId,
-			CommentId: comment.ID,
+			CommentId: comment.Id,
 			Images:    imagesData,
 			CreatedAt: comment.CreatedAt.String(),
 		}
@@ -111,7 +112,7 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 		}
 	}
 	commentResponse := types.CommentResponse{
-		Id:              comment.ID,
+		Id:              comment.Id,
 		Content:         commentContent,
 		UserId:          uid,
 		TopicId:         req.TopicId,

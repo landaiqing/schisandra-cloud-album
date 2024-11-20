@@ -2,7 +2,9 @@ package comment
 
 import (
 	"context"
+	"errors"
 	"net/http"
+	"time"
 
 	"github.com/mssola/useragent"
 
@@ -12,6 +14,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -53,20 +56,96 @@ func (l *SubmitReplyCommentLogic) SubmitReplyComment(r *http.Request, req *types
 
 	browser, _ := ua.Browser()
 	operatingSystem := ua.OS()
-	isAuthor := 0
-	session, wrong := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
-	if wrong == nil {
-		return nil, wrong
+	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
+	if err != nil {
+		return nil, err
 	}
-	uid := session.Values["uid"].(string)
+
+	uid, ok := session.Values["uid"].(string)
+	if !ok {
+		return nil, errors.New("uid not found in session")
+	}
+	isAuthor := 0
 	if uid == req.Author {
 		isAuthor = 1
 	}
+
 	xssFilterContent := utils.XssFilter(req.Content)
 	if xssFilterContent == "" {
 		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
 	}
 	commentContent := l.svcCtx.Sensitive.Replace(xssFilterContent, '*')
 
-	return
+	tx := l.svcCtx.DB.NewSession()
+	defer tx.Close()
+	if err = tx.Begin(); err != nil {
+		return nil, err
+	}
+
+	reply := model.ScaCommentReply{
+		Content:         commentContent,
+		UserId:          uid,
+		TopicId:         req.TopicId,
+		TopicType:       constant.CommentTopicType,
+		CommentType:     constant.COMMENT,
+		Author:          isAuthor,
+		CommentIp:       ip,
+		Location:        location,
+		Browser:         browser,
+		OperatingSystem: operatingSystem,
+		Agent:           userAgent,
+		ReplyId:         req.ReplyId,
+		ReplyUser:       req.ReplyUser,
+	}
+	affected, err := tx.Insert(&reply)
+	if err != nil {
+		return nil, err
+	}
+	if affected == 0 {
+		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
+	}
+	update, err := tx.Table(model.ScaCommentReply{}).Where("id = ? and deleted = 0", req.ReplyId).Incr("reply_count", 1).Update(nil)
+	if err != nil {
+		return nil, err
+	}
+	if update == 0 {
+		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
+	}
+
+	if len(req.Images) > 0 {
+		imagesData, err := utils.ProcessImages(req.Images)
+		if err != nil {
+			return nil, err
+		}
+
+		commentImages := types.CommentImages{
+			UserId:    uid,
+			TopicId:   req.TopicId,
+			CommentId: reply.Id,
+			Images:    imagesData,
+			CreatedAt: reply.CreatedAt.String(),
+		}
+		if _, err = l.svcCtx.MongoClient.Collection("comment_images").InsertOne(l.ctx, commentImages); err != nil {
+			return nil, err
+		}
+	}
+
+	commentResponse := types.CommentResponse{
+		Id:              reply.Id,
+		Content:         commentContent,
+		UserId:          uid,
+		TopicId:         reply.TopicId,
+		Author:          isAuthor,
+		Location:        location,
+		Browser:         browser,
+		OperatingSystem: operatingSystem,
+		CreatedTime:     time.Now(),
+		ReplyId:         reply.ReplyId,
+		ReplyUser:       reply.ReplyUser,
+	}
+	err = tx.Commit()
+	if err != nil {
+		return nil, err
+	}
+	return response.SuccessWithData(commentResponse), nil
 }

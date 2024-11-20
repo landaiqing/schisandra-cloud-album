@@ -6,7 +6,9 @@ Web:
 Middlewares:
   Log: true
 Mysql:
-  DataSource: root:LDQ20020618xxx@tcp(1.95.0.111:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local
+  DataSource: root:1611@tcp(127.0.0.1:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local
+  MaxOpenConn: 10
+  MaxIdleConn: 5
 Auth:
   AccessSecret: uOvKLmVfztaXGpNYd4Z0I1SiT7MweJhl
 Signature:

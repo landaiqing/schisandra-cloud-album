@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/zeromicro/go-zero/core/logc"
 	"github.com/zeromicro/go-zero/core/logx"
+	"xorm.io/xorm"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/captcha/verify"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
@@ -15,8 +15,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 )
 
 type AccountLoginLogic struct {
@@ -38,44 +37,43 @@ func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request,
 	if !verifyResult {
 		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure"), nil
 	}
-	var user *ent.ScaAuthUser
-	var query *ent.ScaAuthUserQuery
+	var user model.ScaAuthUser
+	var query *xorm.Session
 
 	switch {
 	case utils.IsPhone(req.Account):
-		query = l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.PhoneEQ(req.Account), scaauthuser.DeletedEQ(0))
+		query = l.svcCtx.DB.Where("phone = ? AND deleted = ?", req.Account, 0)
 	case utils.IsEmail(req.Account):
-		query = l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.EmailEQ(req.Account), scaauthuser.DeletedEQ(0))
+		query = l.svcCtx.DB.Where("email = ? AND deleted = ?", req.Account, 0)
 	case utils.IsUsername(req.Account):
-		query = l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.UsernameEQ(req.Account), scaauthuser.DeletedEQ(0))
+		query = l.svcCtx.DB.Where("username = ? AND deleted = ?", req.Account, 0)
 	default:
 		return response.ErrorWithI18n(l.ctx, "login.invalidAccount"), nil
 	}
-
-	user, err = query.First(l.ctx)
+	has, err := query.Get(&user)
 	if err != nil {
-		if ent.IsNotFound(err) {
-			return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), nil
-		}
 		return nil, err
+	}
+	if !has {
+		return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), nil
 	}
 
 	if !utils.Verify(user.Password, req.Password) {
 		return response.ErrorWithI18n(l.ctx, "login.invalidPassword"), nil
 	}
-	data, result := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
-	if !result {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+	data, err := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+	if err != nil {
+		return nil, err
 	}
 	// 记录用户登录设备
-	if !GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx) {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+	if err = GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+		return nil, err
 	}
 	return response.SuccessWithData(data), nil
 }
 
 // HandleUserLogin 处理用户登录
-func HandleUserLogin(user *ent.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, w http.ResponseWriter, ctx context.Context) (*types.LoginResponse, bool) {
+func HandleUserLogin(user model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, w http.ResponseWriter, ctx context.Context) (*types.LoginResponse, error) {
 	// 生成jwt token
 	accessToken := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: user.UID,
@@ -105,20 +103,18 @@ func HandleUserLogin(user *ent.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogi
 	}
 	err := svcCtx.RedisClient.Set(ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
 	if err != nil {
-		logc.Error(ctx, err)
-		return nil, false
+		return nil, err
 	}
 	session, err := svcCtx.Session.Get(r, constant.SESSION_KEY)
 	if err != nil {
-		logc.Error(ctx, err)
-		return nil, false
+		return nil, err
 	}
 	session.Values["refresh_token"] = refreshToken
 	session.Values["uid"] = user.UID
 	err = session.Save(r, w)
 	if err != nil {
-		return nil, false
+		return nil, err
 	}
-	return &data, true
+	return &data, nil
 
 }

@@ -1,77 +1,20 @@
 package model
 
-import (
-	"entgo.io/ent"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
+import "time"
 
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model/mixin"
-)
-
-// ScaAuthUserSocial holds the model definition for the ScaAuthUserSocial entity.
 type ScaAuthUserSocial struct {
-	ent.Schema
+	Id        int64     `xorm:"bigint(20) 'id' comment('主键ID') pk autoincr notnull " json:"id"`                     // 主键ID
+	UserId    string    `xorm:"varchar(20) 'user_id' comment('用户ID') notnull " json:"user_id"`                      // 用户ID
+	OpenId    string    `xorm:"varchar(50) 'open_id' comment('第三方用户的 open id') notnull " json:"open_id"`            // 第三方用户的 open id
+	Source    string    `xorm:"varchar(10) 'source' comment('第三方用户来源') notnull " json:"source"`                     // 第三方用户来源
+	Status    int64     `xorm:"bigint(20) 'status' comment('状态 0正常 1 封禁') notnull default 0 " json:"status"`        // 状态 0正常 1 封禁
+	CreatedAt time.Time `xorm:"timestamp 'created_at' created comment('创建时间') default NULL " json:"created_at"`     // 创建时间
+	Deleted   int8      `xorm:"tinyint(4) 'deleted' comment('是否删除 0 未删除 1 已删除') notnull default 0 " json:"deleted"` // 是否删除 0 未删除 1 已删除
+	UpdatedAt time.Time `xorm:"timestamp 'updated_at'updated  comment('更新时间') default NULL " json:"updated_at"`     // 更新时间
+	DeletedAt time.Time `xorm:"datetime 'deleted_at' deleted comment('删除时间') default NULL " json:"deleted_at"`      // 删除时间
+
 }
 
-func (ScaAuthUserSocial) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		mixin.DefaultMixin{},
-	}
-}
-
-// Fields of the ScaAuthUserSocial.
-func (ScaAuthUserSocial) Fields() []ent.Field {
-	return []ent.Field{
-		field.Int64("id").
-			SchemaType(map[string]string{
-				dialect.MySQL: "bigint(20)",
-			}).
-			Unique().
-			Comment("主键ID"),
-		field.String("user_id").
-			MaxLen(20).
-			Comment("用户ID"),
-		field.String("open_id").
-			MaxLen(50).
-			Comment("第三方用户的 open id"),
-		field.String("source").
-			MaxLen(10).
-			Comment("第三方用户来源"),
-		field.Int("status").
-			Default(0).
-			Comment("状态 0正常 1 封禁").Annotations(
-			entsql.WithComments(true),
-		),
-	}
-}
-
-// Edges of the ScaAuthUserSocial.
-func (ScaAuthUserSocial) Edges() []ent.Edge {
-	return nil
-}
-
-// Indexes of the ScaAuthUserSocial.
-func (ScaAuthUserSocial) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("id").
-			Unique(),
-		index.Fields("user_id").
-			Unique(),
-		index.Fields("open_id").
-			Unique(),
-	}
-}
-
-// Annotations of the ScaAuthUserSocial.
-func (ScaAuthUserSocial) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.WithComments(true),
-		schema.Comment("用户第三方登录信息"),
-		entsql.Annotation{
-			Table: "sca_auth_user_social",
-		},
-	}
+func (s *ScaAuthUserSocial) TableName() string {
+	return "sca_auth_user_social"
 }

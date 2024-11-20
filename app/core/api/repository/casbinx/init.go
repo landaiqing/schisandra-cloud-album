@@ -6,13 +6,14 @@ import (
 
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
-
-	"schisandra-album-cloud-microservices/app/core/api/repository/casbinx/adapter"
+	xormadapter "github.com/casbin/xorm-adapter/v3"
+	_ "github.com/go-sql-driver/mysql"
+	"xorm.io/xorm"
 )
 
 // NewCasbin creates a new casbinx enforcer with a mysql adapter and loads the policy from the file system.
-func NewCasbin(dataSourceName string) *casbin.CachedEnforcer {
-	a, err := adapter.NewAdapter("mysql", dataSourceName)
+func NewCasbin(engine *xorm.Engine) *casbin.CachedEnforcer {
+	a, err := xormadapter.NewAdapterByEngineWithTableName(engine, "permission_rule", "sca_auth_")
 	if err != nil {
 		panic(err)
 	}

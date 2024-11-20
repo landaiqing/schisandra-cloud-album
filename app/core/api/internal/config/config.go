@@ -11,7 +11,9 @@ type Config struct {
 		AccessSecret string
 	}
 	Mysql struct {
-		DataSource string
+		DataSource  string
+		MaxOpenConn int
+		MaxIdleConn int
 	}
 	Redis struct {
 		Host string

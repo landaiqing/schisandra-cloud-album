@@ -1,98 +1,29 @@
 package model
 
-import (
-	"entgo.io/ent"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
+import "time"
 
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model/mixin"
-)
-
-// ScaAuthUserDevice holds the model definition for the ScaAuthUserDevice entity.
 type ScaAuthUserDevice struct {
-	ent.Schema
+	Id              int64     `xorm:"bigint(20) 'id' comment('主键ID') pk autoincr notnull " json:"id"`                     // 主键ID
+	UserId          string    `xorm:"varchar(20) 'user_id' comment('用户ID') notnull " json:"user_id"`                      // 用户ID
+	Ip              string    `xorm:"varchar(20) 'ip' comment('登录IP') notnull " json:"ip"`                                // 登录IP
+	Location        string    `xorm:"varchar(20) 'location' comment('地址') notnull " json:"location"`                      // 地址
+	Agent           string    `xorm:"varchar(255) 'agent' comment('设备信息') notnull " json:"agent"`                         // 设备信息
+	CreatedAt       time.Time `xorm:"timestamp 'created_at' created comment('创建时间') default NULL " json:"created_at"`     // 创建时间
+	Deleted         int8      `xorm:"tinyint(4) 'deleted' comment('是否删除 0 未删除 1 已删除') notnull default 0 " json:"deleted"` // 是否删除 0 未删除 1 已删除
+	Browser         string    `xorm:"varchar(20) 'browser' comment('浏览器') notnull " json:"browser"`                       // 浏览器
+	OperatingSystem string    `xorm:"varchar(20) 'operating_system' comment('操作系统') notnull " json:"operating_system"`    // 操作系统
+	BrowserVersion  string    `xorm:"varchar(20) 'browser_version' comment('浏览器版本') notnull " json:"browser_version"`     // 浏览器版本
+	Mobile          bool      `xorm:"tinyint(1) 'mobile' comment('是否为手机 0否1是') notnull " json:"mobile"`                   // 是否为手机 0否1是
+	Bot             bool      `xorm:"tinyint(1) 'bot' comment('是否为bot 0否1是') notnull " json:"bot"`                        // 是否为bot 0否1是
+	Mozilla         string    `xorm:"varchar(10) 'mozilla' comment('火狐版本') notnull " json:"mozilla"`                      // 火狐版本
+	Platform        string    `xorm:"varchar(20) 'platform' comment('平台') notnull " json:"platform"`                      // 平台
+	EngineName      string    `xorm:"varchar(20) 'engine_name' comment('引擎名称') notnull " json:"engine_name"`              // 引擎名称
+	EngineVersion   string    `xorm:"varchar(20) 'engine_version' comment('引擎版本') notnull " json:"engine_version"`        // 引擎版本
+	UpdatedAt       time.Time `xorm:"timestamp 'updated_at' updated comment('更新时间') default NULL " json:"updated_at"`     // 更新时间
+	DeletedAt       time.Time `xorm:"datetime 'deleted_at' deleted comment('删除时间') default NULL " json:"deleted_at"`      // 删除时间
+
 }
 
-func (ScaAuthUserDevice) Mixin() []ent.Mixin {
-	return []ent.Mixin{
-		mixin.DefaultMixin{},
-	}
-}
-
-// Fields of the ScaAuthUserDevice.
-func (ScaAuthUserDevice) Fields() []ent.Field {
-	return []ent.Field{
-		field.Int64("id").
-			SchemaType(map[string]string{
-				dialect.MySQL: "bigint(20)",
-			}).
-			Unique().
-			Comment("主键ID"),
-		field.String("user_id").
-			MaxLen(20).
-			Comment("用户ID"),
-		field.String("ip").
-			MaxLen(20).
-			Comment("登录IP"),
-		field.String("location").
-			MaxLen(20).
-			Comment("地址"),
-		field.String("agent").
-			MaxLen(255).
-			Comment("设备信息"),
-		field.String("browser").
-			MaxLen(20).
-			Comment("浏览器"),
-		field.String("operating_system").
-			MaxLen(20).
-			Comment("操作系统"),
-		field.String("browser_version").
-			MaxLen(20).
-			Comment("浏览器版本"),
-		field.Bool("mobile").
-			Comment("是否为手机 0否1是"),
-		field.Bool("bot").
-			Comment("是否为bot 0否1是"),
-		field.String("mozilla").
-			MaxLen(10).
-			Comment("火狐版本"),
-		field.String("platform").
-			MaxLen(20).
-			Comment("平台"),
-		field.String("engine_name").
-			MaxLen(20).
-			Comment("引擎名称"),
-		field.String("engine_version").
-			MaxLen(20).
-			Comment("引擎版本").Annotations(
-			entsql.WithComments(true),
-		),
-	}
-}
-
-// Edges of the ScaAuthUserDevice.
-func (ScaAuthUserDevice) Edges() []ent.Edge {
-	return nil
-}
-
-// Indexes of the ScaAuthUserDevice.
-func (ScaAuthUserDevice) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("id").
-			Unique(),
-	}
-}
-
-// Annotations of the ScaAuthUserDevice.
-func (ScaAuthUserDevice) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.WithComments(true),
-		schema.Comment("用户设备表"),
-		entsql.Annotation{
-			Table: "sca_auth_user_device",
-		},
-	}
+func (s *ScaAuthUserDevice) TableName() string {
+	return "sca_auth_user_device"
 }

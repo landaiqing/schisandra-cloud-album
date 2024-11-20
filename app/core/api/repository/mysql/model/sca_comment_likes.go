@@ -1,58 +1,15 @@
 package model
 
-import (
-	"time"
+import "time"
 
-	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/field"
-	"entgo.io/ent/schema/index"
-)
-
-// ScaCommentLikes holds the model definition for the ScaCommentLikes entity.
 type ScaCommentLikes struct {
-	ent.Schema
+	Id        int64     `xorm:"bigint(20) 'id' comment('主键id') pk autoincr notnull " json:"id"`               // 主键id
+	TopicId   string    `xorm:"varchar(255) 'topic_id' comment('话题ID') notnull " json:"topic_id"`             // 话题ID
+	UserId    string    `xorm:"varchar(255) 'user_id' comment('用户ID') notnull " json:"user_id"`               // 用户ID
+	CommentId int64     `xorm:"bigint(20) 'comment_id' comment('评论ID') notnull " json:"comment_id"`           // 评论ID
+	LikeTime  time.Time `xorm:"timestamp 'like_time' created comment('点赞时间') default NULL " json:"like_time"` // 点赞时间
 }
 
-// Fields of the ScaCommentLikes.
-func (ScaCommentLikes) Fields() []ent.Field {
-	return []ent.Field{
-		field.Int64("id").
-			Unique().
-			Comment("主键id"),
-		field.String("topic_id").
-			Comment("话题ID"),
-		field.String("user_id").
-			Comment("用户ID"),
-		field.Int64("comment_id").
-			Comment("评论ID"),
-		field.Time("like_time").
-			Default(time.Now).
-			Comment("点赞时间"),
-	}
-}
-
-// Edges of the ScaCommentLikes.
-func (ScaCommentLikes) Edges() []ent.Edge {
-	return nil
-}
-
-// Indexes of the ScaCommentLikes.
-func (ScaCommentLikes) Indexes() []ent.Index {
-	return []ent.Index{
-		index.Fields("user_id"),
-		index.Fields("comment_id"),
-	}
-}
-
-// Annotations of the ScaCommentLikes.
-func (ScaCommentLikes) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.WithComments(true),
-		schema.Comment("评论点赞表"),
-		entsql.Annotation{
-			Table: "sca_comment_likes",
-		},
-	}
+func (s *ScaCommentLikes) TableName() string {
+	return "sca_comment_likes"
 }

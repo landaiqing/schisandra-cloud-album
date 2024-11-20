@@ -9,6 +9,7 @@ import (
 	"github.com/wenlng/go-captcha/v2/rotate"
 	"github.com/wenlng/go-captcha/v2/slide"
 	sensitive "github.com/zmexing/go-sensitive-word"
+	"xorm.io/xorm"
 
 	"github.com/zeromicro/go-zero/rest"
 	"go.mongodb.org/mongo-driver/v2/mongo"
@@ -20,7 +21,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/ip2region"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mongodb"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
 	"schisandra-album-cloud-microservices/app/core/api/repository/redis_session"
 	"schisandra-album-cloud-microservices/app/core/api/repository/redisx"
 	"schisandra-album-cloud-microservices/app/core/api/repository/sensitivex"
@@ -31,7 +31,7 @@ type ServiceContext struct {
 	Config                    config.Config
 	SecurityHeadersMiddleware rest.Middleware
 	CasbinVerifyMiddleware    rest.Middleware
-	MySQLClient               *ent.Client
+	DB                        *xorm.Engine
 	RedisClient               *redis.Client
 	MongoClient               *mongo.Database
 	Session                   *redisstore.RedisStore
@@ -44,14 +44,15 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	casbinEnforcer := casbinx.NewCasbin(c.Mysql.DataSource)
+	db := mysql.NewMySQL(c.Mysql.DataSource, c.Mysql.MaxOpenConn, c.Mysql.MaxIdleConn)
+	casbinEnforcer := casbinx.NewCasbin(db)
 	redisClient := redisx.NewRedis(c.Redis.Host, c.Redis.Pass, c.Redis.DB)
 	session := redis_session.NewRedisSession(redisClient)
 	return &ServiceContext{
 		Config:                    c,
 		SecurityHeadersMiddleware: middleware.NewSecurityHeadersMiddleware().Handle,
 		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer, session).Handle,
-		MySQLClient:               mysql.NewMySQL(c.Mysql.DataSource),
+		DB:                        db,
 		RedisClient:               redisClient,
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),
 		Session:                   session,

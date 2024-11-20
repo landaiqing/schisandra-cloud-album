@@ -8,12 +8,12 @@ import (
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/mssola/useragent"
 	"github.com/zeromicro/go-zero/core/logx"
+	"xorm.io/xorm"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuserdevice"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 )
 
 type GetUserDeviceLogic struct {
@@ -40,23 +40,22 @@ func (l *GetUserDeviceLogic) GetUserDevice(r *http.Request) error {
 		return errors.New("user session not found")
 	}
 
-	res := GetUserLoginDevice(uid, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx)
-	if !res {
-		return errors.New("user device not found")
+	if err = GetUserLoginDevice(uid, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+		return err
 	}
 	return nil
 }
 
 // GetUserLoginDevice 获取用户登录设备
-func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searcher, entClient *ent.Client, ctx context.Context) bool {
+func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searcher, db *xorm.Engine, ctx context.Context) error {
 	userAgent := r.Header.Get("User-Agent")
 	if userAgent == "" {
-		return false
+		return errors.New("user agent not found")
 	}
 	ip := utils.GetClientIP(r)
 	location, err := ip2location.SearchByStr(ip)
 	if err != nil {
-		return false
+		return err
 	}
 	location = utils.RemoveZeroAndAdjust(location)
 
@@ -69,57 +68,54 @@ func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searche
 	platform := ua.Platform()
 	engine, engineVersion := ua.Engine()
 
-	device, err := entClient.ScaAuthUserDevice.Query().
-		Where(scaauthuserdevice.UserID(userId), scaauthuserdevice.IP(ip), scaauthuserdevice.Agent(userAgent)).
-		Only(ctx)
+	var device model.ScaAuthUserDevice
+	has, err := db.Where("user_id = ? AND ip = ? AND agent = ?", userId, ip, userAgent).Get(&device)
+	if err != nil {
+		return err
+	}
 
-	// 如果有错误，表示设备不存在，执行插入
-	if ent.IsNotFound(err) {
+	if !has {
 		// 创建新的设备记录
-		err = entClient.ScaAuthUserDevice.Create().
-			SetUserID(userId).
-			SetBot(isBot).
-			SetAgent(userAgent).
-			SetBrowser(browser).
-			SetBrowserVersion(browserVersion).
-			SetEngineName(engine).
-			SetEngineVersion(engineVersion).
-			SetIP(ip).
-			SetLocation(location).
-			SetOperatingSystem(os).
-			SetMobile(mobile).
-			SetMozilla(mozilla).
-			SetPlatform(platform).
-			Exec(ctx)
-		if err != nil {
-			logx.Error(err)
-			return false
+		newDevice := &model.ScaAuthUserDevice{
+			UserId:          userId,
+			Bot:             isBot,
+			Agent:           userAgent,
+			Browser:         browser,
+			BrowserVersion:  browserVersion,
+			EngineName:      engine,
+			EngineVersion:   engineVersion,
+			Ip:              ip,
+			Location:        location,
+			OperatingSystem: os,
+			Mobile:          mobile,
+			Mozilla:         mozilla,
+			Platform:        platform,
 		}
-		return true
-	} else if err == nil {
-		// 如果设备存在，执行更新
-		err = device.Update().
-			SetUserID(userId).
-			SetBot(isBot).
-			SetAgent(userAgent).
-			SetBrowser(browser).
-			SetBrowserVersion(browserVersion).
-			SetEngineName(engine).
-			SetEngineVersion(engineVersion).
-			SetIP(ip).
-			SetLocation(location).
-			SetOperatingSystem(os).
-			SetMobile(mobile).
-			SetMozilla(mozilla).
-			SetPlatform(platform).
-			Exec(ctx)
-		if err != nil {
-			logx.Error(err)
-			return false
+
+		affected, err := db.Insert(newDevice)
+		if err != nil || affected == 0 {
+			return errors.New("create user device failed")
 		}
-		return true
+		return nil
 	} else {
-		logx.Error(err)
-		return false
+		// 如果设备存在，执行更新
+		device.Bot = isBot
+		device.Agent = userAgent
+		device.Browser = browser
+		device.BrowserVersion = browserVersion
+		device.EngineName = engine
+		device.EngineVersion = engineVersion
+		device.Ip = ip
+		device.Location = location
+		device.OperatingSystem = os
+		device.Mobile = mobile
+		device.Mozilla = mozilla
+		device.Platform = platform
+
+		affected, err := db.ID(device.Id).Update(&device)
+		if err != nil || affected == 0 {
+			return errors.New("update user device failed")
+		}
+		return nil
 	}
 }

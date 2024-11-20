@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -14,8 +15,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 )
 
 type PhoneLoginLogic struct {
@@ -43,64 +43,68 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 	if req.Captcha != code {
 		return response.ErrorWithI18n(l.ctx, "login.captchaError"), nil
 	}
-	user, err := l.svcCtx.MySQLClient.ScaAuthUser.Query().Where(scaauthuser.Phone(req.Phone), scaauthuser.Deleted(0)).First(l.ctx)
-	tx, wrong := l.svcCtx.MySQLClient.Tx(l.ctx)
-	if wrong != nil {
+	authUser := model.ScaAuthUser{
+		Phone:   req.Phone,
+		Deleted: constant.NotDeleted,
+	}
+	has, err := l.svcCtx.DB.Get(&authUser)
+	if err != nil {
 		return nil, err
 	}
-	if ent.IsNotFound(err) {
+	tx := l.svcCtx.DB.NewSession()
+	defer tx.Close()
+	if err = tx.Begin(); err != nil {
+		return nil, err
+	}
+
+	if !has {
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
 
-		addUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Create().
-			SetUID(uidStr).
-			SetPhone(req.Phone).
-			SetAvatar(avatar).
-			SetNickname(name).
-			SetDeleted(constant.NotDeleted).
-			SetGender(constant.Male).
-			Save(l.ctx)
-		if fault != nil {
-			err = tx.Rollback()
-			return nil, err
+		user := model.ScaAuthUser{
+			UID:      uidStr,
+			Phone:    req.Phone,
+			Avatar:   avatar,
+			Nickname: name,
+			Deleted:  constant.NotDeleted,
+			Gender:   constant.Male,
+		}
+		insert, err := tx.Insert(&user)
+		if err != nil || insert == 0 {
+			return nil, errors.New("register failed")
 		}
 		_, err = l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User)
 		if err != nil {
-			err = tx.Rollback()
 			return nil, err
 		}
-		data, result := HandleUserLogin(addUser, l.svcCtx, req.AutoLogin, r, w, l.ctx)
-		if !result {
-			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.registerError"), err
+		data, err := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+		if err != nil {
+			return nil, err
 		}
 		// 记录用户登录设备
-		if !GetUserLoginDevice(addUser.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx) {
-			return response.ErrorWithI18n(l.ctx, "login.registerError"), nil
+		if err = GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+			return nil, err
 		}
 		err = tx.Commit()
 		if err != nil {
-			tx.Rollback()
-		}
-		return response.SuccessWithData(data), nil
-	} else if err == nil {
-		data, result := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
-		if !result {
-			err = tx.Rollback()
-			return response.ErrorWithI18n(l.ctx, "login.loginFailed"), err
-		}
-		// 记录用户登录设备
-		if !GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.MySQLClient, l.ctx) {
-			return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
-		}
-		err = tx.Commit()
-		if err != nil {
-			tx.Rollback()
+			return nil, err
 		}
 		return response.SuccessWithData(data), nil
 	} else {
-		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+		data, err := HandleUserLogin(authUser, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+		if err != nil {
+			return nil, err
+		}
+		// 记录用户登录设备
+		if err = GetUserLoginDevice(authUser.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+			return nil, err
+		}
+		err = tx.Commit()
+		if err != nil {
+			return nil, err
+		}
+		return response.SuccessWithData(data), nil
 	}
 }

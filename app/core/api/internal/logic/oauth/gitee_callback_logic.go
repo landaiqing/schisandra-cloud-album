@@ -15,9 +15,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/user"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -102,81 +100,84 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 	if err = json.Unmarshal(marshal, &giteeUser); err != nil {
 		return err
 	}
+	Id := strconv.Itoa(giteeUser.ID)
 
-	tx, err := l.svcCtx.MySQLClient.Tx(l.ctx)
+	tx := l.svcCtx.DB.NewSession()
+	defer tx.Close()
+	if err = tx.Begin(); err != nil {
+		return err
+	}
+	userSocial := model.ScaAuthUserSocial{
+		OpenId:  Id,
+		Source:  constant.OAuthSourceGitee,
+		Deleted: constant.NotDeleted,
+	}
+	has, err := tx.Get(&userSocial)
 	if err != nil {
 		return err
 	}
-	Id := strconv.Itoa(giteeUser.ID)
 
-	socialUser, err := l.svcCtx.MySQLClient.ScaAuthUserSocial.Query().
-		Where(scaauthusersocial.OpenID(Id),
-			scaauthusersocial.Source(constant.OAuthSourceGitee),
-			scaauthusersocial.Deleted(constant.NotDeleted)).
-		First(l.ctx)
-
-	if err != nil && !ent.IsNotFound(err) {
-		return err
-	}
-
-	if ent.IsNotFound(err) {
+	if !has {
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
-
-		addUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Create().
-			SetUID(uidStr).
-			SetAvatar(giteeUser.AvatarURL).
-			SetUsername(giteeUser.Login).
-			SetNickname(giteeUser.Name).
-			SetBlog(giteeUser.Blog).
-			SetEmail(giteeUser.Email).
-			SetDeleted(constant.NotDeleted).
-			SetGender(constant.Male).
-			Save(l.ctx)
-		if fault != nil {
-			return tx.Rollback()
+		addUser := model.ScaAuthUser{
+			UID:      uidStr,
+			Avatar:   giteeUser.AvatarURL,
+			Username: giteeUser.Login,
+			Nickname: giteeUser.Name,
+			Blog:     giteeUser.Blog,
+			Email:    giteeUser.Email,
+			Deleted:  constant.NotDeleted,
+			Gender:   constant.Male,
 		}
-
-		if err = l.svcCtx.MySQLClient.ScaAuthUserSocial.Create().
-			SetUserID(uidStr).
-			SetOpenID(Id).
-			SetSource(constant.OAuthSourceGitee).
-			Exec(l.ctx); err != nil {
-			return tx.Rollback()
+		affected, err := tx.Insert(&addUser)
+		if err != nil || affected == 0 {
+			return err
+		}
+		socialUser := model.ScaAuthUserSocial{
+			UserId: uidStr,
+			OpenId: Id,
+			Source: constant.OAuthSourceGitee,
+		}
+		insert, err := tx.Insert(&socialUser)
+		if err != nil || insert == 0 {
+			return err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
-			return tx.Rollback()
+			return err
 		}
 
-		if result := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); !result {
-			return tx.Rollback()
+		if err = HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); err != nil {
+			return err
 		}
 	} else {
-		sacAuthUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Query().
-			Where(scaauthuser.UID(socialUser.UserID), scaauthuser.Deleted(constant.NotDeleted)).
-			First(l.ctx)
-		if fault != nil {
-			return tx.Rollback()
+		user := model.ScaAuthUser{
+			UID:     userSocial.UserId,
+			Deleted: constant.NotDeleted,
+		}
+		have, err := tx.Get(&user)
+		if err != nil || !have {
+			return err
 		}
 
-		if result := HandleOauthLoginResponse(sacAuthUser, l.svcCtx, r, w, l.ctx); !result {
-			return tx.Rollback()
+		if err = HandleOauthLoginResponse(user, l.svcCtx, r, w, l.ctx); err != nil {
+			return err
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
-		return tx.Rollback()
+	if err = tx.Commit(); err != nil {
+		return err
 	}
 	return nil
 }
 
 // HandleOauthLoginResponse 处理登录响应
-func HandleOauthLoginResponse(scaAuthUser *ent.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) bool {
-	data, result := user.HandleUserLogin(scaAuthUser, svcCtx, true, r, w, ctx)
-	if !result {
-		return false
+func HandleOauthLoginResponse(scaAuthUser model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) error {
+	data, err := user.HandleUserLogin(scaAuthUser, svcCtx, true, r, w, ctx)
+	if err != nil {
+		return err
 	}
 	responseData := response.SuccessWithData(data)
 	formattedScript := fmt.Sprintf(Script, responseData, svcCtx.Config.Web.URL)
@@ -187,9 +188,9 @@ func HandleOauthLoginResponse(scaAuthUser *ent.ScaAuthUser, svcCtx *svc.ServiceC
 
 	// 写入响应内容
 	if _, writeErr := w.Write([]byte(formattedScript)); writeErr != nil {
-		return false
+		return writeErr
 	}
-	return true
+	return nil
 }
 
 // GetGiteeTokenAuthUrl 获取Gitee token

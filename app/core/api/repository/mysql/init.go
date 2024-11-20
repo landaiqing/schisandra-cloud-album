@@ -1,33 +1,32 @@
 package mysql
 
 import (
-	"context"
-	"database/sql"
-	"log"
-	"time"
-
-	entsql "entgo.io/ent/dialect/sql"
 	_ "github.com/go-sql-driver/mysql"
-
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
+	"xorm.io/xorm"
+	"xorm.io/xorm/caches"
+	"xorm.io/xorm/log"
 )
 
-func NewMySQL(url string) *ent.Client {
-	var db *sql.DB
-	db, err := sql.Open("mysql", url)
-
+func NewMySQL(url string, maxOpenConn int, maxIdleConn int) *xorm.Engine {
+	engine, err := xorm.NewEngine("mysql", url)
 	if err != nil {
-		log.Panicf("failed to connect to database: %v", err)
-		return nil
+		panic(err)
 	}
-	db.SetMaxOpenConns(100)
-	db.SetMaxIdleConns(10)
-	db.SetConnMaxLifetime(time.Hour)
-	drv := entsql.OpenDB("mysql", db)
-	client := ent.NewClient(ent.Driver(drv), ent.Debug())
+	err = engine.Ping()
+	if err != nil {
+		panic(err)
+	}
+	err = SyncDatabase(engine)
+	if err != nil {
+		panic(err)
+	}
+	engine.SetMaxOpenConns(maxOpenConn)
+	engine.SetMaxIdleConns(maxIdleConn)
 
-	if err = client.Schema.Create(context.Background()); err != nil {
-		log.Panicf("failed creating model resources: %v", err)
-	}
-	return client
+	cacher := caches.NewLRUCacher(caches.NewMemoryStore(), 1000)
+	engine.SetDefaultCacher(cacher)
+
+	engine.ShowSQL(true)
+	engine.Logger().SetLevel(log.LOG_DEBUG)
+	return engine
 }

@@ -1,47 +1,18 @@
 package model
 
-import (
-	"entgo.io/ent"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/field"
-)
+import "time"
 
-// ScaUserFollows holds the model definition for the ScaUserFollows entity.
 type ScaUserFollows struct {
-	ent.Schema
+	FollowerId string    `xorm:"varchar(255) 'follower_id' comment('关注者') notnull " json:"follower_id"`                        // 关注者
+	FolloweeId string    `xorm:"varchar(255) 'followee_id' comment('被关注者') notnull " json:"followee_id"`                       // 被关注者
+	Status     uint8     `xorm:"tinyint(3) UNSIGNED 'status' comment('关注状态（0 未互关 1 互关）') notnull default 0 " json:"status"`    // 关注状态（0 未互关 1 互关）
+	CreatedAt  time.Time `xorm:"datetime 'created_at' created comment('创建时间') default CURRENT_TIMESTAMP " json:"created_time"` // 创建时间
+	UpdatedAt  time.Time `xorm:"datetime 'updated_at' updated comment('更新时间') default CURRENT_TIMESTAMP " json:"update_time"`  // 更新时间
+	Id         int64     `xorm:"bigint(20) 'id' pk autoincr notnull " json:"id"`
+	DeletedAt  time.Time `xorm:"datetime 'deleted_at' deleted comment('删除时间') default NULL " json:"deleted_at"` // 删除时间
+
 }
 
-// Fields of the ScaUserFollows.
-func (ScaUserFollows) Fields() []ent.Field {
-	return []ent.Field{
-		field.String("follower_id").
-			Comment("关注者"),
-		field.String("followee_id").
-			Comment("被关注者"),
-		field.Uint8("status").
-			Default(0).
-			Comment("关注状态（0 未互关 1 互关）"),
-	}
-}
-
-// Edges of the ScaUserFollows.
-func (ScaUserFollows) Edges() []ent.Edge {
-	return nil
-}
-
-// Indexes of the ScaUserFollows.
-func (ScaUserFollows) Indexes() []ent.Index {
-	return []ent.Index{}
-}
-
-// Annotations of the ScaUserFollows.
-func (ScaUserFollows) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.WithComments(true),
-		schema.Comment("用户关注表"),
-		entsql.Annotation{
-			Table: "sca_user_follows",
-		},
-	}
+func (s *ScaUserFollows) TableName() string {
+	return "sca_user_follows"
 }

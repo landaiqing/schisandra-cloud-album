@@ -1,66 +1,16 @@
 package model
 
-import (
-	"entgo.io/ent"
-	"entgo.io/ent/dialect"
-	"entgo.io/ent/dialect/entsql"
-	"entgo.io/ent/schema"
-	"entgo.io/ent/schema/field"
-)
-
-// ScaAuthPermissionRule holds the model definition for the ScaAuthPermissionRule entity.
 type ScaAuthPermissionRule struct {
-	ent.Schema
+	Id    int32  `xorm:"int(11) 'id' pk autoincr notnull " json:"id"`
+	Ptype string `xorm:"varchar(100) 'ptype' default NULL " json:"ptype"`
+	V0    string `xorm:"varchar(100) 'v0' default NULL " json:"v0"`
+	V1    string `xorm:"varchar(100) 'v1' default NULL " json:"v1"`
+	V2    string `xorm:"varchar(100) 'v2' default NULL " json:"v2"`
+	V3    string `xorm:"varchar(100) 'v3' default NULL " json:"v3"`
+	V4    string `xorm:"varchar(100) 'v4' default NULL " json:"v4"`
+	V5    string `xorm:"varchar(100) 'v5' default NULL " json:"v5"`
 }
 
-// Fields of the ScaAuthPermissionRule.
-func (ScaAuthPermissionRule) Fields() []ent.Field {
-	return []ent.Field{
-		field.Int("id").
-			SchemaType(map[string]string{
-				dialect.MySQL: "int(11)",
-			}).
-			Unique(),
-		field.String("ptype").
-			MaxLen(100).
-			Optional(),
-		field.String("v0").
-			MaxLen(100).
-			Optional(),
-		field.String("v1").
-			MaxLen(100).
-			Optional(),
-		field.String("v2").
-			MaxLen(100).
-			Optional().
-			Optional(),
-		field.String("v3").
-			MaxLen(100).
-			Optional(),
-		field.String("v4").
-			MaxLen(100).
-			Optional(),
-		field.String("v5").
-			MaxLen(100).
-			Optional().
-			Annotations(
-				entsql.WithComments(true),
-			),
-	}
-}
-
-// Edges of the ScaAuthPermissionRule.
-func (ScaAuthPermissionRule) Edges() []ent.Edge {
-	return nil
-}
-
-// Annotations of the ScaAuthPermissionRule.
-func (ScaAuthPermissionRule) Annotations() []schema.Annotation {
-	return []schema.Annotation{
-		entsql.WithComments(true),
-		schema.Comment("角色权限规则表"),
-		entsql.Annotation{
-			Table: "sca_auth_permission_rule",
-		},
-	}
+func (s *ScaAuthPermissionRule) TableName() string {
+	return "sca_auth_permission_rule"
 }

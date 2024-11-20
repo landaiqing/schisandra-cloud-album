@@ -23,9 +23,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/user"
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/websocket"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthuser"
-	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/ent/scaauthusersocial"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 )
 
 type WechatCallbackLogic struct {
@@ -115,86 +113,92 @@ func (l *WechatCallbackLogic) HandlerWechatLogin(openId string, clientId string,
 	if openId == "" {
 		return errors.New("openId is empty")
 	}
-	socialUser, err := l.svcCtx.MySQLClient.ScaAuthUserSocial.Query().
-		Where(scaauthusersocial.OpenID(openId),
-			scaauthusersocial.Source(constant.OAuthSourceWechat),
-			scaauthusersocial.Deleted(constant.NotDeleted)).
-		First(l.ctx)
-
-	if err != nil && !ent.IsNotFound(err) {
+	tx := l.svcCtx.DB.NewSession()
+	defer tx.Close()
+	if err := tx.Begin(); err != nil {
 		return err
 	}
-	tx, err := l.svcCtx.MySQLClient.Tx(l.ctx)
+	userSocial := model.ScaAuthUserSocial{
+		OpenId:  openId,
+		Source:  constant.OAuthSourceWechat,
+		Deleted: constant.NotDeleted,
+	}
+	has, err := tx.Get(&userSocial)
 	if err != nil {
 		return err
 	}
-	if ent.IsNotFound(err) {
+	if !has {
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
 
-		addUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Create().
-			SetUID(uidStr).
-			SetAvatar(avatar).
-			SetUsername(openId).
-			SetNickname(name).
-			SetDeleted(constant.NotDeleted).
-			SetGender(constant.Male).
-			Save(l.ctx)
-		if fault != nil {
-			return tx.Rollback()
+		addUser := model.ScaAuthUser{
+			UID:      uidStr,
+			Avatar:   avatar,
+			Username: openId,
+			Nickname: name,
+			Deleted:  constant.NotDeleted,
+			Gender:   constant.Male,
+		}
+		affected, err := tx.Insert(&addUser)
+		if err != nil || affected == 0 {
+			return err
 		}
 
-		if err = l.svcCtx.MySQLClient.ScaAuthUserSocial.Create().
-			SetUserID(uidStr).
-			SetOpenID(openId).
-			SetSource(constant.OAuthSourceWechat).
-			Exec(l.ctx); err != nil {
-			return tx.Rollback()
+		socialUser := model.ScaAuthUserSocial{
+			UserId: uidStr,
+			OpenId: openId,
+			Source: constant.OAuthSourceGithub,
+		}
+		insert, err := tx.Insert(&socialUser)
+		if err != nil || insert == 0 {
+			return err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
-			return tx.Rollback()
+			return err
 		}
 
-		data, result := user.HandleUserLogin(addUser, l.svcCtx, true, r, w, l.ctx)
-		if !result {
-			return tx.Rollback()
+		data, err := user.HandleUserLogin(addUser, l.svcCtx, true, r, w, l.ctx)
+		if err != nil {
+			return err
 		}
-		marshal, fault := json.Marshal(data)
-		if fault != nil {
-			return tx.Rollback()
+		marshal, err := json.Marshal(data)
+		if err != nil {
+			return err
 		}
 		err = websocket.QrcodeWebSocketHandler.SendMessageToClient(clientId, marshal)
 		if err != nil {
-			return tx.Rollback()
+			return err
 		}
 
 	} else {
-		sacAuthUser, fault := l.svcCtx.MySQLClient.ScaAuthUser.Query().
-			Where(scaauthuser.UID(socialUser.UserID), scaauthuser.Deleted(constant.NotDeleted)).
-			First(l.ctx)
-		if fault != nil {
-			return tx.Rollback()
+		authUser := model.ScaAuthUser{
+			UID:     userSocial.UserId,
+			Deleted: constant.NotDeleted,
+		}
+		have, err := tx.Get(&authUser)
+		if err != nil || !have {
+			return err
 		}
 
-		data, result := user.HandleUserLogin(sacAuthUser, l.svcCtx, true, r, w, l.ctx)
-		if !result {
-			return tx.Rollback()
+		data, err := user.HandleUserLogin(authUser, l.svcCtx, true, r, w, l.ctx)
+		if err != nil {
+			return err
 		}
-		marshal, fault := json.Marshal(data)
-		if fault != nil {
-			return tx.Rollback()
+		marshal, err := json.Marshal(data)
+		if err != nil {
+			return err
 		}
 		err = websocket.QrcodeWebSocketHandler.SendMessageToClient(clientId, marshal)
 		if err != nil {
-			return tx.Rollback()
+			return err
 		}
 	}
 	if err := tx.Commit(); err != nil {
-		return tx.Rollback()
+		return err
 	}
 	return nil
 
