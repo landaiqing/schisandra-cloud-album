@@ -8,6 +8,8 @@ import (
 
 	"github.com/mssola/useragent"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"schisandra-album-cloud-microservices/app/core/api/common/captcha/verify"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
@@ -15,8 +17,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SubmitCommentLogic struct {
@@ -57,7 +57,7 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 
 	browser, _ := ua.Browser()
 	operatingSystem := ua.OS()
-	isAuthor := 0
+	var isAuthor int64 = 0
 	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
 	if err == nil {
 		return nil, err
@@ -74,25 +74,24 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
 	}
 	commentContent := l.svcCtx.Sensitive.Replace(xssFilterContent, '*')
-	comment := model.ScaCommentReply{
+	topicType := constant.CommentTopicType
+	commentType := constant.COMMENT
+	comment := &model.ScaCommentReply{
 		Content:         commentContent,
-		UserId:          uid,
-		TopicId:         req.TopicId,
-		TopicType:       constant.CommentTopicType,
-		CommentType:     constant.COMMENT,
+		UserID:          uid,
+		TopicID:         req.TopicId,
+		TopicType:       topicType,
+		CommentType:     commentType,
 		Author:          isAuthor,
-		CommentIp:       ip,
+		CommentIP:       ip,
 		Location:        location,
 		Browser:         browser,
 		OperatingSystem: operatingSystem,
 		Agent:           userAgent,
 	}
-	affected, err := l.svcCtx.DB.InsertOne(&comment)
+	err = l.svcCtx.DB.ScaCommentReply.Create(comment)
 	if err != nil {
 		return nil, err
-	}
-	if affected == 0 {
-		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
 	}
 
 	if len(req.Images) > 0 {
@@ -103,16 +102,16 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 		commentImages := types.CommentImages{
 			UserId:    uid,
 			TopicId:   req.TopicId,
-			CommentId: comment.Id,
+			CommentId: comment.ID,
 			Images:    imagesData,
 			CreatedAt: comment.CreatedAt.String(),
 		}
-		if _, err = l.svcCtx.MongoClient.Collection("comment_images").InsertOne(l.ctx, commentImages); err != nil {
+		if _, err = l.svcCtx.MongoClient.Collection(constant.COMMENT_IMAGES).InsertOne(l.ctx, commentImages); err != nil {
 			return nil, err
 		}
 	}
 	commentResponse := types.CommentResponse{
-		Id:              comment.Id,
+		Id:              comment.ID,
 		Content:         commentContent,
 		UserId:          uid,
 		TopicId:         req.TopicId,

@@ -8,6 +8,8 @@ import (
 
 	"github.com/mssola/useragent"
 
+	"github.com/zeromicro/go-zero/core/logx"
+
 	"schisandra-album-cloud-microservices/app/core/api/common/captcha/verify"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
@@ -15,8 +17,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type SubmitReplyReplyLogic struct {
@@ -74,7 +74,7 @@ func (l *SubmitReplyReplyLogic) SubmitReplyReply(r *http.Request, req *types.Rep
 	}
 
 	// 判断作者身份
-	isAuthor := 0
+	var isAuthor int64 = 0
 	if uid == req.Author {
 		isAuthor = 1
 	}
@@ -86,40 +86,35 @@ func (l *SubmitReplyReplyLogic) SubmitReplyReply(r *http.Request, req *types.Rep
 	}
 	commentContent := l.svcCtx.Sensitive.Replace(xssFilterContent, '*')
 
-	tx := l.svcCtx.DB.NewSession()
-	defer tx.Close()
-	if err = tx.Begin(); err != nil {
-		return nil, err
-	}
-
-	replyReply := model.ScaCommentReply{
+	tx := l.svcCtx.DB.Begin()
+	topicType := constant.CommentTopicType
+	commentType := constant.REPLY
+	replyReply := &model.ScaCommentReply{
 		Content:         commentContent,
-		UserId:          uid,
-		TopicId:         req.TopicId,
-		TopicType:       constant.CommentTopicType,
-		CommentType:     constant.COMMENT,
+		UserID:          uid,
+		TopicID:         req.TopicId,
+		TopicType:       topicType,
+		CommentType:     commentType,
 		Author:          isAuthor,
-		CommentIp:       ip,
+		CommentIP:       ip,
 		Location:        location,
 		Browser:         browser,
 		OperatingSystem: operatingSystem,
 		Agent:           userAgent,
-		ReplyId:         req.ReplyId,
+		ReplyID:         req.ReplyId,
 		ReplyUser:       req.ReplyUser,
 		ReplyTo:         req.ReplyTo,
 	}
-	affected, err := tx.Insert(&replyReply)
+	err = tx.ScaCommentReply.Create(replyReply)
 	if err != nil {
 		return nil, err
 	}
-	if affected == 0 {
-		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
-	}
-	update, err := tx.Table(model.ScaCommentReply{}).Where("id = ? and version = ? and deleted = 0", req.ReplyId, replyReply.Version).Incr("reply_count", 1).Update(nil)
+	commentReply := l.svcCtx.DB.ScaCommentReply
+	update, err := tx.ScaCommentReply.Updates(commentReply.ReplyCount.Add(1))
 	if err != nil {
 		return nil, err
 	}
-	if update == 0 {
+	if update.RowsAffected == 0 {
 		return response.ErrorWithI18n(l.ctx, "comment.commentError"), nil
 	}
 
@@ -132,27 +127,27 @@ func (l *SubmitReplyReplyLogic) SubmitReplyReply(r *http.Request, req *types.Rep
 		commentImages := types.CommentImages{
 			UserId:    uid,
 			TopicId:   req.TopicId,
-			CommentId: replyReply.Id,
+			CommentId: replyReply.ID,
 			Images:    imagesData,
 			CreatedAt: replyReply.CreatedAt.String(),
 		}
-		if _, err = l.svcCtx.MongoClient.Collection("comment_images").InsertOne(l.ctx, commentImages); err != nil {
+		if _, err = l.svcCtx.MongoClient.Collection(constant.COMMENT_IMAGES).InsertOne(l.ctx, commentImages); err != nil {
 			return nil, err
 		}
 	}
 
 	// 构建响应
 	commentResponse := types.CommentResponse{
-		Id:              replyReply.Id,
+		Id:              replyReply.ID,
 		Content:         commentContent,
 		UserId:          uid,
-		TopicId:         replyReply.TopicId,
+		TopicId:         replyReply.TopicID,
 		Author:          isAuthor,
 		Location:        location,
 		Browser:         browser,
 		OperatingSystem: operatingSystem,
 		CreatedTime:     time.Now(),
-		ReplyId:         replyReply.ReplyId,
+		ReplyId:         replyReply.ReplyID,
 		ReplyUser:       replyReply.ReplyUser,
 		ReplyTo:         replyReply.ReplyTo,
 	}

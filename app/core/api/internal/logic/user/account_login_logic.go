@@ -2,11 +2,12 @@ package user
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
-	"xorm.io/xorm"
+	"gorm.io/gorm"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/captcha/verify"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
@@ -16,6 +17,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/query"
 )
 
 type AccountLoginLogic struct {
@@ -37,43 +39,44 @@ func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request,
 	if !verifyResult {
 		return response.ErrorWithI18n(l.ctx, "captcha.verificationFailure"), nil
 	}
-	var user model.ScaAuthUser
-	var query *xorm.Session
+
+	user := l.svcCtx.DB.ScaAuthUser
+	var selectedUser query.IScaAuthUserDo
 
 	switch {
 	case utils.IsPhone(req.Account):
-		query = l.svcCtx.DB.Where("phone = ? AND deleted = ?", req.Account, 0)
+		selectedUser = user.Where(user.Phone.Eq(req.Account), user.Deleted.Eq(constant.NotDeleted))
 	case utils.IsEmail(req.Account):
-		query = l.svcCtx.DB.Where("email = ? AND deleted = ?", req.Account, 0)
+		selectedUser = user.Where(user.Email.Eq(req.Account), user.Deleted.Eq(constant.NotDeleted))
 	case utils.IsUsername(req.Account):
-		query = l.svcCtx.DB.Where("username = ? AND deleted = ?", req.Account, 0)
+		selectedUser = user.Where(user.Username.Eq(req.Account), user.Deleted.Eq(constant.NotDeleted))
 	default:
 		return response.ErrorWithI18n(l.ctx, "login.invalidAccount"), nil
 	}
-	has, err := query.Get(&user)
+	userInfo, err := selectedUser.First()
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), nil
+		}
 		return nil, err
 	}
-	if !has {
-		return response.ErrorWithI18n(l.ctx, "login.userNotRegistered"), nil
-	}
 
-	if !utils.Verify(user.Password, req.Password) {
+	if !utils.Verify(userInfo.Password, req.Password) {
 		return response.ErrorWithI18n(l.ctx, "login.invalidPassword"), nil
 	}
-	data, err := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+	data, err := HandleUserLogin(userInfo, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 	if err != nil {
 		return nil, err
 	}
 	// 记录用户登录设备
-	if err = GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+	if err = GetUserLoginDevice(userInfo.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
 		return nil, err
 	}
 	return response.SuccessWithData(data), nil
 }
 
 // HandleUserLogin 处理用户登录
-func HandleUserLogin(user model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, w http.ResponseWriter, ctx context.Context) (*types.LoginResponse, error) {
+func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, w http.ResponseWriter, ctx context.Context) (*types.LoginResponse, error) {
 	// 生成jwt token
 	accessToken := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: user.UID,

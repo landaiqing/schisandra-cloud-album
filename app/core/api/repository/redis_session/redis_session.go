@@ -2,7 +2,6 @@ package redis_session
 
 import (
 	"context"
-	"encoding/gob"
 	"net/http"
 
 	"github.com/gorilla/sessions"
@@ -10,7 +9,6 @@ import (
 	"github.com/redis/go-redis/v9"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
-	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 )
 
 func NewRedisSession(client *redis.Client) *redisstore.RedisStore {
@@ -26,6 +24,5 @@ func NewRedisSession(client *redis.Client) *redisstore.RedisStore {
 		Secure:   true,
 		SameSite: http.SameSiteLaxMode,
 	})
-	gob.Register(types.SessionData{})
 	return store
 }

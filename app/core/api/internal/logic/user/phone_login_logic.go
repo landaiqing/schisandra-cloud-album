@@ -8,6 +8,7 @@ import (
 
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	randomname "schisandra-album-cloud-microservices/app/core/api/common/random_name"
@@ -43,48 +44,51 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 	if req.Captcha != code {
 		return response.ErrorWithI18n(l.ctx, "login.captchaError"), nil
 	}
-	authUser := model.ScaAuthUser{
-		Phone:   req.Phone,
-		Deleted: constant.NotDeleted,
-	}
-	has, err := l.svcCtx.DB.Get(&authUser)
-	if err != nil {
+	authUser := l.svcCtx.DB.ScaAuthUser
+	userInfo, err := authUser.Where(authUser.Phone.Eq(req.Phone), authUser.Deleted.Eq(constant.NotDeleted)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
-	tx := l.svcCtx.DB.NewSession()
-	defer tx.Close()
-	if err = tx.Begin(); err != nil {
-		return nil, err
-	}
+	tx := l.svcCtx.DB.Begin()
+	defer func() {
+		if recover() != nil || err != nil {
+			_ = tx.Rollback()
+		}
+	}()
 
-	if !has {
+	if userInfo == nil {
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
-
-		user := model.ScaAuthUser{
+		notDeleted := constant.NotDeleted
+		male := constant.Male
+		user := &model.ScaAuthUser{
 			UID:      uidStr,
 			Phone:    req.Phone,
 			Avatar:   avatar,
 			Nickname: name,
-			Deleted:  constant.NotDeleted,
-			Gender:   constant.Male,
+			Deleted:  notDeleted,
+			Gender:   male,
 		}
-		insert, err := tx.Insert(&user)
-		if err != nil || insert == 0 {
-			return nil, errors.New("register failed")
+		err := tx.ScaAuthUser.Create(user)
+		if err != nil {
+			_ = tx.Rollback()
+			return nil, err
 		}
 		_, err = l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User)
 		if err != nil {
+			_ = tx.Rollback()
 			return nil, err
 		}
 		data, err := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 		if err != nil {
+			_ = tx.Rollback()
 			return nil, err
 		}
 		// 记录用户登录设备
-		if err = GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+		if err = GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
+			_ = tx.Rollback()
 			return nil, err
 		}
 		err = tx.Commit()
@@ -93,12 +97,14 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		}
 		return response.SuccessWithData(data), nil
 	} else {
-		data, err := HandleUserLogin(authUser, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+		data, err := HandleUserLogin(userInfo, l.svcCtx, req.AutoLogin, r, w, l.ctx)
 		if err != nil {
+			_ = tx.Rollback()
 			return nil, err
 		}
 		// 记录用户登录设备
-		if err = GetUserLoginDevice(authUser.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB, l.ctx); err != nil {
+		if err = GetUserLoginDevice(userInfo.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
+			_ = tx.Rollback()
 			return nil, err
 		}
 		err = tx.Commit()

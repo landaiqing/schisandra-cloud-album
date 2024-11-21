@@ -8,7 +8,7 @@ type CommentResponse struct {
 	Content         string    `json:"content"`
 	UserId          string    `json:"user_id"`
 	TopicId         string    `json:"topic_id"`
-	Author          int       `json:"author"`
+	Author          int64     `json:"author"`
 	Location        string    `json:"location"`
 	Browser         string    `json:"browser"`
 	OperatingSystem string    `json:"operating_system"`

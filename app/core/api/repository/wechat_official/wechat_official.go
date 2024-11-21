@@ -1,4 +1,4 @@
-package wechat_public
+package wechat_official
 
 import (
 	"os"

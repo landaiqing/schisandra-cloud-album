@@ -1,6 +1,6 @@
 package constant
 
 const (
-	Female int8 = iota
+	Female int64 = iota
 	Male
 )

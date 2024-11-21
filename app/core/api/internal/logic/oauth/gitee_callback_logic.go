@@ -3,12 +3,16 @@ package oauth
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
 	"github.com/yitter/idgenerator-go/idgen"
+	"gorm.io/gorm"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
@@ -16,8 +20,6 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GiteeCallbackLogic struct {
@@ -102,26 +104,19 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 	}
 	Id := strconv.Itoa(giteeUser.ID)
 
-	tx := l.svcCtx.DB.NewSession()
-	defer tx.Close()
-	if err = tx.Begin(); err != nil {
-		return err
-	}
-	userSocial := model.ScaAuthUserSocial{
-		OpenId:  Id,
-		Source:  constant.OAuthSourceGitee,
-		Deleted: constant.NotDeleted,
-	}
-	has, err := tx.Get(&userSocial)
-	if err != nil {
+	tx := l.svcCtx.DB.Begin()
+
+	userSocial := l.svcCtx.DB.ScaAuthUserSocial
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGitee), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
-	if !has {
+	if socialUser == nil {
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
-		addUser := model.ScaAuthUser{
+		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   giteeUser.AvatarURL,
 			Username: giteeUser.Login,
@@ -131,21 +126,25 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 			Deleted:  constant.NotDeleted,
 			Gender:   constant.Male,
 		}
-		affected, err := tx.Insert(&addUser)
-		if err != nil || affected == 0 {
+		err = tx.ScaAuthUser.Create(addUser)
+		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
-		socialUser := model.ScaAuthUserSocial{
-			UserId: uidStr,
-			OpenId: Id,
-			Source: constant.OAuthSourceGitee,
+		gitee := constant.OAuthSourceGitee
+		newSocialUser := &model.ScaAuthUserSocial{
+			UserID: uidStr,
+			OpenID: Id,
+			Source: gitee,
 		}
-		insert, err := tx.Insert(&socialUser)
-		if err != nil || insert == 0 {
+		err = tx.ScaAuthUserSocial.Create(newSocialUser)
+		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
@@ -153,16 +152,16 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 			return err
 		}
 	} else {
-		user := model.ScaAuthUser{
-			UID:     userSocial.UserId,
-			Deleted: constant.NotDeleted,
-		}
-		have, err := tx.Get(&user)
-		if err != nil || !have {
+		authUser := l.svcCtx.DB.ScaAuthUser
+
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			_ = tx.Rollback()
 			return err
 		}
 
-		if err = HandleOauthLoginResponse(user, l.svcCtx, r, w, l.ctx); err != nil {
+		if err = HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx); err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 	}
@@ -174,7 +173,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 }
 
 // HandleOauthLoginResponse 处理登录响应
-func HandleOauthLoginResponse(scaAuthUser model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) error {
+func HandleOauthLoginResponse(scaAuthUser *model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) error {
 	data, err := user.HandleUserLogin(scaAuthUser, svcCtx, true, r, w, ctx)
 	if err != nil {
 		return err

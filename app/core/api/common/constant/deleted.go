@@ -1,6 +1,6 @@
 package constant
 
 const (
-	NotDeleted int8 = iota
-	Deleted    int8 = 1
+	NotDeleted int64 = iota
+	Deleted    int64 = 1
 )

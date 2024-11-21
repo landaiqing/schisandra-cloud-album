@@ -3,18 +3,20 @@ package oauth
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/yitter/idgenerator-go/idgen"
+	"gorm.io/gorm"
+
+	"github.com/zeromicro/go-zero/core/logx"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type QqCallbackLogic struct {
@@ -98,72 +100,72 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 		return err
 	}
 
-	tx := l.svcCtx.DB.NewSession()
-	defer tx.Close()
-	if err = tx.Begin(); err != nil {
-		return err
-	}
-	userSocial := model.ScaAuthUserSocial{
-		OpenId:  authQQme.OpenID,
-		Source:  constant.OAuthSourceQQ,
-		Deleted: constant.NotDeleted,
-	}
-	has, err := tx.Get(&userSocial)
-	if err != nil {
+	tx := l.svcCtx.DB.Begin()
+
+	userSocial := l.svcCtx.DB.ScaAuthUserSocial
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(authQQme.OpenID), userSocial.Source.Eq(constant.OAuthSourceQQ), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
 
-	if !has {
+	if socialUser == nil {
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 
-		addUser := model.ScaAuthUser{
+		notDeleted := constant.NotDeleted
+		male := constant.Male
+		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   qqUserInfo.FigureurlQq1,
 			Username: authQQme.OpenID,
 			Nickname: qqUserInfo.Nickname,
-			Deleted:  constant.NotDeleted,
-			Gender:   constant.Male,
+			Deleted:  notDeleted,
+			Gender:   male,
 		}
-		affected, err := tx.Insert(&addUser)
-		if err != nil || affected == 0 {
+		err = tx.ScaAuthUser.Create(addUser)
+		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
-		socialUser := model.ScaAuthUserSocial{
-			UserId: uidStr,
-			OpenId: authQQme.OpenID,
-			Source: constant.OAuthSourceGithub,
+		githubUser := constant.OAuthSourceQQ
+		newSocialUser := &model.ScaAuthUserSocial{
+			UserID: uidStr,
+			OpenID: authQQme.OpenID,
+			Source: githubUser,
 		}
-		insert, err := tx.Insert(&socialUser)
-		if err != nil || insert == 0 {
+		err = tx.ScaAuthUserSocial.Create(newSocialUser)
+		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
 		if err = HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 	} else {
-		user := model.ScaAuthUser{
-			UID:     userSocial.UserId,
-			Deleted: constant.NotDeleted,
-		}
-		have, err := tx.Get(&user)
-		if err != nil || !have {
+		authUser := l.svcCtx.DB.ScaAuthUser
+
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			_ = tx.Rollback()
 			return err
 		}
 
-		if err = HandleOauthLoginResponse(user, l.svcCtx, r, w, l.ctx); err != nil {
+		if err = HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx); err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 	}
 
-	if err := tx.Commit(); err != nil {
+	if err = tx.Commit(); err != nil {
 		return err
 	}
 	return nil

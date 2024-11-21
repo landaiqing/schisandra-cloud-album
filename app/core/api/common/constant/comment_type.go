@@ -1,10 +1,10 @@
 package constant
 
 const (
-	COMMENT int = iota
+	COMMENT int64 = iota
 	REPLY
 )
 
 const (
-	CommentTopicType = iota
+	CommentTopicType int64 = iota
 )

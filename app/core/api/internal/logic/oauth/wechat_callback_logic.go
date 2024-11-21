@@ -15,6 +15,7 @@ import (
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/officialAccount/server/handlers/models"
 	"github.com/yitter/idgenerator-go/idgen"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	"schisandra-album-cloud-microservices/app/core/api/common/i18n"
@@ -113,91 +114,96 @@ func (l *WechatCallbackLogic) HandlerWechatLogin(openId string, clientId string,
 	if openId == "" {
 		return errors.New("openId is empty")
 	}
-	tx := l.svcCtx.DB.NewSession()
-	defer tx.Close()
-	if err := tx.Begin(); err != nil {
+	tx := l.svcCtx.DB.Begin()
+
+	userSocial := l.svcCtx.DB.ScaAuthUserSocial
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(openId), userSocial.Source.Eq(constant.OAuthSourceWechat), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	userSocial := model.ScaAuthUserSocial{
-		OpenId:  openId,
-		Source:  constant.OAuthSourceWechat,
-		Deleted: constant.NotDeleted,
-	}
-	has, err := tx.Get(&userSocial)
-	if err != nil {
-		return err
-	}
-	if !has {
+
+	if socialUser == nil {
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
 
-		addUser := model.ScaAuthUser{
+		notDeleted := constant.NotDeleted
+		male := constant.Male
+		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   avatar,
 			Username: openId,
 			Nickname: name,
-			Deleted:  constant.NotDeleted,
-			Gender:   constant.Male,
+			Deleted:  notDeleted,
+			Gender:   male,
 		}
-		affected, err := tx.Insert(&addUser)
-		if err != nil || affected == 0 {
+		err = tx.ScaAuthUser.Create(addUser)
+		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
-		socialUser := model.ScaAuthUserSocial{
-			UserId: uidStr,
-			OpenId: openId,
-			Source: constant.OAuthSourceGithub,
+		wechatUser := constant.OAuthSourceWechat
+		newSocialUser := &model.ScaAuthUserSocial{
+			UserID: uidStr,
+			OpenID: openId,
+			Source: wechatUser,
 		}
-		insert, err := tx.Insert(&socialUser)
-		if err != nil || insert == 0 {
+		err = tx.ScaAuthUserSocial.Create(newSocialUser)
+		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
 		data, err := user.HandleUserLogin(addUser, l.svcCtx, true, r, w, l.ctx)
 		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 		marshal, err := json.Marshal(data)
 		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 		err = websocket.QrcodeWebSocketHandler.SendMessageToClient(clientId, marshal)
 		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 
 	} else {
-		authUser := model.ScaAuthUser{
-			UID:     userSocial.UserId,
-			Deleted: constant.NotDeleted,
-		}
-		have, err := tx.Get(&authUser)
-		if err != nil || !have {
+		authUser := l.svcCtx.DB.ScaAuthUser
+
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+			_ = tx.Rollback()
 			return err
 		}
 
-		data, err := user.HandleUserLogin(authUser, l.svcCtx, true, r, w, l.ctx)
+		data, err := user.HandleUserLogin(authUserInfo, l.svcCtx, true, r, w, l.ctx)
 		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 		marshal, err := json.Marshal(data)
 		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 		err = websocket.QrcodeWebSocketHandler.SendMessageToClient(clientId, marshal)
 		if err != nil {
+			_ = tx.Rollback()
 			return err
 		}
 	}
-	if err := tx.Commit(); err != nil {
+	if err = tx.Commit(); err != nil {
 		return err
 	}
 	return nil
