@@ -38,7 +38,6 @@ func newScaAuthMenu(db *gorm.DB, opts ...gen.DOOption) scaAuthMenu {
 	_scaAuthMenu.Order_ = field.NewInt64(tableName, "order")
 	_scaAuthMenu.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaAuthMenu.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_scaAuthMenu.Deleted = field.NewInt64(tableName, "deleted")
 	_scaAuthMenu.Remark = field.NewString(tableName, "remark")
 	_scaAuthMenu.DeletedAt = field.NewField(tableName, "deleted_at")
 
@@ -62,7 +61,6 @@ type scaAuthMenu struct {
 	Order_    field.Int64  // 排序
 	CreatedAt field.Time   // 创建时间
 	UpdatedAt field.Time   // 更新时间
-	Deleted   field.Int64  // 是否删除
 	Remark    field.String // 备注 描述
 	DeletedAt field.Field  // 删除时间
 
@@ -92,7 +90,6 @@ func (s *scaAuthMenu) updateTableName(table string) *scaAuthMenu {
 	s.Order_ = field.NewInt64(table, "order")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.Remark = field.NewString(table, "remark")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
@@ -111,7 +108,7 @@ func (s *scaAuthMenu) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *scaAuthMenu) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 14)
+	s.fieldMap = make(map[string]field.Expr, 13)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["menu_name"] = s.MenuName
 	s.fieldMap["parent_id"] = s.ParentID
@@ -123,7 +120,6 @@ func (s *scaAuthMenu) fillFieldMap() {
 	s.fieldMap["order"] = s.Order_
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["remark"] = s.Remark
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }

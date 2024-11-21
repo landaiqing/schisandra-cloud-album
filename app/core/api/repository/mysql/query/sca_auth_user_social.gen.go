@@ -33,7 +33,6 @@ func newScaAuthUserSocial(db *gorm.DB, opts ...gen.DOOption) scaAuthUserSocial {
 	_scaAuthUserSocial.Source = field.NewString(tableName, "source")
 	_scaAuthUserSocial.Status = field.NewInt64(tableName, "status")
 	_scaAuthUserSocial.CreatedAt = field.NewTime(tableName, "created_at")
-	_scaAuthUserSocial.Deleted = field.NewInt64(tableName, "deleted")
 	_scaAuthUserSocial.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaAuthUserSocial.DeletedAt = field.NewField(tableName, "deleted_at")
 
@@ -52,7 +51,6 @@ type scaAuthUserSocial struct {
 	Source    field.String // 第三方用户来源
 	Status    field.Int64  // 状态 0正常 1 封禁
 	CreatedAt field.Time   // 创建时间
-	Deleted   field.Int64  // 是否删除 0 未删除 1 已删除
 	UpdatedAt field.Time   // 更新时间
 	DeletedAt field.Field  // 删除时间
 
@@ -77,7 +75,6 @@ func (s *scaAuthUserSocial) updateTableName(table string) *scaAuthUserSocial {
 	s.Source = field.NewString(table, "source")
 	s.Status = field.NewInt64(table, "status")
 	s.CreatedAt = field.NewTime(table, "created_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
@@ -96,14 +93,13 @@ func (s *scaAuthUserSocial) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (s *scaAuthUserSocial) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 8)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["open_id"] = s.OpenID
 	s.fieldMap["source"] = s.Source
 	s.fieldMap["status"] = s.Status
 	s.fieldMap["created_at"] = s.CreatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }

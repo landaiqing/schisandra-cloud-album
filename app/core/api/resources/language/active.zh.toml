@@ -24,3 +24,5 @@ smsSendSuccess = "短信发送成功！"
 [comment]
 tooManyImages = "图片数量过多，请上传不超过3张！"
 commentError = "评论失败！"
+LikeError = "点赞失败！"
+CancelLikeError = "取消点赞失败！"

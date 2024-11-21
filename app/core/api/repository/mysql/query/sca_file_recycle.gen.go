@@ -34,7 +34,6 @@ func newScaFileRecycle(db *gorm.DB, opts ...gen.DOOption) scaFileRecycle {
 	_scaFileRecycle.UserID = field.NewString(tableName, "user_id")
 	_scaFileRecycle.DeletedAt = field.NewField(tableName, "deleted_at")
 	_scaFileRecycle.OriginalPath = field.NewString(tableName, "original_path")
-	_scaFileRecycle.Deleted = field.NewInt64(tableName, "deleted")
 	_scaFileRecycle.FileSource = field.NewInt64(tableName, "file_source")
 
 	_scaFileRecycle.fillFieldMap()
@@ -53,7 +52,6 @@ type scaFileRecycle struct {
 	UserID       field.String // 用户编号
 	DeletedAt    field.Field  // 删除时间
 	OriginalPath field.String // 原始路径
-	Deleted      field.Int64  // 是否被永久删除 0否 1是
 	FileSource   field.Int64  // 文件来源 0 相册 1 评论
 
 	fieldMap map[string]field.Expr
@@ -78,7 +76,6 @@ func (s *scaFileRecycle) updateTableName(table string) *scaFileRecycle {
 	s.UserID = field.NewString(table, "user_id")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 	s.OriginalPath = field.NewString(table, "original_path")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.FileSource = field.NewInt64(table, "file_source")
 
 	s.fillFieldMap()
@@ -96,7 +93,7 @@ func (s *scaFileRecycle) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaFileRecycle) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 8)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["file_id"] = s.FileID
 	s.fieldMap["folder_id"] = s.FolderID
@@ -104,7 +101,6 @@ func (s *scaFileRecycle) fillFieldMap() {
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["deleted_at"] = s.DeletedAt
 	s.fieldMap["original_path"] = s.OriginalPath
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["file_source"] = s.FileSource
 }
 

@@ -19,7 +19,6 @@ type ScaFileRecycle struct {
 	UserID       string         `gorm:"column:user_id;type:varchar(20);comment:用户编号" json:"user_id"`                     // 用户编号
 	DeletedAt    gorm.DeletedAt `gorm:"column:deleted_at;type:datetime;comment:删除时间" json:"deleted_at"`                  // 删除时间
 	OriginalPath string         `gorm:"column:original_path;type:varchar(1024);comment:原始路径" json:"original_path"`       // 原始路径
-	Deleted      int64          `gorm:"column:deleted;type:int;comment:是否被永久删除 0否 1是" json:"deleted"`                    // 是否被永久删除 0否 1是
 	FileSource   int64          `gorm:"column:file_source;type:int;comment:文件来源 0 相册 1 评论" json:"file_source"`           // 文件来源 0 相册 1 评论
 }
 

@@ -23,8 +23,8 @@ type CommentLikeRequest struct {
 
 type CommentListRequest struct {
 	TopicId string `json:"topic_id"`
-	Page    int64  `json:"page,default=1,optional"`
-	Size    int64  `json:"size,default=5,optional"`
+	Page    int    `json:"page,default=1,optional"`
+	Size    int    `json:"size,default=5,optional"`
 	IsHot   bool   `json:"is_hot,default=true,optional"`
 }
 
@@ -78,8 +78,8 @@ type ReplyCommentRequest struct {
 type ReplyListRequest struct {
 	TopicId   string `json:"topic_id"`
 	CommentId int64  `json:"comment_id"`
-	Page      int64  `json:"page,default=1,optional"`
-	Size      int64  `json:"size,default=5,optional"`
+	Page      int    `json:"page,default=1,optional"`
+	Size      int    `json:"size,default=5,optional"`
 }
 
 type ReplyReplyRequest struct {

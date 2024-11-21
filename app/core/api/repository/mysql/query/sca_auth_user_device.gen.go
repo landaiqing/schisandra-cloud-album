@@ -33,7 +33,6 @@ func newScaAuthUserDevice(db *gorm.DB, opts ...gen.DOOption) scaAuthUserDevice {
 	_scaAuthUserDevice.Location = field.NewString(tableName, "location")
 	_scaAuthUserDevice.Agent = field.NewString(tableName, "agent")
 	_scaAuthUserDevice.CreatedAt = field.NewTime(tableName, "created_at")
-	_scaAuthUserDevice.Deleted = field.NewInt64(tableName, "deleted")
 	_scaAuthUserDevice.Browser = field.NewString(tableName, "browser")
 	_scaAuthUserDevice.OperatingSystem = field.NewString(tableName, "operating_system")
 	_scaAuthUserDevice.BrowserVersion = field.NewString(tableName, "browser_version")
@@ -61,7 +60,6 @@ type scaAuthUserDevice struct {
 	Location        field.String // 地址
 	Agent           field.String // 设备信息
 	CreatedAt       field.Time   // 创建时间
-	Deleted         field.Int64  // 是否删除 0 未删除 1 已删除
 	Browser         field.String // 浏览器
 	OperatingSystem field.String // 操作系统
 	BrowserVersion  field.String // 浏览器版本
@@ -95,7 +93,6 @@ func (s *scaAuthUserDevice) updateTableName(table string) *scaAuthUserDevice {
 	s.Location = field.NewString(table, "location")
 	s.Agent = field.NewString(table, "agent")
 	s.CreatedAt = field.NewTime(table, "created_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.Browser = field.NewString(table, "browser")
 	s.OperatingSystem = field.NewString(table, "operating_system")
 	s.BrowserVersion = field.NewString(table, "browser_version")
@@ -123,14 +120,13 @@ func (s *scaAuthUserDevice) GetFieldByName(fieldName string) (field.OrderExpr, b
 }
 
 func (s *scaAuthUserDevice) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 18)
+	s.fieldMap = make(map[string]field.Expr, 17)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["ip"] = s.IP
 	s.fieldMap["location"] = s.Location
 	s.fieldMap["agent"] = s.Agent
 	s.fieldMap["created_at"] = s.CreatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["browser"] = s.Browser
 	s.fieldMap["operating_system"] = s.OperatingSystem
 	s.fieldMap["browser_version"] = s.BrowserVersion

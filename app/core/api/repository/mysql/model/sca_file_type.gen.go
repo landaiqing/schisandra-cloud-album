@@ -20,7 +20,6 @@ type ScaFileType struct {
 	Status    int64          `gorm:"column:status;type:int;comment:类型状态" json:"status"`                                                       // 类型状态
 	CreatedAt *time.Time     `gorm:"column:created_at;type:datetime;default:CURRENT_TIMESTAMP;autoCreateTime;comment:创建时间" json:"created_at"` // 创建时间
 	UpdatedAt *time.Time     `gorm:"column:updated_at;type:datetime;default:CURRENT_TIMESTAMP;autoUpdateTime;comment:更新时间" json:"updated_at"` // 更新时间
-	Deleted   int64          `gorm:"column:deleted;type:int;comment:是否删除 0 未删除 1 已删除" json:"deleted"`                                         // 是否删除 0 未删除 1 已删除
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:datetime;comment:删除时间" json:"deleted_at"`                                          // 删除时间
 }
 

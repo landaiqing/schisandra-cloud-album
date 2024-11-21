@@ -117,7 +117,7 @@ func (l *WechatCallbackLogic) HandlerWechatLogin(openId string, clientId string,
 	tx := l.svcCtx.DB.Begin()
 
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
-	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(openId), userSocial.Source.Eq(constant.OAuthSourceWechat), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(openId), userSocial.Source.Eq(constant.OAuthSourceWechat)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -129,14 +129,12 @@ func (l *WechatCallbackLogic) HandlerWechatLogin(openId string, clientId string,
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
 
-		notDeleted := constant.NotDeleted
 		male := constant.Male
 		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   avatar,
 			Username: openId,
 			Nickname: name,
-			Deleted:  notDeleted,
 			Gender:   male,
 		}
 		err = tx.ScaAuthUser.Create(addUser)
@@ -181,7 +179,7 @@ func (l *WechatCallbackLogic) HandlerWechatLogin(openId string, clientId string,
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
-		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
 			return err

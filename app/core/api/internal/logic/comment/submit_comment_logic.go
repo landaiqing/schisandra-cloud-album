@@ -16,6 +16,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mongodb/collection"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 )
 
@@ -59,7 +60,7 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 	operatingSystem := ua.OS()
 	var isAuthor int64 = 0
 	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
-	if err == nil {
+	if err != nil {
 		return nil, err
 	}
 	uid, ok := session.Values["uid"].(string)
@@ -99,14 +100,16 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 		if err != nil {
 			return nil, err
 		}
-		commentImages := types.CommentImages{
+		commentImages := &types.CommentImages{
 			UserId:    uid,
 			TopicId:   req.TopicId,
 			CommentId: comment.ID,
 			Images:    imagesData,
-			CreatedAt: comment.CreatedAt.String(),
 		}
-		if _, err = l.svcCtx.MongoClient.Collection(constant.COMMENT_IMAGES).InsertOne(l.ctx, commentImages); err != nil {
+
+		newCollection := collection.MustNewCollection[types.CommentImages](l.svcCtx, constant.COMMENT_IMAGES)
+		_, err = newCollection.Creator().InsertOne(l.ctx, commentImages)
+		if err != nil {
 			return nil, err
 		}
 	}

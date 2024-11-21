@@ -31,7 +31,6 @@ func newScaAuthRole(db *gorm.DB, opts ...gen.DOOption) scaAuthRole {
 	_scaAuthRole.RoleName = field.NewString(tableName, "role_name")
 	_scaAuthRole.RoleKey = field.NewString(tableName, "role_key")
 	_scaAuthRole.CreatedAt = field.NewTime(tableName, "created_at")
-	_scaAuthRole.Deleted = field.NewInt64(tableName, "deleted")
 	_scaAuthRole.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaAuthRole.DeletedAt = field.NewField(tableName, "deleted_at")
 
@@ -48,7 +47,6 @@ type scaAuthRole struct {
 	RoleName  field.String // 角色名称
 	RoleKey   field.String // 角色关键字
 	CreatedAt field.Time   // 创建时间
-	Deleted   field.Int64  // 是否删除 0 未删除 1 已删除
 	UpdatedAt field.Time   // 更新时间
 	DeletedAt field.Field  // 删除时间
 
@@ -71,7 +69,6 @@ func (s *scaAuthRole) updateTableName(table string) *scaAuthRole {
 	s.RoleName = field.NewString(table, "role_name")
 	s.RoleKey = field.NewString(table, "role_key")
 	s.CreatedAt = field.NewTime(table, "created_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
@@ -90,12 +87,11 @@ func (s *scaAuthRole) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *scaAuthRole) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
+	s.fieldMap = make(map[string]field.Expr, 6)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["role_name"] = s.RoleName
 	s.fieldMap["role_key"] = s.RoleKey
 	s.fieldMap["created_at"] = s.CreatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }

@@ -33,7 +33,6 @@ func newScaUserMessage(db *gorm.DB, opts ...gen.DOOption) scaUserMessage {
 	_scaUserMessage.ToID = field.NewString(tableName, "to_id")
 	_scaUserMessage.Content = field.NewString(tableName, "content")
 	_scaUserMessage.IsRead = field.NewInt64(tableName, "is_read")
-	_scaUserMessage.Deleted = field.NewInt64(tableName, "deleted")
 	_scaUserMessage.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaUserMessage.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaUserMessage.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -53,7 +52,6 @@ type scaUserMessage struct {
 	ToID      field.String // 送达人
 	Content   field.String // 消息内容
 	IsRead    field.Int64  // 是否已读
-	Deleted   field.Int64  // 是否删除 0 未删除 1 已删除
 	CreatedAt field.Time   // 创建时间
 	UpdatedAt field.Time   // 更新时间
 	DeletedAt field.Field  // 删除时间
@@ -79,7 +77,6 @@ func (s *scaUserMessage) updateTableName(table string) *scaUserMessage {
 	s.ToID = field.NewString(table, "to_id")
 	s.Content = field.NewString(table, "content")
 	s.IsRead = field.NewInt64(table, "is_read")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -99,14 +96,13 @@ func (s *scaUserMessage) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaUserMessage) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 10)
+	s.fieldMap = make(map[string]field.Expr, 9)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["topic_id"] = s.TopicID
 	s.fieldMap["from_id"] = s.FromID
 	s.fieldMap["to_id"] = s.ToID
 	s.fieldMap["content"] = s.Content
 	s.fieldMap["is_read"] = s.IsRead
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

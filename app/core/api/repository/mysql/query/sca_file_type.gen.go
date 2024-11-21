@@ -33,7 +33,6 @@ func newScaFileType(db *gorm.DB, opts ...gen.DOOption) scaFileType {
 	_scaFileType.Status = field.NewInt64(tableName, "status")
 	_scaFileType.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaFileType.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_scaFileType.Deleted = field.NewInt64(tableName, "deleted")
 	_scaFileType.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_scaFileType.fillFieldMap()
@@ -51,7 +50,6 @@ type scaFileType struct {
 	Status    field.Int64  // 类型状态
 	CreatedAt field.Time   // 创建时间
 	UpdatedAt field.Time   // 更新时间
-	Deleted   field.Int64  // 是否删除 0 未删除 1 已删除
 	DeletedAt field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -75,7 +73,6 @@ func (s *scaFileType) updateTableName(table string) *scaFileType {
 	s.Status = field.NewInt64(table, "status")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
 	s.fillFieldMap()
@@ -93,14 +90,13 @@ func (s *scaFileType) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *scaFileType) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 8)
+	s.fieldMap = make(map[string]field.Expr, 7)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["type_name"] = s.TypeName
 	s.fieldMap["mime_type"] = s.MimeType
 	s.fieldMap["status"] = s.Status
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }
 

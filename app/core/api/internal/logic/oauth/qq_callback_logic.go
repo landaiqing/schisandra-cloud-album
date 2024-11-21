@@ -103,7 +103,7 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 	tx := l.svcCtx.DB.Begin()
 
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
-	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(authQQme.OpenID), userSocial.Source.Eq(constant.OAuthSourceQQ), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(authQQme.OpenID), userSocial.Source.Eq(constant.OAuthSourceQQ)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -113,14 +113,12 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 
-		notDeleted := constant.NotDeleted
 		male := constant.Male
 		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   qqUserInfo.FigureurlQq1,
 			Username: authQQme.OpenID,
 			Nickname: qqUserInfo.Nickname,
-			Deleted:  notDeleted,
 			Gender:   male,
 		}
 		err = tx.ScaAuthUser.Create(addUser)
@@ -153,7 +151,7 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
-		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
 			return err

@@ -103,16 +103,16 @@ type (
 	// 评论列表请求参数
 	CommentListRequest {
 		TopicId string `json:"topic_id"`
-		Page    int64  `json:"page,default=1,optional"`
-		Size    int64  `json:"size,default=5,optional"`
+		Page    int    `json:"page,default=1,optional"`
+		Size    int    `json:"size,default=5,optional"`
 		IsHot   bool   `json:"is_hot,default=true,optional"`
 	}
 	// 回复列表请求参数
 	ReplyListRequest {
 		TopicId   string `json:"topic_id"`
 		CommentId int64  `json:"comment_id"`
-		Page      int64  `json:"page,default=1,optional"`
-		Size      int64  `json:"size,default=5,optional"`
+		Page      int    `json:"page,default=1,optional"`
+		Size      int    `json:"size,default=5,optional"`
 	}
 	// 点赞评论的请求参数
 	CommentLikeRequest {

@@ -20,7 +20,6 @@ type ScaAuthUserDevice struct {
 	Location        string         `gorm:"column:location;type:varchar(20);comment:地址" json:"location"`                       // 地址
 	Agent           string         `gorm:"column:agent;type:varchar(255);comment:设备信息" json:"agent"`                          // 设备信息
 	CreatedAt       time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`    // 创建时间
-	Deleted         int64          `gorm:"column:deleted;type:tinyint;comment:是否删除 0 未删除 1 已删除" json:"deleted"`               // 是否删除 0 未删除 1 已删除
 	Browser         string         `gorm:"column:browser;type:varchar(20);comment:浏览器" json:"browser"`                        // 浏览器
 	OperatingSystem string         `gorm:"column:operating_system;type:varchar(20);comment:操作系统" json:"operating_system"`     // 操作系统
 	BrowserVersion  string         `gorm:"column:browser_version;type:varchar(20);comment:浏览器版本" json:"browser_version"`      // 浏览器版本

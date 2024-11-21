@@ -39,7 +39,6 @@ func newScaAuthUser(db *gorm.DB, opts ...gen.DOOption) scaAuthUser {
 	_scaAuthUser.Status = field.NewInt64(tableName, "status")
 	_scaAuthUser.Introduce = field.NewString(tableName, "introduce")
 	_scaAuthUser.CreatedAt = field.NewTime(tableName, "created_at")
-	_scaAuthUser.Deleted = field.NewInt64(tableName, "deleted")
 	_scaAuthUser.Blog = field.NewString(tableName, "blog")
 	_scaAuthUser.Location = field.NewString(tableName, "location")
 	_scaAuthUser.Company = field.NewString(tableName, "company")
@@ -67,7 +66,6 @@ type scaAuthUser struct {
 	Status    field.Int64  // 状态 0 正常 1 封禁
 	Introduce field.String // 介绍
 	CreatedAt field.Time   // 创建时间
-	Deleted   field.Int64  // 是否删除 0 未删除 1 已删除
 	Blog      field.String // 博客
 	Location  field.String // 地址
 	Company   field.String // 公司
@@ -101,7 +99,6 @@ func (s *scaAuthUser) updateTableName(table string) *scaAuthUser {
 	s.Status = field.NewInt64(table, "status")
 	s.Introduce = field.NewString(table, "introduce")
 	s.CreatedAt = field.NewTime(table, "created_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.Blog = field.NewString(table, "blog")
 	s.Location = field.NewString(table, "location")
 	s.Company = field.NewString(table, "company")
@@ -123,7 +120,7 @@ func (s *scaAuthUser) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *scaAuthUser) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 18)
+	s.fieldMap = make(map[string]field.Expr, 17)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["uid"] = s.UID
 	s.fieldMap["username"] = s.Username
@@ -136,7 +133,6 @@ func (s *scaAuthUser) fillFieldMap() {
 	s.fieldMap["status"] = s.Status
 	s.fieldMap["introduce"] = s.Introduce
 	s.fieldMap["created_at"] = s.CreatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["blog"] = s.Blog
 	s.fieldMap["location"] = s.Location
 	s.fieldMap["company"] = s.Company

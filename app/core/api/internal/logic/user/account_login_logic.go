@@ -45,11 +45,11 @@ func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request,
 
 	switch {
 	case utils.IsPhone(req.Account):
-		selectedUser = user.Where(user.Phone.Eq(req.Account), user.Deleted.Eq(constant.NotDeleted))
+		selectedUser = user.Where(user.Phone.Eq(req.Account))
 	case utils.IsEmail(req.Account):
-		selectedUser = user.Where(user.Email.Eq(req.Account), user.Deleted.Eq(constant.NotDeleted))
+		selectedUser = user.Where(user.Email.Eq(req.Account))
 	case utils.IsUsername(req.Account):
-		selectedUser = user.Where(user.Username.Eq(req.Account), user.Deleted.Eq(constant.NotDeleted))
+		selectedUser = user.Where(user.Username.Eq(req.Account))
 	default:
 		return response.ErrorWithI18n(l.ctx, "login.invalidAccount"), nil
 	}

@@ -45,7 +45,7 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		return response.ErrorWithI18n(l.ctx, "login.captchaError"), nil
 	}
 	authUser := l.svcCtx.DB.ScaAuthUser
-	userInfo, err := authUser.Where(authUser.Phone.Eq(req.Phone), authUser.Deleted.Eq(constant.NotDeleted)).First()
+	userInfo, err := authUser.Where(authUser.Phone.Eq(req.Phone)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -61,14 +61,12 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		uidStr := strconv.FormatInt(uid, 10)
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
-		notDeleted := constant.NotDeleted
 		male := constant.Male
 		user := &model.ScaAuthUser{
 			UID:      uidStr,
 			Phone:    req.Phone,
 			Avatar:   avatar,
 			Nickname: name,
-			Deleted:  notDeleted,
 			Gender:   male,
 		}
 		err := tx.ScaAuthUser.Create(user)

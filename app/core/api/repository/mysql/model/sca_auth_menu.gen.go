@@ -25,7 +25,6 @@ type ScaAuthMenu struct {
 	Order_    int64          `gorm:"column:order;type:int;comment:排序" json:"order"`                                     // 排序
 	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`    // 创建时间
 	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`    // 更新时间
-	Deleted   int64          `gorm:"column:deleted;type:int;comment:是否删除" json:"deleted"`                               // 是否删除
 	Remark    string         `gorm:"column:remark;type:varchar(255);comment:备注 描述" json:"remark"`                       // 备注 描述
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                   // 删除时间
 }

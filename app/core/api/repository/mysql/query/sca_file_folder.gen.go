@@ -33,9 +33,8 @@ func newScaFileFolder(db *gorm.DB, opts ...gen.DOOption) scaFileFolder {
 	_scaFileFolder.FolderAddr = field.NewString(tableName, "folder_addr")
 	_scaFileFolder.UserID = field.NewString(tableName, "user_id")
 	_scaFileFolder.FolderSource = field.NewInt64(tableName, "folder_source")
-	_scaFileFolder.CreatedTime = field.NewTime(tableName, "created_time")
-	_scaFileFolder.UpdateTime = field.NewTime(tableName, "update_time")
-	_scaFileFolder.Deleted = field.NewInt64(tableName, "deleted")
+	_scaFileFolder.CreatedAt = field.NewTime(tableName, "created_at")
+	_scaFileFolder.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaFileFolder.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_scaFileFolder.fillFieldMap()
@@ -53,9 +52,8 @@ type scaFileFolder struct {
 	FolderAddr     field.String // 文件夹名称
 	UserID         field.String // 用户编号
 	FolderSource   field.Int64  // 文件夹来源 0相册 1 评论
-	CreatedTime    field.Time   // 创建时间
-	UpdateTime     field.Time   // 更新时间
-	Deleted        field.Int64  // 是否删除 0 未删除 1 已删除
+	CreatedAt      field.Time   // 创建时间
+	UpdatedAt      field.Time   // 更新时间
 	DeletedAt      field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -79,9 +77,8 @@ func (s *scaFileFolder) updateTableName(table string) *scaFileFolder {
 	s.FolderAddr = field.NewString(table, "folder_addr")
 	s.UserID = field.NewString(table, "user_id")
 	s.FolderSource = field.NewInt64(table, "folder_source")
-	s.CreatedTime = field.NewTime(table, "created_time")
-	s.UpdateTime = field.NewTime(table, "update_time")
-	s.Deleted = field.NewInt64(table, "deleted")
+	s.CreatedAt = field.NewTime(table, "created_at")
+	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
 	s.fillFieldMap()
@@ -99,16 +96,15 @@ func (s *scaFileFolder) GetFieldByName(fieldName string) (field.OrderExpr, bool)
 }
 
 func (s *scaFileFolder) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 10)
+	s.fieldMap = make(map[string]field.Expr, 9)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["folder_name"] = s.FolderName
 	s.fieldMap["parent_folder_id"] = s.ParentFolderID
 	s.fieldMap["folder_addr"] = s.FolderAddr
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["folder_source"] = s.FolderSource
-	s.fieldMap["created_time"] = s.CreatedTime
-	s.fieldMap["update_time"] = s.UpdateTime
-	s.fieldMap["deleted"] = s.Deleted
+	s.fieldMap["created_at"] = s.CreatedAt
+	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }
 

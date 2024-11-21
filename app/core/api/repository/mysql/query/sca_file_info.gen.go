@@ -38,7 +38,6 @@ func newScaFileInfo(db *gorm.DB, opts ...gen.DOOption) scaFileInfo {
 	_scaFileInfo.Status = field.NewInt64(tableName, "status")
 	_scaFileInfo.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaFileInfo.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_scaFileInfo.Deleted = field.NewInt64(tableName, "deleted")
 	_scaFileInfo.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_scaFileInfo.fillFieldMap()
@@ -61,7 +60,6 @@ type scaFileInfo struct {
 	Status     field.Int64   // 文件状态
 	CreatedAt  field.Time    // 创建时间
 	UpdatedAt  field.Time    // 更新时间
-	Deleted    field.Int64   // 是否删除 0 未删除 1 已删除
 	DeletedAt  field.Field   // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -90,7 +88,6 @@ func (s *scaFileInfo) updateTableName(table string) *scaFileInfo {
 	s.Status = field.NewInt64(table, "status")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
 	s.fillFieldMap()
@@ -108,7 +105,7 @@ func (s *scaFileInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool) {
 }
 
 func (s *scaFileInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 13)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["file_name"] = s.FileName
 	s.fieldMap["file_size"] = s.FileSize
@@ -120,7 +117,6 @@ func (s *scaFileInfo) fillFieldMap() {
 	s.fieldMap["status"] = s.Status
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }
 

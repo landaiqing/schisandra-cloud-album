@@ -39,7 +39,6 @@ func newScaCommentReply(db *gorm.DB, opts ...gen.DOOption) scaCommentReply {
 	_scaCommentReply.Author = field.NewInt64(tableName, "author")
 	_scaCommentReply.Likes = field.NewInt64(tableName, "likes")
 	_scaCommentReply.ReplyCount = field.NewInt64(tableName, "reply_count")
-	_scaCommentReply.Deleted = field.NewInt64(tableName, "deleted")
 	_scaCommentReply.Browser = field.NewString(tableName, "browser")
 	_scaCommentReply.OperatingSystem = field.NewString(tableName, "operating_system")
 	_scaCommentReply.CommentIP = field.NewString(tableName, "comment_ip")
@@ -47,7 +46,7 @@ func newScaCommentReply(db *gorm.DB, opts ...gen.DOOption) scaCommentReply {
 	_scaCommentReply.Agent = field.NewString(tableName, "agent")
 	_scaCommentReply.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaCommentReply.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_scaCommentReply.Version = field.NewInt64(tableName, "version")
+	_scaCommentReply.Version = field.NewField(tableName, "version")
 	_scaCommentReply.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_scaCommentReply.fillFieldMap()
@@ -71,7 +70,6 @@ type scaCommentReply struct {
 	Author          field.Int64  // 评论回复是否作者  0否 1是
 	Likes           field.Int64  // 点赞数
 	ReplyCount      field.Int64  // 回复数量
-	Deleted         field.Int64  // 是否删除 0 未删除 1 已删除
 	Browser         field.String // 浏览器
 	OperatingSystem field.String // 操作系统
 	CommentIP       field.String // IP地址
@@ -79,7 +77,7 @@ type scaCommentReply struct {
 	Agent           field.String // 设备信息
 	CreatedAt       field.Time   // 创建时间
 	UpdatedAt       field.Time   // 更新时间
-	Version         field.Int64  // 版本
+	Version         field.Field  // 版本
 	DeletedAt       field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -109,7 +107,6 @@ func (s *scaCommentReply) updateTableName(table string) *scaCommentReply {
 	s.Author = field.NewInt64(table, "author")
 	s.Likes = field.NewInt64(table, "likes")
 	s.ReplyCount = field.NewInt64(table, "reply_count")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.Browser = field.NewString(table, "browser")
 	s.OperatingSystem = field.NewString(table, "operating_system")
 	s.CommentIP = field.NewString(table, "comment_ip")
@@ -117,7 +114,7 @@ func (s *scaCommentReply) updateTableName(table string) *scaCommentReply {
 	s.Agent = field.NewString(table, "agent")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
-	s.Version = field.NewInt64(table, "version")
+	s.Version = field.NewField(table, "version")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
 	s.fillFieldMap()
@@ -135,7 +132,7 @@ func (s *scaCommentReply) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaCommentReply) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 22)
+	s.fieldMap = make(map[string]field.Expr, 21)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["topic_id"] = s.TopicID
@@ -148,7 +145,6 @@ func (s *scaCommentReply) fillFieldMap() {
 	s.fieldMap["author"] = s.Author
 	s.fieldMap["likes"] = s.Likes
 	s.fieldMap["reply_count"] = s.ReplyCount
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["browser"] = s.Browser
 	s.fieldMap["operating_system"] = s.OperatingSystem
 	s.fieldMap["comment_ip"] = s.CommentIP

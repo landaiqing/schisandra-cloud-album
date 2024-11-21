@@ -20,7 +20,6 @@ type ScaAuthUserSocial struct {
 	Source    string         `gorm:"column:source;type:varchar(10);comment:第三方用户来源" json:"source"`                      // 第三方用户来源
 	Status    int64          `gorm:"column:status;type:bigint;comment:状态 0正常 1 封禁" json:"status"`                       // 状态 0正常 1 封禁
 	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`    // 创建时间
-	Deleted   int64          `gorm:"column:deleted;type:tinyint;comment:是否删除 0 未删除 1 已删除" json:"deleted"`               // 是否删除 0 未删除 1 已删除
 	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`    // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                   // 删除时间
 }

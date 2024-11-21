@@ -107,7 +107,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 	tx := l.svcCtx.DB.Begin()
 
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
-	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGitee), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGitee)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -123,7 +123,6 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 			Nickname: giteeUser.Name,
 			Blog:     giteeUser.Blog,
 			Email:    giteeUser.Email,
-			Deleted:  constant.NotDeleted,
 			Gender:   constant.Male,
 		}
 		err = tx.ScaAuthUser.Create(addUser)
@@ -154,7 +153,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
-		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
 			return err

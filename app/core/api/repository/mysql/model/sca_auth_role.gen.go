@@ -18,7 +18,6 @@ type ScaAuthRole struct {
 	RoleName  string         `gorm:"column:role_name;type:varchar(32);not null;comment:角色名称" json:"role_name"`          // 角色名称
 	RoleKey   string         `gorm:"column:role_key;type:varchar(64);not null;comment:角色关键字" json:"role_key"`           // 角色关键字
 	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`    // 创建时间
-	Deleted   int64          `gorm:"column:deleted;type:tinyint;comment:是否删除 0 未删除 1 已删除" json:"deleted"`               // 是否删除 0 未删除 1 已删除
 	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`    // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                   // 删除时间
 }

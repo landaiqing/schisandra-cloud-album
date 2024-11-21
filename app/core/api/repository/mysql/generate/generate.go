@@ -91,8 +91,9 @@ func main() {
 		return tag.Append("autoCreateTime")
 	})
 	softDeleteField := gen.FieldType("delete_at", "gorm.DeletedAt")
+	versionField := gen.FieldType("version", "optimisticlock.Version")
 	// 模型自定义选项组
-	fieldOpts := []gen.ModelOpt{jsonField, autoUpdateTimeField, autoCreateTimeField, softDeleteField}
+	fieldOpts := []gen.ModelOpt{jsonField, autoUpdateTimeField, autoCreateTimeField, softDeleteField, versionField}
 
 	// 创建全部模型文件, 并覆盖前面创建的同名模型
 	allModel := g.GenerateAllTable(fieldOpts...)

@@ -16,6 +16,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+	"schisandra-album-cloud-microservices/app/core/api/repository/mongodb/collection"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 )
 
@@ -110,7 +111,7 @@ func (l *SubmitReplyReplyLogic) SubmitReplyReply(r *http.Request, req *types.Rep
 		return nil, err
 	}
 	commentReply := l.svcCtx.DB.ScaCommentReply
-	update, err := tx.ScaCommentReply.Updates(commentReply.ReplyCount.Add(1))
+	update, err := tx.ScaCommentReply.Where(commentReply.ID.Eq(req.ReplyId)).Update(commentReply.ReplyCount, commentReply.ReplyCount.Add(1))
 	if err != nil {
 		return nil, err
 	}
@@ -124,14 +125,16 @@ func (l *SubmitReplyReplyLogic) SubmitReplyReply(r *http.Request, req *types.Rep
 		if err != nil {
 			return nil, err
 		}
-		commentImages := types.CommentImages{
+		commentImages := &types.CommentImages{
 			UserId:    uid,
 			TopicId:   req.TopicId,
 			CommentId: replyReply.ID,
 			Images:    imagesData,
-			CreatedAt: replyReply.CreatedAt.String(),
 		}
-		if _, err = l.svcCtx.MongoClient.Collection(constant.COMMENT_IMAGES).InsertOne(l.ctx, commentImages); err != nil {
+
+		newCollection := collection.MustNewCollection[types.CommentImages](l.svcCtx, constant.COMMENT_IMAGES)
+		_, err = newCollection.Creator().InsertOne(l.ctx, commentImages)
+		if err != nil {
 			return nil, err
 		}
 	}

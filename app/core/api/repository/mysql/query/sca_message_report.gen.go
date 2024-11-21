@@ -37,9 +37,7 @@ func newScaMessageReport(db *gorm.DB, opts ...gen.DOOption) scaMessageReport {
 	_scaMessageReport.ReportTag = field.NewString(tableName, "report_tag")
 	_scaMessageReport.Status = field.NewInt64(tableName, "status")
 	_scaMessageReport.CreatedAt = field.NewTime(tableName, "created_at")
-	_scaMessageReport.UpdateBy = field.NewString(tableName, "update_by")
 	_scaMessageReport.UpdatedAt = field.NewTime(tableName, "updated_at")
-	_scaMessageReport.Deleted = field.NewInt64(tableName, "deleted")
 	_scaMessageReport.DeletedAt = field.NewField(tableName, "deleted_at")
 
 	_scaMessageReport.fillFieldMap()
@@ -61,9 +59,7 @@ type scaMessageReport struct {
 	ReportTag     field.String // 举报标签
 	Status        field.Int64  // 状态（0 未处理 1 已处理）
 	CreatedAt     field.Time   // 创建时间
-	UpdateBy      field.String // 更新人
 	UpdatedAt     field.Time   // 更新时间
-	Deleted       field.Int64  // 是否删除 0否 1是
 	DeletedAt     field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
@@ -91,9 +87,7 @@ func (s *scaMessageReport) updateTableName(table string) *scaMessageReport {
 	s.ReportTag = field.NewString(table, "report_tag")
 	s.Status = field.NewInt64(table, "status")
 	s.CreatedAt = field.NewTime(table, "created_at")
-	s.UpdateBy = field.NewString(table, "update_by")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
-	s.Deleted = field.NewInt64(table, "deleted")
 	s.DeletedAt = field.NewField(table, "deleted_at")
 
 	s.fillFieldMap()
@@ -111,7 +105,7 @@ func (s *scaMessageReport) GetFieldByName(fieldName string) (field.OrderExpr, bo
 }
 
 func (s *scaMessageReport) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 14)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["type"] = s.Type
@@ -122,9 +116,7 @@ func (s *scaMessageReport) fillFieldMap() {
 	s.fieldMap["report_tag"] = s.ReportTag
 	s.fieldMap["status"] = s.Status
 	s.fieldMap["created_at"] = s.CreatedAt
-	s.fieldMap["update_by"] = s.UpdateBy
 	s.fieldMap["updated_at"] = s.UpdatedAt
-	s.fieldMap["deleted"] = s.Deleted
 	s.fieldMap["deleted_at"] = s.DeletedAt
 }
 

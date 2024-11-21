@@ -106,7 +106,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 	tx := l.svcCtx.DB.Begin()
 
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
-	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGithub), userSocial.Deleted.Eq(constant.NotDeleted)).First()
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGithub)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
@@ -116,7 +116,6 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
 
-		notDeleted := constant.NotDeleted
 		male := constant.Male
 		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
@@ -125,8 +124,8 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 			Nickname: gitHubUser.Name,
 			Blog:     gitHubUser.Blog,
 			Email:    gitHubUser.Email,
-			Deleted:  notDeleted,
-			Gender:   male,
+
+			Gender: male,
 		}
 		err = tx.ScaAuthUser.Create(addUser)
 		if err != nil {
@@ -157,7 +156,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
-		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID), authUser.Deleted.Eq(constant.NotDeleted)).First()
+		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
 			return err

@@ -24,3 +24,5 @@ smsSendSuccess = "sms send success！"
 [comment]
 tooManyImages = "too many images！"
 commentError = "comment error！"
+LikeError = "like error！"
+CancelLikeError = "cancel like error！"

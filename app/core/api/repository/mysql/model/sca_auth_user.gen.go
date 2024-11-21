@@ -26,7 +26,6 @@ type ScaAuthUser struct {
 	Status    int64          `gorm:"column:status;type:tinyint;comment:状态 0 正常 1 封禁" json:"status"`                                               // 状态 0 正常 1 封禁
 	Introduce string         `gorm:"column:introduce;type:varchar(255);comment:介绍" json:"introduce"`                                              // 介绍
 	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                              // 创建时间
-	Deleted   int64          `gorm:"column:deleted;type:tinyint;comment:是否删除 0 未删除 1 已删除" json:"deleted"`                                         // 是否删除 0 未删除 1 已删除
 	Blog      string         `gorm:"column:blog;type:varchar(30);comment:博客" json:"blog"`                                                         // 博客
 	Location  string         `gorm:"column:location;type:varchar(50);comment:地址" json:"location"`                                                 // 地址
 	Company   string         `gorm:"column:company;type:varchar(50);comment:公司" json:"company"`                                                   // 公司
