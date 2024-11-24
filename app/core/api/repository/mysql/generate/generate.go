@@ -84,6 +84,9 @@ func main() {
 	// 将非默认字段名的字段定义为自动时间戳和软删除字段;
 	// 自动时间戳默认字段名为:`updated_at`、`created_at, 表字段数据类型为: INT 或 DATETIME
 	// 软删除默认字段名为:`deleted_at`, 表字段数据类型为: DATETIME
+	idField := gen.FieldGORMTag("id", func(tag field.GormTag) field.GormTag {
+		return tag.Append("primary_key")
+	})
 	autoUpdateTimeField := gen.FieldGORMTag("updated_at", func(tag field.GormTag) field.GormTag {
 		return tag.Append("autoUpdateTime")
 	})
@@ -93,7 +96,7 @@ func main() {
 	softDeleteField := gen.FieldType("delete_at", "gorm.DeletedAt")
 	versionField := gen.FieldType("version", "optimisticlock.Version")
 	// 模型自定义选项组
-	fieldOpts := []gen.ModelOpt{jsonField, autoUpdateTimeField, autoCreateTimeField, softDeleteField, versionField}
+	fieldOpts := []gen.ModelOpt{jsonField, idField, autoUpdateTimeField, autoCreateTimeField, softDeleteField, versionField}
 
 	// 创建全部模型文件, 并覆盖前面创建的同名模型
 	allModel := g.GenerateAllTable(fieldOpts...)

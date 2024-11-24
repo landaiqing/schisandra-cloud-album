@@ -14,23 +14,23 @@ const TableNameScaAuthUser = "sca_auth_user"
 
 // ScaAuthUser mapped from table <sca_auth_user>
 type ScaAuthUser struct {
-	ID        int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;uniqueIndex:id,priority:1;comment:自增ID" json:"id,string"` // 自增ID
-	UID       string         `gorm:"column:uid;type:varchar(50);not null;uniqueIndex:uid,priority:1;comment:唯一ID" json:"uid"`                     // 唯一ID
-	Username  string         `gorm:"column:username;type:varchar(32);comment:用户名" json:"username"`                                                // 用户名
-	Nickname  string         `gorm:"column:nickname;type:varchar(32);comment:昵称" json:"nickname"`                                                 // 昵称
-	Email     string         `gorm:"column:email;type:varchar(32);comment:邮箱" json:"email"`                                                       // 邮箱
-	Phone     string         `gorm:"column:phone;type:varchar(32);uniqueIndex:phone,priority:1;comment:电话" json:"phone"`                          // 电话
-	Password  string         `gorm:"column:password;type:varchar(64);comment:密码" json:"password"`                                                 // 密码
-	Gender    int64          `gorm:"column:gender;type:tinyint;comment:性别" json:"gender"`                                                         // 性别
-	Avatar    string         `gorm:"column:avatar;type:longtext;comment:头像" json:"avatar"`                                                        // 头像
-	Status    int64          `gorm:"column:status;type:tinyint;comment:状态 0 正常 1 封禁" json:"status"`                                               // 状态 0 正常 1 封禁
-	Introduce string         `gorm:"column:introduce;type:varchar(255);comment:介绍" json:"introduce"`                                              // 介绍
-	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                              // 创建时间
-	Blog      string         `gorm:"column:blog;type:varchar(30);comment:博客" json:"blog"`                                                         // 博客
-	Location  string         `gorm:"column:location;type:varchar(50);comment:地址" json:"location"`                                                 // 地址
-	Company   string         `gorm:"column:company;type:varchar(50);comment:公司" json:"company"`                                                   // 公司
-	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                              // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                             // 删除时间
+	ID        int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;uniqueIndex:id,priority:1;comment:自增ID;primary_key" json:"id,string"` // 自增ID
+	UID       string         `gorm:"column:uid;type:varchar(50);not null;uniqueIndex:uid,priority:1;comment:唯一ID" json:"uid"`                                 // 唯一ID
+	Username  string         `gorm:"column:username;type:varchar(32);comment:用户名" json:"username"`                                                            // 用户名
+	Nickname  string         `gorm:"column:nickname;type:varchar(32);comment:昵称" json:"nickname"`                                                             // 昵称
+	Email     string         `gorm:"column:email;type:varchar(32);comment:邮箱" json:"email"`                                                                   // 邮箱
+	Phone     string         `gorm:"column:phone;type:varchar(32);uniqueIndex:phone,priority:1;comment:电话" json:"phone"`                                      // 电话
+	Password  string         `gorm:"column:password;type:varchar(64);comment:密码" json:"password"`                                                             // 密码
+	Gender    int64          `gorm:"column:gender;type:tinyint;comment:性别" json:"gender"`                                                                     // 性别
+	Avatar    string         `gorm:"column:avatar;type:longtext;comment:头像" json:"avatar"`                                                                    // 头像
+	Status    int64          `gorm:"column:status;type:tinyint;comment:状态 0 正常 1 封禁" json:"status"`                                                           // 状态 0 正常 1 封禁
+	Introduce string         `gorm:"column:introduce;type:varchar(255);comment:介绍" json:"introduce"`                                                          // 介绍
+	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                                          // 创建时间
+	Blog      string         `gorm:"column:blog;type:varchar(30);comment:博客" json:"blog"`                                                                     // 博客
+	Location  string         `gorm:"column:location;type:varchar(50);comment:地址" json:"location"`                                                             // 地址
+	Company   string         `gorm:"column:company;type:varchar(50);comment:公司" json:"company"`                                                               // 公司
+	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                                          // 更新时间
+	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                                         // 删除时间
 }
 
 // TableName ScaAuthUser's table name

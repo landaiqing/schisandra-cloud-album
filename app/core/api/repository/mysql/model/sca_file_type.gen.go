@@ -14,7 +14,7 @@ const TableNameScaFileType = "sca_file_type"
 
 // ScaFileType mapped from table <sca_file_type>
 type ScaFileType struct {
-	ID        int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键" json:"id,string"`                         // 主键
+	ID        int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`             // 主键
 	TypeName  string         `gorm:"column:type_name;type:varchar(100);comment:类型名称" json:"type_name"`                                        // 类型名称
 	MimeType  string         `gorm:"column:mime_type;type:varchar(50);comment:MIME 类型" json:"mime_type"`                                      // MIME 类型
 	Status    int64          `gorm:"column:status;type:int;comment:类型状态" json:"status"`                                                       // 类型状态

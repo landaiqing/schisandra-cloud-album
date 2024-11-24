@@ -14,7 +14,7 @@ const TableNameScaFileInfo = "sca_file_info"
 
 // ScaFileInfo mapped from table <sca_file_info>
 type ScaFileInfo struct {
-	ID         int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键" json:"id,string"`                         // 主键
+	ID         int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`             // 主键
 	FileName   string         `gorm:"column:file_name;type:varchar(50);comment:文件名" json:"file_name"`                                          // 文件名
 	FileSize   float64        `gorm:"column:file_size;type:double;comment:文件大小" json:"file_size"`                                              // 文件大小
 	FileTypeID int64          `gorm:"column:file_type_id;type:bigint;comment:文件类型编号" json:"file_type_id"`                                      // 文件类型编号

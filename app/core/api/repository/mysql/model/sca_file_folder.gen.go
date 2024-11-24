@@ -14,7 +14,7 @@ const TableNameScaFileFolder = "sca_file_folder"
 
 // ScaFileFolder mapped from table <sca_file_folder>
 type ScaFileFolder struct {
-	ID             int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键" json:"id,string"`                         // 主键
+	ID             int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`             // 主键
 	FolderName     string         `gorm:"column:folder_name;type:varchar(512);comment:文件夹名称" json:"folder_name"`                                   // 文件夹名称
 	ParentFolderID int64          `gorm:"column:parent_folder_id;type:bigint;comment:父文件夹编号" json:"parent_folder_id"`                              // 父文件夹编号
 	FolderAddr     string         `gorm:"column:folder_addr;type:varchar(1024);comment:文件夹名称" json:"folder_addr"`                                  // 文件夹名称

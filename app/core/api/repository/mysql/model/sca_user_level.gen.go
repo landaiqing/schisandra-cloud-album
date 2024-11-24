@@ -14,7 +14,7 @@ const TableNameScaUserLevel = "sca_user_level"
 
 // ScaUserLevel mapped from table <sca_user_level>
 type ScaUserLevel struct {
-	ID          int64          `gorm:"column:id;type:bigint;primaryKey;comment:主键" json:"id,string"`                                             // 主键
+	ID          int64          `gorm:"column:id;type:bigint;primaryKey;comment:主键;primary_key" json:"id,string"`                                 // 主键
 	UserID      string         `gorm:"column:user_id;type:varchar(50);comment:用户Id" json:"user_id"`                                              // 用户Id
 	LevelType   int64          `gorm:"column:level_type;type:tinyint unsigned;comment:等级类型" json:"level_type"`                                   // 等级类型
 	Level       int64          `gorm:"column:level;type:int;comment:等级" json:"level"`                                                            // 等级

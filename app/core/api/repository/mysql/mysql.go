@@ -5,6 +5,10 @@ import (
 	"os"
 	"time"
 
+	"github.com/asjdf/gorm-cache/cache"
+	"github.com/asjdf/gorm-cache/config"
+	"github.com/asjdf/gorm-cache/storage"
+	"github.com/redis/go-redis/v9"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -12,7 +16,7 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/query"
 )
 
-func NewMySQL(url string, maxOpenConn int, maxIdleConn int) (*gorm.DB, *query.Query) {
+func NewMySQL(url string, maxOpenConn int, maxIdleConn int, client *redis.Client) (*gorm.DB, *query.Query) {
 	db, err := gorm.Open(mysql.Open(url), &gorm.Config{
 		SkipDefaultTransaction: true,
 		PrepareStmt:            true,
@@ -36,5 +40,27 @@ func NewMySQL(url string, maxOpenConn int, maxIdleConn int) (*gorm.DB, *query.Qu
 	sqlDB.SetMaxOpenConns(maxOpenConn)
 	sqlDB.SetMaxIdleConns(maxIdleConn)
 	useDB := query.Use(db)
+	// cache
+	gormCache, err := cache.NewGorm2Cache(&config.CacheConfig{
+		CacheLevel: config.CacheLevelAll,
+		CacheStorage: storage.NewRedis(&storage.RedisStoreConfig{
+			KeyPrefix: "cache",
+			Client:    client,
+		}),
+		InvalidateWhenUpdate:           true,  // when you create/update/delete objects, invalidate cache
+		CacheTTL:                       10000, // 5000 ms
+		CacheMaxItemCnt:                0,     // if length of objects retrieved one single time
+		AsyncWrite:                     true,  // async write to cache
+		DebugMode:                      true,
+		DisableCachePenetrationProtect: true, // disable cache penetration protect
+	})
+	if err != nil {
+		panic(err)
+	}
+	err = db.Use(gormCache)
+	if err != nil {
+		panic(err)
+	}
+
 	return db, useDB
 }

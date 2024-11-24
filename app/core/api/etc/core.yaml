@@ -1,6 +1,7 @@
 Name: main
 Host: 0.0.0.0
 Port: 80
+MaxConns: 100
 Web:
   URL: http://localhost:5173
 Middlewares:

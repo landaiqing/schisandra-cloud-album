@@ -59,13 +59,9 @@ func (l *SubmitCommentLogic) SubmitComment(r *http.Request, req *types.CommentRe
 	browser, _ := ua.Browser()
 	operatingSystem := ua.OS()
 	var isAuthor int64 = 0
-	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
-	if err != nil {
-		return nil, err
-	}
-	uid, ok := session.Values["uid"].(string)
+	uid, ok := l.ctx.Value("user_id").(string)
 	if !ok {
-		return nil, errors.New("uid not found in session")
+		return nil, errors.New("user_id not found in context")
 	}
 	if uid == req.Author {
 		isAuthor = 1

@@ -19,7 +19,7 @@ type ScaUserFollow struct {
 	Status     int64          `gorm:"column:status;type:tinyint unsigned;not null;comment:关注状态（0 未互关 1 互关）" json:"status"`                      // 关注状态（0 未互关 1 互关）
 	CreatedAt  *time.Time     `gorm:"column:created_at;type:timestamp;default:CURRENT_TIMESTAMP;autoCreateTime;comment:创建时间" json:"created_at"` // 创建时间
 	UpdatedAt  *time.Time     `gorm:"column:updated_at;type:timestamp;default:CURRENT_TIMESTAMP;autoUpdateTime;comment:更新时间" json:"updated_at"` // 更新时间
-	ID         int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true" json:"id,string"`
+	ID         int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;primary_key" json:"id,string"`
 	DeletedAt  gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"` // 删除时间
 }
 

@@ -43,9 +43,9 @@ type ServiceContext struct {
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
-	db, queryDB := mysql.NewMySQL(c.Mysql.DataSource, c.Mysql.MaxOpenConn, c.Mysql.MaxIdleConn)
-	casbinEnforcer := casbinx.NewCasbin(db)
 	redisClient := redisx.NewRedis(c.Redis.Host, c.Redis.Pass, c.Redis.DB)
+	db, queryDB := mysql.NewMySQL(c.Mysql.DataSource, c.Mysql.MaxOpenConn, c.Mysql.MaxIdleConn, redisClient)
+	casbinEnforcer := casbinx.NewCasbin(db)
 	session := redis_session.NewRedisSession(redisClient)
 	return &ServiceContext{
 		Config:                    c,

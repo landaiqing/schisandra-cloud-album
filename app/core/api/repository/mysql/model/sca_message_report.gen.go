@@ -14,7 +14,7 @@ const TableNameScaMessageReport = "sca_message_report"
 
 // ScaMessageReport mapped from table <sca_message_report>
 type ScaMessageReport struct {
-	ID            int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键" json:"id,string"`                          // 主键
+	ID            int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`              // 主键
 	UserID        string         `gorm:"column:user_id;type:varchar(20);comment:用户Id" json:"user_id"`                                              // 用户Id
 	Type          int64          `gorm:"column:type;type:tinyint;comment:举报类型 0评论 1 相册" json:"type"`                                               // 举报类型 0评论 1 相册
 	CommentID     int64          `gorm:"column:comment_id;type:bigint;comment:评论Id" json:"comment_id"`                                             // 评论Id
