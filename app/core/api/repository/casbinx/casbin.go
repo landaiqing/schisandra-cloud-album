@@ -11,7 +11,7 @@ import (
 )
 
 // NewCasbin creates a new casbinx enforcer with a mysql adapter and loads the policy from the file system.
-func NewCasbin(engine *gorm.DB) *casbin.CachedEnforcer {
+func NewCasbin(engine *gorm.DB) *casbin.SyncedCachedEnforcer {
 	a, err := gormadapter.NewAdapterByDBUseTableName(engine, "sca_auth_", "permission_rule")
 	if err != nil {
 		panic(err)
@@ -25,12 +25,11 @@ func NewCasbin(engine *gorm.DB) *casbin.CachedEnforcer {
 	if err != nil {
 		panic(err)
 	}
-	e, err := casbin.NewCachedEnforcer(modelFile, a)
+	e, err := casbin.NewSyncedCachedEnforcer(modelFile, a)
 	if err != nil {
 		panic(err)
 	}
 	e.EnableCache(true)
-	e.SetExpireTime(60 * 60)
 	err = e.LoadPolicy()
 	if err != nil {
 		panic(err)

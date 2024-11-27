@@ -10,11 +10,11 @@ import (
 )
 
 type CasbinVerifyMiddleware struct {
-	casbin  *casbin.CachedEnforcer
+	casbin  *casbin.SyncedCachedEnforcer
 	session *redisstore.RedisStore
 }
 
-func NewCasbinVerifyMiddleware(casbin *casbin.CachedEnforcer, session *redisstore.RedisStore) *CasbinVerifyMiddleware {
+func NewCasbinVerifyMiddleware(casbin *casbin.SyncedCachedEnforcer, session *redisstore.RedisStore) *CasbinVerifyMiddleware {
 	return &CasbinVerifyMiddleware{
 		casbin:  casbin,
 		session: session,

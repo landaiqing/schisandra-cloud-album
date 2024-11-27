@@ -35,7 +35,7 @@ type ServiceContext struct {
 	MongoClient               *mongo.Database
 	Session                   *redisstore.RedisStore
 	Ip2Region                 *xdb.Searcher
-	CasbinEnforcer            *casbin.CachedEnforcer
+	CasbinEnforcer            *casbin.SyncedCachedEnforcer
 	WechatPublic              *officialAccount.OfficialAccount
 	Sensitive                 *sensitive.Manager
 	RotateCaptcha             rotate.Captcha

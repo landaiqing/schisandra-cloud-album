@@ -66,7 +66,7 @@ func (l *GetReplyListLogic) GetReplyList(req *types.ReplyListRequest) (resp *typ
 		replyUser.Nickname.As("reply_nickname"),
 	).LeftJoin(commentUser, reply.UserID.EqCol(commentUser.UID)).
 		LeftJoin(replyUser, reply.ReplyUser.EqCol(replyUser.UID)).
-		Where(reply.TopicID.Eq(req.TopicId), reply.CommentType.Eq(constant.REPLY)).
+		Where(reply.TopicID.Eq(req.TopicId), reply.ReplyID.Eq(req.CommentId), reply.CommentType.Eq(constant.REPLY)).
 		Order(reply.Likes.Desc(), reply.CreatedAt.Desc()).
 		ScanByPage(&replyQueryList, (req.Page-1)*req.Size, req.Size)
 	if err != nil {
