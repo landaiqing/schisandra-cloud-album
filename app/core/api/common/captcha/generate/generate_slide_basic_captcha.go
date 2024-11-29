@@ -23,9 +23,15 @@ func GenerateSlideBasicCaptcha(slide slide.Captcha, redis *redis.Client, ctx con
 		return nil, nil
 	}
 	var masterImageBase64, tileImageBase64 string
-	masterImageBase64 = captData.GetMasterImage().ToBase64()
+	masterImageBase64, err = captData.GetMasterImage().ToBase64()
+	if err != nil {
+		return nil, err
+	}
 
-	tileImageBase64 = captData.GetTileImage().ToBase64()
+	tileImageBase64, err = captData.GetTileImage().ToBase64()
+	if err != nil {
+		return nil, err
+	}
 
 	dotsByte, err := json.Marshal(blockData)
 	if err != nil {

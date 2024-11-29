@@ -23,9 +23,9 @@ require (
 	github.com/rbcervilla/redisstore/v9 v9.0.0
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/wenlng/go-captcha-assets v1.0.1
-	github.com/wenlng/go-captcha/v2 v2.0.1
+	github.com/wenlng/go-captcha/v2 v2.0.2
 	github.com/yitter/idgenerator-go v1.3.3
-	github.com/zeromicro/go-zero v1.7.3
+	github.com/zeromicro/go-zero v1.7.4
 	github.com/zmexing/go-sensitive-word v1.3.0
 	go.mongodb.org/mongo-driver/v2 v2.0.0-beta2
 	golang.org/x/crypto v0.29.0
@@ -69,11 +69,11 @@ require (
 	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
 	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
-	github.com/google/pprof v0.0.0-20241101162523-b92577c0c142 // indirect
+	github.com/google/pprof v0.0.0-20241128161848-dc51965c6481 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
 	github.com/gorilla/securecookie v1.1.2 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.23.0 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.24.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/imroc/req/v3 v3.48.0 // indirect
@@ -84,7 +84,7 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/karlseguin/ccache/v3 v3.0.3 // indirect
+	github.com/karlseguin/ccache/v3 v3.0.6 // indirect
 	github.com/klauspost/compress v1.17.11 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/lib/pq v1.10.7 // indirect
@@ -106,7 +106,7 @@ require (
 	github.com/prometheus/common v0.60.1 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
 	github.com/quic-go/qpack v0.5.1 // indirect
-	github.com/quic-go/quic-go v0.48.1 // indirect
+	github.com/quic-go/quic-go v0.48.2 // indirect
 	github.com/refraction-networking/utls v1.6.7 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
@@ -145,7 +145,7 @@ require (
 	gorm.io/driver/postgres v1.5.10 // indirect
 	gorm.io/driver/sqlserver v1.5.4 // indirect
 	gorm.io/hints v1.1.2 // indirect
-	modernc.org/libc v1.61.2 // indirect
+	modernc.org/libc v1.61.3 // indirect
 	modernc.org/mathutil v1.6.0 // indirect
 	modernc.org/memory v1.8.0 // indirect
 	modernc.org/sqlite v1.34.1 // indirect

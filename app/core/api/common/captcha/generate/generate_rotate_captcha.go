@@ -22,8 +22,14 @@ func GenerateRotateCaptcha(captcha rotate.Captcha, redis *redis.Client, ctx cont
 	if blockData == nil {
 		return nil, nil
 	}
-	masterImageBase64 := captchaData.GetMasterImage().ToBase64()
-	thumbImageBase64 := captchaData.GetThumbImage().ToBase64()
+	masterImageBase64, err := captchaData.GetMasterImage().ToBase64()
+	if err != nil {
+		return nil, err
+	}
+	thumbImageBase64, err := captchaData.GetThumbImage().ToBase64()
+	if err != nil {
+		return nil, err
+	}
 	dotsByte, err := json.Marshal(blockData)
 	if err != nil {
 		return nil, err
