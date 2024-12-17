@@ -3,45 +3,44 @@ package websocket
 import (
 	"context"
 	"fmt"
+	"github.com/lxzan/gws"
 	"net/http"
+	"schisandra-album-cloud-microservices/app/core/api/common/jwt"
 	"time"
 
-	"github.com/lxzan/gws"
 	"github.com/zeromicro/go-zero/core/logx"
-
-	"schisandra-album-cloud-microservices/app/core/api/common/jwt"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 )
 
-type MessageWebsocketLogic struct {
+type FileWebsocketLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewMessageWebsocketLogic(ctx context.Context, svcCtx *svc.ServiceContext) *MessageWebsocketLogic {
-	return &MessageWebsocketLogic{
+func NewFileWebsocketLogic(ctx context.Context, svcCtx *svc.ServiceContext) *FileWebsocketLogic {
+	return &FileWebsocketLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-type MessageWebSocket struct {
+type FileWebSocket struct {
 	ctx context.Context
 	gws.BuiltinEventHandler
-	sessions *gws.ConcurrentMap[string, *gws.Conn] // 使用内置的ConcurrentMap存储连接, 可以减少锁冲突
+	sessions *gws.ConcurrentMap[string, *gws.Conn]
 }
 
-var MessageWebSocketHandler = NewMessageWebSocket()
+var FileWebSocketHandler = NewFileWebSocket()
 
-func (l *MessageWebsocketLogic) MessageWebsocket(w http.ResponseWriter, r *http.Request) {
+func (l *FileWebsocketLogic) FileWebsocket(w http.ResponseWriter, r *http.Request) {
 	token := r.Header.Get("Sec-Websocket-Protocol")
 	accessToken, res := jwt.ParseAccessToken(l.svcCtx.Config.Auth.AccessSecret, token)
 	if !res {
 		return
 	}
-	upgrader := gws.NewUpgrader(MessageWebSocketHandler, &gws.ServerOption{
+	upGrader := gws.NewUpgrader(FileWebSocketHandler, &gws.ServerOption{
 		HandshakeTimeout: 5 * time.Second, // 握手超时时间
 		ReadBufferSize:   1024,            // 读缓冲区大小
 		ParallelEnabled:  true,            // 开启并行消息处理
@@ -58,20 +57,12 @@ func (l *MessageWebsocketLogic) MessageWebsocket(w http.ResponseWriter, r *http.
 			if accessToken.UserID != clientId {
 				return false
 			}
-			//token := r.URL.Query().Get("token")
-			//if token == "" {
-			//	return false
-			//}
-			//accessToken, res := jwt.ParseAccessToken(l.svcCtx.Config.Auth.AccessSecret, token)
-			//if !res || accessToken.UserID != clientId {
-			//	return false
-			//}
 			session.Store("user_id", clientId)
 			return true
 		},
 		SubProtocols: []string{token},
 	})
-	socket, err := upgrader.Upgrade(w, r)
+	socket, err := upGrader.Upgrade(w, r)
 	if err != nil {
 		panic(err)
 	}
@@ -80,16 +71,15 @@ func (l *MessageWebsocketLogic) MessageWebsocket(w http.ResponseWriter, r *http.
 	}()
 }
 
-// NewMessageWebSocket 创建WebSocket实例
-func NewMessageWebSocket() *MessageWebSocket {
-	return &MessageWebSocket{
+func NewFileWebSocket() *FileWebSocket {
+	return &FileWebSocket{
 		ctx:      context.Background(),
 		sessions: gws.NewConcurrentMap[string, *gws.Conn](64, 128),
 	}
 }
 
 // OnOpen 连接建立
-func (c *MessageWebSocket) OnOpen(socket *gws.Conn) {
+func (c *FileWebSocket) OnOpen(socket *gws.Conn) {
 	clientId := MustLoad[string](socket.Session(), "user_id")
 	c.sessions.Store(clientId, socket)
 	// 订阅该用户的频道
@@ -97,7 +87,7 @@ func (c *MessageWebSocket) OnOpen(socket *gws.Conn) {
 }
 
 // OnClose 关闭连接
-func (c *MessageWebSocket) OnClose(socket *gws.Conn, err error) {
+func (c *FileWebSocket) OnClose(socket *gws.Conn, err error) {
 	name := MustLoad[string](socket.Session(), "user_id")
 	sharding := c.sessions.GetSharding(name)
 	c.sessions.Delete(name)
@@ -107,20 +97,29 @@ func (c *MessageWebSocket) OnClose(socket *gws.Conn, err error) {
 }
 
 // OnPing 处理客户端的Ping消息
-func (c *MessageWebSocket) OnPing(socket *gws.Conn, payload []byte) {
+func (c *FileWebSocket) OnPing(socket *gws.Conn, payload []byte) {
 	_ = socket.SetDeadline(time.Now().Add(PingInterval + HeartbeatWaitTimeout))
 	_ = socket.WritePong(payload)
 }
 
 // OnPong 处理客户端的Pong消息
-func (c *MessageWebSocket) OnPong(_ *gws.Conn, _ []byte) {}
+func (c *FileWebSocket) OnPong(_ *gws.Conn, _ []byte) {}
 
 // OnMessage 接受消息
-func (c *MessageWebSocket) OnMessage(socket *gws.Conn, message *gws.Message) {
+func (c *FileWebSocket) OnMessage(socket *gws.Conn, message *gws.Message) {
 	defer message.Close()
 	clientId := MustLoad[string](socket.Session(), "user_id")
 	if conn, ok := c.sessions.Load(clientId); ok {
 		_ = conn.WriteMessage(gws.OpcodeText, message.Bytes())
 	}
 	// fmt.Printf("received message from client %s\n", message.Data)
+}
+
+// SendMessageToClient 向指定客户端发送消息
+func (c *FileWebSocket) SendMessageToClient(clientId string, message []byte) error {
+	conn, ok := c.sessions.Load(clientId)
+	if ok {
+		return conn.WriteMessage(gws.OpcodeText, message)
+	}
+	return fmt.Errorf("client %s not found", clientId)
 }

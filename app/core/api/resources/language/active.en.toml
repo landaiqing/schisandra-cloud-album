@@ -26,3 +26,6 @@ tooManyImages = "too many images！"
 commentError = "comment error！"
 LikeError = "like error！"
 CancelLikeError = "cancel like error！"
+[upload]
+uploadError = "upload error！"
+uploadSuccess = "upload success！"

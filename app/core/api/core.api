@@ -125,6 +125,15 @@ type (
 	}
 )
 
+// 上传图片请求参数
+type (
+	UploadRequest {
+		Image       string `json:"image"`
+		AccessToken string `json:"access_token"`
+		userId      string `json:"user_id"`
+	}
+)
+
 // 统一响应参数
 type (
 	Response {
@@ -203,6 +212,9 @@ service core {
 
 	@handler messageWebsocket
 	get /message
+
+	@handler fileWebsocket
+	get /file
 }
 
 @server (
@@ -312,5 +324,20 @@ service core {
 
 	@handler dislikeComment
 	post /dislike (CommentDisLikeRequest) returns (Response)
+}
+
+@server (
+	group:      upscale // 微服务分组
+	prefix:     /api/auth/upscale // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   10485760 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service core {
+	@handler uploadImage
+	post /upload (UploadRequest) returns (Response)
 }
 

@@ -13,6 +13,7 @@ import (
 	oauth "schisandra-album-cloud-microservices/app/core/api/internal/handler/oauth"
 	sms "schisandra-album-cloud-microservices/app/core/api/internal/handler/sms"
 	token "schisandra-album-cloud-microservices/app/core/api/internal/handler/token"
+	upscale "schisandra-album-cloud-microservices/app/core/api/internal/handler/upscale"
 	user "schisandra-album-cloud-microservices/app/core/api/internal/handler/user"
 	websocket "schisandra-album-cloud-microservices/app/core/api/internal/handler/websocket"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
@@ -204,6 +205,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
 			[]rest.Route{
 				{
+					Method:  http.MethodPost,
+					Path:    "/upload",
+					Handler: upscale.UploadImageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/auth/upscale"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(10485760),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Route{
+				{
 					Method:  http.MethodGet,
 					Path:    "/device",
 					Handler: user.GetUserDeviceHandler(serverCtx),
@@ -233,6 +250,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/file",
+				Handler: websocket.FileWebsocketHandler(serverCtx),
+			},
 			{
 				Method:  http.MethodGet,
 				Path:    "/message",

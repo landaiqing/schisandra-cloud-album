@@ -26,3 +26,6 @@ tooManyImages = "图片数量过多，请上传不超过3张！"
 commentError = "评论失败！"
 LikeError = "点赞失败！"
 CancelLikeError = "取消点赞失败！"
+[upload]
+uploadError = "上传失败！"
+uploadSuccess = "上传成功！"

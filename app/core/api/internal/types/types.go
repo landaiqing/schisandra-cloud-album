@@ -112,3 +112,9 @@ type SmsSendRequest struct {
 	Angle int64  `json:"angle"`
 	Key   string `json:"key"`
 }
+
+type UploadRequest struct {
+	Image       string `json:"image"`
+	AccessToken string `json:"access_token"`
+	UserId      string `json:"user_id"`
+}
