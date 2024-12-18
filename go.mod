@@ -9,7 +9,7 @@ require (
 	github.com/casbin/casbin/v2 v2.102.0
 	github.com/casbin/gorm-adapter/v3 v3.32.0
 	github.com/ccpwcn/kgo v1.2.3
-	github.com/chenmingyong0423/go-mongox/v2 v2.0.0-beta1
+	github.com/chenmingyong0423/go-mongox/v2 v2.0.0
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/gorilla/sessions v1.4.0
@@ -27,7 +27,7 @@ require (
 	github.com/yitter/idgenerator-go v1.3.3
 	github.com/zeromicro/go-zero v1.7.4
 	github.com/zmexing/go-sensitive-word v1.3.0
-	go.mongodb.org/mongo-driver/v2 v2.0.0-beta2
+	go.mongodb.org/mongo-driver/v2 v2.0.0
 	golang.org/x/crypto v0.31.0
 	golang.org/x/text v0.21.0
 	google.golang.org/grpc v1.69.0

@@ -115,13 +115,6 @@
             </set>
           </value>
         </entry>
-        <entry key="Deleter">
-          <value>
-            <set>
-              <option value="file://D:/GoPath/pkg/mod/github.com/chenmingyong0423/go-mongox/v2@v2.0.0-beta1/deleter/deleter.go" />
-            </set>
-          </value>
-        </entry>
         <entry key="DislikeCommentLogic">
           <value>
             <set>
@@ -640,6 +633,13 @@
             </set>
           </value>
         </entry>
+        <entry key="UploadRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="WechatCallbackLogic">
           <value>
             <set>
@@ -882,18 +882,6 @@
     </option>
     <option name="scannedPathMapping">
       <map>
-        <entry key="file://D:/GoPath/pkg/mod/github.com/chenmingyong0423/go-mongox/v2@v2.0.0-beta1/deleter/deleter.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1734434552946" />
-              <option name="schema">
-                <list>
-                  <option value="Deleter" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/common/captcha/generate/generate_basic_text_captcha.go">
           <value>
             <ScannedPath>
@@ -1370,7 +1358,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734425232071" />
+              <option name="lastModified" value="1734452162469" />
             </ScannedPath>
           </value>
         </entry>
@@ -1791,7 +1779,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/websocket/file_websocket_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734441955437" />
+              <option name="lastModified" value="1734442048750" />
               <option name="schema">
                 <list>
                   <option value="FileWebsocketLogic" />
@@ -1895,7 +1883,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734425232067" />
+              <option name="lastModified" value="1734452162464" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -1914,6 +1902,7 @@
                   <option value="ResetPasswordRequest" />
                   <option value="Response" />
                   <option value="SmsSendRequest" />
+                  <option value="UploadRequest" />
                 </list>
               </option>
             </ScannedPath>
@@ -2191,7 +2180,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/mysql/mysql.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1732278234054" />
+              <option name="lastModified" value="1734507775529" />
             </ScannedPath>
           </value>
         </entry>
@@ -2465,7 +2454,6 @@
         <entry key="comment_request" value="CommentRequest" />
         <entry key="comment_response" value="CommentResponse" />
         <entry key="config" value="Config" />
-        <entry key="deleter" value="Deleter" />
         <entry key="dislike_comment_logic" value="DislikeCommentLogic" />
         <entry key="file_web_socket" value="FileWebSocket" />
         <entry key="file_websocket_logic" value="FileWebsocketLogic" />
@@ -2557,9 +2545,10 @@
         <entry key="submit_reply_reply_logic" value="SubmitReplyReplyLogic" />
         <entry key="token" value="Token" />
         <entry key="upload_image_logic" value="UploadImageLogic" />
+        <entry key="upload_request" value="UploadRequest" />
         <entry key="wechat_callback_logic" value="WechatCallbackLogic" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1734413179532" />
+    <option name="lastTimeChecked" value="1734500040668" />
   </component>
 </project>
