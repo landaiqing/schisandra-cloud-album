@@ -6,6 +6,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
+	http2 "schisandra-album-cloud-microservices/app/core/api/common/http"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/oauth"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
@@ -21,7 +22,7 @@ func GiteeCallbackHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		}
 
 		l := oauth.NewGiteeCallbackLogic(r.Context(), svcCtx)
-		err := l.GiteeCallback(w, r, &req)
+		data, err := l.GiteeCallback(w, r, &req)
 		if err != nil {
 			logx.Error(err)
 			httpx.WriteJsonCtx(
@@ -30,7 +31,7 @@ func GiteeCallbackHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				http.StatusInternalServerError,
 				response.ErrorWithI18n(r.Context(), "system.error"))
 		} else {
-			httpx.Ok(w)
+			http2.OkHTML(w, data)
 		}
 	}
 }

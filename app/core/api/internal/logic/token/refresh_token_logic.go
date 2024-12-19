@@ -34,11 +34,7 @@ func (l *RefreshTokenLogic) RefreshToken(r *http.Request) (resp *types.Response,
 	if err != nil {
 		return nil, err
 	}
-	refreshSessionToken, ok := session.Values["refresh_token"].(string)
-	if !ok {
-		return response.ErrorWithCode(403), nil
-	}
-	userId, ok := session.Values["uid"].(string)
+	userId, ok := session.Values["user_id"].(string)
 	if !ok {
 		return response.ErrorWithCode(403), nil
 	}
@@ -51,23 +47,20 @@ func (l *RefreshTokenLogic) RefreshToken(r *http.Request) (resp *types.Response,
 	if err != nil {
 		return nil, err
 	}
-	if redisTokenData.RefreshToken != refreshSessionToken {
-		return response.ErrorWithCode(403), nil
-	}
-
-	refreshToken, result := jwt.ParseRefreshToken(l.svcCtx.Config.Auth.AccessSecret, refreshSessionToken)
+	refreshToken, result := jwt.ParseRefreshToken(l.svcCtx.Config.Auth.AccessSecret, redisTokenData.RefreshToken)
 	if !result {
 		return response.ErrorWithCode(403), nil
 	}
 	accessToken := jwt.GenerateAccessToken(l.svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: refreshToken.UserID,
+		Type:   constant.JWT_TYPE_ACCESS,
 	})
 	if accessToken == "" {
 		return response.ErrorWithCode(403), nil
 	}
 	redisToken := types.RedisToken{
 		AccessToken:  accessToken,
-		RefreshToken: refreshSessionToken,
+		RefreshToken: redisTokenData.RefreshToken,
 		UID:          refreshToken.UserID,
 	}
 	err = l.svcCtx.RedisClient.Set(l.ctx, constant.UserTokenPrefix+refreshToken.UserID, redisToken, time.Hour*24*7).Err()

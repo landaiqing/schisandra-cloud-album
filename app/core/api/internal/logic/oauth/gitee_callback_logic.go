@@ -77,30 +77,33 @@ func NewGiteeCallbackLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Git
 	}
 }
 
-func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Request, req *types.OAuthCallbackRequest) error {
+func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Request, req *types.OAuthCallbackRequest) (string, error) {
 	// 获取 token
 	tokenAuthUrl := l.GetGiteeTokenAuthUrl(req.Code)
 	token, err := l.GetGiteeToken(tokenAuthUrl)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if token == nil {
-		return nil
+		return "", errors.New("get gitee token failed")
 	}
 
 	// 获取用户信息
 	userInfo, err := l.GetGiteeUserInfo(token)
 	if err != nil {
-		return err
+		return "", err
+	}
+	if userInfo == nil {
+		return "", errors.New("get gitee user info failed")
 	}
 
 	var giteeUser GiteeUser
 	marshal, err := json.Marshal(userInfo)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if err = json.Unmarshal(marshal, &giteeUser); err != nil {
-		return err
+		return "", err
 	}
 	Id := strconv.Itoa(giteeUser.ID)
 
@@ -109,7 +112,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
 	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGitee)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
+		return "", err
 	}
 
 	if socialUser == nil {
@@ -128,7 +131,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 		err = tx.ScaAuthUser.Create(addUser)
 		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 		gitee := constant.OAuthSourceGitee
 		newSocialUser := &model.ScaAuthUserSocial{
@@ -139,56 +142,56 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 		err = tx.ScaAuthUserSocial.Create(newSocialUser)
 		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
-
-		if err = HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); err != nil {
-			return err
+		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx)
+		if err != nil {
+			_ = tx.Rollback()
+			return "", err
 		}
+		if err = tx.Commit(); err != nil {
+			return "", err
+		}
+		return data, nil
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
 		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
-		if err = HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx); err != nil {
+		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx)
+		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
+		if err = tx.Commit(); err != nil {
+			return "", err
+		}
+		return data, nil
 	}
-
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-	return nil
 }
 
 // HandleOauthLoginResponse 处理登录响应
-func HandleOauthLoginResponse(scaAuthUser *model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) error {
+func HandleOauthLoginResponse(scaAuthUser *model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) (string, error) {
 	data, err := user.HandleUserLogin(scaAuthUser, svcCtx, true, r, w, ctx)
 	if err != nil {
-		return err
+		return "", err
 	}
 	responseData := response.SuccessWithData(data)
-	formattedScript := fmt.Sprintf(Script, responseData, svcCtx.Config.Web.URL)
-
-	// 设置响应状态码和内容类型
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-
-	// 写入响应内容
-	if _, writeErr := w.Write([]byte(formattedScript)); writeErr != nil {
-		return writeErr
+	marshalData, err := json.Marshal(responseData)
+	if err != nil {
+		return "", err
 	}
-	return nil
+	formattedScript := fmt.Sprintf(Script, marshalData, svcCtx.Config.Web.URL)
+	return formattedScript, nil
 }
 
 // GetGiteeTokenAuthUrl 获取Gitee token

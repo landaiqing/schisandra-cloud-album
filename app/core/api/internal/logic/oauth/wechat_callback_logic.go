@@ -55,7 +55,7 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 				err = event.ReadMessage(&msg)
 				if err != nil {
 					println(err.Error())
-					return "error"
+					return err
 				}
 				key := strings.TrimPrefix(msg.EventKey, "qrscene_")
 				err = l.HandlerWechatLogin(msg.FromUserName, key, w, r)
@@ -66,10 +66,10 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 
 			case models.CALLBACK_EVENT_UNSUBSCRIBE:
 				msg := models.EventUnSubscribe{}
-				err := event.ReadMessage(&msg)
+				err = event.ReadMessage(&msg)
 				if err != nil {
 					println(err.Error())
-					return "error"
+					return err
 				}
 				return messages.NewText("ok")
 
@@ -78,7 +78,7 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 				err = event.ReadMessage(&msg)
 				if err != nil {
 					println(err.Error())
-					return "error"
+					return err
 				}
 				err = l.HandlerWechatLogin(msg.FromUserName, msg.EventKey, w, r)
 				if err != nil {
@@ -90,10 +90,10 @@ func (l *WechatCallbackLogic) WechatCallback(w http.ResponseWriter, r *http.Requ
 
 		case models2.CALLBACK_MSG_TYPE_TEXT:
 			msg := models.MessageText{}
-			err := event.ReadMessage(&msg)
+			err = event.ReadMessage(&msg)
 			if err != nil {
 				println(err.Error())
-				return "error"
+				return err
 			}
 		}
 		return messages.NewText("ok")
@@ -205,5 +205,4 @@ func (l *WechatCallbackLogic) HandlerWechatLogin(openId string, clientId string,
 		return err
 	}
 	return nil
-
 }

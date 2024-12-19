@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"github.com/rbcervilla/redisstore/v9"
 	"net/http"
 	"time"
 
@@ -80,6 +81,7 @@ func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLo
 	// 生成jwt token
 	accessToken := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: user.UID,
+		Type:   constant.JWT_TYPE_ACCESS,
 	})
 	var days time.Duration
 	if autoLogin {
@@ -89,6 +91,7 @@ func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLo
 	}
 	refreshToken := jwt.GenerateRefreshToken(svcCtx.Config.Auth.AccessSecret, jwt.RefreshJWTPayload{
 		UserID: user.UID,
+		Type:   constant.JWT_TYPE_REFRESH,
 	}, days)
 	data := types.LoginResponse{
 		AccessToken: accessToken,
@@ -108,16 +111,24 @@ func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLo
 	if err != nil {
 		return nil, err
 	}
-	session, err := svcCtx.Session.Get(r, constant.SESSION_KEY)
-	if err != nil {
-		return nil, err
-	}
-	session.Values["refresh_token"] = refreshToken
-	session.Values["uid"] = user.UID
-	err = session.Save(r, w)
+	err = HandlerSession(r, w, user.UID, svcCtx.Session)
 	if err != nil {
 		return nil, err
 	}
 	return &data, nil
 
+}
+
+// HandlerSession is a function to set the user_id in the session
+func HandlerSession(r *http.Request, w http.ResponseWriter, userID string, redisSession *redisstore.RedisStore) error {
+	session, err := redisSession.Get(r, constant.SESSION_KEY)
+	if err != nil {
+		return err
+	}
+	session.Values["user_id"] = userID
+	err = session.Save(r, w)
+	if err != nil {
+		return err
+	}
+	return nil
 }

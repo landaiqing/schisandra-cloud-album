@@ -8,7 +8,7 @@ import (
 
 type RefreshJWTPayload struct {
 	UserID string `json:"user_id"`
-	Type   string `json:"type" default:"refresh"`
+	Type   string `json:"type"`
 }
 type RefreshJWTClaims struct {
 	RefreshJWTPayload

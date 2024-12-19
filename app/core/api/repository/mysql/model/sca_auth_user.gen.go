@@ -19,7 +19,7 @@ type ScaAuthUser struct {
 	Username  string         `gorm:"column:username;type:varchar(32);comment:用户名" json:"username"`                                                            // 用户名
 	Nickname  string         `gorm:"column:nickname;type:varchar(32);comment:昵称" json:"nickname"`                                                             // 昵称
 	Email     string         `gorm:"column:email;type:varchar(32);comment:邮箱" json:"email"`                                                                   // 邮箱
-	Phone     string         `gorm:"column:phone;type:varchar(32);uniqueIndex:phone,priority:1;comment:电话" json:"phone"`                                      // 电话
+	Phone     string         `gorm:"column:phone;type:varchar(32);comment:电话" json:"phone"`                                                                   // 电话
 	Password  string         `gorm:"column:password;type:varchar(64);comment:密码" json:"password"`                                                             // 密码
 	Gender    int64          `gorm:"column:gender;type:tinyint;comment:性别" json:"gender"`                                                                     // 性别
 	Avatar    string         `gorm:"column:avatar;type:longtext;comment:头像" json:"avatar"`                                                                    // 头像

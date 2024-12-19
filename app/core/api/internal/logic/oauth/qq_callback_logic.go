@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/yitter/idgenerator-go/idgen"
 	"gorm.io/gorm"
@@ -65,39 +66,42 @@ func NewQqCallbackLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QqCall
 	}
 }
 
-func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req *types.OAuthCallbackRequest) error {
+func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req *types.OAuthCallbackRequest) (string, error) {
 
 	tokenAuthUrl := l.GetQQTokenAuthUrl(req.Code)
 	token, err := l.GetQQToken(tokenAuthUrl)
 	if err != nil {
 
-		return err
+		return "", err
 	}
 	if token == nil {
-		return nil
+		return "", errors.New("get qq token failed")
 	}
 
 	// 通过 token 获取 openid
 	authQQme, err := l.GetQQUserOpenID(token)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// 通过 token 和 openid 获取用户信息
 	userInfo, err := l.GetQQUserUserInfo(token, authQQme.OpenID)
 	if err != nil {
-		return err
+		return "", err
+	}
+	if userInfo == nil {
+		return "", errors.New("get qq user info failed")
 	}
 
 	// 处理用户信息
 	userInfoBytes, err := json.Marshal(userInfo)
 	if err != nil {
-		return err
+		return "", err
 	}
 	var qqUserInfo QQUserInfo
 	err = json.Unmarshal(userInfoBytes, &qqUserInfo)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	tx := l.svcCtx.DB.Begin()
@@ -105,7 +109,7 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
 	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(authQQme.OpenID), userSocial.Source.Eq(constant.OAuthSourceQQ)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
+		return "", err
 	}
 
 	if socialUser == nil {
@@ -114,9 +118,10 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 		uidStr := strconv.FormatInt(uid, 10)
 
 		male := constant.Male
+		avatarUrl := strings.Replace(qqUserInfo.FigureurlQq1, "http://", "https://", 1)
 		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
-			Avatar:   qqUserInfo.FigureurlQq1,
+			Avatar:   avatarUrl,
 			Username: authQQme.OpenID,
 			Nickname: qqUserInfo.Nickname,
 			Gender:   male,
@@ -124,7 +129,7 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 		err = tx.ScaAuthUser.Create(addUser)
 		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
 		githubUser := constant.OAuthSourceQQ
@@ -136,37 +141,42 @@ func (l *QqCallbackLogic) QqCallback(w http.ResponseWriter, r *http.Request, req
 		err = tx.ScaAuthUserSocial.Create(newSocialUser)
 		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
-		if err = HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); err != nil {
+		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx)
+		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
+		if err = tx.Commit(); err != nil {
+			return "", err
+		}
+		return data, nil
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
 		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
-		if err = HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx); err != nil {
+		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx)
+		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
+		if err = tx.Commit(); err != nil {
+			return "", err
+		}
+		return data, nil
 	}
-
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-	return nil
 }
 
 // GetQQTokenAuthUrl 通过code获取token认证url

@@ -31,6 +31,9 @@ type (
 		Password   string `json:"password"`
 		Repassword string `json:"repassword"`
 	}
+	UserDeviceRequest {
+		AccessToken string `json:"access_token"`
+	}
 	// 登录响应参数
 	LoginResponse {
 		AccessToken string `json:"access_token"`
@@ -168,7 +171,7 @@ service core {
 	post /reset/password (ResetPasswordRequest) returns (Response)
 
 	@handler getUserDevice
-	get /device
+	post /device (UserDeviceRequest) returns (Response)
 }
 
 @server (
@@ -238,13 +241,13 @@ service core {
 	get /qq/url (OAuthRequest) returns (Response)
 
 	@handler giteeCallback
-	get /gitee/callback (OAuthCallbackRequest)
+	get /gitee/callback (OAuthCallbackRequest) returns (string)
 
 	@handler githubCallback
-	get /github/callback (OAuthCallbackRequest)
+	get /github/callback (OAuthCallbackRequest) returns (string)
 
 	@handler qqCallback
-	get /qq/callback (OAuthCallbackRequest)
+	get /qq/callback (OAuthCallbackRequest) returns (string)
 
 	@handler wechatCallback
 	get /wechat/callback

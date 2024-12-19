@@ -2,11 +2,10 @@ package middleware
 
 import (
 	"net/http"
+	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 
 	"github.com/casbin/casbin/v2"
 	"github.com/rbcervilla/redisstore/v9"
-
-	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 )
 
 type CasbinVerifyMiddleware struct {
@@ -28,7 +27,7 @@ func (m *CasbinVerifyMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc 
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return
 		}
-		userId, ok := session.Values["uid"].(string)
+		userId, ok := session.Values["user_id"].(string)
 		if !ok {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
 			return

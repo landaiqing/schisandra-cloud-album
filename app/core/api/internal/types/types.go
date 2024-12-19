@@ -118,3 +118,7 @@ type UploadRequest struct {
 	AccessToken string `json:"access_token"`
 	UserId      string `json:"user_id"`
 }
+
+type UserDeviceRequest struct {
+	AccessToken string `json:"access_token"`
+}

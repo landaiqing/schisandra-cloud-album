@@ -29,7 +29,7 @@ Log:
   # 日期格式化
   TimeFormat:
   # 日志在文件输出模式下，日志输出路径
-  Path: logs
+  Path: logs/system
   # 日志输出级别 debug,info,error,severe
   Level: debug
   # 日志长度限制，打印单个日志的时候会对日志进行裁剪，只有对 content 进行裁剪
@@ -37,7 +37,7 @@ Log:
   # 是否压缩日志
   Compress: true
   # 是否开启 stat 日志，go-zero 版本大于等于1.5.0才支持
-  Stat: true
+  Stat: false
   # 日志保留天数，只有在文件模式才会生效
   KeepDays: 7
   # 堆栈打印冷却时间
@@ -51,7 +51,7 @@ Log:
   # 文件名日期格式
   FileTimeFormat:
 Web:
-  URL: https://www.landaiqing.cn
+  URL: http://localhost:5173/
 # 启用中间件
 Middlewares:
   # 访问日志中间件

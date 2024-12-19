@@ -8,7 +8,7 @@ import (
 
 type AccessJWTPayload struct {
 	UserID string `json:"user_id"`
-	Type   string `json:"type" default:"access"`
+	Type   string `json:"type"`
 }
 type AccessJWTClaims struct {
 	AccessJWTPayload
@@ -19,7 +19,7 @@ func GenerateAccessToken(secret string, payload AccessJWTPayload) string {
 	claims := AccessJWTClaims{
 		AccessJWTPayload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 30)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},

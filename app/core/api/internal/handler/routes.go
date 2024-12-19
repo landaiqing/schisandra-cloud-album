@@ -221,7 +221,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
 			[]rest.Route{
 				{
-					Method:  http.MethodGet,
+					Method:  http.MethodPost,
 					Path:    "/device",
 					Handler: user.GetUserDeviceHandler(serverCtx),
 				},

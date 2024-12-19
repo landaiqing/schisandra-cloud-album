@@ -1,20 +1,26 @@
 package user
 
 import (
+	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/user"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
+	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 )
 
 func GetUserDeviceHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.UserDeviceRequest
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
 		l := user.NewGetUserDeviceLogic(r.Context(), svcCtx)
-		err := l.GetUserDevice(r)
+		resp, err := l.GetUserDevice(r, w, &req)
 		if err != nil {
 			logx.Error(err)
 			httpx.WriteJsonCtx(
@@ -23,7 +29,7 @@ func GetUserDeviceHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				http.StatusInternalServerError,
 				response.ErrorWithI18n(r.Context(), "system.error"))
 		} else {
-			httpx.Ok(w)
+			httpx.OkJsonCtx(r.Context(), w, resp)
 		}
 	}
 }

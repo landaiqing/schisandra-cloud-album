@@ -3,18 +3,20 @@ package user
 import (
 	"context"
 	"errors"
-	"net/http"
-
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/mssola/useragent"
-	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
-
-	"schisandra-album-cloud-microservices/app/core/api/common/constant"
+	"net/http"
+	"schisandra-album-cloud-microservices/app/core/api/common/jwt"
+	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
-	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/model"
 	"schisandra-album-cloud-microservices/app/core/api/repository/mysql/query"
+
+	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
+	"schisandra-album-cloud-microservices/app/core/api/internal/types"
+
+	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type GetUserDeviceLogic struct {
@@ -31,20 +33,20 @@ func NewGetUserDeviceLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Get
 	}
 }
 
-func (l *GetUserDeviceLogic) GetUserDevice(r *http.Request) error {
-	session, err := l.svcCtx.Session.Get(r, constant.SESSION_KEY)
-	if err != nil {
-		return err
-	}
-	uid, ok := session.Values["uid"].(string)
+func (l *GetUserDeviceLogic) GetUserDevice(r *http.Request, w http.ResponseWriter, req *types.UserDeviceRequest) (resp *types.Response, err error) {
+	token, ok := jwt.ParseAccessToken(l.svcCtx.Config.Auth.AccessSecret, req.AccessToken)
 	if !ok {
-		return errors.New("user session not found")
+		return response.Error(), nil
 	}
-
-	if err = GetUserLoginDevice(uid, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
-		return err
+	err = HandlerSession(r, w, token.UserID, l.svcCtx.Session)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	err = GetUserLoginDevice(token.UserID, r, l.svcCtx.Ip2Region, l.svcCtx.DB)
+	if err != nil {
+		return nil, err
+	}
+	return response.Success(), nil
 }
 
 // GetUserLoginDevice 获取用户登录设备

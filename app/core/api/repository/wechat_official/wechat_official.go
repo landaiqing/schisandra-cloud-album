@@ -16,11 +16,12 @@ func NewWechatPublic(appId, appSecret, token, aesKey, addr, pass string, db int)
 		AESKey: aesKey,
 		Log: officialAccount.Log{
 			Level:  "error",
-			Stdout: true,
+			File:   "/logs/wechat/wechat_official.log",
+			Stdout: false,
 		},
 		ResponseType: os.Getenv("response_type"),
-		HttpDebug:    true,
-		Debug:        true,
+		HttpDebug:    false,
+		Debug:        false,
 		Cache: kernel.NewRedisClient(&kernel.UniversalOptions{
 			Addrs:    []string{addr},
 			Password: pass,

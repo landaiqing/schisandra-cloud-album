@@ -68,39 +68,39 @@ func NewGithubCallbackLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Gi
 	}
 }
 
-func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Request, req *types.OAuthCallbackRequest) error {
+func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Request, req *types.OAuthCallbackRequest) (string, error) {
 
 	// 获取 token
 	tokenAuthUrl := l.GetTokenAuthUrl(req.Code)
 	token, err := l.GetToken(tokenAuthUrl)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if token == nil {
 
-		return nil
+		return "", errors.New("get github token failed")
 	}
 
 	// 获取用户信息
 	userInfo, err := l.GetUserInfo(token)
 	if err != nil {
 
-		return err
+		return "", err
 	}
 
 	if userInfo == nil {
-		return nil
+		return "", errors.New("get github user info failed")
 	}
 
 	// 处理用户信息
 	userInfoBytes, err := json.Marshal(userInfo)
 	if err != nil {
-		return err
+		return "", err
 	}
 	var gitHubUser GitHubUser
 	err = json.Unmarshal(userInfoBytes, &gitHubUser)
 	if err != nil {
-		return err
+		return "", err
 	}
 	Id := strconv.Itoa(gitHubUser.ID)
 	tx := l.svcCtx.DB.Begin()
@@ -108,7 +108,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
 	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Id), userSocial.Source.Eq(constant.OAuthSourceGithub)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
-		return err
+		return "", err
 	}
 
 	if socialUser == nil {
@@ -130,7 +130,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 		err = tx.ScaAuthUser.Create(addUser)
 		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 		githubUser := constant.OAuthSourceGithub
 		newSocialUser := &model.ScaAuthUserSocial{
@@ -141,37 +141,42 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 		err = tx.ScaAuthUserSocial.Create(newSocialUser)
 		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
 		if res, err := l.svcCtx.CasbinEnforcer.AddRoleForUser(uidStr, constant.User); !res || err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
-		if err = HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx); err != nil {
+		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx)
+		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
+		if err = tx.Commit(); err != nil {
+			return "", err
+		}
+		return data, nil
 	} else {
 		authUser := l.svcCtx.DB.ScaAuthUser
 
 		authUserInfo, err := tx.ScaAuthUser.Where(authUser.UID.Eq(socialUser.UserID)).First()
 		if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
 
-		if err = HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx); err != nil {
+		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx)
+		if err != nil {
 			_ = tx.Rollback()
-			return err
+			return "", err
 		}
+		if err = tx.Commit(); err != nil {
+			return "", err
+		}
+		return data, nil
 	}
-
-	if err = tx.Commit(); err != nil {
-		return err
-	}
-	return nil
 }
 
 // GetTokenAuthUrl 通过code获取token认证url
