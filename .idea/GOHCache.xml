@@ -38,6 +38,13 @@
             </set>
           </value>
         </entry>
+        <entry key="AuthorizationMiddleware">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/middleware/authorization_middleware.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="BaseResponse">
           <value>
             <set>
@@ -213,6 +220,14 @@
             </set>
           </value>
         </entry>
+        <entry key="GetWechatOffiaccountQrcodeLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/get_wechat_offiaccount_qrcode_logic.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/user/get_wechat_offiaccount_qrcode_logic.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="GetWechatQrcodeLogic">
           <value>
             <set>
@@ -273,6 +288,14 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/core/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="MessageData">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_callback_logic.go" />
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_offiaccount_callback_logic.go" />
             </set>
           </value>
         </entry>
@@ -577,6 +600,13 @@
             </set>
           </value>
         </entry>
+        <entry key="SendMessage">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_callback_logic.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="SendSmsByAliyunLogic">
           <value>
             <set>
@@ -661,10 +691,52 @@
             </set>
           </value>
         </entry>
+        <entry key="WebsocketJWTClaims">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/common/jwt/websocket_token.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="WebsocketJWTPayload">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/common/jwt/websocket_token.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="WechatCallbackLogic">
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_callback_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="WechatCallbackVerifyLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_callback_verify_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="WechatOffiaccountCallbackLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_offiaccount_callback_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="WechatOffiaccountCallbackVerifyLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_offiaccount_callback_verify_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="WechatOffiaccountLoginLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/user/wechat_offiaccount_login_logic.go" />
             </set>
           </value>
         </entry>
@@ -983,7 +1055,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/constant/jwt_type.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734585304638" />
+              <option name="lastModified" value="1734692829250" />
             </ScannedPath>
           </value>
         </entry>
@@ -1008,10 +1080,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/app/core/api/common/constant/session_key.go">
+        <entry key="file://$PROJECT_DIR$/app/core/api/common/constant/uid_key.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731503839158" />
+              <option name="lastModified" value="1734682023828" />
             </ScannedPath>
           </value>
         </entry>
@@ -1123,7 +1195,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/jwt/access_token.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734627130905" />
+              <option name="lastModified" value="1734682778489" />
               <option name="schema">
                 <list>
                   <option value="AccessJWTPayload" />
@@ -1146,10 +1218,23 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/common/jwt/websocket_token.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734685303630" />
+              <option name="schema">
+                <list>
+                  <option value="WebsocketJWTPayload" />
+                  <option value="WebsocketJWTClaims" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/common/middleware/cors_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731945430237" />
+              <option name="lastModified" value="1734682151710" />
             </ScannedPath>
           </value>
         </entry>
@@ -1170,7 +1255,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/middleware/unauthorized_callback_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731723288201" />
+              <option name="lastModified" value="1734672079755" />
             </ScannedPath>
           </value>
         </entry>
@@ -1280,7 +1365,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/core.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734422263961" />
+              <option name="lastModified" value="1734693433014" />
             </ScannedPath>
           </value>
         </entry>
@@ -1394,6 +1479,13 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/oauth/get_wechat_offiaccount_qrcode_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712613824" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/oauth/get_wechat_qrcode_handler.go">
           <value>
             <ScannedPath>
@@ -1425,14 +1517,35 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/oauth/wechat_callback_handler.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731862717048" />
+              <option name="lastModified" value="1734710082690" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/oauth/wechat_callback_verify_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734706549624" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/oauth/wechat_offiaccount_callback_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712724197" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/oauth/wechat_offiaccount_callback_verify_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712613290" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734584742648" />
+              <option name="lastModified" value="1734712935626" />
             </ScannedPath>
           </value>
         </entry>
@@ -1485,6 +1598,13 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/get_wechat_offiaccount_qrcode_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712935631" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/phone_login_handler.go">
           <value>
             <ScannedPath>
@@ -1496,6 +1616,13 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1731864275383" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/user/wechat_offiaccount_login_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734710236074" />
             </ScannedPath>
           </value>
         </entry>
@@ -1676,10 +1803,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/get_wechat_offiaccount_qrcode_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712486975" />
+              <option name="schema">
+                <list>
+                  <option value="GetWechatOffiaccountQrcodeLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/get_wechat_qrcode_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731863022429" />
+              <option name="lastModified" value="1734702605921" />
               <option name="schema">
                 <list>
                   <option value="GetWechatQrcodeLogic" />
@@ -1691,7 +1830,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/gitee_callback_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734537913336" />
+              <option name="lastModified" value="1734709587419" />
               <option name="schema">
                 <list>
                   <option value="GiteeCallbackLogic" />
@@ -1705,7 +1844,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/github_callback_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734534251287" />
+              <option name="lastModified" value="1734709097463" />
               <option name="schema">
                 <list>
                   <option value="GithubCallbackLogic" />
@@ -1718,7 +1857,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/qq_callback_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734628607288" />
+              <option name="lastModified" value="1734709097444" />
               <option name="schema">
                 <list>
                   <option value="QqCallbackLogic" />
@@ -1733,10 +1872,48 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_callback_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734534398664" />
+              <option name="lastModified" value="1734710679760" />
               <option name="schema">
                 <list>
                   <option value="WechatCallbackLogic" />
+                  <option value="MessageData" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_callback_verify_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734706458837" />
+              <option name="schema">
+                <list>
+                  <option value="WechatCallbackVerifyLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_offiaccount_callback_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712747630" />
+              <option name="schema">
+                <list>
+                  <option value="WechatOffiaccountCallbackLogic" />
+                  <option value="MessageData" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_offiaccount_callback_verify_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712613711" />
+              <option name="schema">
+                <list>
+                  <option value="WechatOffiaccountCallbackVerifyLogic" />
                 </list>
               </option>
             </ScannedPath>
@@ -1781,7 +1958,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/token/refresh_token_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734584546882" />
+              <option name="lastModified" value="1734692914876" />
               <option name="schema">
                 <list>
                   <option value="RefreshTokenLogic" />
@@ -1805,7 +1982,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/account_login_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734584691324" />
+              <option name="lastModified" value="1734709587740" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginLogic" />
@@ -1817,7 +1994,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/get_user_device_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734584662756" />
+              <option name="lastModified" value="1734709292150" />
               <option name="schema">
                 <list>
                   <option value="GetUserDeviceLogic" />
@@ -1826,10 +2003,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/get_wechat_offiaccount_qrcode_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734712935637" />
+              <option name="schema">
+                <list>
+                  <option value="GetWechatOffiaccountQrcodeLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/phone_login_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1732207481081" />
+              <option name="lastModified" value="1734709292172" />
               <option name="schema">
                 <list>
                   <option value="PhoneLoginLogic" />
@@ -1845,6 +2034,18 @@
               <option name="schema">
                 <list>
                   <option value="ResetPasswordLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/wechat_offiaccount_login_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734711022532" />
+              <option name="schema">
+                <list>
+                  <option value="WechatOffiaccountLoginLogic" />
                 </list>
               </option>
             </ScannedPath>
@@ -1889,10 +2090,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/middleware/authorization_middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734692269196" />
+              <option name="schema">
+                <list>
+                  <option value="AuthorizationMiddleware" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/middleware/casbinverify_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734583810496" />
+              <option name="lastModified" value="1734682271288" />
               <option name="schema">
                 <list>
                   <option value="CasbinVerifyMiddleware" />
@@ -1916,7 +2129,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734586605604" />
+              <option name="lastModified" value="1734702591918" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -1945,7 +2158,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/token.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731722350830" />
+              <option name="lastModified" value="1734692829235" />
               <option name="schema">
                 <list>
                   <option value="RedisToken" />
@@ -1957,7 +2170,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734584742644" />
+              <option name="lastModified" value="1734692204790" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -2481,13 +2694,6 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/app/core/api/repository/redis_session/redis_session.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1734586600191" />
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/redisx/redis.go">
           <value>
             <ScannedPath>
@@ -2518,6 +2724,7 @@
         <entry key="account_login_logic" value="AccountLoginLogic" />
         <entry key="account_login_request" value="AccountLoginRequest" />
         <entry key="auth_q_qme" value="AuthQQme" />
+        <entry key="authorization_middleware" value="AuthorizationMiddleware" />
         <entry key="base_response" value="BaseResponse" />
         <entry key="base_xml_response" value="baseXmlResponse" />
         <entry key="casbin_verify_middleware" value="CasbinVerifyMiddleware" />
@@ -2544,6 +2751,7 @@
         <entry key="get_qq_oauth_url_logic" value="GetQqOauthUrlLogic" />
         <entry key="get_reply_list_logic" value="GetReplyListLogic" />
         <entry key="get_user_device_logic" value="GetUserDeviceLogic" />
+        <entry key="get_wechat_offiaccount_qrcode_logic" value="GetWechatOffiaccountQrcodeLogic" />
         <entry key="get_wechat_qrcode_logic" value="GetWechatQrcodeLogic" />
         <entry key="git_hub_user" value="GitHubUser" />
         <entry key="gitee_callback_logic" value="GiteeCallbackLogic" />
@@ -2553,6 +2761,7 @@
         <entry key="i18n_middleware" value="I18nMiddleware" />
         <entry key="like_comment_logic" value="LikeCommentLogic" />
         <entry key="login_response" value="LoginResponse" />
+        <entry key="message_data" value="MessageData" />
         <entry key="message_web_socket" value="MessageWebSocket" />
         <entry key="message_websocket_logic" value="MessageWebsocketLogic" />
         <entry key="o_auth_callback_request" value="OAuthCallbackRequest" />
@@ -2613,6 +2822,7 @@
         <entry key="sca_user_message" value="scaUserMessage" />
         <entry key="sca_user_message_do" value="scaUserMessageDo" />
         <entry key="security_headers_middleware" value="SecurityHeadersMiddleware" />
+        <entry key="send_message" value="SendMessage" />
         <entry key="send_sms_by_aliyun_logic" value="SendSmsByAliyunLogic" />
         <entry key="send_sms_by_smsbao_logic" value="SendSmsBySmsbaoLogic" />
         <entry key="send_sms_by_test_logic" value="SendSmsByTestLogic" />
@@ -2625,9 +2835,15 @@
         <entry key="upload_image_logic" value="UploadImageLogic" />
         <entry key="upload_request" value="UploadRequest" />
         <entry key="user_device_request" value="UserDeviceRequest" />
+        <entry key="websocket_jwt_claims" value="WebsocketJWTClaims" />
+        <entry key="websocket_jwt_payload" value="WebsocketJWTPayload" />
         <entry key="wechat_callback_logic" value="WechatCallbackLogic" />
+        <entry key="wechat_callback_verify_logic" value="WechatCallbackVerifyLogic" />
+        <entry key="wechat_offiaccount_callback_logic" value="WechatOffiaccountCallbackLogic" />
+        <entry key="wechat_offiaccount_callback_verify_logic" value="WechatOffiaccountCallbackVerifyLogic" />
+        <entry key="wechat_offiaccount_login_logic" value="WechatOffiaccountLoginLogic" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1734592292465" />
+    <option name="lastTimeChecked" value="1734699497598" />
   </component>
 </project>

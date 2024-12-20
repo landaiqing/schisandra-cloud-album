@@ -11,16 +11,16 @@ import (
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 )
 
-func GetUserDeviceHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func WechatOffiaccountLoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.UserDeviceRequest
+		var req types.WechatOffiaccountLoginRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := user.NewGetUserDeviceLogic(r.Context(), svcCtx)
-		resp, err := l.GetUserDevice(r, w, &req)
+		l := user.NewWechatOffiaccountLoginLogic(r.Context(), svcCtx)
+		resp, err := l.WechatOffiaccountLogin(r, &req)
 		if err != nil {
 			logx.Error(err)
 			httpx.WriteJsonCtx(

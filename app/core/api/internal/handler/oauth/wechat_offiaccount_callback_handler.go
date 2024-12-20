@@ -1,20 +1,20 @@
 package oauth
 
 import (
+	"github.com/ArtisanCloud/PowerLibs/v3/http/helper"
+	"github.com/zeromicro/go-zero/core/logx"
 	"net/http"
 
-	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
-
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/oauth"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 )
 
-func WechatCallbackHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func WechatOffiaccountCallbackHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := oauth.NewWechatCallbackLogic(r.Context(), svcCtx)
-		err := l.WechatCallback(w, r)
+		l := oauth.NewWechatOffiaccountCallbackLogic(r.Context(), svcCtx)
+		res, err := l.WechatOffiaccountCallback(r)
 		if err != nil {
 			logx.Error(err)
 			httpx.WriteJsonCtx(
@@ -23,7 +23,7 @@ func WechatCallbackHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 				http.StatusInternalServerError,
 				response.ErrorWithI18n(r.Context(), "system.error"))
 		} else {
-			httpx.Ok(w)
+			_ = helper.HttpResponseSend(res, w)
 		}
 	}
 }

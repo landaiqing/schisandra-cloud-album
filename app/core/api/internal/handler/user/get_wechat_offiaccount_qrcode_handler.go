@@ -1,18 +1,17 @@
-package oauth
+package user
 
 import (
-	"net/http"
-
 	"github.com/zeromicro/go-zero/core/logx"
-	"github.com/zeromicro/go-zero/rest/httpx"
+	"net/http"
+	"schisandra-album-cloud-microservices/app/core/api/internal/logic/user"
 
+	"github.com/zeromicro/go-zero/rest/httpx"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
-	"schisandra-album-cloud-microservices/app/core/api/internal/logic/oauth"
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 )
 
-func GetWechatQrcodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func GetWechatOffiaccountQrcodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.OAuthWechatRequest
 		if err := httpx.Parse(r, &req); err != nil {
@@ -20,8 +19,8 @@ func GetWechatQrcodeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := oauth.NewGetWechatQrcodeLogic(r.Context(), svcCtx)
-		resp, err := l.GetWechatQrcode(r, &req)
+		l := user.NewGetWechatOffiaccountQrcodeLogic(r.Context(), svcCtx)
+		resp, err := l.GetWechatOffiaccountQrcode(r, &req)
 		if err != nil {
 			logx.Error(err)
 			httpx.WriteJsonCtx(

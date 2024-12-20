@@ -1,37 +1,36 @@
-package oauth
+package user
 
 import (
 	"context"
 	"encoding/json"
-	"net/http"
-	"time"
-
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/basicService/qrCode/response"
-
+	"net/http"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
 	response2 "schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
+	"time"
+
 	"schisandra-album-cloud-microservices/app/core/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/core/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type GetWechatQrcodeLogic struct {
+type GetWechatOffiaccountQrcodeLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewGetWechatQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetWechatQrcodeLogic {
-	return &GetWechatQrcodeLogic{
+func NewGetWechatOffiaccountQrcodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetWechatOffiaccountQrcodeLogic {
+	return &GetWechatOffiaccountQrcodeLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *GetWechatQrcodeLogic) GetWechatQrcode(r *http.Request, req *types.OAuthWechatRequest) (resp *types.Response, err error) {
+func (l *GetWechatOffiaccountQrcodeLogic) GetWechatOffiaccountQrcode(r *http.Request, req *types.OAuthWechatRequest) (resp *types.Response, err error) {
 	ip := utils.GetClientIP(r) // 使用工具函数获取客户端IP
 	key := constant.UserQrcodePrefix + ip
 
@@ -46,7 +45,7 @@ func (l *GetWechatQrcodeLogic) GetWechatQrcode(r *http.Request, req *types.OAuth
 	}
 
 	// 生成临时二维码
-	data, err := l.svcCtx.WechatPublic.QRCode.Temporary(l.ctx, req.Client_id, 7*24*3600)
+	data, err := l.svcCtx.WechatOfficial.QRCode.Temporary(l.ctx, req.Client_id, 7*24*3600)
 	if err != nil {
 		return nil, err
 	}

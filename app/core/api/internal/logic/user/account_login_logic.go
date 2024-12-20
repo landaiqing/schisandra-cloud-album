@@ -3,7 +3,8 @@ package user
 import (
 	"context"
 	"errors"
-	"github.com/rbcervilla/redisstore/v9"
+	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
+	"github.com/mssola/useragent"
 	"net/http"
 	"time"
 
@@ -65,19 +66,20 @@ func (l *AccountLoginLogic) AccountLogin(w http.ResponseWriter, r *http.Request,
 	if !utils.Verify(userInfo.Password, req.Password) {
 		return response.ErrorWithI18n(l.ctx, "login.invalidPassword"), nil
 	}
-	data, err := HandleUserLogin(userInfo, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+	data, err := HandleLoginJWT(userInfo, l.svcCtx, req.AutoLogin, r, l.ctx)
 	if err != nil {
-		return nil, err
-	}
-	// 记录用户登录设备
-	if err = GetUserLoginDevice(userInfo.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
 		return nil, err
 	}
 	return response.SuccessWithData(data), nil
 }
 
-// HandleUserLogin 处理用户登录
-func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, w http.ResponseWriter, ctx context.Context) (*types.LoginResponse, error) {
+// HandleLoginJWT 处理用户登录
+func HandleLoginJWT(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, ctx context.Context) (*types.LoginResponse, error) {
+	// 获取用户登录设备
+	err := GetUserLoginDevice(user.UID, r, svcCtx.Ip2Region, svcCtx.DB)
+	if err != nil {
+		return nil, err
+	}
 	// 生成jwt token
 	accessToken := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: user.UID,
@@ -85,9 +87,9 @@ func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLo
 	})
 	var days time.Duration
 	if autoLogin {
-		days = 7 * 24 * time.Hour
+		days = 24 * time.Hour
 	} else {
-		days = time.Hour * 24
+		days = time.Hour * 1
 	}
 	refreshToken := jwt.GenerateRefreshToken(svcCtx.Config.Auth.AccessSecret, jwt.RefreshJWTPayload{
 		UserID: user.UID,
@@ -106,29 +108,76 @@ func HandleUserLogin(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLo
 		AccessToken:  accessToken,
 		RefreshToken: refreshToken,
 		UID:          user.UID,
+		Revoked:      false,
 	}
-	err := svcCtx.RedisClient.Set(ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
-	if err != nil {
-		return nil, err
-	}
-	err = HandlerSession(r, w, user.UID, svcCtx.Session)
+	err = svcCtx.RedisClient.Set(ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
 	if err != nil {
 		return nil, err
 	}
 	return &data, nil
-
 }
 
-// HandlerSession is a function to set the user_id in the session
-func HandlerSession(r *http.Request, w http.ResponseWriter, userID string, redisSession *redisstore.RedisStore) error {
-	session, err := redisSession.Get(r, constant.SESSION_KEY)
+// GetUserLoginDevice 获取用户登录设备
+func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searcher, DB *query.Query) error {
+	userAgent := r.UserAgent()
+	if userAgent == "" {
+		return errors.New("user agent not found")
+	}
+	ip := utils.GetClientIP(r)
+	location, err := ip2location.SearchByStr(ip)
 	if err != nil {
 		return err
 	}
-	session.Values["user_id"] = userID
-	err = session.Save(r, w)
-	if err != nil {
+	location = utils.RemoveZeroAndAdjust(location)
+
+	ua := useragent.New(userAgent)
+	isBot := ua.Bot()
+	browser, browserVersion := ua.Browser()
+	os := ua.OS()
+	mobile := ua.Mobile()
+	mozilla := ua.Mozilla()
+	platform := ua.Platform()
+	engine, engineVersion := ua.Engine()
+	var newIsBot int64 = 0
+	var newIsMobile int64 = 0
+	if isBot {
+		newIsBot = 1
+	}
+	if mobile {
+		newIsMobile = 1
+	}
+	userDevice := DB.ScaAuthUserDevice
+	device, err := userDevice.Where(userDevice.UserID.Eq(userId), userDevice.IP.Eq(ip), userDevice.Agent.Eq(userAgent)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	return nil
+	newDevice := &model.ScaAuthUserDevice{
+		UserID:          userId,
+		Bot:             newIsBot,
+		Agent:           userAgent,
+		Browser:         browser,
+		BrowserVersion:  browserVersion,
+		EngineName:      engine,
+		EngineVersion:   engineVersion,
+		IP:              ip,
+		Location:        location,
+		OperatingSystem: os,
+		Mobile:          newIsMobile,
+		Mozilla:         mozilla,
+		Platform:        platform,
+	}
+	if device == nil {
+		// 创建新的设备记录
+		err = DB.ScaAuthUserDevice.Create(newDevice)
+		if err != nil {
+			return err
+		}
+		return nil
+	} else {
+		resultInfo, err := userDevice.Where(userDevice.ID.Eq(device.ID)).Updates(newDevice)
+		if err != nil || resultInfo.RowsAffected == 0 {
+			return errors.New("update device failed")
+		}
+		return nil
+	}
 }

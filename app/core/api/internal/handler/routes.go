@@ -61,7 +61,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.AuthorizationMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -141,14 +141,14 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Handler: oauth.GetQqOauthUrlHandler(serverCtx),
 				},
 				{
-					Method:  http.MethodGet,
-					Path:    "/wechat/callback",
-					Handler: oauth.WechatCallbackHandler(serverCtx),
+					Method:  http.MethodPost,
+					Path:    "/wechat/offiaccount/callback",
+					Handler: oauth.WechatOffiaccountCallbackHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodGet,
-					Path:    "/wechat/qrcode",
-					Handler: oauth.GetWechatQrcodeHandler(serverCtx),
+					Path:    "/wechat/offiaccount/callback",
+					Handler: oauth.WechatOffiaccountCallbackVerifyHandler(serverCtx),
 				},
 			}...,
 		),
@@ -222,11 +222,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/device",
-					Handler: user.GetUserDeviceHandler(serverCtx),
-				},
-				{
-					Method:  http.MethodPost,
 					Path:    "/login",
 					Handler: user.AccountLoginHandler(serverCtx),
 				},
@@ -239,6 +234,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/reset/password",
 					Handler: user.ResetPasswordHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/wechat/offiaccount/login",
+					Handler: user.WechatOffiaccountLoginHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/wechat/offiaccount/qrcode",
+					Handler: user.GetWechatOffiaccountQrcodeHandler(serverCtx),
 				},
 			}...,
 		),

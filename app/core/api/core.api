@@ -31,8 +31,9 @@ type (
 		Password   string `json:"password"`
 		Repassword string `json:"repassword"`
 	}
-	UserDeviceRequest {
-		AccessToken string `json:"access_token"`
+	WechatOffiaccountLoginRequest {
+		Openid   string `json:"openid"`
+		ClientId string `json:"client_id"`
 	}
 	// 登录响应参数
 	LoginResponse {
@@ -170,8 +171,13 @@ service core {
 	@handler resetPassword
 	post /reset/password (ResetPasswordRequest) returns (Response)
 
-	@handler getUserDevice
-	post /device (UserDeviceRequest) returns (Response)
+	// 微信公众号登录
+	@handler wechatOffiaccountLogin
+	post /wechat/offiaccount/login (WechatOffiaccountLoginRequest) returns (Response)
+
+	// 获取微信公众号二维码
+	@handler getWechatOffiaccountQrcode
+	post /wechat/offiaccount/qrcode (OAuthWechatRequest) returns (Response)
 }
 
 @server (
@@ -249,11 +255,12 @@ service core {
 	@handler qqCallback
 	get /qq/callback (OAuthCallbackRequest) returns (string)
 
-	@handler wechatCallback
-	get /wechat/callback
+	@handler wechatOffiaccountCallback
+	post /wechat/offiaccount/callback
 
-	@handler getWechatQrcode
-	get /wechat/qrcode (OAuthWechatRequest) returns (Response)
+	// important!
+	@handler wechatOffiaccountCallbackVerify
+	get /wechat/offiaccount/callback
 }
 
 @server (
@@ -301,7 +308,7 @@ service core {
 	timeout:    10s // 超时时间
 	maxBytes:   1048576 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,AuthorizationMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证

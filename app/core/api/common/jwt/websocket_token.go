@@ -6,16 +6,17 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type AccessJWTPayload struct {
+type WebsocketJWTPayload struct {
 	UserID string `json:"user_id"`
 	Type   string `json:"type"`
+	Expr   string `json:"expr"`
 }
-type AccessJWTClaims struct {
+type WebsocketJWTClaims struct {
 	AccessJWTPayload
 	jwt.RegisteredClaims
 }
 
-func GenerateAccessToken(secret string, payload AccessJWTPayload) string {
+func GenerateWebsocketToken(secret string, payload AccessJWTPayload) string {
 	claims := AccessJWTClaims{
 		AccessJWTPayload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -32,8 +33,8 @@ func GenerateAccessToken(secret string, payload AccessJWTPayload) string {
 	return accessToken
 }
 
-// ParseAccessToken parses a JWT token and returns the payload
-func ParseAccessToken(secret string, tokenString string) (*AccessJWTPayload, bool) {
+// ParseWebsocketToken parses a JWT token and returns the payload
+func ParseWebsocketToken(secret string, tokenString string) (*AccessJWTPayload, bool) {
 	token, err := jwt.ParseWithClaims(tokenString, &AccessJWTClaims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(secret), nil
 	})

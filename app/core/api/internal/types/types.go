@@ -119,6 +119,7 @@ type UploadRequest struct {
 	UserId      string `json:"user_id"`
 }
 
-type UserDeviceRequest struct {
-	AccessToken string `json:"access_token"`
+type WechatOffiaccountLoginRequest struct {
+	Openid   string `json:"openid"`
+	ClientId string `json:"client_id"`
 }

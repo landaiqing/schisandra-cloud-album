@@ -79,13 +79,8 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 			_ = tx.Rollback()
 			return nil, err
 		}
-		data, err := HandleUserLogin(user, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+		data, err := HandleLoginJWT(user, l.svcCtx, req.AutoLogin, r, l.ctx)
 		if err != nil {
-			_ = tx.Rollback()
-			return nil, err
-		}
-		// 记录用户登录设备
-		if err = GetUserLoginDevice(user.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
 			_ = tx.Rollback()
 			return nil, err
 		}
@@ -95,13 +90,8 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, w http.ResponseWriter, req
 		}
 		return response.SuccessWithData(data), nil
 	} else {
-		data, err := HandleUserLogin(userInfo, l.svcCtx, req.AutoLogin, r, w, l.ctx)
+		data, err := HandleLoginJWT(userInfo, l.svcCtx, req.AutoLogin, r, l.ctx)
 		if err != nil {
-			_ = tx.Rollback()
-			return nil, err
-		}
-		// 记录用户登录设备
-		if err = GetUserLoginDevice(userInfo.UID, r, l.svcCtx.Ip2Region, l.svcCtx.DB); err != nil {
 			_ = tx.Rollback()
 			return nil, err
 		}

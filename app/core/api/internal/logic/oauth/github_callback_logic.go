@@ -149,7 +149,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 			return "", err
 		}
 
-		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx)
+		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, l.ctx)
 		if err != nil {
 			_ = tx.Rollback()
 			return "", err
@@ -167,7 +167,7 @@ func (l *GithubCallbackLogic) GithubCallback(w http.ResponseWriter, r *http.Requ
 			return "", err
 		}
 
-		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx)
+		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, l.ctx)
 		if err != nil {
 			_ = tx.Rollback()
 			return "", err

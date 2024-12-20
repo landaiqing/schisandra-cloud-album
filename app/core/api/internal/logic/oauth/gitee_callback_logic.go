@@ -149,7 +149,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 			_ = tx.Rollback()
 			return "", err
 		}
-		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, w, l.ctx)
+		data, err := HandleOauthLoginResponse(addUser, l.svcCtx, r, l.ctx)
 		if err != nil {
 			_ = tx.Rollback()
 			return "", err
@@ -167,7 +167,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 			return "", err
 		}
 
-		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, w, l.ctx)
+		data, err := HandleOauthLoginResponse(authUserInfo, l.svcCtx, r, l.ctx)
 		if err != nil {
 			_ = tx.Rollback()
 			return "", err
@@ -180,13 +180,12 @@ func (l *GiteeCallbackLogic) GiteeCallback(w http.ResponseWriter, r *http.Reques
 }
 
 // HandleOauthLoginResponse 处理登录响应
-func HandleOauthLoginResponse(scaAuthUser *model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, w http.ResponseWriter, ctx context.Context) (string, error) {
-	data, err := user.HandleUserLogin(scaAuthUser, svcCtx, true, r, w, ctx)
+func HandleOauthLoginResponse(scaAuthUser *model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, ctx context.Context) (string, error) {
+	data, err := user.HandleLoginJWT(scaAuthUser, svcCtx, true, r, ctx)
 	if err != nil {
 		return "", err
 	}
-	responseData := response.SuccessWithData(data)
-	marshalData, err := json.Marshal(responseData)
+	marshalData, err := json.Marshal(response.SuccessWithData(data))
 	if err != nil {
 		return "", err
 	}

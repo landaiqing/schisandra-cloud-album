@@ -1,37 +1,24 @@
 package middleware
 
 import (
+	"github.com/casbin/casbin/v2"
 	"net/http"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
-
-	"github.com/casbin/casbin/v2"
-	"github.com/rbcervilla/redisstore/v9"
 )
 
 type CasbinVerifyMiddleware struct {
-	casbin  *casbin.SyncedCachedEnforcer
-	session *redisstore.RedisStore
+	casbin *casbin.SyncedCachedEnforcer
 }
 
-func NewCasbinVerifyMiddleware(casbin *casbin.SyncedCachedEnforcer, session *redisstore.RedisStore) *CasbinVerifyMiddleware {
+func NewCasbinVerifyMiddleware(casbin *casbin.SyncedCachedEnforcer) *CasbinVerifyMiddleware {
 	return &CasbinVerifyMiddleware{
-		casbin:  casbin,
-		session: session,
+		casbin: casbin,
 	}
 }
 
 func (m *CasbinVerifyMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		session, err := m.session.Get(r, constant.SESSION_KEY)
-		if err != nil {
-			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-			return
-		}
-		userId, ok := session.Values["user_id"].(string)
-		if !ok {
-			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)
-			return
-		}
+		userId := r.Header.Get(constant.UID_HEADER_KEY)
 		correct, err := m.casbin.Enforce(userId, r.URL.Path, r.Method)
 		if err != nil || !correct {
 			http.Error(w, http.StatusText(http.StatusForbidden), http.StatusForbidden)

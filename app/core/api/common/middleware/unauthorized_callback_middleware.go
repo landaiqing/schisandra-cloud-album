@@ -10,7 +10,7 @@ import (
 
 func UnauthorizedCallbackMiddleware() func(w http.ResponseWriter, r *http.Request, err error) {
 	return func(w http.ResponseWriter, r *http.Request, err error) {
-		// httpx.WriteJson(w, http.StatusUnauthorized, response.ErrorWithCodeMessage(http.StatusUnauthorized, "Unauthorized"))
-		httpx.OkJsonCtx(r.Context(), w, response.ErrorWithCodeMessage(http.StatusUnauthorized, "Unauthorized"))
+		httpx.OkJsonCtx(r.Context(), w, response.ErrorWithCodeMessage(http.StatusUnauthorized, err.Error()))
+		return
 	}
 }
