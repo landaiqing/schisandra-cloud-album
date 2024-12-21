@@ -39,6 +39,7 @@ type CommentRequest struct {
 
 type LoginResponse struct {
 	AccessToken string `json:"access_token"`
+	ExpireAt    int64  `json:"expire_at"`
 	UID         string `json:"uid"`
 	Username    string `json:"username,omitempty"`
 	Nickname    string `json:"nickname"`
@@ -55,7 +56,7 @@ type OAuthRequest struct {
 }
 
 type OAuthWechatRequest struct {
-	Client_id string `form:"client_id"`
+	ClientId string `json:"client_id"`
 }
 
 type PhoneLoginRequest struct {

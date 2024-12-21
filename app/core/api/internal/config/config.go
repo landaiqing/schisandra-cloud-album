@@ -10,6 +10,11 @@ type Config struct {
 	Auth struct {
 		AccessSecret string
 	}
+
+	Encrypt struct {
+		Key string
+		IV  string
+	}
 	Mysql struct {
 		DataSource  string
 		MaxOpenConn int

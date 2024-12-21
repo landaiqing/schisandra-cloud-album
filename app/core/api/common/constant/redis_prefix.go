@@ -22,5 +22,5 @@ const (
 
 // 系统相关的redis key
 const (
-	SystemApiNonceRedisKey = "system:controller:nonce:"
+	SystemApiNoncePrefix = "system:nonce:"
 )

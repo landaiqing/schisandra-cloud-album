@@ -31,7 +31,7 @@ func NewGetWechatOffiaccountQrcodeLogic(ctx context.Context, svcCtx *svc.Service
 }
 
 func (l *GetWechatOffiaccountQrcodeLogic) GetWechatOffiaccountQrcode(r *http.Request, req *types.OAuthWechatRequest) (resp *types.Response, err error) {
-	ip := utils.GetClientIP(r) // 使用工具函数获取客户端IP
+	ip := utils.GetClientIP(r)
 	key := constant.UserQrcodePrefix + ip
 
 	// 从Redis获取二维码数据
@@ -45,7 +45,7 @@ func (l *GetWechatOffiaccountQrcodeLogic) GetWechatOffiaccountQrcode(r *http.Req
 	}
 
 	// 生成临时二维码
-	data, err := l.svcCtx.WechatOfficial.QRCode.Temporary(l.ctx, req.Client_id, 7*24*3600)
+	data, err := l.svcCtx.WechatOfficial.QRCode.Temporary(l.ctx, req.ClientId, 7*24*3600)
 	if err != nil {
 		return nil, err
 	}

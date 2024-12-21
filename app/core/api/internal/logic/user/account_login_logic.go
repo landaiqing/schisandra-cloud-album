@@ -81,15 +81,15 @@ func HandleLoginJWT(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLog
 		return nil, err
 	}
 	// 生成jwt token
-	accessToken := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
+	accessToken, expireAt := jwt.GenerateAccessToken(svcCtx.Config.Auth.AccessSecret, jwt.AccessJWTPayload{
 		UserID: user.UID,
 		Type:   constant.JWT_TYPE_ACCESS,
 	})
 	var days time.Duration
 	if autoLogin {
-		days = 24 * time.Hour
+		days = 3 * 24 * time.Hour
 	} else {
-		days = time.Hour * 1
+		days = time.Hour * 24
 	}
 	refreshToken := jwt.GenerateRefreshToken(svcCtx.Config.Auth.AccessSecret, jwt.RefreshJWTPayload{
 		UserID: user.UID,
@@ -97,6 +97,7 @@ func HandleLoginJWT(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLog
 	}, days)
 	data := types.LoginResponse{
 		AccessToken: accessToken,
+		ExpireAt:    expireAt,
 		UID:         user.UID,
 		Username:    user.Username,
 		Nickname:    user.Nickname,
@@ -109,6 +110,10 @@ func HandleLoginJWT(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLog
 		RefreshToken: refreshToken,
 		UID:          user.UID,
 		Revoked:      false,
+		GeneratedAt:  time.Now().Format(constant.TimeFormat),
+		AllowAgent:   r.UserAgent(),
+		GeneratedIP:  utils.GetClientIP(r),
+		UpdatedAt:    time.Now().Format(constant.TimeFormat),
 	}
 	err = svcCtx.RedisClient.Set(ctx, constant.UserTokenPrefix+user.UID, redisToken, days).Err()
 	if err != nil {

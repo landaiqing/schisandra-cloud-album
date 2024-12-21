@@ -7,6 +7,7 @@ import (
 	"gorm.io/gorm"
 	"net/http"
 	"schisandra-album-cloud-microservices/app/core/api/common/constant"
+	"schisandra-album-cloud-microservices/app/core/api/common/encrypt"
 	randomname "schisandra-album-cloud-microservices/app/core/api/common/random_name"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/common/utils"
@@ -34,9 +35,21 @@ func NewWechatOffiaccountLoginLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, req *types.WechatOffiaccountLoginRequest) (resp *types.Response, err error) {
+	decryptedClientId, err := encrypt.Decrypt(req.ClientId, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	if err != nil {
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+	}
+	clientId := l.svcCtx.RedisClient.Get(r.Context(), constant.UserClientPrefix+decryptedClientId).Val()
+	if clientId == "" {
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+	}
+	Openid, err := encrypt.Decrypt(req.Openid, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	if err != nil {
+		return response.ErrorWithI18n(l.ctx, "login.loginFailed"), nil
+	}
 	tx := l.svcCtx.DB.Begin()
 	userSocial := l.svcCtx.DB.ScaAuthUserSocial
-	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(req.Openid), userSocial.Source.Eq(constant.OAuthSourceWechat)).First()
+	socialUser, err := tx.ScaAuthUserSocial.Where(userSocial.OpenID.Eq(Openid), userSocial.Source.Eq(constant.OAuthSourceWechat)).First()
 	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
@@ -50,7 +63,7 @@ func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, re
 		addUser := &model.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   avatar,
-			Username: req.Openid,
+			Username: Openid,
 			Nickname: name,
 			Gender:   constant.Male,
 		}
@@ -62,7 +75,7 @@ func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, re
 
 		newSocialUser := &model.ScaAuthUserSocial{
 			UserID: uidStr,
-			OpenID: req.Openid,
+			OpenID: Openid,
 			Source: constant.OAuthSourceWechat,
 		}
 		err = tx.ScaAuthUserSocial.Create(newSocialUser)

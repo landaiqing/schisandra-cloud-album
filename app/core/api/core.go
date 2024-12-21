@@ -25,7 +25,8 @@ func main() {
 	server := rest.MustNewServer(
 		c.RestConf,
 		rest.WithCustomCors(middleware.CORSMiddleware(), nil),
-		rest.WithUnauthorizedCallback(middleware.UnauthorizedCallbackMiddleware()))
+		rest.WithUnauthorizedCallback(middleware.UnauthorizedCallbackMiddleware()),
+		rest.WithUnsignedCallback(middleware.UnsignedCallbackMiddleware()))
 	defer server.Stop()
 	// i18n middleware
 	server.Use(middleware.I18nMiddleware)

@@ -8,6 +8,7 @@ import (
 	models2 "github.com/ArtisanCloud/PowerWeChat/v3/src/kernel/models"
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/officialAccount/server/handlers/models"
 	"net/http"
+	"schisandra-album-cloud-microservices/app/core/api/common/encrypt"
 	"schisandra-album-cloud-microservices/app/core/api/common/i18n"
 	"schisandra-album-cloud-microservices/app/core/api/common/response"
 	"schisandra-album-cloud-microservices/app/core/api/internal/logic/websocket"
@@ -96,9 +97,17 @@ func (l *WechatOffiaccountCallbackLogic) WechatOffiaccountCallback(r *http.Reque
 
 // SendMessage 发送消息到客户端
 func (l *WechatOffiaccountCallbackLogic) SendMessage(openId string, clientId string) error {
+	encryptClientId, err := encrypt.Encrypt(clientId, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	if err != nil {
+		return err
+	}
+	encryptOpenId, err := encrypt.Encrypt(openId, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	if err != nil {
+		return err
+	}
 	messageData := MessageData{
-		Openid:   openId,
-		ClientId: clientId,
+		Openid:   encryptOpenId,
+		ClientId: encryptClientId,
 	}
 	jsonData, err := json.Marshal(response.SuccessWithData(messageData))
 	if err != nil {

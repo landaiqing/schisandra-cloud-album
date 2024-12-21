@@ -73,9 +73,10 @@ func (l *GetCommentListLogic) GetCommentList(req *types.CommentListRequest) (res
 	}
 	if count == 0 || len(commentQueryList) == 0 {
 		return response.SuccessWithData(types.CommentListPageResponse{
-			Total:   count,
-			Size:    req.Size,
-			Current: req.Page,
+			Total:    count,
+			Size:     req.Size,
+			Current:  req.Page,
+			Comments: []types.CommentContent{},
 		}), nil
 	}
 	// **************** 获取评论Id和用户Id ************

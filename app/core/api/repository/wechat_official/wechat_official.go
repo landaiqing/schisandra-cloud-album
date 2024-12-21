@@ -16,7 +16,7 @@ func NewWechatPublic(appId, appSecret, token, aesKey, addr, pass string, db int)
 		AESKey: aesKey,
 		Log: officialAccount.Log{
 			Level:  "error",
-			File:   "/logs/wechat/wechat_official.log",
+			File:   "./logs/wechat/wechat_official.log",
 			Stdout: false,
 		},
 		ResponseType: os.Getenv("response_type"),

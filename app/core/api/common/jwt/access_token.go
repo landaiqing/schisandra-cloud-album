@@ -15,11 +15,11 @@ type AccessJWTClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateAccessToken(secret string, payload AccessJWTPayload) string {
+func GenerateAccessToken(secret string, payload AccessJWTPayload) (string, int64) {
 	claims := AccessJWTClaims{
 		AccessJWTPayload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 15)),
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Minute * 30)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 			NotBefore: jwt.NewNumericDate(time.Now()),
 		},
@@ -27,9 +27,10 @@ func GenerateAccessToken(secret string, payload AccessJWTPayload) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	accessToken, err := token.SignedString([]byte(secret))
 	if err != nil {
-		return ""
+		return "", 0
 	}
-	return accessToken
+	expiresAt := claims.ExpiresAt.Unix()
+	return accessToken, expiresAt
 }
 
 // ParseAccessToken parses a JWT token and returns the payload

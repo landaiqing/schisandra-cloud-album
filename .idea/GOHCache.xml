@@ -17,6 +17,13 @@
             </set>
           </value>
         </entry>
+        <entry key="AccessToken">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/token/refresh_token_logic.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="AccountLoginLogic">
           <value>
             <set>
@@ -310,6 +317,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/core/api/internal/logic/websocket/message_websocket_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="NonceMiddleware">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/middleware/nonce_middleware.go" />
             </set>
           </value>
         </entry>
@@ -740,6 +754,13 @@
             </set>
           </value>
         </entry>
+        <entry key="WechatOffiaccountLoginRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/core/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="baseXmlResponse">
           <value>
             <set>
@@ -1076,7 +1097,14 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/constant/redis_prefix.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1731581334503" />
+              <option name="lastModified" value="1734750443057" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/common/constant/time.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734753572318" />
             </ScannedPath>
           </value>
         </entry>
@@ -1091,6 +1119,13 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1731553753763" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/common/encrypt/aes.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734746896453" />
             </ScannedPath>
           </value>
         </entry>
@@ -1195,7 +1230,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/jwt/access_token.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734682778489" />
+              <option name="lastModified" value="1734756247281" />
               <option name="schema">
                 <list>
                   <option value="AccessJWTPayload" />
@@ -1221,7 +1256,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/jwt/websocket_token.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734685303630" />
+              <option name="lastModified" value="1734757072652" />
               <option name="schema">
                 <list>
                   <option value="WebsocketJWTPayload" />
@@ -1234,7 +1269,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/common/middleware/cors_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734682151710" />
+              <option name="lastModified" value="1734755743115" />
             </ScannedPath>
           </value>
         </entry>
@@ -1256,6 +1291,13 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1734672079755" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/common/middleware/unsigned_callback_middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734716219341" />
             </ScannedPath>
           </value>
         </entry>
@@ -1365,7 +1407,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/core.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734693433014" />
+              <option name="lastModified" value="1734716174504" />
             </ScannedPath>
           </value>
         </entry>
@@ -1379,7 +1421,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/config/config.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1732080315861" />
+              <option name="lastModified" value="1734714088072" />
               <option name="schema">
                 <list>
                   <option value="Config" />
@@ -1545,7 +1587,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734712935626" />
+              <option name="lastModified" value="1734715543981" />
             </ScannedPath>
           </value>
         </entry>
@@ -1698,7 +1740,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/comment/get_comment_list_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1732187874238" />
+              <option name="lastModified" value="1734752546625" />
               <option name="schema">
                 <list>
                   <option value="GetCommentListLogic" />
@@ -1897,7 +1939,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/oauth/wechat_offiaccount_callback_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734712747630" />
+              <option name="lastModified" value="1734747356974" />
               <option name="schema">
                 <list>
                   <option value="WechatOffiaccountCallbackLogic" />
@@ -1958,10 +2000,11 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/token/refresh_token_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734692914876" />
+              <option name="lastModified" value="1734755189078" />
               <option name="schema">
                 <list>
                   <option value="RefreshTokenLogic" />
+                  <option value="AccessToken" />
                 </list>
               </option>
             </ScannedPath>
@@ -1982,7 +2025,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/account_login_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734709587740" />
+              <option name="lastModified" value="1734756271140" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginLogic" />
@@ -2006,7 +2049,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/get_wechat_offiaccount_qrcode_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734712935637" />
+              <option name="lastModified" value="1734754660785" />
               <option name="schema">
                 <list>
                   <option value="GetWechatOffiaccountQrcodeLogic" />
@@ -2042,7 +2085,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/logic/user/wechat_offiaccount_login_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734711022532" />
+              <option name="lastModified" value="1734747514069" />
               <option name="schema">
                 <list>
                   <option value="WechatOffiaccountLoginLogic" />
@@ -2093,7 +2136,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/middleware/authorization_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734692269196" />
+              <option name="lastModified" value="1734756193052" />
               <option name="schema">
                 <list>
                   <option value="AuthorizationMiddleware" />
@@ -2114,6 +2157,18 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/core/api/internal/middleware/nonce_middleware.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1734751419592" />
+              <option name="schema">
+                <list>
+                  <option value="NonceMiddleware" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/middleware/securityheaders_middleware.go">
           <value>
             <ScannedPath>
@@ -2129,7 +2184,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734702591918" />
+              <option name="lastModified" value="1734756131198" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -2158,7 +2213,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/token.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734692829235" />
+              <option name="lastModified" value="1734753611313" />
               <option name="schema">
                 <list>
                   <option value="RedisToken" />
@@ -2170,7 +2225,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734692204790" />
+              <option name="lastModified" value="1734715543979" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -2190,7 +2245,7 @@
                   <option value="Response" />
                   <option value="SmsSendRequest" />
                   <option value="UploadRequest" />
-                  <option value="UserDeviceRequest" />
+                  <option value="WechatOffiaccountLoginRequest" />
                 </list>
               </option>
             </ScannedPath>
@@ -2711,7 +2766,7 @@
         <entry key="file://$PROJECT_DIR$/app/core/api/repository/wechat_official/wechat_official.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734534902624" />
+              <option name="lastModified" value="1734752607655" />
             </ScannedPath>
           </value>
         </entry>
@@ -2721,6 +2776,7 @@
       <map>
         <entry key="access_jwt_claims" value="AccessJWTClaims" />
         <entry key="access_jwt_payload" value="AccessJWTPayload" />
+        <entry key="access_token" value="AccessToken" />
         <entry key="account_login_logic" value="AccountLoginLogic" />
         <entry key="account_login_request" value="AccountLoginRequest" />
         <entry key="auth_q_qme" value="AuthQQme" />
@@ -2764,6 +2820,7 @@
         <entry key="message_data" value="MessageData" />
         <entry key="message_web_socket" value="MessageWebSocket" />
         <entry key="message_websocket_logic" value="MessageWebsocketLogic" />
+        <entry key="nonce_middleware" value="NonceMiddleware" />
         <entry key="o_auth_callback_request" value="OAuthCallbackRequest" />
         <entry key="o_auth_request" value="OAuthRequest" />
         <entry key="o_auth_wechat_request" value="OAuthWechatRequest" />
@@ -2842,6 +2899,7 @@
         <entry key="wechat_offiaccount_callback_logic" value="WechatOffiaccountCallbackLogic" />
         <entry key="wechat_offiaccount_callback_verify_logic" value="WechatOffiaccountCallbackVerifyLogic" />
         <entry key="wechat_offiaccount_login_logic" value="WechatOffiaccountLoginLogic" />
+        <entry key="wechat_offiaccount_login_request" value="WechatOffiaccountLoginRequest" />
       </map>
     </option>
     <option name="lastTimeChecked" value="1734699497598" />

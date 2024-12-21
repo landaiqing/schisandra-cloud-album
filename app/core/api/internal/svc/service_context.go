@@ -29,6 +29,7 @@ type ServiceContext struct {
 	SecurityHeadersMiddleware rest.Middleware
 	CasbinVerifyMiddleware    rest.Middleware
 	AuthorizationMiddleware   rest.Middleware
+	NonceMiddleware           rest.Middleware
 	DB                        *query.Query
 	RedisClient               *redis.Client
 	MongoClient               *mongo.Database
@@ -48,7 +49,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:                    c,
 		SecurityHeadersMiddleware: middleware.NewSecurityHeadersMiddleware().Handle,
 		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer).Handle,
-		AuthorizationMiddleware:   middleware.NewAuthorizationMiddleware(redisClient).Handle,
+		AuthorizationMiddleware:   middleware.NewAuthorizationMiddleware().Handle,
+		NonceMiddleware:           middleware.NewNonceMiddleware(redisClient).Handle,
 		DB:                        queryDB,
 		RedisClient:               redisClient,
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),

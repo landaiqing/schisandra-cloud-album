@@ -24,7 +24,7 @@ import (
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
@@ -45,7 +45,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
@@ -61,7 +61,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.AuthorizationMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.AuthorizationMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -108,7 +108,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodGet,
@@ -159,7 +159,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -185,7 +185,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -202,7 +202,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -218,7 +218,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
