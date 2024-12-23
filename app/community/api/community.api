@@ -1,0 +1,152 @@
+syntax = "v1"
+
+info (
+	title:   "社区服务"
+	desc:    "社区服务"
+	author:  "landaiqing"
+	email:   "landaiqing@126.com"
+	version: "v1.0.0"
+)
+
+// 评论请求参数
+type (
+	// 评论提交请求参数
+	CommentRequest {
+		Content string   `json:"content"`
+		Images  []string `json:"images,optional"`
+		TopicId string   `json:"topic_id"`
+		Author  string   `json:"author"`
+		Key     string   `json:"key"`
+		Point   []int64  `json:"point"`
+	}
+	// 回复评论提交请求参数
+	ReplyCommentRequest {
+		Content   string   `json:"content"`
+		Images    []string `json:"images,optional"`
+		TopicId   string   `json:"topic_id" `
+		ReplyId   int64    `json:"reply_id" `
+		ReplyUser string   `json:"reply_user" `
+		Author    string   `json:"author"`
+		Key       string   `json:"key"`
+		Point     []int64  `json:"point"`
+	}
+	//  回复回复请求参数
+	ReplyReplyRequest {
+		Content   string   `json:"content"`
+		Images    []string `json:"images,optional"`
+		TopicId   string   `json:"topic_id"`
+		ReplyTo   int64    `json:"reply_to"`
+		ReplyId   int64    `json:"reply_id"`
+		ReplyUser string   `json:"reply_user" `
+		Author    string   `json:"author"`
+		Key       string   `json:"key"`
+		Point     []int64  `json:"point"`
+	}
+	// 评论列表请求参数
+	CommentListRequest {
+		TopicId string `json:"topic_id"`
+		Page    int    `json:"page,default=1,optional"`
+		Size    int    `json:"size,default=5,optional"`
+		IsHot   bool   `json:"is_hot,default=true,optional"`
+	}
+	// 回复列表请求参数
+	ReplyListRequest {
+		TopicId   string `json:"topic_id"`
+		CommentId int64  `json:"comment_id"`
+		Page      int    `json:"page,default=1,optional"`
+		Size      int    `json:"size,default=5,optional"`
+	}
+	// 点赞评论的请求参数
+	CommentLikeRequest {
+		TopicId   string `json:"topic_id"`
+		CommentId int64  `json:"comment_id"`
+	}
+	CommentDisLikeRequest {
+		TopicId   string `json:"topic_id"`
+		CommentId int64  `json:"comment_id"`
+	}
+)
+
+// 响应参数
+type (
+	// CommentContent 评论内容
+	CommentContent {
+		NickName        string   `json:"nickname"`
+		Avatar          string   `json:"avatar"`
+		Level           int64    `json:"level,omitempty" default:"0"`
+		Id              int64    `json:"id"`
+		UserId          string   `json:"user_id"`
+		TopicId         string   `json:"topic_id"`
+		Content         string   `json:"content"`
+		ReplyTo         int64    `json:"reply_to,omitempty"`
+		ReplyId         int64    `json:"reply_id,omitempty"`
+		ReplyUser       string   `json:"reply_user,omitempty"`
+		ReplyNickname   string   `json:"reply_nickname,omitempty"`
+		IsAuthor        int64    `json:"is_author"`
+		Likes           int64    `json:"likes"`
+		ReplyCount      int64    `json:"reply_count"`
+		CreatedTime     string   `json:"created_time"`
+		Location        string   `json:"location"`
+		Browser         string   `json:"browser"`
+		OperatingSystem string   `json:"operating_system"`
+		IsLiked         bool     `json:"is_liked" default:"false"`
+		Images          []string `json:"images,omitempty"`
+	}
+	// CommentListPageResponse 评论返回值
+	CommentListPageResponse {
+		Size     int              `json:"size"`
+		Total    int64            `json:"total"`
+		Current  int              `json:"current"`
+		Comments []CommentContent `json:"comments"`
+	}
+	// CommentResponse 提交评论响应
+	CommentResponse {
+		Id              int64  `json:"id"`
+		Content         string `json:"content"`
+		UserId          string `json:"user_id"`
+		TopicId         string `json:"topic_id"`
+		Author          int64  `json:"author"`
+		Location        string `json:"location"`
+		Browser         string `json:"browser"`
+		OperatingSystem string `json:"operating_system"`
+		CreatedTime     string `json:"created_time"`
+		ReplyId         int64  `json:"reply_id,omitempty"`
+		ReplyUser       string `json:"reply_user,omitempty"`
+		ReplyTo         int64  `json:"reply_to,omitempty"`
+	}
+)
+
+@server (
+	group:      comment // 微服务分组
+	prefix:     /api/auth/comment // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,AuthorizationMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+	jwt:        Auth // 是否开启jwt验证
+)
+service community {
+	@handler getCommentList
+	post /list (CommentListRequest) returns (CommentListPageResponse)
+
+	@handler getReplyList
+	post /reply/list (ReplyListRequest) returns (CommentListPageResponse)
+
+	@handler submitComment
+	post /submit (CommentRequest) returns (CommentResponse)
+
+	@handler submitReplyComment
+	post /reply/submit (ReplyCommentRequest) returns (CommentResponse)
+
+	@handler submitReplyReply
+	post /reply/reply/submit (ReplyReplyRequest) returns (CommentResponse)
+
+	@handler likeComment
+	post /like (CommentLikeRequest)
+
+	@handler dislikeComment
+	post /dislike (CommentDisLikeRequest)
+}
+

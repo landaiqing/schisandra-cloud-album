@@ -1,0 +1,251 @@
+syntax = "v1"
+
+info (
+	title:   "鉴权服务"
+	desc:    "鉴权服务"
+	author:  "landaiqing"
+	email:   "landaiqing@126.com"
+	version: "v1.0.0"
+)
+
+// 登录请求参数
+type (
+	// 账户登录请求参数
+	AccountLoginRequest {
+		Account   string `json:"account"`
+		Password  string `json:"password"`
+		AutoLogin bool   `json:"auto_login"`
+		Angle     int64  `json:"angle"`
+		Key       string `json:"key"`
+	}
+	// 手机号登录请求参数
+	PhoneLoginRequest {
+		Phone     string `json:"phone"`
+		Captcha   string `json:"captcha"`
+		AutoLogin bool   `json:"auto_login"`
+	}
+	// 重置密码请求参数
+	ResetPasswordRequest {
+		Phone      string `json:"phone"`
+		Captcha    string `json:"captcha"`
+		Password   string `json:"password"`
+		Repassword string `json:"repassword"`
+	}
+	WechatOffiaccountLoginRequest {
+		Openid   string `json:"openid"`
+		ClientId string `json:"client_id"`
+	}
+	// 登录响应参数
+	LoginResponse {
+		AccessToken string `json:"access_token"`
+		ExpireAt    int64  `json:"expire_at"`
+		UID         string `json:"uid"`
+		Username    string `json:"username,omitempty"`
+		Nickname    string `json:"nickname"`
+		Avatar      string `json:"avatar"`
+		Status      int64  `json:"status"`
+	}
+)
+
+// OAuth请求参数
+type (
+	// OAuth请求参数
+	OAuthRequest {
+		state string `form:"state"`
+	}
+	// OAuth回调请求参数
+	OAuthCallbackRequest {
+		Code string `form:"code"`
+	}
+	OAuthWechatRequest {
+		clientId string `json:"client_id"`
+	}
+)
+
+// 短信发送请求参数
+type (
+	SmsSendRequest {
+		Phone string `json:"phone"`
+		Angle int64  `json:"angle"`
+		Key   string `json:"key"`
+	}
+)
+
+// 刷新token响应参数
+type (
+	RefreshTokenResponse {
+		AccessToken string `json:"access_token"`
+		ExpireAt    int64  `json:"expire_at"`
+	}
+)
+
+// 验证码响应参数
+type (
+	RotateCaptchaResponse {
+		Key   string `json:"key"`
+		Image string `json:"image"`
+		Thumb string `json:"thumb"`
+	}
+	SlideCaptchaResponse {
+		Key         string `json:"key"`
+		Image       string `json:"image"`
+		Thumb       string `json:"thumb"`
+		ThumbWidth  int64  `json:"thumb_width"`
+		ThumbHeight int64  `json:"thumb_height"`
+		ThumbX      int64  `json:"thumb_x"`
+		ThumbY      int64  `json:"thumb_y"`
+	}
+)
+
+// 用户服务
+@server (
+	group:      user // 微服务分组
+	prefix:     /api/user // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  true // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service auth {
+	// 账户登录
+	@handler accountLogin
+	post /login (AccountLoginRequest) returns (LoginResponse)
+
+	// 手机号登录
+	@handler phoneLogin
+	post /phone/login (PhoneLoginRequest) returns (LoginResponse)
+
+	// 重置密码
+	@handler resetPassword
+	post /reset/password (ResetPasswordRequest)
+
+	// 微信公众号登录
+	@handler wechatOffiaccountLogin
+	post /wechat/offiaccount/login (WechatOffiaccountLoginRequest) returns (LoginResponse)
+
+	// 获取微信公众号二维码
+	@handler getWechatOffiaccountQrcode
+	post /wechat/offiaccount/qrcode (OAuthWechatRequest) returns (string)
+}
+
+@server (
+	group:      token // 微服务分组
+	prefix:     /api/auth // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  true // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service auth {
+	@handler refreshToken
+	post /token/refresh returns (RefreshTokenResponse)
+}
+
+// 客户端服务
+@server (
+	group:      client // 微服务分组
+	prefix:     /api/client // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service auth {
+	@handler generateClientId
+	get /generate returns (string)
+}
+
+@server (
+	group:  websocket // 微服务分组
+	prefix: /api/ws // 微服务前缀
+)
+service auth {
+	@handler qrcodeWebsocket
+	get /qrcode
+
+	@handler messageWebsocket
+	get /message
+}
+
+@server (
+	group:      oauth // 微服务分组
+	prefix:     /api/oauth // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service auth {
+	@handler getGiteeOauthUrl
+	get /gitee/url returns (string)
+
+	@handler getGithubOauthUrl
+	get /github/url (OAuthRequest) returns (string)
+
+	@handler getQqOauthUrl
+	get /qq/url (OAuthRequest) returns (string)
+
+	@handler giteeCallback
+	get /gitee/callback (OAuthCallbackRequest) returns (string)
+
+	@handler githubCallback
+	get /github/callback (OAuthCallbackRequest) returns (string)
+
+	@handler qqCallback
+	get /qq/callback (OAuthCallbackRequest) returns (string)
+
+	@handler wechatOffiaccountCallback
+	post /wechat/offiaccount/callback
+
+	// important!
+	@handler wechatOffiaccountCallbackVerify
+	get /wechat/offiaccount/callback
+}
+
+@server (
+	group:      sms // 微服务分组
+	prefix:     /api/sms // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service auth {
+	@handler sendSmsByAliyun
+	post /ali/send (SmsSendRequest)
+
+	@handler sendSmsBySmsbao
+	post /smsbao/send (SmsSendRequest)
+
+	@handler sendSmsByTest
+	post /test/send (SmsSendRequest) returns (string)
+}
+
+@server (
+	group:      captcha // 微服务分组
+	prefix:     /api/captcha // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   1048576 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+)
+service auth {
+	@handler generateRotateCaptcha
+	get /rotate/generate returns (RotateCaptchaResponse)
+
+	@handler generateSlideBasicCaptcha
+	get /slide/generate returns (SlideCaptchaResponse)
+}
+
