@@ -13,7 +13,7 @@ import (
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 )
 
-var configFile = flag.String("f", "etc/auth.yaml", "the config file")
+var configFile = flag.String("f", "api/etc/auth.yaml", "the config file")
 
 func main() {
 	flag.Parse()

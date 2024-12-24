@@ -3,7 +3,7 @@ Name: schisandra-auth-service
 # 监听地址
 Host: 0.0.0.0
 # 监听端口
-Port: 8080
+Port: 80
 # 服务的环境，目前我们预定义了 dev。在dev 环境我们会开启反射 dev,test,rt,pre, pro
 Mode: pro
 # 打点上报，将一些 metrics 上报到对应的地址，如果为空，则不上报
@@ -64,6 +64,18 @@ Mysql:
   MaxOpenConn: 10
   # 最大空闲连接数
   MaxIdleConn: 5
+# Mongo 配置
+Mongo:
+  # MongoDB 地址
+  Uri: mongodb://1.95.0.111:27017
+  # MongoDB 用户名
+  Username: landaiqing
+  # MongoDB 密码
+  Password: LDQ20020618xxx
+  # MongoDB 数据库
+  Database: schisandra-cloud-album
+  # MongoDB 认证源
+  AuthSource: admin
 # Auth 配置
 Auth:
   # 访问密钥
@@ -77,7 +89,7 @@ Signature:
   # 签名私钥文件
   PrivateKeys:
     - Fingerprint: idm0jdoau38lwourb4pbjk4dxkat0kcx
-      KeyFile: etc/rsa_private_key.pem
+      KeyFile: api/etc/rsa_private_key.pem
 # 加密配置
 Encrypt:
   # 密钥（32）

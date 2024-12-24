@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/model"
+	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	constant2 "schisandra-album-cloud-microservices/common/constant"
 	errors2 "schisandra-album-cloud-microservices/common/errors"
 	"schisandra-album-cloud-microservices/common/i18n"

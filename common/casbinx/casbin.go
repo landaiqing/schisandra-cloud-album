@@ -20,7 +20,7 @@ func NewCasbin(engine *gorm.DB) *casbin.SyncedCachedEnforcer {
 	if err != nil {
 		panic(err)
 	}
-	path := filepath.Join(cwd, "etc", "rbac_model.conf")
+	path := filepath.Join(cwd, "/api/etc", "rbac_model.conf")
 	modelFile, err := model.NewModelFromFile(path)
 	if err != nil {
 		panic(err)

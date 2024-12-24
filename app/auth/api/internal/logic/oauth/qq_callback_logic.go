@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/model"
+	model2 "schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"strconv"
 	"strings"
@@ -119,7 +119,7 @@ func (l *QqCallbackLogic) QqCallback(r *http.Request, req *types.OAuthCallbackRe
 
 		male := constant.Male
 		avatarUrl := strings.Replace(qqUserInfo.FigureurlQq1, "http://", "https://", 1)
-		addUser := &model.ScaAuthUser{
+		addUser := &model2.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   avatarUrl,
 			Username: authQQme.OpenID,
@@ -133,7 +133,7 @@ func (l *QqCallbackLogic) QqCallback(r *http.Request, req *types.OAuthCallbackRe
 		}
 
 		githubUser := constant.OAuthSourceQQ
-		newSocialUser := &model.ScaAuthUserSocial{
+		newSocialUser := &model2.ScaAuthUserSocial{
 			UserID: uidStr,
 			OpenID: authQQme.OpenID,
 			Source: githubUser,

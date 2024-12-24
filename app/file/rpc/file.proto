@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+package auth;
+option go_package = "./pb";
+
+message AccountLoginRequest {
+  string account = 1;
+  string password = 2;
+  bool auto_login = 3;
+  int64 angle = 4;
+  string key = 5;
+}
+message PhoneLoginRequest {
+  string phone = 1;
+  int64 captcha = 2;
+  bool auto_login = 3;
+}
+message ResetPasswordRequest {
+  string phone = 1;
+  string captcha = 2;
+  string password = 3;
+  string repassword = 4;
+}
+message WechatOffiaccountLoginRequest {
+  string openid = 1;
+  string client_id = 2;
+}
+message GetWechatQrcodeRequest {
+  string client_id = 1;
+}
+message LoginResponse {
+  string access_token = 1;
+  int64 expire_at = 2;
+  string uid = 3;
+  string username = 4;
+  string nickname = 5;
+  string avatar = 6;
+  int64 status = 7;
+}
+message ResetPasswordResponse {
+  bool success = 1;
+}
+message GetWechatQrcodeResponse {
+  string qrcode = 1;
+}
+// The LoginService service definition.
+service LoginService{
+  // AccountLogin
+  rpc AccountLogin (AccountLoginRequest) returns (LoginResponse);
+  // PhoneLogin
+  rpc PhoneLogin (AccountLoginRequest) returns (LoginResponse);
+  // ResetPassword
+  rpc ResetPassword (ResetPasswordRequest) returns (ResetPasswordResponse);
+  // WechatOffiaccountLogin
+  rpc WechatOffiaccountLogin (WechatOffiaccountLoginRequest) returns (LoginResponse);
+  // GetWechatOffiaccountQrcode
+  rpc GetWechatOffiaccountQrcode (GetWechatQrcodeRequest) returns (GetWechatQrcodeResponse);
+}
+
+// The TokenService service definition.
+message TokenRequest {
+  string  uid = 1;
+}
+message RefreshTokenResponse {
+  string access_token = 1;
+  int64 expire_at = 2;
+}
+service TokenService{
+  // RefreshToken
+  rpc RefreshToken (TokenRequest) returns (RefreshTokenResponse);
+}

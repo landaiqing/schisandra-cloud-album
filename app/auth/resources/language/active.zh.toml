@@ -1,0 +1,28 @@
+[captcha]
+verificationFailure = "验证失败！"
+
+[login]
+invalidAccount = "无效的账号！"
+notFoundAccount = "未找到账号！"
+invalidPassword = "密码错误！"
+loginFailed = "登录失败！"
+phoneFormatError = "手机号码格式错误！"
+captchaExpired = "验证码已过期！"
+captchaError = "验证码错误！"
+userNotRegistered = "用户未注册！"
+registerError = "注册失败！"
+passwordNotMatch = "两次输入的密码不一致！"
+passwordFormatError = "密码格式错误！"
+resetPasswordError = "重置密码失败！"
+loginSuccess = "登录成功！"
+
+[sms]
+smsSendTooFrequently = "验证码发送过于频繁，请稍后再试！"
+smsSendFailed = "短信发送失败！"
+smsSendSuccess = "短信发送成功！"
+
+[comment]
+tooManyImages = "图片数量过多，请上传不超过3张！"
+commentError = "评论失败！"
+LikeError = "点赞失败！"
+CancelLikeError = "取消点赞失败！"

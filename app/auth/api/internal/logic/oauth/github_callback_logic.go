@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/model"
+	model2 "schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"strconv"
 
@@ -117,7 +117,7 @@ func (l *GithubCallbackLogic) GithubCallback(r *http.Request, req *types.OAuthCa
 		uidStr := strconv.FormatInt(uid, 10)
 
 		male := constant.Male
-		addUser := &model.ScaAuthUser{
+		addUser := &model2.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   gitHubUser.AvatarURL,
 			Username: gitHubUser.Login,
@@ -133,7 +133,7 @@ func (l *GithubCallbackLogic) GithubCallback(r *http.Request, req *types.OAuthCa
 			return "", err
 		}
 		githubUser := constant.OAuthSourceGithub
-		newSocialUser := &model.ScaAuthUserSocial{
+		newSocialUser := &model2.ScaAuthUserSocial{
 			UserID: uidStr,
 			OpenID: Id,
 			Source: githubUser,

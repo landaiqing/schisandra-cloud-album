@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/model"
+	model2 "schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/xhttp"
 	"strconv"
@@ -119,7 +119,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(r *http.Request, req *types.OAuthCall
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
-		addUser := &model.ScaAuthUser{
+		addUser := &model2.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   giteeUser.AvatarURL,
 			Username: giteeUser.Login,
@@ -134,7 +134,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(r *http.Request, req *types.OAuthCall
 			return "", err
 		}
 		gitee := constant.OAuthSourceGitee
-		newSocialUser := &model.ScaAuthUserSocial{
+		newSocialUser := &model2.ScaAuthUserSocial{
 			UserID: uidStr,
 			OpenID: Id,
 			Source: gitee,
@@ -180,7 +180,7 @@ func (l *GiteeCallbackLogic) GiteeCallback(r *http.Request, req *types.OAuthCall
 }
 
 // HandleOauthLoginResponse 处理登录响应
-func HandleOauthLoginResponse(scaAuthUser *model.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, ctx context.Context) (string, error) {
+func HandleOauthLoginResponse(scaAuthUser *model2.ScaAuthUser, svcCtx *svc.ServiceContext, r *http.Request, ctx context.Context) (string, error) {
 	data, err := user.HandleLoginJWT(scaAuthUser, svcCtx, true, r, ctx)
 	if err != nil {
 		return "", err

@@ -6,8 +6,8 @@ import (
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/mssola/useragent"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/model"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/query"
+	model2 "schisandra-album-cloud-microservices/app/auth/model/mysql/model"
+	query2 "schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"schisandra-album-cloud-microservices/common/captcha/verify"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/errors"
@@ -44,7 +44,7 @@ func (l *AccountLoginLogic) AccountLogin(r *http.Request, req *types.AccountLogi
 	}
 
 	user := l.svcCtx.DB.ScaAuthUser
-	var selectedUser query.IScaAuthUserDo
+	var selectedUser query2.IScaAuthUserDo
 
 	switch {
 	case utils.IsPhone(req.Account):
@@ -75,7 +75,7 @@ func (l *AccountLoginLogic) AccountLogin(r *http.Request, req *types.AccountLogi
 }
 
 // HandleLoginJWT 处理用户登录
-func HandleLoginJWT(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, ctx context.Context) (*types.LoginResponse, error) {
+func HandleLoginJWT(user *model2.ScaAuthUser, svcCtx *svc.ServiceContext, autoLogin bool, r *http.Request, ctx context.Context) (*types.LoginResponse, error) {
 	// 获取用户登录设备
 	err := GetUserLoginDevice(user.UID, r, svcCtx.Ip2Region, svcCtx.DB)
 	if err != nil {
@@ -124,7 +124,7 @@ func HandleLoginJWT(user *model.ScaAuthUser, svcCtx *svc.ServiceContext, autoLog
 }
 
 // GetUserLoginDevice 获取用户登录设备
-func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searcher, DB *query.Query) error {
+func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searcher, DB *query2.Query) error {
 	userAgent := r.UserAgent()
 	if userAgent == "" {
 		return errors2.New("user agent not found")
@@ -157,7 +157,7 @@ func GetUserLoginDevice(userId string, r *http.Request, ip2location *xdb.Searche
 	if err != nil && !errors2.Is(err, gorm.ErrRecordNotFound) {
 		return err
 	}
-	newDevice := &model.ScaAuthUserDevice{
+	newDevice := &model2.ScaAuthUserDevice{
 		UserID:          userId,
 		Bot:             newIsBot,
 		Agent:           userAgent,

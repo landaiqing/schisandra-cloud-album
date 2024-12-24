@@ -6,7 +6,7 @@ import (
 	"github.com/yitter/idgenerator-go/idgen"
 	"gorm.io/gorm"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/model/mysql/model"
+	model2 "schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	errors2 "schisandra-album-cloud-microservices/common/errors"
@@ -61,7 +61,7 @@ func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, re
 		avatar := utils.GenerateAvatar(uidStr)
 		name := randomname.GenerateName()
 
-		addUser := &model.ScaAuthUser{
+		addUser := &model2.ScaAuthUser{
 			UID:      uidStr,
 			Avatar:   avatar,
 			Username: Openid,
@@ -74,7 +74,7 @@ func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, re
 			return nil, err
 		}
 
-		newSocialUser := &model.ScaAuthUserSocial{
+		newSocialUser := &model2.ScaAuthUserSocial{
 			UserID: uidStr,
 			OpenID: Openid,
 			Source: constant.OAuthSourceWechat,
