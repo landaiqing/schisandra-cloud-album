@@ -1,6 +1,6 @@
 # to build this docker image:
-#   docker build -f Dockerfile -t schisandra-cloud-album-server .
-#   docker build --build-arg OPENCV_VERSION="4.x" --build-arg OPENCV_FILE="https://github.com/opencv/opencv/archive/refs/heads/4.x.zip" --build-arg OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/refs/heads/4.x.zip" -f Dockerfile -t schisandra-cloud-album-server .
+#   docker build -f opencv.Dockerfile -t schisandra-cloud-album-server .
+#   docker build --build-arg OPENCV_VERSION="4.x" --build-arg OPENCV_FILE="https://github.com/opencv/opencv/archive/refs/heads/4.x.zip" --build-arg OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/refs/heads/4.x.zip" -f opencv.Dockerfile -t schisandra-cloud-album-server .
 
 FROM ubuntu:20.04 AS opencv-builder
 

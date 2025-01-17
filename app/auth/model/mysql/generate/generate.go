@@ -11,7 +11,7 @@ import (
 	"gorm.io/gorm"
 )
 
-const MySQLDSN = "root:1611@(localhost:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local"
+const MySQLDSN = "root:LDQ20020618xxx@tcp(1.95.0.111:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local"
 
 func main() {
 
@@ -25,7 +25,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	path := filepath.Join(dir, "app/auth/api/repository/mysql/", "query")
+	path := filepath.Join(dir, "app/auth/model/mysql/", "query")
 	// 生成实例
 	g := gen.NewGenerator(gen.Config{
 		// 相对执行`go run`时的路径, 会自动创建目录

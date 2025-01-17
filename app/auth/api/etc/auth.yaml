@@ -96,6 +96,8 @@ Encrypt:
   Key: p3380puliiep184buh8d5dvujeerqtem
   # 向量 (16)
   IV: spb7er04k2vz3dtk
+  PublicKey: api/etc/rsa_public_key.pem
+  PrivateKey: api/etc/rsa_private_key.pem
 # Redis 配置
 Redis:
   # Redis 地址

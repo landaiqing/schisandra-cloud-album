@@ -12,6 +12,7 @@ import (
 	comment "schisandra-album-cloud-microservices/app/auth/api/internal/handler/comment"
 	oauth "schisandra-album-cloud-microservices/app/auth/api/internal/handler/oauth"
 	sms "schisandra-album-cloud-microservices/app/auth/api/internal/handler/sms"
+	storage "schisandra-album-cloud-microservices/app/auth/api/internal/handler/storage"
 	token "schisandra-album-cloud-microservices/app/auth/api/internal/handler/token"
 	upscale "schisandra-album-cloud-microservices/app/auth/api/internal/handler/upscale"
 	user "schisandra-album-cloud-microservices/app/auth/api/internal/handler/user"
@@ -185,6 +186,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.AuthorizationMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/config",
+					Handler: storage.SetStorageConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/uploads",
+					Handler: storage.UploadFileHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/auth/storage"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(104857600),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
@@ -206,7 +229,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
-					Path:    "/upload",
+					Path:    "/phone/upload",
 					Handler: upscale.UploadImageHandler(serverCtx),
 				},
 			}...,

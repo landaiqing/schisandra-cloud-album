@@ -97,11 +97,11 @@ func (l *WechatOffiaccountCallbackLogic) WechatOffiaccountCallback(r *http.Reque
 
 // SendMessage 发送消息到客户端
 func (l *WechatOffiaccountCallbackLogic) SendMessage(openId string, clientId string) error {
-	encryptClientId, err := encrypt.Encrypt(clientId, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	encryptClientId, err := encrypt.Encrypt(clientId, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
 		return err
 	}
-	encryptOpenId, err := encrypt.Encrypt(openId, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	encryptOpenId, err := encrypt.Encrypt(openId, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
 		return err
 	}

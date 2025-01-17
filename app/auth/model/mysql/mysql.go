@@ -3,6 +3,7 @@ package mysql
 import (
 	"log"
 	"os"
+	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"time"
 
@@ -39,6 +40,8 @@ func NewMySQL(url string, maxOpenConn int, maxIdleConn int, client *redis.Client
 	sqlDB.SetMaxOpenConns(maxOpenConn)
 	sqlDB.SetMaxIdleConns(maxIdleConn)
 	useDB := query.Use(db)
+	// migrate
+	Migrate(db)
 	// cache
 	gormCache, err := cache.NewGorm2Cache(&config.CacheConfig{
 		CacheLevel: config.CacheLevelAll,
@@ -62,4 +65,27 @@ func NewMySQL(url string, maxOpenConn int, maxIdleConn int, client *redis.Client
 	}
 
 	return db, useDB
+}
+
+func Migrate(db *gorm.DB) {
+	err := db.AutoMigrate(
+		&model.ScaAuthUser{},
+		&model.ScaAuthRole{},
+		&model.ScaAuthPermissionRule{},
+		&model.ScaAuthMenu{},
+		&model.ScaAuthUserDevice{},
+		&model.ScaAuthUserSocial{},
+		&model.ScaCommentLike{},
+		&model.ScaCommentReply{},
+		&model.ScaStorageInfo{},
+		&model.ScaStorageTag{},
+		&model.ScaStorageTagInfo{},
+		&model.ScaMessageReport{},
+		&model.ScaStorageConfig{},
+		&model.ScaUserFollow{},
+		&model.ScaUserLevel{},
+		&model.ScaUserMessage{})
+	if err != nil {
+		panic(err)
+	}
 }

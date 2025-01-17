@@ -6,15 +6,17 @@ package query
 
 import (
 	"context"
+
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"gorm.io/gorm/schema"
-	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 
 	"gorm.io/gen"
 	"gorm.io/gen/field"
 
 	"gorm.io/plugin/dbresolver"
+
+	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 )
 
 func newScaAuthUserSocial(db *gorm.DB, opts ...gen.DOOption) scaAuthUserSocial {

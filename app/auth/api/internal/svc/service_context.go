@@ -20,6 +20,8 @@ import (
 	"schisandra-album-cloud-microservices/common/ip2region"
 	"schisandra-album-cloud-microservices/common/redisx"
 	"schisandra-album-cloud-microservices/common/sensitivex"
+	"schisandra-album-cloud-microservices/common/storage"
+	storage2 "schisandra-album-cloud-microservices/common/storage/manager"
 	"schisandra-album-cloud-microservices/common/wechat_official"
 )
 
@@ -38,6 +40,7 @@ type ServiceContext struct {
 	RotateCaptcha             rotate.Captcha
 	SlideCaptcha              slide.Captcha
 	Sensitive                 *sensitive.Manager
+	StorageManager            *storage2.Manager
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -59,5 +62,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SlideCaptcha:              initialize.NewSlideCaptcha(),
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),
 		Sensitive:                 sensitivex.NewSensitive(),
+		StorageManager:            storage.InitStorageManager(),
 	}
 }

@@ -15,27 +15,27 @@ const TableNameScaCommentReply = "sca_comment_reply"
 
 // ScaCommentReply mapped from table <sca_comment_reply>
 type ScaCommentReply struct {
-	ID              int64                  `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;uniqueIndex:id,priority:1;comment:主键id;primary_key" json:"id,string"` // 主键id
-	UserID          string                 `gorm:"column:user_id;type:varchar(50);not null;comment:评论用户id" json:"user_id"`                                                  // 评论用户id
-	TopicID         string                 `gorm:"column:topic_id;type:varchar(50);comment:评论话题id" json:"topic_id"`                                                         // 评论话题id
-	TopicType       int64                  `gorm:"column:topic_type;type:tinyint;comment:话题类型" json:"topic_type"`                                                           // 话题类型
-	Content         string                 `gorm:"column:content;type:text;comment:评论内容" json:"content"`                                                                    // 评论内容
-	CommentType     int64                  `gorm:"column:comment_type;type:bigint;comment:评论类型 0评论 1 回复" json:"comment_type"`                                               // 评论类型 0评论 1 回复
-	ReplyTo         int64                  `gorm:"column:reply_to;type:bigint;comment:回复子评论ID" json:"reply_to"`                                                             // 回复子评论ID
-	ReplyID         int64                  `gorm:"column:reply_id;type:bigint;comment:回复父评论Id" json:"reply_id"`                                                             // 回复父评论Id
-	ReplyUser       string                 `gorm:"column:reply_user;type:varchar(50);comment:回复人id" json:"reply_user"`                                                      // 回复人id
-	Author          int64                  `gorm:"column:author;type:tinyint;comment:评论回复是否作者  0否 1是" json:"author"`                                                        // 评论回复是否作者  0否 1是
-	Likes           int64                  `gorm:"column:likes;type:bigint;comment:点赞数" json:"likes"`                                                                       // 点赞数
-	ReplyCount      int64                  `gorm:"column:reply_count;type:bigint;comment:回复数量" json:"reply_count"`                                                          // 回复数量
-	Browser         string                 `gorm:"column:browser;type:varchar(50);comment:浏览器" json:"browser"`                                                              // 浏览器
-	OperatingSystem string                 `gorm:"column:operating_system;type:varchar(50);comment:操作系统" json:"operating_system"`                                           // 操作系统
-	CommentIP       string                 `gorm:"column:comment_ip;type:varchar(50);comment:IP地址" json:"comment_ip"`                                                       // IP地址
-	Location        string                 `gorm:"column:location;type:varchar(50);comment:地址" json:"location"`                                                             // 地址
-	Agent           string                 `gorm:"column:agent;type:varchar(255);comment:设备信息" json:"agent"`                                                                // 设备信息
-	CreatedAt       time.Time              `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                                          // 创建时间
-	UpdatedAt       time.Time              `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                                          // 更新时间
-	Version         optimisticlock.Version `gorm:"column:version;type:bigint;comment:版本" json:"version"`                                                                    // 版本
-	DeletedAt       gorm.DeletedAt         `gorm:"column:deleted_at;type:datetime;comment:删除时间" json:"deleted_at"`                                                          // 删除时间
+	ID              int64                  `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;uniqueIndex:id,priority:1;comment:主键id;primary_key" json:"id,string"` // 主键id
+	UserID          string                 `gorm:"column:user_id;type:varchar(50);not null;comment:评论用户id" json:"user_id"`                                                      // 评论用户id
+	TopicID         string                 `gorm:"column:topic_id;type:varchar(50);comment:评论话题id" json:"topic_id"`                                                             // 评论话题id
+	TopicType       int64                  `gorm:"column:topic_type;type:tinyint(4);comment:话题类型" json:"topic_type"`                                                            // 话题类型
+	Content         string                 `gorm:"column:content;type:text;comment:评论内容" json:"content"`                                                                        // 评论内容
+	CommentType     int64                  `gorm:"column:comment_type;type:bigint(20);comment:评论类型 0评论 1 回复" json:"comment_type"`                                               // 评论类型 0评论 1 回复
+	ReplyTo         int64                  `gorm:"column:reply_to;type:bigint(20);comment:回复子评论ID" json:"reply_to"`                                                             // 回复子评论ID
+	ReplyID         int64                  `gorm:"column:reply_id;type:bigint(20);comment:回复父评论Id" json:"reply_id"`                                                             // 回复父评论Id
+	ReplyUser       string                 `gorm:"column:reply_user;type:varchar(50);comment:回复人id" json:"reply_user"`                                                          // 回复人id
+	Author          int64                  `gorm:"column:author;type:tinyint(4);comment:评论回复是否作者  0否 1是" json:"author"`                                                         // 评论回复是否作者  0否 1是
+	Likes           int64                  `gorm:"column:likes;type:bigint(20);comment:点赞数" json:"likes"`                                                                       // 点赞数
+	ReplyCount      int64                  `gorm:"column:reply_count;type:bigint(20);comment:回复数量" json:"reply_count"`                                                          // 回复数量
+	Browser         string                 `gorm:"column:browser;type:varchar(50);comment:浏览器" json:"browser"`                                                                  // 浏览器
+	OperatingSystem string                 `gorm:"column:operating_system;type:varchar(50);comment:操作系统" json:"operating_system"`                                               // 操作系统
+	CommentIP       string                 `gorm:"column:comment_ip;type:varchar(50);comment:IP地址" json:"comment_ip"`                                                           // IP地址
+	Location        string                 `gorm:"column:location;type:varchar(50);comment:地址" json:"location"`                                                                 // 地址
+	Agent           string                 `gorm:"column:agent;type:varchar(255);comment:设备信息" json:"agent"`                                                                    // 设备信息
+	CreatedAt       time.Time              `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                                              // 创建时间
+	UpdatedAt       time.Time              `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                                              // 更新时间
+	Version         optimisticlock.Version `gorm:"column:version;type:bigint(20);comment:版本" json:"version"`                                                                    // 版本
+	DeletedAt       gorm.DeletedAt         `gorm:"column:deleted_at;type:datetime;comment:删除时间" json:"deleted_at"`                                                              // 删除时间
 }
 
 // TableName ScaCommentReply's table name

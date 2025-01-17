@@ -414,6 +414,40 @@ type (
 )
 service auth {
 	@handler uploadImage
-	post /upload (UploadRequest)
+	post /phone/upload (UploadRequest)
+}
+
+// 文件上传配置请求参数
+type (
+	StorageConfigRequest {
+		Type      string `json:"type"`
+		AccessKey string `json:"access_key"`
+		SecretKey string `json:"secret_key"`
+		Endpoint  string `json:"endpoint"`
+		Bucket    string `json:"bucket"`
+		Region    string `json:"region"`
+	}
+)
+
+// 文件上传
+@server (
+	group:      storage // 微服务分组
+	prefix:     /api/auth/storage // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   104857600 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,AuthorizationMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+	jwt:        Auth // 是否开启jwt验证
+)
+service auth {
+	// 上传文件
+	@handler uploadFile
+	post /uploads returns (string)
+
+	// 设置存储配置
+	@handler setStorageConfig
+	post /config (StorageConfigRequest) returns (string)
 }
 

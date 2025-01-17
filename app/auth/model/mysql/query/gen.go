@@ -25,11 +25,11 @@ var (
 	ScaAuthUserSocial     *scaAuthUserSocial
 	ScaCommentLike        *scaCommentLike
 	ScaCommentReply       *scaCommentReply
-	ScaFileFolder         *scaFileFolder
-	ScaFileInfo           *scaFileInfo
-	ScaFileRecycle        *scaFileRecycle
-	ScaFileType           *scaFileType
 	ScaMessageReport      *scaMessageReport
+	ScaStorageConfig      *scaStorageConfig
+	ScaStorageInfo        *scaStorageInfo
+	ScaStorageTag         *scaStorageTag
+	ScaStorageTagInfo     *scaStorageTagInfo
 	ScaUserFollow         *scaUserFollow
 	ScaUserLevel          *scaUserLevel
 	ScaUserMessage        *scaUserMessage
@@ -45,11 +45,11 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaAuthUserSocial = &Q.ScaAuthUserSocial
 	ScaCommentLike = &Q.ScaCommentLike
 	ScaCommentReply = &Q.ScaCommentReply
-	ScaFileFolder = &Q.ScaFileFolder
-	ScaFileInfo = &Q.ScaFileInfo
-	ScaFileRecycle = &Q.ScaFileRecycle
-	ScaFileType = &Q.ScaFileType
 	ScaMessageReport = &Q.ScaMessageReport
+	ScaStorageConfig = &Q.ScaStorageConfig
+	ScaStorageInfo = &Q.ScaStorageInfo
+	ScaStorageTag = &Q.ScaStorageTag
+	ScaStorageTagInfo = &Q.ScaStorageTagInfo
 	ScaUserFollow = &Q.ScaUserFollow
 	ScaUserLevel = &Q.ScaUserLevel
 	ScaUserMessage = &Q.ScaUserMessage
@@ -66,11 +66,11 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaAuthUserSocial:     newScaAuthUserSocial(db, opts...),
 		ScaCommentLike:        newScaCommentLike(db, opts...),
 		ScaCommentReply:       newScaCommentReply(db, opts...),
-		ScaFileFolder:         newScaFileFolder(db, opts...),
-		ScaFileInfo:           newScaFileInfo(db, opts...),
-		ScaFileRecycle:        newScaFileRecycle(db, opts...),
-		ScaFileType:           newScaFileType(db, opts...),
 		ScaMessageReport:      newScaMessageReport(db, opts...),
+		ScaStorageConfig:      newScaStorageConfig(db, opts...),
+		ScaStorageInfo:        newScaStorageInfo(db, opts...),
+		ScaStorageTag:         newScaStorageTag(db, opts...),
+		ScaStorageTagInfo:     newScaStorageTagInfo(db, opts...),
 		ScaUserFollow:         newScaUserFollow(db, opts...),
 		ScaUserLevel:          newScaUserLevel(db, opts...),
 		ScaUserMessage:        newScaUserMessage(db, opts...),
@@ -88,11 +88,11 @@ type Query struct {
 	ScaAuthUserSocial     scaAuthUserSocial
 	ScaCommentLike        scaCommentLike
 	ScaCommentReply       scaCommentReply
-	ScaFileFolder         scaFileFolder
-	ScaFileInfo           scaFileInfo
-	ScaFileRecycle        scaFileRecycle
-	ScaFileType           scaFileType
 	ScaMessageReport      scaMessageReport
+	ScaStorageConfig      scaStorageConfig
+	ScaStorageInfo        scaStorageInfo
+	ScaStorageTag         scaStorageTag
+	ScaStorageTagInfo     scaStorageTagInfo
 	ScaUserFollow         scaUserFollow
 	ScaUserLevel          scaUserLevel
 	ScaUserMessage        scaUserMessage
@@ -111,11 +111,11 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaAuthUserSocial:     q.ScaAuthUserSocial.clone(db),
 		ScaCommentLike:        q.ScaCommentLike.clone(db),
 		ScaCommentReply:       q.ScaCommentReply.clone(db),
-		ScaFileFolder:         q.ScaFileFolder.clone(db),
-		ScaFileInfo:           q.ScaFileInfo.clone(db),
-		ScaFileRecycle:        q.ScaFileRecycle.clone(db),
-		ScaFileType:           q.ScaFileType.clone(db),
 		ScaMessageReport:      q.ScaMessageReport.clone(db),
+		ScaStorageConfig:      q.ScaStorageConfig.clone(db),
+		ScaStorageInfo:        q.ScaStorageInfo.clone(db),
+		ScaStorageTag:         q.ScaStorageTag.clone(db),
+		ScaStorageTagInfo:     q.ScaStorageTagInfo.clone(db),
 		ScaUserFollow:         q.ScaUserFollow.clone(db),
 		ScaUserLevel:          q.ScaUserLevel.clone(db),
 		ScaUserMessage:        q.ScaUserMessage.clone(db),
@@ -141,11 +141,11 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaAuthUserSocial:     q.ScaAuthUserSocial.replaceDB(db),
 		ScaCommentLike:        q.ScaCommentLike.replaceDB(db),
 		ScaCommentReply:       q.ScaCommentReply.replaceDB(db),
-		ScaFileFolder:         q.ScaFileFolder.replaceDB(db),
-		ScaFileInfo:           q.ScaFileInfo.replaceDB(db),
-		ScaFileRecycle:        q.ScaFileRecycle.replaceDB(db),
-		ScaFileType:           q.ScaFileType.replaceDB(db),
 		ScaMessageReport:      q.ScaMessageReport.replaceDB(db),
+		ScaStorageConfig:      q.ScaStorageConfig.replaceDB(db),
+		ScaStorageInfo:        q.ScaStorageInfo.replaceDB(db),
+		ScaStorageTag:         q.ScaStorageTag.replaceDB(db),
+		ScaStorageTagInfo:     q.ScaStorageTagInfo.replaceDB(db),
 		ScaUserFollow:         q.ScaUserFollow.replaceDB(db),
 		ScaUserLevel:          q.ScaUserLevel.replaceDB(db),
 		ScaUserMessage:        q.ScaUserMessage.replaceDB(db),
@@ -161,11 +161,11 @@ type queryCtx struct {
 	ScaAuthUserSocial     IScaAuthUserSocialDo
 	ScaCommentLike        IScaCommentLikeDo
 	ScaCommentReply       IScaCommentReplyDo
-	ScaFileFolder         IScaFileFolderDo
-	ScaFileInfo           IScaFileInfoDo
-	ScaFileRecycle        IScaFileRecycleDo
-	ScaFileType           IScaFileTypeDo
 	ScaMessageReport      IScaMessageReportDo
+	ScaStorageConfig      IScaStorageConfigDo
+	ScaStorageInfo        IScaStorageInfoDo
+	ScaStorageTag         IScaStorageTagDo
+	ScaStorageTagInfo     IScaStorageTagInfoDo
 	ScaUserFollow         IScaUserFollowDo
 	ScaUserLevel          IScaUserLevelDo
 	ScaUserMessage        IScaUserMessageDo
@@ -181,11 +181,11 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaAuthUserSocial:     q.ScaAuthUserSocial.WithContext(ctx),
 		ScaCommentLike:        q.ScaCommentLike.WithContext(ctx),
 		ScaCommentReply:       q.ScaCommentReply.WithContext(ctx),
-		ScaFileFolder:         q.ScaFileFolder.WithContext(ctx),
-		ScaFileInfo:           q.ScaFileInfo.WithContext(ctx),
-		ScaFileRecycle:        q.ScaFileRecycle.WithContext(ctx),
-		ScaFileType:           q.ScaFileType.WithContext(ctx),
 		ScaMessageReport:      q.ScaMessageReport.WithContext(ctx),
+		ScaStorageConfig:      q.ScaStorageConfig.WithContext(ctx),
+		ScaStorageInfo:        q.ScaStorageInfo.WithContext(ctx),
+		ScaStorageTag:         q.ScaStorageTag.WithContext(ctx),
+		ScaStorageTagInfo:     q.ScaStorageTagInfo.WithContext(ctx),
 		ScaUserFollow:         q.ScaUserFollow.WithContext(ctx),
 		ScaUserLevel:          q.ScaUserLevel.WithContext(ctx),
 		ScaUserMessage:        q.ScaUserMessage.WithContext(ctx),

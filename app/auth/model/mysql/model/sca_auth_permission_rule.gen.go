@@ -8,7 +8,7 @@ const TableNameScaAuthPermissionRule = "sca_auth_permission_rule"
 
 // ScaAuthPermissionRule mapped from table <sca_auth_permission_rule>
 type ScaAuthPermissionRule struct {
-	ID    int64  `gorm:"column:id;type:int;primaryKey;autoIncrement:true;primary_key" json:"id,string"`
+	ID    int64  `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true;primary_key" json:"id,string"`
 	Ptype string `gorm:"column:ptype;type:varchar(100);uniqueIndex:idx_sca_auth_permission_rule,priority:1;index:IDX_sca_auth_permission_rule_ptype,priority:1" json:"ptype"`
 	V0    string `gorm:"column:v0;type:varchar(100);uniqueIndex:idx_sca_auth_permission_rule,priority:2;index:IDX_sca_auth_permission_rule_v0,priority:1" json:"v0"`
 	V1    string `gorm:"column:v1;type:varchar(100);uniqueIndex:idx_sca_auth_permission_rule,priority:3;index:IDX_sca_auth_permission_rule_v1,priority:1" json:"v1"`

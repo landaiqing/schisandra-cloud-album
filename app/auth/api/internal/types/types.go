@@ -174,6 +174,15 @@ type SmsSendRequest struct {
 	Key   string `json:"key"`
 }
 
+type StorageConfigRequest struct {
+	Type      string `json:"type"`
+	AccessKey string `json:"access_key"`
+	SecretKey string `json:"secret_key"`
+	Endpoint  string `json:"endpoint"`
+	Bucket    string `json:"bucket"`
+	Region    string `json:"region"`
+}
+
 type UploadRequest struct {
 	Image       string `json:"image"`
 	AccessToken string `json:"access_token"`

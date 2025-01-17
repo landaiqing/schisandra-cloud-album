@@ -1,99 +1,82 @@
 package encrypt
 
 import (
-	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
+	"crypto/rand"
 	"encoding/base64"
+	"errors"
+	"io"
 )
 
-// AEC/CBC/PKCS7Padding 加密解密
+// Encrypt 使用 AES-GCM 模式加密
+func Encrypt(plainText string, key string) (string, error) {
+	// 转换 key 为字节数组
+	keyBytes := []byte(key)
 
-// Encrypt 加密
-//
-// plainText: 加密目标字符串
-// key: 加密Key
-// iv: 加密iv(AES时固定为16位)
-func Encrypt(plainText string, key string, iv string) (string, error) {
-	data, err := aesCBCEncrypt([]byte(plainText), []byte(key), []byte(iv))
+	// 创建 AES block
+	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
 		return "", err
 	}
 
-	return base64.StdEncoding.EncodeToString(data), nil
+	// 创建 GCM 实例
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		return "", err
+	}
+
+	// 生成随机 nonce
+	nonce := make([]byte, aesGCM.NonceSize())
+	if _, err = io.ReadFull(rand.Reader, nonce); err != nil {
+		return "", err
+	}
+
+	// 加密明文
+	cipherText := aesGCM.Seal(nil, nonce, []byte(plainText), nil)
+
+	// 将 nonce 和密文拼接后进行 Base64 编码
+	result := append(nonce, cipherText...)
+	return base64.StdEncoding.EncodeToString(result), nil
 }
 
-// Decrypt 解密
-//
-// cipherText: 解密目标字符串
-// key: 加密Key
-// iv: 加密iv(AES时固定为16位)
-func Decrypt(cipherText string, key string, iv string) (string, error) {
+// Decrypt 使用 AES-GCM 模式解密
+func Decrypt(cipherText string, key string) (string, error) {
+	// 转换 key 为字节数组
+	keyBytes := []byte(key)
+
+	// Base64 解码密文
 	data, err := base64.StdEncoding.DecodeString(cipherText)
 	if err != nil {
 		return "", err
 	}
 
-	dnData, err := aesCBCDecrypt(data, []byte(key), []byte(iv))
+	// 创建 AES block
+	block, err := aes.NewCipher(keyBytes)
 	if err != nil {
 		return "", err
 	}
 
-	return string(dnData), nil
-}
-
-// aesCBCEncrypt AES/CBC/PKCS7Padding 加密
-func aesCBCEncrypt(plaintext []byte, key []byte, iv []byte) ([]byte, error) {
-	// AES
-	block, err := aes.NewCipher(key)
+	// 创建 GCM 实例
+	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	// PKCS7 填充
-	plaintext = paddingPKCS7(plaintext, aes.BlockSize)
+	// 检查数据长度是否足够
+	nonceSize := aesGCM.NonceSize()
+	if len(data) < nonceSize {
+		return "", errors.New("cipherText too short")
+	}
 
-	// CBC 加密
-	mode := cipher.NewCBCEncrypter(block, iv)
-	mode.CryptBlocks(plaintext, plaintext)
+	// 分离 nonce 和密文
+	nonce, cipherTextBytes := data[:nonceSize], data[nonceSize:]
 
-	return plaintext, nil
-}
-
-// aesCBCDecrypt AES/CBC/PKCS7Padding 解密
-func aesCBCDecrypt(ciphertext []byte, key []byte, iv []byte) ([]byte, error) {
-	// AES
-	block, err := aes.NewCipher(key)
+	// 解密密文
+	plainText, err := aesGCM.Open(nil, nonce, cipherTextBytes, nil)
 	if err != nil {
-		panic(err)
+		return "", err
 	}
 
-	if len(ciphertext)%aes.BlockSize != 0 {
-		panic("ciphertext is not a multiple of the block size")
-	}
-
-	// CBC 解密
-	mode := cipher.NewCBCDecrypter(block, iv)
-	mode.CryptBlocks(ciphertext, ciphertext)
-
-	// PKCS7 反填充
-	result := unPaddingPKCS7(ciphertext)
-	return result, nil
-}
-
-// PKCS7 填充
-func paddingPKCS7(plaintext []byte, blockSize int) []byte {
-	paddingSize := blockSize - len(plaintext)%blockSize
-	paddingText := bytes.Repeat([]byte{byte(paddingSize)}, paddingSize)
-	return append(plaintext, paddingText...)
-}
-
-// PKCS7 反填充
-func unPaddingPKCS7(s []byte) []byte {
-	length := len(s)
-	if length == 0 {
-		return s
-	}
-	unPadding := int(s[length-1])
-	return s[:(length - unPadding)]
+	return string(plainText), nil
 }

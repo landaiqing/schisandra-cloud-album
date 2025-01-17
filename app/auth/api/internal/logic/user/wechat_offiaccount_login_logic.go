@@ -36,7 +36,7 @@ func NewWechatOffiaccountLoginLogic(ctx context.Context, svcCtx *svc.ServiceCont
 }
 
 func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, req *types.WechatOffiaccountLoginRequest) (resp *types.LoginResponse, err error) {
-	decryptedClientId, err := encrypt.Decrypt(req.ClientId, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	decryptedClientId, err := encrypt.Decrypt(req.ClientId, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +44,7 @@ func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, re
 	if clientId == "" {
 		return nil, errors2.New(http.StatusUnauthorized, i18n.FormatText(l.ctx, "login.loginFailed"))
 	}
-	Openid, err := encrypt.Decrypt(req.Openid, l.svcCtx.Config.Encrypt.Key, l.svcCtx.Config.Encrypt.IV)
+	Openid, err := encrypt.Decrypt(req.Openid, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
 		return nil, err
 	}

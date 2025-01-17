@@ -14,15 +14,15 @@ const TableNameScaMessageReport = "sca_message_report"
 
 // ScaMessageReport mapped from table <sca_message_report>
 type ScaMessageReport struct {
-	ID            int64          `gorm:"column:id;type:bigint;primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`              // 主键
+	ID            int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`          // 主键
 	UserID        string         `gorm:"column:user_id;type:varchar(20);comment:用户Id" json:"user_id"`                                              // 用户Id
-	Type          int64          `gorm:"column:type;type:tinyint;comment:举报类型 0评论 1 相册" json:"type"`                                               // 举报类型 0评论 1 相册
-	CommentID     int64          `gorm:"column:comment_id;type:bigint;comment:评论Id" json:"comment_id"`                                             // 评论Id
+	Type          int64          `gorm:"column:type;type:tinyint(4);comment:举报类型 0评论 1 相册" json:"type"`                                            // 举报类型 0评论 1 相册
+	CommentID     int64          `gorm:"column:comment_id;type:bigint(20);comment:评论Id" json:"comment_id"`                                         // 评论Id
 	TopicID       string         `gorm:"column:topic_id;type:varchar(20);comment:话题Id" json:"topic_id"`                                            // 话题Id
-	ReportType    int64          `gorm:"column:report_type;type:tinyint;comment:举报" json:"report_type"`                                            // 举报
+	ReportType    int64          `gorm:"column:report_type;type:tinyint(4);comment:举报" json:"report_type"`                                         // 举报
 	ReportContent string         `gorm:"column:report_content;type:text;comment:举报说明内容" json:"report_content"`                                     // 举报说明内容
 	ReportTag     string         `gorm:"column:report_tag;type:varchar(255);comment:举报标签" json:"report_tag"`                                       // 举报标签
-	Status        int64          `gorm:"column:status;type:tinyint;comment:状态（0 未处理 1 已处理）" json:"status"`                                         // 状态（0 未处理 1 已处理）
+	Status        int64          `gorm:"column:status;type:tinyint(4);comment:状态（0 未处理 1 已处理）" json:"status"`                                      // 状态（0 未处理 1 已处理）
 	CreatedAt     *time.Time     `gorm:"column:created_at;type:timestamp;default:CURRENT_TIMESTAMP;autoCreateTime;comment:创建时间" json:"created_at"` // 创建时间
 	UpdatedAt     *time.Time     `gorm:"column:updated_at;type:timestamp;default:CURRENT_TIMESTAMP;autoUpdateTime;comment:更新时间" json:"updated_at"` // 更新时间
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                          // 删除时间
