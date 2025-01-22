@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ai;
+option go_package = "./pb";
+
+
+
+message FaceRecognitionRequest {
+  bytes  face = 1;
+  string user_id = 2;
+}
+message FaceRecognitionResponse {
+  int64 face_id = 1;
+}
+service AiService {
+  // FaceRecognition
+  rpc FaceRecognition (FaceRecognitionRequest) returns (FaceRecognitionResponse);
+}

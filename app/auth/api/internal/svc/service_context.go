@@ -8,8 +8,10 @@ import (
 	"github.com/wenlng/go-captcha/v2/rotate"
 	"github.com/wenlng/go-captcha/v2/slide"
 	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/zrpc"
 	sensitive "github.com/zmexing/go-sensitive-word"
 	"go.mongodb.org/mongo-driver/v2/mongo"
+	"schisandra-album-cloud-microservices/app/aisvc/rpc/client/aiservice"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/config"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/middleware"
 	"schisandra-album-cloud-microservices/app/auth/model/mongodb"
@@ -17,16 +19,18 @@ import (
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"schisandra-album-cloud-microservices/common/captcha/initialize"
 	"schisandra-album-cloud-microservices/common/casbinx"
+	"schisandra-album-cloud-microservices/common/gao_map"
 	"schisandra-album-cloud-microservices/common/ip2region"
 	"schisandra-album-cloud-microservices/common/redisx"
 	"schisandra-album-cloud-microservices/common/sensitivex"
 	"schisandra-album-cloud-microservices/common/storage"
-	storage2 "schisandra-album-cloud-microservices/common/storage/manager"
+	"schisandra-album-cloud-microservices/common/storage/manager"
 	"schisandra-album-cloud-microservices/common/wechat_official"
 )
 
 type ServiceContext struct {
 	Config                    config.Config
+	AiSvcRpc                  aiservice.AiService
 	SecurityHeadersMiddleware rest.Middleware
 	CasbinVerifyMiddleware    rest.Middleware
 	AuthorizationMiddleware   rest.Middleware
@@ -40,7 +44,8 @@ type ServiceContext struct {
 	RotateCaptcha             rotate.Captcha
 	SlideCaptcha              slide.Captcha
 	Sensitive                 *sensitive.Manager
-	StorageManager            *storage2.Manager
+	StorageManager            *manager.Manager
+	GaoMap                    *gao_map.AmapClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -63,5 +68,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MongoClient:               mongodb.NewMongoDB(c.Mongo.Uri, c.Mongo.Username, c.Mongo.Password, c.Mongo.AuthSource, c.Mongo.Database),
 		Sensitive:                 sensitivex.NewSensitive(),
 		StorageManager:            storage.InitStorageManager(),
+		GaoMap:                    gao_map.NewAmapClient(c.Map.Key, ""),
+		AiSvcRpc:                  aiservice.NewAiService(zrpc.MustNewClient(c.AiSvcRpc)),
 	}
 }

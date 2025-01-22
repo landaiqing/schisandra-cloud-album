@@ -13,3 +13,7 @@ const (
 const (
 	SystemApiNoncePrefix = "system:nonce:"
 )
+
+const (
+	FaceSamplePrefix = "face:sample:"
+)

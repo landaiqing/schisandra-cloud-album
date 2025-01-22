@@ -73,7 +73,7 @@ func (l *RefreshTokenLogic) RefreshToken(r *http.Request) (resp *types.RefreshTo
 		GeneratedIP:  redisTokenData.GeneratedIP,
 		UpdatedAt:    time.Now().Format(constant.TimeFormat),
 	}
-	err = l.svcCtx.RedisClient.Set(l.ctx, constant.UserTokenPrefix+refreshToken.UserID, redisToken, time.Hour*24*7).Err()
+	err = l.svcCtx.RedisClient.Set(l.ctx, constant.UserTokenPrefix+refreshToken.UserID, redisToken, time.Hour*24*3).Err()
 	if err != nil {
 		return nil, err
 	}

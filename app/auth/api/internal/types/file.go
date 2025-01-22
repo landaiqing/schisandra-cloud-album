@@ -2,13 +2,11 @@ package types
 
 // File represents a file uploaded by the user.
 type File struct {
-	UID             string `json:"uid"`
-	FileName        string `json:"fileName"`
-	FileType        string `json:"fileType"`
-	DetectionResult struct {
-		IsAnime     bool     `json:"isAnime"`
-		HasFace     bool     `json:"hasFace"`
-		ObjectArray []string `json:"objectArray"`
-		Landscape   string   `json:"landscape"`
-	}
+	FileType     string   `json:"fileType"`
+	IsAnime      bool     `json:"isAnime"`
+	ObjectArray  []string `json:"objectArray"`
+	Landscape    string   `json:"landscape"`
+	TopCategory  string   `json:"topCategory"`
+	IsScreenshot bool     `json:"isScreenshot"`
+	Exif         any      `json:"exif"`
 }

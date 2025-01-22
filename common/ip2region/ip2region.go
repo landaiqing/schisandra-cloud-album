@@ -1,7 +1,6 @@
 package ip2region
 
 import (
-	"fmt"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"os"
 	"path/filepath"
@@ -13,7 +12,6 @@ func NewIP2Region() *xdb.Searcher {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(cwd)
 	dbPath := filepath.Join(cwd, "resources/ip2region", "ip2region.xdb")
 	cBuff, err := xdb.LoadContentFromFile(dbPath)
 	if err != nil {

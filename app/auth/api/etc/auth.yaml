@@ -18,6 +18,12 @@ CpuThreshold: 900
 MaxBytes: 10485760
 # 是否打印详细日志
 Verbose: false
+# RPC 配置
+AiSvcRpc:
+  Etcd:
+    Hosts:
+      - 127.0.0.1:2379
+    Key: aisvc.rpc
 # 日志配置
 Log:
   # 服务名称
@@ -162,3 +168,6 @@ SMS:
     Username: landaiqing
     # 短信宝用户密码
     Password: $LDQ20020618xxx$
+Map:
+  # 高德地图API Key
+  Key: 54823a494909959a9c8cd8af101bbc32

@@ -14,24 +14,29 @@ const TableNameScaStorageInfo = "sca_storage_info"
 
 // ScaStorageInfo mapped from table <sca_storage_info>
 type ScaStorageInfo struct {
-	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
-	UserID    string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID
-	Storage   string         `gorm:"column:storage;type:varchar(50);comment:存储空间" json:"storage"`                                     // 存储空间
-	Bucket    string         `gorm:"column:bucket;type:varchar(50);comment:存储桶" json:"bucket"`                                        // 存储桶
-	Type      string         `gorm:"column:type;type:varchar(50);comment:类型" json:"type"`                                             // 类型
-	Path      string         `gorm:"column:path;type:varchar(255);comment:路径" json:"path"`                                            // 路径
-	FileName  string         `gorm:"column:file_name;type:varchar(100);comment:名称" json:"file_name"`                                  // 名称
-	Category  string         `gorm:"column:category;type:varchar(50);comment:分类" json:"category"`                                     // 分类
-	Loaction  string         `gorm:"column:loaction;type:varchar(100);comment:地址" json:"loaction"`                                    // 地址
-	Hash      string         `gorm:"column:hash;type:varchar(255);comment:哈希值" json:"hash"`                                           // 哈希值
-	Anime     string         `gorm:"column:anime;type:varchar(50);comment:是否是动漫图片" json:"anime"`                                      // 是否是动漫图片
-	HasFace   string         `gorm:"column:has_face;type:varchar(50);comment:是否人像" json:"has_face"`                                   // 是否人像
-	FaceID    int64          `gorm:"column:face_id;type:bigint(20);comment:人像ID" json:"face_id"`                                      // 人像ID
-	Landscape string         `gorm:"column:landscape;type:varchar(50);comment:风景类型" json:"landscape"`                                 // 风景类型
-	Objects   string         `gorm:"column:objects;type:varchar(50);comment:对象识别" json:"objects"`                                     // 对象识别
-	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
-	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间
+	ID           int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
+	UserID       string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID
+	Provider     string         `gorm:"column:provider;type:varchar(50);comment:供应商" json:"provider"`                                    // 供应商
+	Bucket       string         `gorm:"column:bucket;type:varchar(50);comment:存储桶" json:"bucket"`                                        // 存储桶
+	Path         string         `gorm:"column:path;type:varchar(255);comment:路径" json:"path"`                                            // 路径
+	FileName     string         `gorm:"column:file_name;type:varchar(100);comment:文件名称" json:"file_name"`                                // 文件名称
+	FileSize     string         `gorm:"column:file_size;type:varchar(50);comment:文件大小" json:"file_size"`                                 // 文件大小
+	FileType     string         `gorm:"column:file_type;type:varchar(50);comment:文件类型" json:"file_type"`                                 // 文件类型
+	Category     string         `gorm:"column:category;type:varchar(50);comment:分类" json:"category"`                                     // 分类
+	Tags         string         `gorm:"column:tags;type:varchar(255);comment:标签" json:"tags"`                                            // 标签
+	Location     string         `gorm:"column:location;type:varchar(100);comment:地址" json:"location"`                                    // 地址
+	Hash         string         `gorm:"column:hash;type:varchar(255);comment:哈希值" json:"hash"`                                           // 哈希值
+	Anime        string         `gorm:"column:anime;type:varchar(50);comment:是否是动漫图片" json:"anime"`                                      // 是否是动漫图片
+	FaceID       int64          `gorm:"column:face_id;type:bigint(20);comment:人像ID" json:"face_id"`                                      // 人像ID
+	Landscape    string         `gorm:"column:landscape;type:varchar(50);comment:风景类型" json:"landscape"`                                 // 风景类型
+	Objects      string         `gorm:"column:objects;type:varchar(50);comment:对象识别" json:"objects"`                                     // 对象识别
+	OriginalTime string         `gorm:"column:original_time;type:varchar(50);comment:拍摄时间" json:"original_time"`                         // 拍摄时间
+	Gps          string         `gorm:"column:gps;type:varchar(255);comment:GPS" json:"gps"`                                             // GPS
+	Screenshot   string         `gorm:"column:screenshot;type:varchar(50);comment:是否是截图" json:"screenshot"`                              // 是否是截图
+	Exif         string         `gorm:"column:exif;type:json;comment:exif 信息" json:"exif"`                                               // exif 信息
+	CreatedAt    time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
+	UpdatedAt    time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
+	DeletedAt    gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间
 }
 
 // TableName ScaStorageInfo's table name

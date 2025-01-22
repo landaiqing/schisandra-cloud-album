@@ -1,8 +1,13 @@
 package utils
 
 import (
+	"bytes"
 	"encoding/base64"
 	"errors"
+	"fmt"
+	"image"
+	_ "image/jpeg" // 引入 jpeg 解码器
+	_ "image/png"  // 引入 png 解码器
 	"io"
 	"regexp"
 	"strings"
@@ -87,4 +92,26 @@ func Base64ToBytes(base64Str string) ([]byte, error) {
 		return nil, errors.New("failed to decode base64 string")
 	}
 	return data, nil
+}
+
+// Base64ToImage 将 Base64 字符串转换为 image.Image 格式
+func Base64ToImage(base64Str string) (image.Image, error) {
+	// 使用正则表达式去除前缀
+	re := regexp.MustCompile(`^data:image/([a-zA-Z]*);base64,`)
+	// 去除前缀部分
+	base64Str = re.ReplaceAllString(base64Str, "")
+
+	// 解码 Base64 字符串
+	data, err := base64.StdEncoding.DecodeString(base64Str)
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode base64 string: %v", err)
+	}
+
+	// 使用 image.Decode 解码字节数据
+	img, _, err := image.Decode(bytes.NewReader(data))
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode image: %v", err)
+	}
+
+	return img, nil
 }

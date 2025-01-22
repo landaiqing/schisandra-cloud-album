@@ -29,19 +29,24 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.ALL = field.NewAsterisk(tableName)
 	_scaStorageInfo.ID = field.NewInt64(tableName, "id")
 	_scaStorageInfo.UserID = field.NewString(tableName, "user_id")
-	_scaStorageInfo.Storage = field.NewString(tableName, "storage")
+	_scaStorageInfo.Provider = field.NewString(tableName, "provider")
 	_scaStorageInfo.Bucket = field.NewString(tableName, "bucket")
-	_scaStorageInfo.Type = field.NewString(tableName, "type")
 	_scaStorageInfo.Path = field.NewString(tableName, "path")
 	_scaStorageInfo.FileName = field.NewString(tableName, "file_name")
+	_scaStorageInfo.FileSize = field.NewString(tableName, "file_size")
+	_scaStorageInfo.FileType = field.NewString(tableName, "file_type")
 	_scaStorageInfo.Category = field.NewString(tableName, "category")
-	_scaStorageInfo.Loaction = field.NewString(tableName, "loaction")
+	_scaStorageInfo.Tags = field.NewString(tableName, "tags")
+	_scaStorageInfo.Location = field.NewString(tableName, "location")
 	_scaStorageInfo.Hash = field.NewString(tableName, "hash")
 	_scaStorageInfo.Anime = field.NewString(tableName, "anime")
-	_scaStorageInfo.HasFace = field.NewString(tableName, "has_face")
 	_scaStorageInfo.FaceID = field.NewInt64(tableName, "face_id")
 	_scaStorageInfo.Landscape = field.NewString(tableName, "landscape")
 	_scaStorageInfo.Objects = field.NewString(tableName, "objects")
+	_scaStorageInfo.OriginalTime = field.NewString(tableName, "original_time")
+	_scaStorageInfo.Gps = field.NewString(tableName, "gps")
+	_scaStorageInfo.Screenshot = field.NewString(tableName, "screenshot")
+	_scaStorageInfo.Exif = field.NewString(tableName, "exif")
 	_scaStorageInfo.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageInfo.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageInfo.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -54,25 +59,30 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 type scaStorageInfo struct {
 	scaStorageInfoDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	UserID    field.String // 用户ID
-	Storage   field.String // 存储空间
-	Bucket    field.String // 存储桶
-	Type      field.String // 类型
-	Path      field.String // 路径
-	FileName  field.String // 名称
-	Category  field.String // 分类
-	Loaction  field.String // 地址
-	Hash      field.String // 哈希值
-	Anime     field.String // 是否是动漫图片
-	HasFace   field.String // 是否人像
-	FaceID    field.Int64  // 人像ID
-	Landscape field.String // 风景类型
-	Objects   field.String // 对象识别
-	CreatedAt field.Time   // 创建时间
-	UpdatedAt field.Time   // 更新时间
-	DeletedAt field.Field  // 删除时间
+	ALL          field.Asterisk
+	ID           field.Int64  // 主键
+	UserID       field.String // 用户ID
+	Provider     field.String // 供应商
+	Bucket       field.String // 存储桶
+	Path         field.String // 路径
+	FileName     field.String // 文件名称
+	FileSize     field.String // 文件大小
+	FileType     field.String // 文件类型
+	Category     field.String // 分类
+	Tags         field.String // 标签
+	Location     field.String // 地址
+	Hash         field.String // 哈希值
+	Anime        field.String // 是否是动漫图片
+	FaceID       field.Int64  // 人像ID
+	Landscape    field.String // 风景类型
+	Objects      field.String // 对象识别
+	OriginalTime field.String // 拍摄时间
+	Gps          field.String // GPS
+	Screenshot   field.String // 是否是截图
+	Exif         field.String // exif 信息
+	CreatedAt    field.Time   // 创建时间
+	UpdatedAt    field.Time   // 更新时间
+	DeletedAt    field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
 }
@@ -91,19 +101,24 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
-	s.Storage = field.NewString(table, "storage")
+	s.Provider = field.NewString(table, "provider")
 	s.Bucket = field.NewString(table, "bucket")
-	s.Type = field.NewString(table, "type")
 	s.Path = field.NewString(table, "path")
 	s.FileName = field.NewString(table, "file_name")
+	s.FileSize = field.NewString(table, "file_size")
+	s.FileType = field.NewString(table, "file_type")
 	s.Category = field.NewString(table, "category")
-	s.Loaction = field.NewString(table, "loaction")
+	s.Tags = field.NewString(table, "tags")
+	s.Location = field.NewString(table, "location")
 	s.Hash = field.NewString(table, "hash")
 	s.Anime = field.NewString(table, "anime")
-	s.HasFace = field.NewString(table, "has_face")
 	s.FaceID = field.NewInt64(table, "face_id")
 	s.Landscape = field.NewString(table, "landscape")
 	s.Objects = field.NewString(table, "objects")
+	s.OriginalTime = field.NewString(table, "original_time")
+	s.Gps = field.NewString(table, "gps")
+	s.Screenshot = field.NewString(table, "screenshot")
+	s.Exif = field.NewString(table, "exif")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -123,22 +138,27 @@ func (s *scaStorageInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaStorageInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 18)
+	s.fieldMap = make(map[string]field.Expr, 23)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
-	s.fieldMap["storage"] = s.Storage
+	s.fieldMap["provider"] = s.Provider
 	s.fieldMap["bucket"] = s.Bucket
-	s.fieldMap["type"] = s.Type
 	s.fieldMap["path"] = s.Path
 	s.fieldMap["file_name"] = s.FileName
+	s.fieldMap["file_size"] = s.FileSize
+	s.fieldMap["file_type"] = s.FileType
 	s.fieldMap["category"] = s.Category
-	s.fieldMap["loaction"] = s.Loaction
+	s.fieldMap["tags"] = s.Tags
+	s.fieldMap["location"] = s.Location
 	s.fieldMap["hash"] = s.Hash
 	s.fieldMap["anime"] = s.Anime
-	s.fieldMap["has_face"] = s.HasFace
 	s.fieldMap["face_id"] = s.FaceID
 	s.fieldMap["landscape"] = s.Landscape
 	s.fieldMap["objects"] = s.Objects
+	s.fieldMap["original_time"] = s.OriginalTime
+	s.fieldMap["gps"] = s.Gps
+	s.fieldMap["screenshot"] = s.Screenshot
+	s.fieldMap["exif"] = s.Exif
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

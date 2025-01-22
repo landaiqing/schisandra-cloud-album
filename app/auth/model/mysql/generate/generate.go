@@ -99,9 +99,41 @@ func main() {
 	fieldOpts := []gen.ModelOpt{jsonField, idField, autoUpdateTimeField, autoCreateTimeField, softDeleteField, versionField}
 
 	// 创建全部模型文件, 并覆盖前面创建的同名模型
-	allModel := g.GenerateAllTable(fieldOpts...)
+	scaAuthMenu := g.GenerateModel("sca_auth_menu", fieldOpts...)
+	scaAuthPermissionRule := g.GenerateModel("sca_auth_permission_rule", fieldOpts...)
+	scaAuthRole := g.GenerateModel("sca_auth_role", fieldOpts...)
+	scaAuthUser := g.GenerateModel("sca_auth_user", fieldOpts...)
+	scaAuthUserDevice := g.GenerateModel("sca_auth_user_device", fieldOpts...)
+	scaAuthUserSocial := g.GenerateModel("sca_auth_user_social", fieldOpts...)
+	scaCommentReply := g.GenerateModel("sca_comment_reply", fieldOpts...)
+	scaCommentLikes := g.GenerateModel("sca_comment_likes", fieldOpts...)
+	scaMessageReport := g.GenerateModel("sca_message_report", fieldOpts...)
+	scaStorageConfig := g.GenerateModel("sca_storage_config", fieldOpts...)
+	scaStorageInfo := g.GenerateModel("sca_storage_info", fieldOpts...)
+	scaStorageTag := g.GenerateModel("sca_storage_tag", fieldOpts...)
+	scaStorageTagInfo := g.GenerateModel("sca_storage_tag_info", fieldOpts...)
+	scaUserFollows := g.GenerateModel("sca_user_follows", fieldOpts...)
+	scaUserLevel := g.GenerateModel("sca_user_level", fieldOpts...)
+	scaUserMessage := g.GenerateModel("sca_user_message", fieldOpts...)
 
-	g.ApplyBasic(allModel...)
+	g.ApplyBasic(
+		scaAuthMenu,
+		scaAuthPermissionRule,
+		scaAuthRole,
+		scaAuthUser,
+		scaAuthUserDevice,
+		scaAuthUserSocial,
+		scaCommentReply,
+		scaCommentLikes,
+		scaMessageReport,
+		scaStorageConfig,
+		scaStorageInfo,
+		scaStorageTag,
+		scaStorageTagInfo,
+		scaUserFollows,
+		scaUserLevel,
+		scaUserMessage,
+	)
 
 	g.Execute()
 }

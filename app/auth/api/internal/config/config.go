@@ -1,10 +1,14 @@
 package config
 
-import "github.com/zeromicro/go-zero/rest"
+import (
+	"github.com/zeromicro/go-zero/rest"
+	"github.com/zeromicro/go-zero/zrpc"
+)
 
 type Config struct {
 	rest.RestConf
-	Web struct {
+	AiSvcRpc zrpc.RpcClientConf
+	Web      struct {
 		URL string
 	}
 	Auth struct {
@@ -66,5 +70,8 @@ type Config struct {
 			Username string
 			Password string
 		}
+	}
+	Map struct {
+		Key string
 	}
 }

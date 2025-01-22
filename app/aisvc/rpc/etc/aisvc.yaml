@@ -1,0 +1,22 @@
+Name: aisvc.rpc
+ListenOn: 0.0.0.0:8080
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: aisvc.rpc
+# MySQL 配置
+Mysql:
+  # 数据源dsn
+  DataSource: root:LDQ20020618xxx@tcp(1.95.0.111:3306)/schisandra-cloud-album?charset=utf8mb4&parseTime=True&loc=Local
+  # 最大连接数
+  MaxOpenConn: 10
+  # 最大空闲连接数
+  MaxIdleConn: 5
+# RedisConf 配置
+RedisConf:
+  # Redis 地址
+  Host: 1.95.0.111:6379
+  # Redis 密码
+  Pass: LDQ20020618xxx
+  # Redis 数据库
+  DB: 0
