@@ -9,18 +9,14 @@ LABEL maintainer="landaiqing <<landaiqing@126.com>>"
 ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
-RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
-
-RUN sed -i 's|http://deb.debian.org/debian|https://mirrors.tuna.tsinghua.edu.cn/debian|g' /etc/apt/sources.list && \
-    apt-get update && apt-get install -y --no-install-recommends --fix-missing \
-    tzdata git build-essential cmake pkg-config wget unzip libgtk2.0-dev \
-    curl ca-certificates libcurl4-openssl-dev libssl-dev \
-    libavcodec-dev libavformat-dev libswscale-dev libtbb2 libtbb-dev \
-    libharfbuzz-dev libfreetype6-dev \
-    libjpeg-dev libturbojpeg-dev libpng-dev libtiff-dev libdc1394-22-dev nasm  \
-    libdlib-dev libblas-dev libatlas-base-dev liblapack-dev \
-    gcc g++ musl-dev cmake && \
-    rm -rf /var/lib/apt/lists/*
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
+    sed -i 's|http://deb.debian.org/debian|https://mirrors.tuna.tsinghua.edu.cn/debian|g' /etc/apt/sources.list && \
+    apt-get update && apt-get install -y --no-install-recommends \
+        tzdata git build-essential cmake pkg-config unzip curl ca-certificates \
+        libcurl4-openssl-dev libssl-dev libturbojpeg-dev \
+        libpng-dev libtiff-dev nasm libblas-dev libatlas-base-dev\
+        libdlib-dev libjpeg62-turbo-dev liblapack-dev && \
+        rm -rf /var/lib/apt/lists/*
 
 ARG OPENCV_VERSION="4.11.0"
 
@@ -71,8 +67,6 @@ WORKDIR /app
 
 COPY . .
 
-#WORKDIR /app/app/aisvc/
-
 ENV CGO_ENABLED=1 \
     CGO_CFLAGS="-I/usr/local/include/opencv4" \
     CGO_CPPFLAGS="-I/usr/local/include" \
@@ -81,13 +75,8 @@ ENV CGO_ENABLED=1 \
     GOARCH=amd64 \
     GOPROXY=https://goproxy.cn,direct
 
-RUN go mod download
-
-RUN go build -ldflags="-w -s" -o schisandra-ai-server ./app/aisvc/rpc/aisvc.go
-
-#EXPOSE 8888
-#
-#CMD ["./schisandra-ai-server"]
+RUN go mod download && \
+    go build -ldflags="-w -s" -o schisandra-ai-server ./app/aisvc/rpc/aisvc.go
 
 FROM debian:bullseye-slim AS runtime
 
@@ -96,16 +85,12 @@ ENV TZ=Asia/Shanghai \
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
     apt-get update && apt-get install -y --no-install-recommends \
-    tzdata libjpeg62-turbo libpng16-16 libtiff5 libturbojpeg0 \
-    libharfbuzz0b libfreetype6 libavcodec58 libavformat58 libswscale5 libtbb2 \
-    libblas3 liblapack3 && \
+    tzdata libjpeg62-turbo libblas3 liblapack3 libdlib-dev  libtiff5 && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
 COPY --from=builder /usr/local/lib /usr/local/lib/
-
-COPY --from=builder /usr/lib/ /usr/lib/
 
 COPY --from=builder /usr/local/include/opencv4 /usr/local/include/opencv4/
 
@@ -116,9 +101,6 @@ COPY --from=builder /app/app/aisvc/rpc/etc ./rpc/etc
 COPY --from=builder /app/app/aisvc/resources ./resources
 
 ENV LD_LIBRARY_PATH=/usr/local/lib
-
-RUN echo "/usr/local/lib" > /etc/ld.so.conf.d/custom-libs.conf && ldconfig
-
 
 EXPOSE 8888
 

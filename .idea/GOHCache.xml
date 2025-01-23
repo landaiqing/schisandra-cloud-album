@@ -1489,7 +1489,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/face_recognition_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737604866085" />
+              <option name="lastModified" value="1737629887959" />
               <option name="schema">
                 <list>
                   <option value="FaceRecognitionLogic" />
@@ -2117,7 +2117,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/upload_file_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737533110977" />
+              <option name="lastModified" value="1737629820919" />
               <option name="schema">
                 <list>
                   <option value="UploadFileLogic" />

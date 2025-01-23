@@ -56,26 +56,29 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if err != nil {
 		return "", err
 	}
-	var faceId int64
+	var faceId int64 = 0
+	var className string
 	bytes, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
 	}
 	// 人脸识别
-	face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{Face: bytes, UserId: uid})
-	if err != nil {
-		return "", err
+	if result.FileType == "image/png" || result.FileType == "image/jpeg" {
+		face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{Face: bytes, UserId: uid})
+		if err != nil {
+			return "", err
+		}
+		if face != nil {
+			faceId = face.GetFaceId()
+		}
+
+		// 图像分类
+		classification, err := l.svcCtx.AiSvcRpc.TfClassification(l.ctx, &pb.TfClassificationRequest{Image: bytes})
+		if err != nil {
+			return "", err
+		}
+		className = classification.GetClassName()
 	}
-	if face != nil {
-		faceId = face.GetFaceId()
-	}
-	// 分类
-	classification, err := l.svcCtx.AiSvcRpc.TfClassification(l.ctx, &pb.TfClassificationRequest{Image: bytes})
-	if err != nil {
-		return "", err
-	}
-	fmt.Println(classification.ClassName)
-	fmt.Println(classification.Score)
 
 	// 解析 EXIF 信息
 	exif, err := l.parseExifData(result.Exif)
@@ -99,12 +102,13 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	}
 
 	// 上传文件到 OSS
-	if err = l.uploadFileToOSS(uid, header, file); err != nil {
+	bucket, provider, err := l.uploadFileToOSS(uid, header, file)
+	if err != nil {
 		return "", err
 	}
 
 	// 将 EXIF 和文件信息存入数据库
-	if err = l.saveFileInfoToDB(uid, header, result, originalDateTime, gpsString, locationString, exif, faceId); err != nil {
+	if err = l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, gpsString, locationString, exif, faceId, className); err != nil {
 		return "", err
 	}
 
@@ -220,20 +224,20 @@ func (l *UploadFileLogic) getGeoLocation(latitude, longitude float64) (string, s
 }
 
 // 上传文件到 OSS
-func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File) error {
+func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File) (string, string, error) {
 	ossConfig := l.svcCtx.DB.ScaStorageConfig
 	dbConfig, err := ossConfig.Where(ossConfig.UserID.Eq(uid)).First()
 	if err != nil {
-		return errors.New("oss config not found")
+		return "", "", errors.New("oss config not found")
 	}
 
 	accessKey, err := encrypt.Decrypt(dbConfig.AccessKey, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
-		return errors.New("decrypt access key failed")
+		return "", "", errors.New("decrypt access key failed")
 	}
 	secretKey, err := encrypt.Decrypt(dbConfig.SecretKey, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
-		return errors.New("decrypt secret key failed")
+		return "", "", errors.New("decrypt secret key failed")
 	}
 
 	storageConfig := &config.StorageConfig{
@@ -247,31 +251,34 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 
 	service, err := l.svcCtx.StorageManager.GetStorage(uid, storageConfig)
 	if err != nil {
-		return errors.New("get storage failed")
+		return "", "", errors.New("get storage failed")
 	}
 
 	_, err = service.UploadFileSimple(l.ctx, dbConfig.Bucket, header.Filename, file, map[string]string{})
 	if err != nil {
-		return errors.New("upload file failed")
+		return "", "", errors.New("upload file failed")
 	}
-	return nil
+	return dbConfig.Bucket, dbConfig.Type, nil
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (l *UploadFileLogic) saveFileInfoToDB(uid string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64) error {
+func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64, className string) error {
 	exifJSON, err := json.Marshal(exif)
 	if err != nil {
 		return errors.New("marshal exif failed")
 	}
-
+	var landscape string
+	if result.Landscape != "none" {
+		landscape = result.Landscape
+	}
 	scaStorageInfo := &model.ScaStorageInfo{
 		UserID:       uid,
-		Provider:     result.FileType,
-		Bucket:       result.TopCategory,
+		Provider:     provider,
+		Bucket:       bucket,
 		FileName:     header.Filename,
 		FileSize:     strconv.FormatInt(header.Size, 10),
 		FileType:     result.FileType,
-		Landscape:    result.Landscape,
+		Landscape:    landscape,
 		Objects:      strings.Join(result.ObjectArray, ", "),
 		Anime:        strconv.FormatBool(result.IsAnime),
 		Category:     result.TopCategory,
@@ -281,6 +288,7 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid string, header *multipart.FileHea
 		Location:     locationString,
 		Exif:         string(exifJSON),
 		FaceID:       faceId,
+		Tags:         className,
 	}
 
 	err = l.svcCtx.DB.ScaStorageInfo.Create(scaStorageInfo)

@@ -10,6 +10,7 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"image"
 	"image/jpeg"
+	_ "image/png"
 	"os"
 	"path/filepath"
 	"schisandra-album-cloud-microservices/app/aisvc/model/mysql/model"
@@ -46,6 +47,9 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 	toJPEG, err := l.ConvertImageToJPEG(in.GetFace())
 	if err != nil {
 		return nil, err
+	}
+	if toJPEG == nil {
+		return nil, nil
 	}
 	// 提取人脸特征
 	faceFeatures, err := l.svcCtx.FaceRecognizer.RecognizeSingle(toJPEG)
@@ -96,18 +100,21 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 	return l.saveNewFace(in, faceFeatures, hashKey)
 }
 
-// ConvertImageToJPEG 将非 JPEG 格式的图片字节数据转换为 JPEG
 func (l *FaceRecognitionLogic) ConvertImageToJPEG(imageData []byte) ([]byte, error) {
-	// 使用 image.Decode 解码图像数据
-	img, _, err := image.Decode(bytes.NewReader(imageData))
+
+	// 解码图片
+	img, format, err := image.Decode(bytes.NewReader(imageData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to decode image: %v", err)
 	}
 
-	// 创建一个缓冲区来存储 JPEG 格式的数据
-	var jpegBuffer bytes.Buffer
+	// 如果已经是 JPEG 格式，则直接返回原数据
+	if format == "jpeg" {
+		return imageData, nil
+	}
 
-	// 将图片编码为 JPEG 格式
+	// 如果是 PNG 格式，则转换为 JPEG
+	var jpegBuffer bytes.Buffer
 	err = jpeg.Encode(&jpegBuffer, img, nil)
 	if err != nil {
 		return nil, fmt.Errorf("failed to encode image to JPEG: %v", err)
