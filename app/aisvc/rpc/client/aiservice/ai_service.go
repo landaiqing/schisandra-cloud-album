@@ -14,12 +14,20 @@ import (
 )
 
 type (
-	FaceRecognitionRequest  = pb.FaceRecognitionRequest
-	FaceRecognitionResponse = pb.FaceRecognitionResponse
+	CaffeClassificationRequest  = pb.CaffeClassificationRequest
+	CaffeClassificationResponse = pb.CaffeClassificationResponse
+	FaceRecognitionRequest      = pb.FaceRecognitionRequest
+	FaceRecognitionResponse     = pb.FaceRecognitionResponse
+	TfClassificationRequest     = pb.TfClassificationRequest
+	TfClassificationResponse    = pb.TfClassificationResponse
 
 	AiService interface {
 		// FaceRecognition
 		FaceRecognition(ctx context.Context, in *FaceRecognitionRequest, opts ...grpc.CallOption) (*FaceRecognitionResponse, error)
+		// TfClassification
+		TfClassification(ctx context.Context, in *TfClassificationRequest, opts ...grpc.CallOption) (*TfClassificationResponse, error)
+		// CaffeClassification
+		CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error)
 	}
 
 	defaultAiService struct {
@@ -37,4 +45,16 @@ func NewAiService(cli zrpc.Client) AiService {
 func (m *defaultAiService) FaceRecognition(ctx context.Context, in *FaceRecognitionRequest, opts ...grpc.CallOption) (*FaceRecognitionResponse, error) {
 	client := pb.NewAiServiceClient(m.cli.Conn())
 	return client.FaceRecognition(ctx, in, opts...)
+}
+
+// TfClassification
+func (m *defaultAiService) TfClassification(ctx context.Context, in *TfClassificationRequest, opts ...grpc.CallOption) (*TfClassificationResponse, error) {
+	client := pb.NewAiServiceClient(m.cli.Conn())
+	return client.TfClassification(ctx, in, opts...)
+}
+
+// CaffeClassification
+func (m *defaultAiService) CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error) {
+	client := pb.NewAiServiceClient(m.cli.Conn())
+	return client.CaffeClassification(ctx, in, opts...)
 }

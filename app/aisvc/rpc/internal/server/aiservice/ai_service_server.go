@@ -28,3 +28,15 @@ func (s *AiServiceServer) FaceRecognition(ctx context.Context, in *pb.FaceRecogn
 	l := aiservicelogic.NewFaceRecognitionLogic(ctx, s.svcCtx)
 	return l.FaceRecognition(in)
 }
+
+// TfClassification
+func (s *AiServiceServer) TfClassification(ctx context.Context, in *pb.TfClassificationRequest) (*pb.TfClassificationResponse, error) {
+	l := aiservicelogic.NewTfClassificationLogic(ctx, s.svcCtx)
+	return l.TfClassification(in)
+}
+
+// CaffeClassification
+func (s *AiServiceServer) CaffeClassification(ctx context.Context, in *pb.CaffeClassificationRequest) (*pb.CaffeClassificationResponse, error) {
+	l := aiservicelogic.NewCaffeClassificationLogic(ctx, s.svcCtx)
+	return l.CaffeClassification(in)
+}

@@ -433,7 +433,7 @@ type (
 @server (
 	group:      storage // 微服务分组
 	prefix:     /api/auth/storage // 微服务前缀
-	timeout:    10s // 超时时间
+	timeout:    20s // 超时时间
 	maxBytes:   104857600 // 最大请求大小
 	signature:  false // 是否开启签名验证
 	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,AuthorizationMiddleware,NonceMiddleware // 注册中间件

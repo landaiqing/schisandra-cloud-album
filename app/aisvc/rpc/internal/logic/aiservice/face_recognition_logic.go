@@ -43,8 +43,12 @@ func NewFaceRecognitionLogic(ctx context.Context, svcCtx *svc.ServiceContext) *F
 
 // FaceRecognition 人脸识别
 func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*pb.FaceRecognitionResponse, error) {
+	toJPEG, err := l.ConvertImageToJPEG(in.GetFace())
+	if err != nil {
+		return nil, err
+	}
 	// 提取人脸特征
-	faceFeatures, err := l.svcCtx.FaceRecognizer.RecognizeSingle(in.GetFace())
+	faceFeatures, err := l.svcCtx.FaceRecognizer.RecognizeSingle(toJPEG)
 	if err != nil {
 		return nil, err
 	}
@@ -82,7 +86,7 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 
 	// 人脸分类
 	classify := l.svcCtx.FaceRecognizer.ClassifyThreshold(faceFeatures.Descriptor, 0.6)
-	if classify >= 0 {
+	if classify >= 0 && classify < len(ids) {
 		return &pb.FaceRecognitionResponse{
 			FaceId: int64(ids[classify]),
 		}, nil
@@ -90,6 +94,26 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 
 	// 如果未找到匹配的人脸，则保存为新样本
 	return l.saveNewFace(in, faceFeatures, hashKey)
+}
+
+// ConvertImageToJPEG 将非 JPEG 格式的图片字节数据转换为 JPEG
+func (l *FaceRecognitionLogic) ConvertImageToJPEG(imageData []byte) ([]byte, error) {
+	// 使用 image.Decode 解码图像数据
+	img, _, err := image.Decode(bytes.NewReader(imageData))
+	if err != nil {
+		return nil, fmt.Errorf("failed to decode image: %v", err)
+	}
+
+	// 创建一个缓冲区来存储 JPEG 格式的数据
+	var jpegBuffer bytes.Buffer
+
+	// 将图片编码为 JPEG 格式
+	err = jpeg.Encode(&jpegBuffer, img, nil)
+	if err != nil {
+		return nil, fmt.Errorf("failed to encode image to JPEG: %v", err)
+	}
+
+	return jpegBuffer.Bytes(), nil
 }
 
 // 保存新的人脸样本到数据库和 Redis

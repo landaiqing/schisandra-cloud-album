@@ -202,7 +202,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		),
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/auth/storage"),
-		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithTimeout(20000*time.Millisecond),
 		rest.WithMaxBytes(104857600),
 	)
 

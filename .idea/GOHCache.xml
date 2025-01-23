@@ -122,6 +122,27 @@
             </set>
           </value>
         </entry>
+        <entry key="CaffeClassificationLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/caffe_classification_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CaffeClassificationRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="CaffeClassificationResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="CasbinVerifyMiddleware">
           <value>
             <set>
@@ -267,7 +288,6 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/face_recognition_logic.go" />
-              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/facerecognitionservice/face_recognition_logic.go" />
             </set>
           </value>
         </entry>
@@ -953,6 +973,27 @@
             </set>
           </value>
         </entry>
+        <entry key="TfClassificationLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/tf_classification_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TfClassificationRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="TfClassificationResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="Token">
           <value>
             <set>
@@ -1325,20 +1366,13 @@
         <entry key="file://D:/GoPath/pkg/mod/github.com/!kagami/go-face@v0.0.0-20210630145111-0c14797b4d0e/face.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737436748224" />
+              <option name="lastModified" value="1737559935226" />
               <option name="schema">
                 <list>
                   <option value="Recognizer" />
                   <option value="Face" />
                 </list>
               </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/app/ai/rpc/generate.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1737425967125" />
             </ScannedPath>
           </value>
         </entry>
@@ -1402,10 +1436,17 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/build.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737540237579" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/client/aiservice/ai_service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471643677" />
+              <option name="lastModified" value="1737535196216" />
               <option name="schema">
                 <list>
                   <option value="defaultAiService" />
@@ -1417,7 +1458,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/generate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737426199266" />
+              <option name="lastModified" value="1737540206762" />
             </ScannedPath>
           </value>
         </entry>
@@ -1433,10 +1474,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/caffe_classification_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737535196207" />
+              <option name="schema">
+                <list>
+                  <option value="CaffeClassificationLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/face_recognition_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737511014685" />
+              <option name="lastModified" value="1737604866085" />
               <option name="schema">
                 <list>
                   <option value="FaceRecognitionLogic" />
@@ -1445,13 +1498,13 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/facerecognitionservice/face_recognition_logic.go">
+        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/tf_classification_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737426415089" />
+              <option name="lastModified" value="1737534650883" />
               <option name="schema">
                 <list>
-                  <option value="FaceRecognitionLogic" />
+                  <option value="TfClassificationLogic" />
                 </list>
               </option>
             </ScannedPath>
@@ -1460,7 +1513,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/server/aiservice/ai_service_server.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471643672" />
+              <option name="lastModified" value="1737535196211" />
               <option name="schema">
                 <list>
                   <option value="AiServiceServer" />
@@ -1472,7 +1525,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737451498188" />
+              <option name="lastModified" value="1737534763350" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -1484,11 +1537,15 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471643651" />
+              <option name="lastModified" value="1737535196194" />
               <option name="schema">
                 <list>
                   <option value="FaceRecognitionRequest" />
                   <option value="FaceRecognitionResponse" />
+                  <option value="TfClassificationRequest" />
+                  <option value="TfClassificationResponse" />
+                  <option value="CaffeClassificationRequest" />
+                  <option value="CaffeClassificationResponse" />
                   <option value="x" />
                 </list>
               </option>
@@ -1498,7 +1555,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc_grpc.pb.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471643657" />
+              <option name="lastModified" value="1737535196195" />
               <option name="schema">
                 <list>
                   <option value="aiServiceClient" />
@@ -1511,7 +1568,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/auth.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735112913996" />
+              <option name="lastModified" value="1737600178055" />
             </ScannedPath>
           </value>
         </entry>
@@ -1677,7 +1734,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737092120580" />
+              <option name="lastModified" value="1737533432274" />
             </ScannedPath>
           </value>
         </entry>
@@ -2060,7 +2117,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/upload_file_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737478365272" />
+              <option name="lastModified" value="1737533110977" />
               <option name="schema">
                 <list>
                   <option value="UploadFileLogic" />
@@ -2293,7 +2350,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737092120578" />
+              <option name="lastModified" value="1737533432269" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -2767,6 +2824,20 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/build.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737603279477" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/caffe_classifier/caffe_classifier.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737535248279" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/common/captcha/generate/generate_basic_text_captcha.go">
           <value>
             <ScannedPath>
@@ -2861,7 +2932,7 @@
         <entry key="file://$PROJECT_DIR$/common/casbinx/casbin.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735029589299" />
+              <option name="lastModified" value="1737600200600" />
             </ScannedPath>
           </value>
         </entry>
@@ -2961,24 +3032,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/common/face_recognition/face_recognition.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1737432158291" />
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/common/face_recognizer/face_recognizer.go">
           <value>
             <ScannedPath>
               <option name="lastModified" value="1737465426627" />
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/common/face_recognizer/face_recognizer_test.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1737464721501" />
             </ScannedPath>
           </value>
         </entry>
@@ -3399,6 +3456,13 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/common/tf_classifier/tf_classifier.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737518434331" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/common/utils/encrypt.go">
           <value>
             <ScannedPath>
@@ -3422,13 +3486,6 @@
                   <option value="Options" />
                 </list>
               </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/common/utils/generate_file_hash.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1736849903553" />
             </ScannedPath>
           </value>
         </entry>
@@ -3531,6 +3588,9 @@
         <entry key="bucket_properties" value="BucketProperties" />
         <entry key="bucket_stat" value="BucketStat" />
         <entry key="cache_entry" value="CacheEntry" />
+        <entry key="caffe_classification_logic" value="CaffeClassificationLogic" />
+        <entry key="caffe_classification_request" value="CaffeClassificationRequest" />
+        <entry key="caffe_classification_response" value="CaffeClassificationResponse" />
         <entry key="casbin_verify_middleware" value="CasbinVerifyMiddleware" />
         <entry key="code_msg" value="CodeMsg" />
         <entry key="comment_content" value="CommentContent" />
@@ -3669,6 +3729,9 @@
         <entry key="submit_reply_comment_logic" value="SubmitReplyCommentLogic" />
         <entry key="submit_reply_reply_logic" value="SubmitReplyReplyLogic" />
         <entry key="tencent_cos" value="TencentCOS" />
+        <entry key="tf_classification_logic" value="TfClassificationLogic" />
+        <entry key="tf_classification_request" value="TfClassificationRequest" />
+        <entry key="tf_classification_response" value="TfClassificationResponse" />
         <entry key="token" value="Token" />
         <entry key="unimplemented_ai_service_server" value="UnimplementedAiServiceServer" />
         <entry key="upload_file_logic" value="UploadFileLogic" />
@@ -3684,6 +3747,6 @@
         <entry key="x" value="x" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1737424561706" />
+    <option name="lastTimeChecked" value="1737523965355" />
   </component>
 </project>

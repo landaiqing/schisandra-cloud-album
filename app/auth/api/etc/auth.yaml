@@ -22,8 +22,10 @@ Verbose: false
 AiSvcRpc:
   Etcd:
     Hosts:
-      - 127.0.0.1:2379
+      - 1.95.0.111:2379
     Key: aisvc.rpc
+    User: root
+    Pass: LDQ20020618xxx
 # 日志配置
 Log:
   # 服务名称

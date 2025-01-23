@@ -5,12 +5,14 @@ go 1.23.4
 require (
 	github.com/ArtisanCloud/PowerLibs/v3 v3.3.1
 	github.com/ArtisanCloud/PowerWeChat/v3 v3.3.3
+	github.com/Kagami/go-face v0.0.0-20210630145111-0c14797b4d0e
 	github.com/aliyun/alibabacloud-oss-go-sdk-v2 v1.2.0
 	github.com/asjdf/gorm-cache v1.2.3
 	github.com/casbin/casbin/v2 v2.103.0
 	github.com/casbin/gorm-adapter/v3 v3.32.0
 	github.com/ccpwcn/kgo v1.2.8
 	github.com/chenmingyong0423/go-mongox/v2 v2.0.0
+	github.com/corona10/goimagehash v1.1.0
 	github.com/duke-git/lancet/v2 v2.3.4
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
@@ -29,6 +31,7 @@ require (
 	github.com/zeromicro/go-zero v1.7.6
 	github.com/zmexing/go-sensitive-word v1.3.0
 	go.mongodb.org/mongo-driver/v2 v2.0.0
+	gocv.io/x/gocv v0.40.0
 	golang.org/x/crypto v0.32.0
 	golang.org/x/text v0.21.0
 	google.golang.org/grpc v1.69.4
@@ -43,7 +46,6 @@ require (
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/ArtisanCloud/PowerSocialite/v3 v3.0.7 // indirect
-	github.com/Kagami/go-face v0.0.0-20210630145111-0c14797b4d0e // indirect
 	github.com/andybalholm/brotli v1.1.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -57,7 +59,6 @@ require (
 	github.com/cloudflare/circl v1.5.0 // indirect
 	github.com/coreos/go-semver v0.3.1 // indirect
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
-	github.com/corona10/goimagehash v1.1.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dolthub/maphash v0.1.0 // indirect
@@ -89,10 +90,10 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
-	github.com/google/pprof v0.0.0-20250120214715-4e5bb2051dab // indirect
+	github.com/google/pprof v0.0.0-20250121033306-997b0b79cac0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/css v1.0.1 // indirect
-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.25.1 // indirect
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/imroc/req/v3 v3.49.1 // indirect

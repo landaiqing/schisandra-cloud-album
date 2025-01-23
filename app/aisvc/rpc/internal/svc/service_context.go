@@ -3,11 +3,14 @@ package svc
 import (
 	"github.com/Kagami/go-face"
 	"github.com/redis/go-redis/v9"
+	"gocv.io/x/gocv"
 	"schisandra-album-cloud-microservices/app/aisvc/model/mysql"
 	"schisandra-album-cloud-microservices/app/aisvc/model/mysql/query"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/internal/config"
+	"schisandra-album-cloud-microservices/common/caffe_classifier"
 	"schisandra-album-cloud-microservices/common/face_recognizer"
 	"schisandra-album-cloud-microservices/common/redisx"
+	"schisandra-album-cloud-microservices/common/tf_classifier"
 )
 
 type ServiceContext struct {
@@ -15,15 +18,25 @@ type ServiceContext struct {
 	FaceRecognizer *face.Recognizer
 	DB             *query.Query
 	RedisClient    *redis.Client
+	TfNet          *gocv.Net
+	TfDesc         []string
+	CaffeNet       *gocv.Net
+	CaffeDesc      []string
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	redisClient := redisx.NewRedis(c.RedisConf.Host, c.RedisConf.Pass, c.RedisConf.DB)
 	_, queryDB := mysql.NewMySQL(c.Mysql.DataSource, c.Mysql.MaxOpenConn, c.Mysql.MaxIdleConn, redisClient)
+	tfClassifier, tfDesc := tf_classifier.NewTFClassifier()
+	caffeClassifier, caffeDesc := caffe_classifier.NewCaffeClassifier()
 	return &ServiceContext{
 		Config:         c,
 		FaceRecognizer: face_recognizer.NewFaceRecognition(),
 		DB:             queryDB,
 		RedisClient:    redisClient,
+		TfNet:          tfClassifier,
+		TfDesc:         tfDesc,
+		CaffeNet:       caffeClassifier,
+		CaffeDesc:      caffeDesc,
 	}
 }

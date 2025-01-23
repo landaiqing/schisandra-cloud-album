@@ -19,7 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	AiService_FaceRecognition_FullMethodName = "/ai.AiService/FaceRecognition"
+	AiService_FaceRecognition_FullMethodName     = "/ai.AiService/FaceRecognition"
+	AiService_TfClassification_FullMethodName    = "/ai.AiService/TfClassification"
+	AiService_CaffeClassification_FullMethodName = "/ai.AiService/CaffeClassification"
 )
 
 // AiServiceClient is the client API for AiService service.
@@ -28,6 +30,10 @@ const (
 type AiServiceClient interface {
 	// FaceRecognition
 	FaceRecognition(ctx context.Context, in *FaceRecognitionRequest, opts ...grpc.CallOption) (*FaceRecognitionResponse, error)
+	// TfClassification
+	TfClassification(ctx context.Context, in *TfClassificationRequest, opts ...grpc.CallOption) (*TfClassificationResponse, error)
+	// CaffeClassification
+	CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error)
 }
 
 type aiServiceClient struct {
@@ -48,12 +54,36 @@ func (c *aiServiceClient) FaceRecognition(ctx context.Context, in *FaceRecogniti
 	return out, nil
 }
 
+func (c *aiServiceClient) TfClassification(ctx context.Context, in *TfClassificationRequest, opts ...grpc.CallOption) (*TfClassificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(TfClassificationResponse)
+	err := c.cc.Invoke(ctx, AiService_TfClassification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aiServiceClient) CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(CaffeClassificationResponse)
+	err := c.cc.Invoke(ctx, AiService_CaffeClassification_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AiServiceServer is the server API for AiService service.
 // All implementations must embed UnimplementedAiServiceServer
 // for forward compatibility.
 type AiServiceServer interface {
 	// FaceRecognition
 	FaceRecognition(context.Context, *FaceRecognitionRequest) (*FaceRecognitionResponse, error)
+	// TfClassification
+	TfClassification(context.Context, *TfClassificationRequest) (*TfClassificationResponse, error)
+	// CaffeClassification
+	CaffeClassification(context.Context, *CaffeClassificationRequest) (*CaffeClassificationResponse, error)
 	mustEmbedUnimplementedAiServiceServer()
 }
 
@@ -66,6 +96,12 @@ type UnimplementedAiServiceServer struct{}
 
 func (UnimplementedAiServiceServer) FaceRecognition(context.Context, *FaceRecognitionRequest) (*FaceRecognitionResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method FaceRecognition not implemented")
+}
+func (UnimplementedAiServiceServer) TfClassification(context.Context, *TfClassificationRequest) (*TfClassificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TfClassification not implemented")
+}
+func (UnimplementedAiServiceServer) CaffeClassification(context.Context, *CaffeClassificationRequest) (*CaffeClassificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CaffeClassification not implemented")
 }
 func (UnimplementedAiServiceServer) mustEmbedUnimplementedAiServiceServer() {}
 func (UnimplementedAiServiceServer) testEmbeddedByValue()                   {}
@@ -106,6 +142,42 @@ func _AiService_FaceRecognition_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiService_TfClassification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TfClassificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiServiceServer).TfClassification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiService_TfClassification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiServiceServer).TfClassification(ctx, req.(*TfClassificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AiService_CaffeClassification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CaffeClassificationRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiServiceServer).CaffeClassification(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiService_CaffeClassification_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiServiceServer).CaffeClassification(ctx, req.(*CaffeClassificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AiService_ServiceDesc is the grpc.ServiceDesc for AiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -116,6 +188,14 @@ var AiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "FaceRecognition",
 			Handler:    _AiService_FaceRecognition_Handler,
+		},
+		{
+			MethodName: "TfClassification",
+			Handler:    _AiService_TfClassification_Handler,
+		},
+		{
+			MethodName: "CaffeClassification",
+			Handler:    _AiService_CaffeClassification_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

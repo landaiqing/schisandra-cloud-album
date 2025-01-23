@@ -1,9 +1,11 @@
 Name: aisvc.rpc
-ListenOn: 0.0.0.0:8080
+ListenOn: 0.0.0.0:8888
 Etcd:
   Hosts:
-    - 127.0.0.1:2379
+    - 1.95.0.111:2379
   Key: aisvc.rpc
+  User: root
+  Pass: LDQ20020618xxx
 # MySQL 配置
 Mysql:
   # 数据源dsn

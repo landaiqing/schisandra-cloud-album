@@ -69,6 +69,13 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if face != nil {
 		faceId = face.GetFaceId()
 	}
+	// 分类
+	classification, err := l.svcCtx.AiSvcRpc.TfClassification(l.ctx, &pb.TfClassificationRequest{Image: bytes})
+	if err != nil {
+		return "", err
+	}
+	fmt.Println(classification.ClassName)
+	fmt.Println(classification.Score)
 
 	// 解析 EXIF 信息
 	exif, err := l.parseExifData(result.Exif)
