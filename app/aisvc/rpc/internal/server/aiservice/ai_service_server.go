@@ -40,3 +40,21 @@ func (s *AiServiceServer) CaffeClassification(ctx context.Context, in *pb.CaffeC
 	l := aiservicelogic.NewCaffeClassificationLogic(ctx, s.svcCtx)
 	return l.CaffeClassification(in)
 }
+
+// QueryFaceLibrary
+func (s *AiServiceServer) QueryFaceLibrary(ctx context.Context, in *pb.QueryFaceLibraryRequest) (*pb.QueryFaceLibraryResponse, error) {
+	l := aiservicelogic.NewQueryFaceLibraryLogic(ctx, s.svcCtx)
+	return l.QueryFaceLibrary(in)
+}
+
+// ModifyFaceName
+func (s *AiServiceServer) ModifyFaceName(ctx context.Context, in *pb.ModifyFaceNameRequest) (*pb.ModifyFaceNameResponse, error) {
+	l := aiservicelogic.NewModifyFaceNameLogic(ctx, s.svcCtx)
+	return l.ModifyFaceName(in)
+}
+
+// ModifyFaceType
+func (s *AiServiceServer) ModifyFaceType(ctx context.Context, in *pb.ModifyFaceTypeRequest) (*pb.ModifyFaceTypeResponse, error) {
+	l := aiservicelogic.NewModifyFaceTypeLogic(ctx, s.svcCtx)
+	return l.ModifyFaceType(in)
+}

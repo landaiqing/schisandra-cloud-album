@@ -115,6 +115,7 @@ func main() {
 	scaUserFollows := g.GenerateModel("sca_user_follows", fieldOpts...)
 	scaUserLevel := g.GenerateModel("sca_user_level", fieldOpts...)
 	scaUserMessage := g.GenerateModel("sca_user_message", fieldOpts...)
+	scaStorageAlbum := g.GenerateModel("sca_storage_album", fieldOpts...)
 
 	g.ApplyBasic(
 		scaAuthMenu,
@@ -133,6 +134,7 @@ func main() {
 		scaUserFollows,
 		scaUserLevel,
 		scaUserMessage,
+		scaStorageAlbum,
 	)
 
 	g.Execute()

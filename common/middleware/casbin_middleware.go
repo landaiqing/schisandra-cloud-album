@@ -12,7 +12,7 @@ func CasbinMiddleware(w http.ResponseWriter, r *http.Request, casbin *casbin.Syn
 	userId := r.Header.Get(constant.UID_HEADER_KEY)
 	correct, err := casbin.Enforce(userId, r.URL.Path, r.Method)
 	if err != nil || !correct {
-		xhttp.JsonBaseResponseCtx(r.Context(), w, errors.New(http.StatusForbidden, "forbidden"))
+		xhttp.JsonBaseResponseCtx(r.Context(), w, errors.New(http.StatusNotFound, "not found"))
 		return
 	}
 }

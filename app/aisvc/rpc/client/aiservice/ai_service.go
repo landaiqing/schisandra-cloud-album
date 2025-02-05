@@ -16,8 +16,15 @@ import (
 type (
 	CaffeClassificationRequest  = pb.CaffeClassificationRequest
 	CaffeClassificationResponse = pb.CaffeClassificationResponse
+	FaceLibrary                 = pb.FaceLibrary
 	FaceRecognitionRequest      = pb.FaceRecognitionRequest
 	FaceRecognitionResponse     = pb.FaceRecognitionResponse
+	ModifyFaceNameRequest       = pb.ModifyFaceNameRequest
+	ModifyFaceNameResponse      = pb.ModifyFaceNameResponse
+	ModifyFaceTypeRequest       = pb.ModifyFaceTypeRequest
+	ModifyFaceTypeResponse      = pb.ModifyFaceTypeResponse
+	QueryFaceLibraryRequest     = pb.QueryFaceLibraryRequest
+	QueryFaceLibraryResponse    = pb.QueryFaceLibraryResponse
 	TfClassificationRequest     = pb.TfClassificationRequest
 	TfClassificationResponse    = pb.TfClassificationResponse
 
@@ -28,6 +35,12 @@ type (
 		TfClassification(ctx context.Context, in *TfClassificationRequest, opts ...grpc.CallOption) (*TfClassificationResponse, error)
 		// CaffeClassification
 		CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error)
+		// QueryFaceLibrary
+		QueryFaceLibrary(ctx context.Context, in *QueryFaceLibraryRequest, opts ...grpc.CallOption) (*QueryFaceLibraryResponse, error)
+		// ModifyFaceName
+		ModifyFaceName(ctx context.Context, in *ModifyFaceNameRequest, opts ...grpc.CallOption) (*ModifyFaceNameResponse, error)
+		// ModifyFaceType
+		ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error)
 	}
 
 	defaultAiService struct {
@@ -57,4 +70,22 @@ func (m *defaultAiService) TfClassification(ctx context.Context, in *TfClassific
 func (m *defaultAiService) CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error) {
 	client := pb.NewAiServiceClient(m.cli.Conn())
 	return client.CaffeClassification(ctx, in, opts...)
+}
+
+// QueryFaceLibrary
+func (m *defaultAiService) QueryFaceLibrary(ctx context.Context, in *QueryFaceLibraryRequest, opts ...grpc.CallOption) (*QueryFaceLibraryResponse, error) {
+	client := pb.NewAiServiceClient(m.cli.Conn())
+	return client.QueryFaceLibrary(ctx, in, opts...)
+}
+
+// ModifyFaceName
+func (m *defaultAiService) ModifyFaceName(ctx context.Context, in *ModifyFaceNameRequest, opts ...grpc.CallOption) (*ModifyFaceNameResponse, error) {
+	client := pb.NewAiServiceClient(m.cli.Conn())
+	return client.ModifyFaceName(ctx, in, opts...)
+}
+
+// ModifyFaceType
+func (m *defaultAiService) ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error) {
+	client := pb.NewAiServiceClient(m.cli.Conn())
+	return client.ModifyFaceType(ctx, in, opts...)
 }

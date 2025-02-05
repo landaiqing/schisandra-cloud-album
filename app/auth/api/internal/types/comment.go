@@ -2,18 +2,7 @@ package types
 
 import (
 	"time"
-
-	"github.com/chenmingyong0423/go-mongox/v2"
 )
-
-// CommentImages 评论 图片
-type CommentImages struct {
-	mongox.Model `bson:",inline"`
-	TopicId      string   `json:"topic_id" bson:"topic_id"`
-	CommentId    int64    `json:"comment_id" bson:"comment_id"`
-	UserId       string   `json:"user_id" bson:"user_id"`
-	Images       [][]byte `json:"images" bson:"images"`
-}
 
 // CommentListQueryResult 评论列表查询结果
 type CommentListQueryResult struct {
@@ -30,6 +19,7 @@ type CommentListQueryResult struct {
 	Location        string    `json:"location"`
 	Avatar          string    `json:"avatar"`
 	Nickname        string    `json:"nickname"`
+	ImagePath       string    `json:"image_path"`
 }
 
 // ReplyListQueryResult 回复列表查询结果
@@ -51,4 +41,5 @@ type ReplyListQueryResult struct {
 	ReplyId         int64     `json:"reply_id"`
 	ReplyTo         int64     `json:"reply_to"`
 	ReplyNickname   string    `json:"reply_nickname"`
+	ImagePath       string    `json:"image_path"`
 }

@@ -170,6 +170,17 @@ SMS:
     Username: landaiqing
     # 短信宝用户密码
     Password: $LDQ20020618xxx$
+# 高德地图配置
 Map:
   # 高德地图API Key
   Key: 54823a494909959a9c8cd8af101bbc32
+# Minio配置
+Minio:
+  # Minio 地址
+  Endpoint: 1.95.0.111:9000
+  # Minio 访问密钥
+  AccessKeyID: JNLVxMGro1XXwajodLBX
+  # Minio 访问密钥
+  SecretAccessKey: XEHkwExqQdAlEPfpRk36xpc0Sie8hZkcmlhXQJXw
+  # Minio 使用SSL
+  UseSSL: false

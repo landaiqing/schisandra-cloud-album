@@ -7,12 +7,12 @@ import (
 	"fmt"
 	"github.com/Kagami/go-face"
 	"github.com/ccpwcn/kgo"
+	"github.com/minio/minio-go/v7"
 	"github.com/zeromicro/go-zero/core/logx"
 	"image"
 	"image/jpeg"
 	_ "image/png"
-	"os"
-	"path/filepath"
+	"path"
 	"schisandra-album-cloud-microservices/app/aisvc/model/mysql/model"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/internal/svc"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/pb"
@@ -60,7 +60,7 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 		return nil, nil
 	}
 
-	hashKey := fmt.Sprintf("user:%s:faces", in.GetUserId())
+	hashKey := constant.FaceVectorPrefix + in.GetUserId()
 	// 从 Redis 加载人脸数据
 	samples, ids, err := l.loadFacesFromRedisHash(hashKey)
 	if err != nil {
@@ -89,10 +89,10 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 	l.svcCtx.FaceRecognizer.SetSamples(samples, ids)
 
 	// 人脸分类
-	classify := l.svcCtx.FaceRecognizer.ClassifyThreshold(faceFeatures.Descriptor, 0.6)
-	if classify >= 0 && classify < len(ids) {
+	classify := l.svcCtx.FaceRecognizer.ClassifyThreshold(faceFeatures.Descriptor, 0.3)
+	if classify > 0 {
 		return &pb.FaceRecognitionResponse{
-			FaceId: int64(ids[classify]),
+			FaceId: int64(classify),
 		}, nil
 	}
 
@@ -131,7 +131,7 @@ func (l *FaceRecognitionLogic) saveNewFace(in *pb.FaceRecognitionRequest, faceFe
 	}
 
 	// 保存人脸图片到本地
-	faceImagePath, err := l.saveCroppedFaceToLocal(in.GetFace(), faceFeatures.Rectangle, "face_samples", in.GetUserId())
+	faceImagePath, err := l.saveCroppedFaceToLocal(in.GetFace(), faceFeatures.Rectangle, in.GetUserId())
 	if err != nil {
 		return nil, err
 	}
@@ -161,7 +161,7 @@ func (l *FaceRecognitionLogic) loadExistingFaces(userId string) ([]face.Descript
 	storageFace := l.svcCtx.DB.ScaStorageFace
 	existingFaces, err := storageFace.
 		Select(storageFace.FaceVector, storageFace.ID).
-		Where(storageFace.UserID.Eq(userId), storageFace.FaceType.Eq(constant.FaceTypeSample)).
+		Where(storageFace.UserID.Eq(userId)).
 		Find()
 	if err != nil {
 		return nil, nil, err
@@ -215,7 +215,6 @@ func (l *FaceRecognitionLogic) saveFaceToDatabase(userId string, descriptor face
 	storageFace := model.ScaStorageFace{
 		FaceVector:    string(jsonBytes),
 		FaceImagePath: faceImagePath,
-		FaceType:      constant.FaceTypeSample,
 		UserID:        userId,
 	}
 	err = l.svcCtx.DB.ScaStorageFace.Create(&storageFace)
@@ -225,17 +224,12 @@ func (l *FaceRecognitionLogic) saveFaceToDatabase(userId string, descriptor face
 	return &storageFace, nil
 }
 
-func (l *FaceRecognitionLogic) saveCroppedFaceToLocal(faceImage []byte, rect image.Rectangle, baseSavePath string, userID string) (string, error) {
-	// 动态生成用户目录和时间分级目录
-	subDir := filepath.Join(baseSavePath, userID, time.Now().Format("2006/01")) // 格式：<baseSavePath>/<userID>/YYYY/MM
-
-	// 缓存目录检查，避免重复调用 os.MkdirAll
-	if !l.isDirectoryCached(subDir) {
-		if err := os.MkdirAll(subDir, os.ModePerm); err != nil {
-			return "", fmt.Errorf("failed to create directory: %w", err)
-		}
-		l.cacheDirectory(subDir) // 缓存已创建的目录路径
-	}
+func (l *FaceRecognitionLogic) saveCroppedFaceToLocal(faceImage []byte, rect image.Rectangle, userID string) (string, error) {
+	objectKey := path.Join(
+		userID,
+		time.Now().Format("2006/01"), // 按年/月划分目录
+		fmt.Sprintf("%s_%s.jpg", time.Now().Format("20060102150405"), kgo.SimpleUuid()),
+	)
 
 	// 解码图像
 	img, _, err := image.Decode(bytes.NewReader(faceImage))
@@ -258,42 +252,35 @@ func (l *FaceRecognitionLogic) saveCroppedFaceToLocal(faceImage []byte, rect ima
 		SubImage(r image.Rectangle) image.Image
 	}).SubImage(extendedRect)
 
-	// 生成唯一文件名（时间戳 + UUID）
-	fileName := fmt.Sprintf("%s_%s.jpg", time.Now().Format("20060102_150405"), kgo.SimpleUuid())
-	outputPath := filepath.Join(subDir, fileName)
-
-	// 写入文件
-	if err = l.writeImageToFile(outputPath, croppedImage); err != nil {
-		return "", err
+	// 将图像编码为JPEG字节流
+	var buf bytes.Buffer
+	if err = jpeg.Encode(&buf, croppedImage, nil); err != nil {
+		return "", fmt.Errorf("failed to encode image to JPEG: %w", err)
 	}
-	return outputPath, nil
-}
+	exists, err := l.svcCtx.MinioClient.BucketExists(l.ctx, constant.FaceBucketName)
+	if err != nil || !exists {
+		err = l.svcCtx.MinioClient.MakeBucket(l.ctx, constant.FaceBucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
+		if err != nil {
+			logx.Errorf("Failed to create MinIO bucket: %v", err)
+			return "", err
+		}
+	}
 
-// 判断目录是否已缓存
-func (l *FaceRecognitionLogic) isDirectoryCached(dir string) bool {
-	_, exists := l.directoryCache.Load(dir)
-	return exists
-}
-
-// 缓存目录
-func (l *FaceRecognitionLogic) cacheDirectory(dir string) {
-	l.directoryCache.Store(dir, struct{}{})
-}
-
-// 将图像写入文件
-func (l *FaceRecognitionLogic) writeImageToFile(path string, img image.Image) error {
-	file, err := os.Create(path)
+	// 上传到MinIO
+	_, err = l.svcCtx.MinioClient.PutObject(
+		l.ctx,
+		constant.FaceBucketName,
+		objectKey,
+		bytes.NewReader(buf.Bytes()),
+		int64(buf.Len()),
+		minio.PutObjectOptions{
+			ContentType: "image/jpeg",
+		},
+	)
 	if err != nil {
-		return fmt.Errorf("failed to create file: %w", err)
+		return "", fmt.Errorf("failed to upload image to MinIO: %w", err)
 	}
-	defer func(file *os.File) {
-		_ = file.Close()
-	}(file)
-
-	if err = jpeg.Encode(file, img, nil); err != nil {
-		return fmt.Errorf("failed to encode and save image: %w", err)
-	}
-	return nil
+	return objectKey, nil
 }
 
 // 从 Redis 的 Hash 中加载人脸数据

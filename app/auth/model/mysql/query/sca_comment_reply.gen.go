@@ -39,6 +39,7 @@ func newScaCommentReply(db *gorm.DB, opts ...gen.DOOption) scaCommentReply {
 	_scaCommentReply.Author = field.NewInt64(tableName, "author")
 	_scaCommentReply.Likes = field.NewInt64(tableName, "likes")
 	_scaCommentReply.ReplyCount = field.NewInt64(tableName, "reply_count")
+	_scaCommentReply.ImagePath = field.NewString(tableName, "image_path")
 	_scaCommentReply.Browser = field.NewString(tableName, "browser")
 	_scaCommentReply.OperatingSystem = field.NewString(tableName, "operating_system")
 	_scaCommentReply.CommentIP = field.NewString(tableName, "comment_ip")
@@ -70,6 +71,7 @@ type scaCommentReply struct {
 	Author          field.Int64  // 评论回复是否作者  0否 1是
 	Likes           field.Int64  // 点赞数
 	ReplyCount      field.Int64  // 回复数量
+	ImagePath       field.String // 评论图片地址
 	Browser         field.String // 浏览器
 	OperatingSystem field.String // 操作系统
 	CommentIP       field.String // IP地址
@@ -107,6 +109,7 @@ func (s *scaCommentReply) updateTableName(table string) *scaCommentReply {
 	s.Author = field.NewInt64(table, "author")
 	s.Likes = field.NewInt64(table, "likes")
 	s.ReplyCount = field.NewInt64(table, "reply_count")
+	s.ImagePath = field.NewString(table, "image_path")
 	s.Browser = field.NewString(table, "browser")
 	s.OperatingSystem = field.NewString(table, "operating_system")
 	s.CommentIP = field.NewString(table, "comment_ip")
@@ -132,7 +135,7 @@ func (s *scaCommentReply) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaCommentReply) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 21)
+	s.fieldMap = make(map[string]field.Expr, 22)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["topic_id"] = s.TopicID
@@ -145,6 +148,7 @@ func (s *scaCommentReply) fillFieldMap() {
 	s.fieldMap["author"] = s.Author
 	s.fieldMap["likes"] = s.Likes
 	s.fieldMap["reply_count"] = s.ReplyCount
+	s.fieldMap["image_path"] = s.ImagePath
 	s.fieldMap["browser"] = s.Browser
 	s.fieldMap["operating_system"] = s.OperatingSystem
 	s.fieldMap["comment_ip"] = s.CommentIP

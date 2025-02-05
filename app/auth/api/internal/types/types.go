@@ -12,26 +12,26 @@ type AccountLoginRequest struct {
 }
 
 type CommentContent struct {
-	NickName        string   `json:"nickname"`
-	Avatar          string   `json:"avatar"`
-	Level           int64    `json:"level,omitempty" default:"0"`
-	Id              int64    `json:"id"`
-	UserId          string   `json:"user_id"`
-	TopicId         string   `json:"topic_id"`
-	Content         string   `json:"content"`
-	ReplyTo         int64    `json:"reply_to,omitempty"`
-	ReplyId         int64    `json:"reply_id,omitempty"`
-	ReplyUser       string   `json:"reply_user,omitempty"`
-	ReplyNickname   string   `json:"reply_nickname,omitempty"`
-	IsAuthor        int64    `json:"is_author"`
-	Likes           int64    `json:"likes"`
-	ReplyCount      int64    `json:"reply_count"`
-	CreatedTime     string   `json:"created_time"`
-	Location        string   `json:"location"`
-	Browser         string   `json:"browser"`
-	OperatingSystem string   `json:"operating_system"`
-	IsLiked         bool     `json:"is_liked" default:"false"`
-	Images          []string `json:"images,omitempty"`
+	NickName        string `json:"nickname"`
+	Avatar          string `json:"avatar"`
+	Level           int64  `json:"level,omitempty" default:"0"`
+	Id              int64  `json:"id"`
+	UserId          string `json:"user_id"`
+	TopicId         string `json:"topic_id"`
+	Content         string `json:"content"`
+	ReplyTo         int64  `json:"reply_to,omitempty"`
+	ReplyId         int64  `json:"reply_id,omitempty"`
+	ReplyUser       string `json:"reply_user,omitempty"`
+	ReplyNickname   string `json:"reply_nickname,omitempty"`
+	IsAuthor        int64  `json:"is_author"`
+	Likes           int64  `json:"likes"`
+	ReplyCount      int64  `json:"reply_count"`
+	CreatedTime     string `json:"created_time"`
+	Location        string `json:"location"`
+	Browser         string `json:"browser"`
+	OperatingSystem string `json:"operating_system"`
+	IsLiked         bool   `json:"is_liked" default:"false"`
+	Images          string `json:"images,omitempty"`
 }
 
 type CommentDisLikeRequest struct {
@@ -59,12 +59,12 @@ type CommentListRequest struct {
 }
 
 type CommentRequest struct {
-	Content string   `json:"content"`
-	Images  []string `json:"images,optional"`
-	TopicId string   `json:"topic_id"`
-	Author  string   `json:"author"`
-	Key     string   `json:"key"`
-	Point   []int64  `json:"point"`
+	Content string  `json:"content"`
+	Images  string  `json:"images,optional"`
+	TopicId string  `json:"topic_id"`
+	Author  string  `json:"author"`
+	Key     string  `json:"key"`
+	Point   []int64 `json:"point"`
 }
 
 type CommentResponse struct {
@@ -82,6 +82,20 @@ type CommentResponse struct {
 	ReplyTo         int64  `json:"reply_to,omitempty"`
 }
 
+type FaceSampleLibrary struct {
+	ID        int64  `json:"id"`
+	FaceName  string `json:"face_name"`
+	FaceImage string `json:"face_image"`
+}
+
+type FaceSampleLibraryListRequest struct {
+	Type int64 `json:"type"`
+}
+
+type FaceSampleLibraryListResponse struct {
+	Faces []FaceSampleLibrary `json:"faces"`
+}
+
 type LoginResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpireAt    int64  `json:"expire_at"`
@@ -90,6 +104,20 @@ type LoginResponse struct {
 	Nickname    string `json:"nickname"`
 	Avatar      string `json:"avatar"`
 	Status      int64  `json:"status"`
+}
+
+type ModifyFaceNameRequestAndResponse struct {
+	ID       int64  `json:"id"`
+	FaceName string `json:"face_name"`
+}
+
+type ModifyFaceTypeRequest struct {
+	IDs      []int64 `json:"ids"`
+	FaceType int64   `json:"face_type"`
+}
+
+type ModifyFaceTypeResponse struct {
+	Result string `json:"result"`
 }
 
 type OAuthCallbackRequest struct {
@@ -116,14 +144,14 @@ type RefreshTokenResponse struct {
 }
 
 type ReplyCommentRequest struct {
-	Content   string   `json:"content"`
-	Images    []string `json:"images,optional"`
-	TopicId   string   `json:"topic_id" `
-	ReplyId   int64    `json:"reply_id" `
-	ReplyUser string   `json:"reply_user" `
-	Author    string   `json:"author"`
-	Key       string   `json:"key"`
-	Point     []int64  `json:"point"`
+	Content   string  `json:"content"`
+	Images    string  `json:"images,optional"`
+	TopicId   string  `json:"topic_id" `
+	ReplyId   int64   `json:"reply_id" `
+	ReplyUser string  `json:"reply_user" `
+	Author    string  `json:"author"`
+	Key       string  `json:"key"`
+	Point     []int64 `json:"point"`
 }
 
 type ReplyListRequest struct {
@@ -134,15 +162,15 @@ type ReplyListRequest struct {
 }
 
 type ReplyReplyRequest struct {
-	Content   string   `json:"content"`
-	Images    []string `json:"images,optional"`
-	TopicId   string   `json:"topic_id"`
-	ReplyTo   int64    `json:"reply_to"`
-	ReplyId   int64    `json:"reply_id"`
-	ReplyUser string   `json:"reply_user" `
-	Author    string   `json:"author"`
-	Key       string   `json:"key"`
-	Point     []int64  `json:"point"`
+	Content   string  `json:"content"`
+	Images    string  `json:"images,optional"`
+	TopicId   string  `json:"topic_id"`
+	ReplyTo   int64   `json:"reply_to"`
+	ReplyId   int64   `json:"reply_id"`
+	ReplyUser string  `json:"reply_user" `
+	Author    string  `json:"author"`
+	Key       string  `json:"key"`
+	Point     []int64 `json:"point"`
 }
 
 type ResetPasswordRequest struct {

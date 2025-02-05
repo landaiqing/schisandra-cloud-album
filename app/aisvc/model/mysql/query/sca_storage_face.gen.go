@@ -32,7 +32,7 @@ func newScaStorageFace(db *gorm.DB, opts ...gen.DOOption) scaStorageFace {
 	_scaStorageFace.FaceName = field.NewString(tableName, "face_name")
 	_scaStorageFace.FaceVector = field.NewString(tableName, "face_vector")
 	_scaStorageFace.FaceImagePath = field.NewString(tableName, "face_image_path")
-	_scaStorageFace.FaceType = field.NewString(tableName, "face_type")
+	_scaStorageFace.FaceType = field.NewInt64(tableName, "face_type")
 	_scaStorageFace.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageFace.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageFace.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -52,7 +52,7 @@ type scaStorageFace struct {
 	FaceName      field.String // 人脸名称
 	FaceVector    field.String // 人脸特征向量
 	FaceImagePath field.String // 人脸图像路径
-	FaceType      field.String // 人脸类型标识
+	FaceType      field.Int64  // 人脸类型标识
 	CreatedAt     field.Time   // 创建时间
 	UpdatedAt     field.Time   // 更新时间
 	DeletedAt     field.Field  // 删除时间
@@ -77,7 +77,7 @@ func (s *scaStorageFace) updateTableName(table string) *scaStorageFace {
 	s.FaceName = field.NewString(table, "face_name")
 	s.FaceVector = field.NewString(table, "face_vector")
 	s.FaceImagePath = field.NewString(table, "face_image_path")
-	s.FaceType = field.NewString(table, "face_type")
+	s.FaceType = field.NewInt64(table, "face_type")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")

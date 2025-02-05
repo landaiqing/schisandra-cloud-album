@@ -62,7 +62,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.AuthorizationMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -186,12 +186,27 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.AuthorizationMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
 					Path:    "/config",
 					Handler: storage.SetStorageConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/face/sample/list",
+					Handler: storage.GetFaceSampleLibraryListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/face/sample/modify/name",
+					Handler: storage.ModifyFaceLibraryNameHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/face/sample/modify/type",
+					Handler: storage.ModifyFaceLibraryTypeHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

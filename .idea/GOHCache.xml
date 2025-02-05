@@ -66,13 +66,6 @@
             </set>
           </value>
         </entry>
-        <entry key="AuthorizationMiddleware">
-          <value>
-            <set>
-              <option value="file://$PROJECT_DIR$/app/auth/api/internal/middleware/authorization_middleware.go" />
-            </set>
-          </value>
-        </entry>
         <entry key="BaseResponse">
           <value>
             <set>
@@ -277,10 +270,11 @@
             </set>
           </value>
         </entry>
-        <entry key="Face">
+        <entry key="FaceLibrary">
           <value>
             <set>
-              <option value="file://D:/GoPath/pkg/mod/github.com/!kagami/go-face@v0.0.0-20210630145111-0c14797b4d0e/face.go" />
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/query_face_library_logic.go" />
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
             </set>
           </value>
         </entry>
@@ -302,6 +296,27 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="FaceSampleLibrary">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="FaceSampleLibraryListRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="FaceSampleLibraryListResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go" />
             </set>
           </value>
         </entry>
@@ -365,6 +380,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/auth/api/internal/logic/comment/get_comment_list_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="GetFaceSampleLibraryListLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/get_face_sample_library_list_logic.go" />
             </set>
           </value>
         </entry>
@@ -501,6 +523,71 @@
             </set>
           </value>
         </entry>
+        <entry key="ModifyFaceLibraryNameLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/modify_face_library_name_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceLibraryTypeLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/modify_face_library_type_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceNameLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/modify_face_name_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceNameRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceNameRequestAndResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceNameResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceTypeLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/modify_face_type_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceTypeRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ModifyFaceTypeResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+              <option value="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="NonceMiddleware">
           <value>
             <set>
@@ -628,6 +715,27 @@
             </set>
           </value>
         </entry>
+        <entry key="QueryFaceLibraryLogic">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/query_face_library_logic.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="QueryFaceLibraryRequest">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="QueryFaceLibraryResponse">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="QueryTx">
           <value>
             <set>
@@ -647,13 +755,6 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/common/gao_map/beans.go" />
-            </set>
-          </value>
-        </entry>
-        <entry key="Recognizer">
-          <value>
-            <set>
-              <option value="file://D:/GoPath/pkg/mod/github.com/!kagami/go-face@v0.0.0-20210630145111-0c14797b4d0e/face.go" />
             </set>
           </value>
         </entry>
@@ -815,6 +916,13 @@
           <value>
             <set>
               <option value="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_message_report.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="ScaStorageAlbum">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_storage_album.gen.go" />
             </set>
           </value>
         </entry>
@@ -1240,6 +1348,20 @@
             </set>
           </value>
         </entry>
+        <entry key="scaStorageAlbum">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_album.gen.go" />
+            </set>
+          </value>
+        </entry>
+        <entry key="scaStorageAlbumDo">
+          <value>
+            <set>
+              <option value="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_album.gen.go" />
+            </set>
+          </value>
+        </entry>
         <entry key="scaStorageConfig">
           <value>
             <set>
@@ -1363,19 +1485,6 @@
     </option>
     <option name="scannedPathMapping">
       <map>
-        <entry key="file://D:/GoPath/pkg/mod/github.com/!kagami/go-face@v0.0.0-20210630145111-0c14797b4d0e/face.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1737559935226" />
-              <option name="schema">
-                <list>
-                  <option value="Recognizer" />
-                  <option value="Face" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/app/aisvc/model/mysql/generate/generate.go">
           <value>
             <ScannedPath>
@@ -1386,7 +1495,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/model/mysql/model/sca_storage_face.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471583034" />
+              <option name="lastModified" value="1737710882230" />
               <option name="schema">
                 <list>
                   <option value="ScaStorageFace" />
@@ -1405,7 +1514,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/model/mysql/query/gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471584472" />
+              <option name="lastModified" value="1737710883748" />
               <option name="schema">
                 <list>
                   <option value="Query" />
@@ -1419,7 +1528,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/model/mysql/query/sca_storage_face.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737471584201" />
+              <option name="lastModified" value="1737710883470" />
               <option name="schema">
                 <list>
                   <option value="scaStorageFace" />
@@ -1436,17 +1545,10 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/build.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1737540237579" />
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/client/aiservice/ai_service.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737535196216" />
+              <option name="lastModified" value="1738734171735" />
               <option name="schema">
                 <list>
                   <option value="defaultAiService" />
@@ -1465,7 +1567,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/config/config.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737451479134" />
+              <option name="lastModified" value="1738727936121" />
               <option name="schema">
                 <list>
                   <option value="Config" />
@@ -1489,10 +1591,47 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/face_recognition_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737629887959" />
+              <option name="lastModified" value="1738743166349" />
               <option name="schema">
                 <list>
                   <option value="FaceRecognitionLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/modify_face_name_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737696790633" />
+              <option name="schema">
+                <list>
+                  <option value="ModifyFaceNameLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/modify_face_type_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737716255768" />
+              <option name="schema">
+                <list>
+                  <option value="ModifyFaceTypeLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/logic/aiservice/query_face_library_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1738742115187" />
+              <option name="schema">
+                <list>
+                  <option value="QueryFaceLibraryLogic" />
+                  <option value="FaceLibrary" />
                 </list>
               </option>
             </ScannedPath>
@@ -1513,7 +1652,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/server/aiservice/ai_service_server.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737535196211" />
+              <option name="lastModified" value="1738734171728" />
               <option name="schema">
                 <list>
                   <option value="AiServiceServer" />
@@ -1525,7 +1664,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737534763350" />
+              <option name="lastModified" value="1738727970140" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -1537,7 +1676,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc.pb.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737535196194" />
+              <option name="lastModified" value="1738734171704" />
               <option name="schema">
                 <list>
                   <option value="FaceRecognitionRequest" />
@@ -1546,6 +1685,13 @@
                   <option value="TfClassificationResponse" />
                   <option value="CaffeClassificationRequest" />
                   <option value="CaffeClassificationResponse" />
+                  <option value="QueryFaceLibraryRequest" />
+                  <option value="FaceLibrary" />
+                  <option value="QueryFaceLibraryResponse" />
+                  <option value="ModifyFaceNameRequest" />
+                  <option value="ModifyFaceNameResponse" />
+                  <option value="ModifyFaceTypeRequest" />
+                  <option value="ModifyFaceTypeResponse" />
                   <option value="x" />
                 </list>
               </option>
@@ -1555,7 +1701,7 @@
         <entry key="file://$PROJECT_DIR$/app/aisvc/rpc/pb/aisvc_grpc.pb.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737535196195" />
+              <option name="lastModified" value="1738734171705" />
               <option name="schema">
                 <list>
                   <option value="aiServiceClient" />
@@ -1582,7 +1728,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/config/config.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737427979817" />
+              <option name="lastModified" value="1738725465053" />
               <option name="schema">
                 <list>
                   <option value="Config" />
@@ -1734,7 +1880,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/handler/routes.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737533432274" />
+              <option name="lastModified" value="1738745470373" />
             </ScannedPath>
           </value>
         </entry>
@@ -1756,6 +1902,27 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1735033691677" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/handler/storage/get_face_sample_library_list_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737711213003" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/handler/storage/modify_face_library_name_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737696931049" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/handler/storage/modify_face_library_type_handler.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737716778061" />
             </ScannedPath>
           </value>
         </entry>
@@ -1870,7 +2037,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/client/generate_client_id_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735033691968" />
+              <option name="lastModified" value="1737649191496" />
               <option name="schema">
                 <list>
                   <option value="GenerateClientIdLogic" />
@@ -1894,7 +2061,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/comment/get_comment_list_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735033691633" />
+              <option name="lastModified" value="1738749672984" />
               <option name="schema">
                 <list>
                   <option value="GetCommentListLogic" />
@@ -1906,7 +2073,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/comment/get_reply_list_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735033691666" />
+              <option name="lastModified" value="1738749672977" />
               <option name="schema">
                 <list>
                   <option value="GetReplyListLogic" />
@@ -1930,7 +2097,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/comment/submit_comment_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735033691924" />
+              <option name="lastModified" value="1738748024580" />
               <option name="schema">
                 <list>
                   <option value="SubmitCommentLogic" />
@@ -1942,7 +2109,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/comment/submit_reply_comment_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735033691714" />
+              <option name="lastModified" value="1738748024587" />
               <option name="schema">
                 <list>
                   <option value="SubmitReplyCommentLogic" />
@@ -1954,7 +2121,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/comment/submit_reply_reply_logic.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1735033691948" />
+              <option name="lastModified" value="1738748024592" />
               <option name="schema">
                 <list>
                   <option value="SubmitReplyReplyLogic" />
@@ -2097,6 +2264,42 @@
               <option name="schema">
                 <list>
                   <option value="SendSmsByTestLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/get_face_sample_library_list_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737711212518" />
+              <option name="schema">
+                <list>
+                  <option value="GetFaceSampleLibraryListLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/modify_face_library_name_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1737697079809" />
+              <option name="schema">
+                <list>
+                  <option value="ModifyFaceLibraryNameLogic" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/logic/storage/modify_face_library_type_logic.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1738722460883" />
+              <option name="schema">
+                <list>
+                  <option value="ModifyFaceLibraryTypeLogic" />
                 </list>
               </option>
             </ScannedPath>
@@ -2249,18 +2452,6 @@
             </ScannedPath>
           </value>
         </entry>
-        <entry key="file://$PROJECT_DIR$/app/auth/api/internal/middleware/authorization_middleware.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1734968378912" />
-              <option name="schema">
-                <list>
-                  <option value="AuthorizationMiddleware" />
-                </list>
-              </option>
-            </ScannedPath>
-          </value>
-        </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/middleware/casbinverify_middleware.go">
           <value>
             <ScannedPath>
@@ -2300,7 +2491,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/svc/service_context.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737427979341" />
+              <option name="lastModified" value="1738744010634" />
               <option name="schema">
                 <list>
                   <option value="ServiceContext" />
@@ -2312,10 +2503,9 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/types/comment.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734969890531" />
+              <option name="lastModified" value="1738747312423" />
               <option name="schema">
                 <list>
-                  <option value="CommentImages" />
                   <option value="CommentListQueryResult" />
                   <option value="ReplyListQueryResult" />
                 </list>
@@ -2350,7 +2540,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/api/internal/types/types.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737533432269" />
+              <option name="lastModified" value="1738745470368" />
               <option name="schema">
                 <list>
                   <option value="AccountLoginRequest" />
@@ -2361,7 +2551,13 @@
                   <option value="CommentListRequest" />
                   <option value="CommentRequest" />
                   <option value="CommentResponse" />
+                  <option value="FaceSampleLibrary" />
+                  <option value="FaceSampleLibraryListRequest" />
+                  <option value="FaceSampleLibraryListResponse" />
                   <option value="LoginResponse" />
+                  <option value="ModifyFaceNameRequestAndResponse" />
+                  <option value="ModifyFaceTypeRequest" />
+                  <option value="ModifyFaceTypeResponse" />
                   <option value="OAuthCallbackRequest" />
                   <option value="OAuthRequest" />
                   <option value="OAuthWechatRequest" />
@@ -2385,28 +2581,28 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mongodb/collection.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734971303394" />
+              <option name="lastModified" value="1738743805056" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/model/mongodb/mongodb.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734953849821" />
+              <option name="lastModified" value="1738743883537" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/generate/generate.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450889733" />
+              <option name="lastModified" value="1738724401923" />
             </ScannedPath>
           </value>
         </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_auth_menu.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450920999" />
+              <option name="lastModified" value="1738724437433" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthMenu" />
@@ -2418,7 +2614,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_auth_permission_rule.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921372" />
+              <option name="lastModified" value="1738724437915" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthPermissionRule" />
@@ -2430,7 +2626,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_auth_role.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921120" />
+              <option name="lastModified" value="1738724437563" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthRole" />
@@ -2442,7 +2638,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_auth_user.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450920851" />
+              <option name="lastModified" value="1738724437939" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUser" />
@@ -2454,7 +2650,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_auth_user_device.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450920855" />
+              <option name="lastModified" value="1738724437852" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserDevice" />
@@ -2466,7 +2662,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_auth_user_social.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450920941" />
+              <option name="lastModified" value="1738724437510" />
               <option name="schema">
                 <list>
                   <option value="ScaAuthUserSocial" />
@@ -2478,7 +2674,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_comment_likes.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921111" />
+              <option name="lastModified" value="1738724437573" />
               <option name="schema">
                 <list>
                   <option value="ScaCommentLike" />
@@ -2490,7 +2686,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_comment_reply.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450928171" />
+              <option name="lastModified" value="1738724443542" />
               <option name="schema">
                 <list>
                   <option value="ScaCommentReply" />
@@ -2502,7 +2698,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_message_report.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921049" />
+              <option name="lastModified" value="1738724437887" />
               <option name="schema">
                 <list>
                   <option value="ScaMessageReport" />
@@ -2511,10 +2707,22 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_storage_album.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1738724437572" />
+              <option name="schema">
+                <list>
+                  <option value="ScaStorageAlbum" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_storage_config.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921123" />
+              <option name="lastModified" value="1738724437580" />
               <option name="schema">
                 <list>
                   <option value="ScaStorageConfig" />
@@ -2526,7 +2734,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_storage_info.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921095" />
+              <option name="lastModified" value="1738724437559" />
               <option name="schema">
                 <list>
                   <option value="ScaStorageInfo" />
@@ -2538,7 +2746,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_storage_tag.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450920973" />
+              <option name="lastModified" value="1738724437473" />
               <option name="schema">
                 <list>
                   <option value="ScaStorageTag" />
@@ -2550,7 +2758,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_storage_tag_info.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450920940" />
+              <option name="lastModified" value="1738724437886" />
               <option name="schema">
                 <list>
                   <option value="ScaStorageTagInfo" />
@@ -2562,7 +2770,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_user_follows.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921395" />
+              <option name="lastModified" value="1738724437444" />
               <option name="schema">
                 <list>
                   <option value="ScaUserFollow" />
@@ -2574,7 +2782,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_user_level.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921263" />
+              <option name="lastModified" value="1738724437595" />
               <option name="schema">
                 <list>
                   <option value="ScaUserLevel" />
@@ -2586,7 +2794,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/model/sca_user_message.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450921384" />
+              <option name="lastModified" value="1738724437640" />
               <option name="schema">
                 <list>
                   <option value="ScaUserMessage" />
@@ -2605,7 +2813,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450930498" />
+              <option name="lastModified" value="1738724445814" />
               <option name="schema">
                 <list>
                   <option value="Query" />
@@ -2619,7 +2827,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_auth_menu.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929825" />
+              <option name="lastModified" value="1738724445474" />
               <option name="schema">
                 <list>
                   <option value="scaAuthMenu" />
@@ -2632,7 +2840,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_auth_permission_rule.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929841" />
+              <option name="lastModified" value="1738724445504" />
               <option name="schema">
                 <list>
                   <option value="scaAuthPermissionRule" />
@@ -2645,7 +2853,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_auth_role.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929974" />
+              <option name="lastModified" value="1738724445505" />
               <option name="schema">
                 <list>
                   <option value="scaAuthRole" />
@@ -2658,7 +2866,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_auth_user.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929789" />
+              <option name="lastModified" value="1738724445138" />
               <option name="schema">
                 <list>
                   <option value="scaAuthUser" />
@@ -2671,7 +2879,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_auth_user_device.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929890" />
+              <option name="lastModified" value="1738724445105" />
               <option name="schema">
                 <list>
                   <option value="scaAuthUserDevice" />
@@ -2684,7 +2892,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_auth_user_social.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929743" />
+              <option name="lastModified" value="1738724445196" />
               <option name="schema">
                 <list>
                   <option value="scaAuthUserSocial" />
@@ -2697,7 +2905,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_comment_likes.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929709" />
+              <option name="lastModified" value="1738724445107" />
               <option name="schema">
                 <list>
                   <option value="scaCommentLike" />
@@ -2710,7 +2918,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_comment_reply.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929961" />
+              <option name="lastModified" value="1738724445141" />
               <option name="schema">
                 <list>
                   <option value="scaCommentReply" />
@@ -2723,7 +2931,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_message_report.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450930234" />
+              <option name="lastModified" value="1738724445529" />
               <option name="schema">
                 <list>
                   <option value="scaMessageReport" />
@@ -2733,10 +2941,23 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_album.gen.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1738724445062" />
+              <option name="schema">
+                <list>
+                  <option value="scaStorageAlbum" />
+                  <option value="scaStorageAlbumDo" />
+                </list>
+              </option>
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_config.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929818" />
+              <option name="lastModified" value="1738724445517" />
               <option name="schema">
                 <list>
                   <option value="scaStorageConfig" />
@@ -2749,7 +2970,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_info.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450930147" />
+              <option name="lastModified" value="1738724445221" />
               <option name="schema">
                 <list>
                   <option value="scaStorageInfo" />
@@ -2762,7 +2983,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_tag.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929973" />
+              <option name="lastModified" value="1738724445147" />
               <option name="schema">
                 <list>
                   <option value="scaStorageTag" />
@@ -2775,7 +2996,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_storage_tag_info.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929729" />
+              <option name="lastModified" value="1738724445224" />
               <option name="schema">
                 <list>
                   <option value="scaStorageTagInfo" />
@@ -2788,7 +3009,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_user_follows.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450929962" />
+              <option name="lastModified" value="1738724445066" />
               <option name="schema">
                 <list>
                   <option value="scaUserFollow" />
@@ -2801,7 +3022,7 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_user_level.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450930232" />
+              <option name="lastModified" value="1738724445196" />
               <option name="schema">
                 <list>
                   <option value="scaUserLevel" />
@@ -2814,20 +3035,13 @@
         <entry key="file://$PROJECT_DIR$/app/auth/model/mysql/query/sca_user_message.gen.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737450930178" />
+              <option name="lastModified" value="1738724445059" />
               <option name="schema">
                 <list>
                   <option value="scaUserMessage" />
                   <option value="scaUserMessageDo" />
                 </list>
               </option>
-            </ScannedPath>
-          </value>
-        </entry>
-        <entry key="file://$PROJECT_DIR$/build.go">
-          <value>
-            <ScannedPath>
-              <option name="lastModified" value="1737603279477" />
             </ScannedPath>
           </value>
         </entry>
@@ -2936,6 +3150,13 @@
             </ScannedPath>
           </value>
         </entry>
+        <entry key="file://$PROJECT_DIR$/common/constant/bucket_name.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1738748617053" />
+            </ScannedPath>
+          </value>
+        </entry>
         <entry key="file://$PROJECT_DIR$/common/constant/comment_type.go">
           <value>
             <ScannedPath>
@@ -2946,7 +3167,7 @@
         <entry key="file://$PROJECT_DIR$/common/constant/face_type.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737474728453" />
+              <option name="lastModified" value="1737710812185" />
             </ScannedPath>
           </value>
         </entry>
@@ -2981,7 +3202,7 @@
         <entry key="file://$PROJECT_DIR$/common/constant/redis_prefix.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737476138621" />
+              <option name="lastModified" value="1737646308922" />
             </ScannedPath>
           </value>
         </entry>
@@ -3242,7 +3463,7 @@
         <entry key="file://$PROJECT_DIR$/common/middleware/casbin_middleware.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1734968475501" />
+              <option name="lastModified" value="1737648688003" />
             </ScannedPath>
           </value>
         </entry>
@@ -3285,6 +3506,13 @@
           <value>
             <ScannedPath>
               <option name="lastModified" value="1734964565419" />
+            </ScannedPath>
+          </value>
+        </entry>
+        <entry key="file://$PROJECT_DIR$/common/miniox/minio.go">
+          <value>
+            <ScannedPath>
+              <option name="lastModified" value="1738725099396" />
             </ScannedPath>
           </value>
         </entry>
@@ -3506,7 +3734,7 @@
         <entry key="file://$PROJECT_DIR$/common/utils/image_util.go">
           <value>
             <ScannedPath>
-              <option name="lastModified" value="1737448005617" />
+              <option name="lastModified" value="1738748288943" />
             </ScannedPath>
           </value>
         </entry>
@@ -3579,7 +3807,6 @@
         <entry key="all_district_response" value="AllDistrictResponse" />
         <entry key="amap_client" value="AmapClient" />
         <entry key="auth_q_qme" value="AuthQQme" />
-        <entry key="authorization_middleware" value="AuthorizationMiddleware" />
         <entry key="base_response" value="BaseResponse" />
         <entry key="base_xml_response" value="baseXmlResponse" />
         <entry key="bicycling_request" value="BicyclingRequest" />
@@ -3612,10 +3839,13 @@
         <entry key="driving_request" value="DrivingRequest" />
         <entry key="driving_response" value="DrivingResponse" />
         <entry key="event" value="Event" />
-        <entry key="face" value="Face" />
+        <entry key="face_library" value="FaceLibrary" />
         <entry key="face_recognition_logic" value="FaceRecognitionLogic" />
         <entry key="face_recognition_request" value="FaceRecognitionRequest" />
         <entry key="face_recognition_response" value="FaceRecognitionResponse" />
+        <entry key="face_sample_library" value="FaceSampleLibrary" />
+        <entry key="face_sample_library_list_request" value="FaceSampleLibraryListRequest" />
+        <entry key="face_sample_library_list_response" value="FaceSampleLibraryListResponse" />
         <entry key="file" value="File" />
         <entry key="file_web_socket" value="FileWebSocket" />
         <entry key="file_websocket_logic" value="FileWebsocketLogic" />
@@ -3625,6 +3855,7 @@
         <entry key="geo" value="Geo" />
         <entry key="geo_response" value="GeoResponse" />
         <entry key="get_comment_list_logic" value="GetCommentListLogic" />
+        <entry key="get_face_sample_library_list_logic" value="GetFaceSampleLibraryListLogic" />
         <entry key="get_gitee_oauth_url_logic" value="GetGiteeOauthUrlLogic" />
         <entry key="get_github_oauth_url_logic" value="GetGithubOauthUrlLogic" />
         <entry key="get_qq_oauth_url_logic" value="GetQqOauthUrlLogic" />
@@ -3644,6 +3875,15 @@
         <entry key="message_data" value="MessageData" />
         <entry key="message_web_socket" value="MessageWebSocket" />
         <entry key="message_websocket_logic" value="MessageWebsocketLogic" />
+        <entry key="modify_face_library_name_logic" value="ModifyFaceLibraryNameLogic" />
+        <entry key="modify_face_library_type_logic" value="ModifyFaceLibraryTypeLogic" />
+        <entry key="modify_face_name_logic" value="ModifyFaceNameLogic" />
+        <entry key="modify_face_name_request" value="ModifyFaceNameRequest" />
+        <entry key="modify_face_name_request_and_response" value="ModifyFaceNameRequestAndResponse" />
+        <entry key="modify_face_name_response" value="ModifyFaceNameResponse" />
+        <entry key="modify_face_type_logic" value="ModifyFaceTypeLogic" />
+        <entry key="modify_face_type_request" value="ModifyFaceTypeRequest" />
+        <entry key="modify_face_type_response" value="ModifyFaceTypeResponse" />
         <entry key="nonce_middleware" value="NonceMiddleware" />
         <entry key="o_auth_callback_request" value="OAuthCallbackRequest" />
         <entry key="o_auth_request" value="OAuthRequest" />
@@ -3663,10 +3903,12 @@
         <entry key="qrcode_websocket_logic" value="QrcodeWebsocketLogic" />
         <entry key="query" value="Query" />
         <entry key="query_ctx" value="queryCtx" />
+        <entry key="query_face_library_logic" value="QueryFaceLibraryLogic" />
+        <entry key="query_face_library_request" value="QueryFaceLibraryRequest" />
+        <entry key="query_face_library_response" value="QueryFaceLibraryResponse" />
         <entry key="query_tx" value="QueryTx" />
         <entry key="re_geo_request" value="ReGeoRequest" />
         <entry key="re_geo_response" value="ReGeoResponse" />
-        <entry key="recognizer" value="Recognizer" />
         <entry key="redis_token" value="RedisToken" />
         <entry key="refresh_jwt_claims" value="RefreshJWTClaims" />
         <entry key="refresh_jwt_payload" value="RefreshJWTPayload" />
@@ -3699,6 +3941,8 @@
         <entry key="sca_comment_reply_do" value="scaCommentReplyDo" />
         <entry key="sca_message_report" value="scaMessageReport" />
         <entry key="sca_message_report_do" value="scaMessageReportDo" />
+        <entry key="sca_storage_album" value="scaStorageAlbum" />
+        <entry key="sca_storage_album_do" value="scaStorageAlbumDo" />
         <entry key="sca_storage_config" value="scaStorageConfig" />
         <entry key="sca_storage_config_do" value="scaStorageConfigDo" />
         <entry key="sca_storage_face" value="scaStorageFace" />
@@ -3747,6 +3991,6 @@
         <entry key="x" value="x" />
       </map>
     </option>
-    <option name="lastTimeChecked" value="1737523965355" />
+    <option name="lastTimeChecked" value="1738720848734" />
   </component>
 </project>

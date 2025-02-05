@@ -26,6 +26,7 @@ var (
 	ScaCommentLike        *scaCommentLike
 	ScaCommentReply       *scaCommentReply
 	ScaMessageReport      *scaMessageReport
+	ScaStorageAlbum       *scaStorageAlbum
 	ScaStorageConfig      *scaStorageConfig
 	ScaStorageInfo        *scaStorageInfo
 	ScaStorageTag         *scaStorageTag
@@ -46,6 +47,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaCommentLike = &Q.ScaCommentLike
 	ScaCommentReply = &Q.ScaCommentReply
 	ScaMessageReport = &Q.ScaMessageReport
+	ScaStorageAlbum = &Q.ScaStorageAlbum
 	ScaStorageConfig = &Q.ScaStorageConfig
 	ScaStorageInfo = &Q.ScaStorageInfo
 	ScaStorageTag = &Q.ScaStorageTag
@@ -67,6 +69,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaCommentLike:        newScaCommentLike(db, opts...),
 		ScaCommentReply:       newScaCommentReply(db, opts...),
 		ScaMessageReport:      newScaMessageReport(db, opts...),
+		ScaStorageAlbum:       newScaStorageAlbum(db, opts...),
 		ScaStorageConfig:      newScaStorageConfig(db, opts...),
 		ScaStorageInfo:        newScaStorageInfo(db, opts...),
 		ScaStorageTag:         newScaStorageTag(db, opts...),
@@ -89,6 +92,7 @@ type Query struct {
 	ScaCommentLike        scaCommentLike
 	ScaCommentReply       scaCommentReply
 	ScaMessageReport      scaMessageReport
+	ScaStorageAlbum       scaStorageAlbum
 	ScaStorageConfig      scaStorageConfig
 	ScaStorageInfo        scaStorageInfo
 	ScaStorageTag         scaStorageTag
@@ -112,6 +116,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaCommentLike:        q.ScaCommentLike.clone(db),
 		ScaCommentReply:       q.ScaCommentReply.clone(db),
 		ScaMessageReport:      q.ScaMessageReport.clone(db),
+		ScaStorageAlbum:       q.ScaStorageAlbum.clone(db),
 		ScaStorageConfig:      q.ScaStorageConfig.clone(db),
 		ScaStorageInfo:        q.ScaStorageInfo.clone(db),
 		ScaStorageTag:         q.ScaStorageTag.clone(db),
@@ -142,6 +147,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaCommentLike:        q.ScaCommentLike.replaceDB(db),
 		ScaCommentReply:       q.ScaCommentReply.replaceDB(db),
 		ScaMessageReport:      q.ScaMessageReport.replaceDB(db),
+		ScaStorageAlbum:       q.ScaStorageAlbum.replaceDB(db),
 		ScaStorageConfig:      q.ScaStorageConfig.replaceDB(db),
 		ScaStorageInfo:        q.ScaStorageInfo.replaceDB(db),
 		ScaStorageTag:         q.ScaStorageTag.replaceDB(db),
@@ -162,6 +168,7 @@ type queryCtx struct {
 	ScaCommentLike        IScaCommentLikeDo
 	ScaCommentReply       IScaCommentReplyDo
 	ScaMessageReport      IScaMessageReportDo
+	ScaStorageAlbum       IScaStorageAlbumDo
 	ScaStorageConfig      IScaStorageConfigDo
 	ScaStorageInfo        IScaStorageInfoDo
 	ScaStorageTag         IScaStorageTagDo
@@ -182,6 +189,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaCommentLike:        q.ScaCommentLike.WithContext(ctx),
 		ScaCommentReply:       q.ScaCommentReply.WithContext(ctx),
 		ScaMessageReport:      q.ScaMessageReport.WithContext(ctx),
+		ScaStorageAlbum:       q.ScaStorageAlbum.WithContext(ctx),
 		ScaStorageConfig:      q.ScaStorageConfig.WithContext(ctx),
 		ScaStorageInfo:        q.ScaStorageInfo.WithContext(ctx),
 		ScaStorageTag:         q.ScaStorageTag.WithContext(ctx),

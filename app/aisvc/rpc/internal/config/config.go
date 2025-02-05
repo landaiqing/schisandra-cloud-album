@@ -15,4 +15,10 @@ type Config struct {
 		Pass string
 		DB   int
 	}
+	Minio struct {
+		Endpoint        string
+		AccessKeyID     string
+		SecretAccessKey string
+		UseSSL          bool
+	}
 }

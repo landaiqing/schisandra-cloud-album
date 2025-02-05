@@ -74,4 +74,10 @@ type Config struct {
 	Map struct {
 		Key string
 	}
+	Minio struct {
+		Endpoint        string
+		AccessKeyID     string
+		SecretAccessKey string
+		UseSSL          bool
+	}
 }

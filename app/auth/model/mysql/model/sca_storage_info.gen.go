@@ -34,6 +34,8 @@ type ScaStorageInfo struct {
 	Gps          string         `gorm:"column:gps;type:varchar(255);comment:GPS" json:"gps"`                                             // GPS
 	Screenshot   string         `gorm:"column:screenshot;type:varchar(50);comment:是否是截图" json:"screenshot"`                              // 是否是截图
 	Exif         string         `gorm:"column:exif;type:json;comment:exif 信息" json:"exif"`                                               // exif 信息
+	Hide         int64          `gorm:"column:hide;type:int(11) unsigned zerofill;comment:是否隐藏（0 不隐藏 1 隐藏）" json:"hide"`                 // 是否隐藏（0 不隐藏 1 隐藏）
+	AlbumID      int64          `gorm:"column:album_id;type:bigint(20);comment:相册ID" json:"album_id"`                                    // 相册ID
 	CreatedAt    time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt    time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
 	DeletedAt    gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间

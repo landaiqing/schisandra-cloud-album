@@ -2,17 +2,13 @@ package comment
 
 import (
 	"context"
-	"encoding/base64"
 	"errors"
-	"fmt"
+	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
-	"schisandra-album-cloud-microservices/app/auth/model/mongodb"
 	"schisandra-album-cloud-microservices/common/constant"
-	"schisandra-album-cloud-microservices/common/utils"
 	"sync"
-
-	"github.com/chenmingyong0423/go-mongox/v2/builder/query"
+	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -59,6 +55,7 @@ func (l *GetReplyListLogic) GetReplyList(req *types.ReplyListRequest) (resp *typ
 		reply.ReplyUser,
 		reply.ReplyTo,
 		reply.ReplyID,
+		reply.ImagePath,
 		commentUser.Avatar,
 		commentUser.Nickname,
 		replyUser.Nickname.As("reply_nickname"),
@@ -82,7 +79,7 @@ func (l *GetReplyListLogic) GetReplyList(req *types.ReplyListRequest) (resp *typ
 	for _, commentList := range replyQueryList {
 		commentIds = append(commentIds, commentList.ID)
 	}
-	l.wg.Add(2)
+	l.wg.Add(1)
 
 	// *************** 获取评论点赞状态 **********
 	likeMap := make(map[int64]bool)
@@ -102,36 +99,22 @@ func (l *GetReplyListLogic) GetReplyList(req *types.ReplyListRequest) (resp *typ
 			likeMap[like.CommentID] = true
 		}
 	}()
-	// ***************获取评论图片 **********
-	commentImageMap := make(map[int64][]string)
-	go func() {
-		defer l.wg.Done()
-		newCollection := mongodb.MustNewCollection[types.CommentImages](l.svcCtx.MongoClient, constant.COMMENT_IMAGES)
-		commentImages, err := newCollection.Finder().
-			Filter(query.Eq("topic_id", req.TopicId)).
-			Filter(query.In("comment_id", commentIds...)).
-			Find(l.ctx)
-		if err != nil {
-			logx.Error(err)
-			return
-		}
-
-		for _, image := range commentImages {
-			if len(image.Images) == 0 {
-				continue
-			}
-			imagesBase64 := make([]string, len(image.Images))
-			for i, img := range image.Images {
-				imagesBase64[i] = fmt.Sprintf("data:%s;base64,%s", utils.GetMimeType(img), base64.StdEncoding.EncodeToString(img))
-			}
-			commentImageMap[image.CommentId] = imagesBase64
-		}
-	}()
 	l.wg.Wait()
 
 	// *************** 组装数据 **********
 	result := make([]types.CommentContent, 0, len(replyQueryList))
 	for _, replyData := range replyQueryList {
+
+		var imagePath string
+		if replyData.ImagePath != "" {
+			reqParams := make(url.Values)
+			presignedURL, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.CommentImagesBucketName, replyData.ImagePath, time.Hour*24, reqParams)
+			if err != nil {
+				logx.Error(err)
+				continue
+			}
+			imagePath = presignedURL.String()
+		}
 		commentContent := types.CommentContent{
 			Avatar:          replyData.Avatar,
 			NickName:        replyData.Nickname,
@@ -148,7 +131,7 @@ func (l *GetReplyListLogic) GetReplyList(req *types.ReplyListRequest) (resp *typ
 			Browser:         replyData.Browser,
 			OperatingSystem: replyData.OperatingSystem,
 			IsLiked:         likeMap[replyData.ID],
-			Images:          commentImageMap[replyData.ID],
+			Images:          imagePath,
 			ReplyUser:       replyData.ReplyUser,
 			ReplyTo:         replyData.ReplyTo,
 			ReplyId:         replyData.ReplyId,

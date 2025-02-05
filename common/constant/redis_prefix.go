@@ -15,5 +15,6 @@ const (
 )
 
 const (
-	FaceSamplePrefix = "face:sample:"
+	FaceSamplePrefix = "face:samples:"
+	FaceVectorPrefix = "face:vectors:"
 )

@@ -255,35 +255,35 @@ service auth {
 type (
 	// 评论提交请求参数
 	CommentRequest {
-		Content string   `json:"content"`
-		Images  []string `json:"images,optional"`
-		TopicId string   `json:"topic_id"`
-		Author  string   `json:"author"`
-		Key     string   `json:"key"`
-		Point   []int64  `json:"point"`
+		Content string  `json:"content"`
+		Images  string  `json:"images,optional"`
+		TopicId string  `json:"topic_id"`
+		Author  string  `json:"author"`
+		Key     string  `json:"key"`
+		Point   []int64 `json:"point"`
 	}
 	// 回复评论提交请求参数
 	ReplyCommentRequest {
-		Content   string   `json:"content"`
-		Images    []string `json:"images,optional"`
-		TopicId   string   `json:"topic_id" `
-		ReplyId   int64    `json:"reply_id" `
-		ReplyUser string   `json:"reply_user" `
-		Author    string   `json:"author"`
-		Key       string   `json:"key"`
-		Point     []int64  `json:"point"`
+		Content   string  `json:"content"`
+		Images    string  `json:"images,optional"`
+		TopicId   string  `json:"topic_id" `
+		ReplyId   int64   `json:"reply_id" `
+		ReplyUser string  `json:"reply_user" `
+		Author    string  `json:"author"`
+		Key       string  `json:"key"`
+		Point     []int64 `json:"point"`
 	}
 	//  回复回复请求参数
 	ReplyReplyRequest {
-		Content   string   `json:"content"`
-		Images    []string `json:"images,optional"`
-		TopicId   string   `json:"topic_id"`
-		ReplyTo   int64    `json:"reply_to"`
-		ReplyId   int64    `json:"reply_id"`
-		ReplyUser string   `json:"reply_user" `
-		Author    string   `json:"author"`
-		Key       string   `json:"key"`
-		Point     []int64  `json:"point"`
+		Content   string  `json:"content"`
+		Images    string  `json:"images,optional"`
+		TopicId   string  `json:"topic_id"`
+		ReplyTo   int64   `json:"reply_to"`
+		ReplyId   int64   `json:"reply_id"`
+		ReplyUser string  `json:"reply_user" `
+		Author    string  `json:"author"`
+		Key       string  `json:"key"`
+		Point     []int64 `json:"point"`
 	}
 	// 评论列表请求参数
 	CommentListRequest {
@@ -314,26 +314,26 @@ type (
 type (
 	// CommentContent 评论内容
 	CommentContent {
-		NickName        string   `json:"nickname"`
-		Avatar          string   `json:"avatar"`
-		Level           int64    `json:"level,omitempty" default:"0"`
-		Id              int64    `json:"id"`
-		UserId          string   `json:"user_id"`
-		TopicId         string   `json:"topic_id"`
-		Content         string   `json:"content"`
-		ReplyTo         int64    `json:"reply_to,omitempty"`
-		ReplyId         int64    `json:"reply_id,omitempty"`
-		ReplyUser       string   `json:"reply_user,omitempty"`
-		ReplyNickname   string   `json:"reply_nickname,omitempty"`
-		IsAuthor        int64    `json:"is_author"`
-		Likes           int64    `json:"likes"`
-		ReplyCount      int64    `json:"reply_count"`
-		CreatedTime     string   `json:"created_time"`
-		Location        string   `json:"location"`
-		Browser         string   `json:"browser"`
-		OperatingSystem string   `json:"operating_system"`
-		IsLiked         bool     `json:"is_liked" default:"false"`
-		Images          []string `json:"images,omitempty"`
+		NickName        string `json:"nickname"`
+		Avatar          string `json:"avatar"`
+		Level           int64  `json:"level,omitempty" default:"0"`
+		Id              int64  `json:"id"`
+		UserId          string `json:"user_id"`
+		TopicId         string `json:"topic_id"`
+		Content         string `json:"content"`
+		ReplyTo         int64  `json:"reply_to,omitempty"`
+		ReplyId         int64  `json:"reply_id,omitempty"`
+		ReplyUser       string `json:"reply_user,omitempty"`
+		ReplyNickname   string `json:"reply_nickname,omitempty"`
+		IsAuthor        int64  `json:"is_author"`
+		Likes           int64  `json:"likes"`
+		ReplyCount      int64  `json:"reply_count"`
+		CreatedTime     string `json:"created_time"`
+		Location        string `json:"location"`
+		Browser         string `json:"browser"`
+		OperatingSystem string `json:"operating_system"`
+		IsLiked         bool   `json:"is_liked" default:"false"`
+		Images          string `json:"images,omitempty"`
 	}
 	// CommentListPageResponse 评论返回值
 	CommentListPageResponse {
@@ -365,7 +365,7 @@ type (
 	timeout:    10s // 超时时间
 	maxBytes:   1048576 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,AuthorizationMiddleware,NonceMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证
@@ -427,6 +427,28 @@ type (
 		Bucket    string `json:"bucket"`
 		Region    string `json:"region"`
 	}
+	FaceSampleLibrary {
+		ID        int64  `json:"id"`
+		FaceName  string `json:"face_name"`
+		FaceImage string `json:"face_image"`
+	}
+	FaceSampleLibraryListRequest {
+		Type int64 `json:"type"`
+	}
+	FaceSampleLibraryListResponse {
+		faces []FaceSampleLibrary `json:"faces"`
+	}
+	ModifyFaceNameRequestAndResponse {
+		ID       int64  `json:"id"`
+		FaceName string `json:"face_name"`
+	}
+	ModifyFaceTypeRequest {
+		IDs      []int64 `json:"ids"`
+		FaceType int64   `json:"face_type"`
+	}
+	ModifyFaceTypeResponse {
+		result string `json:"result"`
+	}
 )
 
 // 文件上传
@@ -436,7 +458,7 @@ type (
 	timeout:    20s // 超时时间
 	maxBytes:   104857600 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,AuthorizationMiddleware,NonceMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证
@@ -449,5 +471,17 @@ service auth {
 	// 设置存储配置
 	@handler setStorageConfig
 	post /config (StorageConfigRequest) returns (string)
+
+	// 获取人脸样本库列表
+	@handler getFaceSampleLibraryList
+	post /face/sample/list (FaceSampleLibraryListRequest) returns (FaceSampleLibraryListResponse)
+
+	// 修改人脸样本名称
+	@handler modifyFaceLibraryName
+	post /face/sample/modify/name (ModifyFaceNameRequestAndResponse) returns (ModifyFaceNameRequestAndResponse)
+
+	// 修改人脸样本类型
+	@handler modifyFaceLibraryType
+	post /face/sample/modify/type (ModifyFaceTypeRequest) returns (ModifyFaceTypeResponse)
 }
 

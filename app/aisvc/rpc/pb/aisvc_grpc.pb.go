@@ -22,6 +22,9 @@ const (
 	AiService_FaceRecognition_FullMethodName     = "/ai.AiService/FaceRecognition"
 	AiService_TfClassification_FullMethodName    = "/ai.AiService/TfClassification"
 	AiService_CaffeClassification_FullMethodName = "/ai.AiService/CaffeClassification"
+	AiService_QueryFaceLibrary_FullMethodName    = "/ai.AiService/QueryFaceLibrary"
+	AiService_ModifyFaceName_FullMethodName      = "/ai.AiService/ModifyFaceName"
+	AiService_ModifyFaceType_FullMethodName      = "/ai.AiService/ModifyFaceType"
 )
 
 // AiServiceClient is the client API for AiService service.
@@ -34,6 +37,12 @@ type AiServiceClient interface {
 	TfClassification(ctx context.Context, in *TfClassificationRequest, opts ...grpc.CallOption) (*TfClassificationResponse, error)
 	// CaffeClassification
 	CaffeClassification(ctx context.Context, in *CaffeClassificationRequest, opts ...grpc.CallOption) (*CaffeClassificationResponse, error)
+	// QueryFaceLibrary
+	QueryFaceLibrary(ctx context.Context, in *QueryFaceLibraryRequest, opts ...grpc.CallOption) (*QueryFaceLibraryResponse, error)
+	// ModifyFaceName
+	ModifyFaceName(ctx context.Context, in *ModifyFaceNameRequest, opts ...grpc.CallOption) (*ModifyFaceNameResponse, error)
+	// ModifyFaceType
+	ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error)
 }
 
 type aiServiceClient struct {
@@ -74,6 +83,36 @@ func (c *aiServiceClient) CaffeClassification(ctx context.Context, in *CaffeClas
 	return out, nil
 }
 
+func (c *aiServiceClient) QueryFaceLibrary(ctx context.Context, in *QueryFaceLibraryRequest, opts ...grpc.CallOption) (*QueryFaceLibraryResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(QueryFaceLibraryResponse)
+	err := c.cc.Invoke(ctx, AiService_QueryFaceLibrary_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aiServiceClient) ModifyFaceName(ctx context.Context, in *ModifyFaceNameRequest, opts ...grpc.CallOption) (*ModifyFaceNameResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ModifyFaceNameResponse)
+	err := c.cc.Invoke(ctx, AiService_ModifyFaceName_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *aiServiceClient) ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ModifyFaceTypeResponse)
+	err := c.cc.Invoke(ctx, AiService_ModifyFaceType_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AiServiceServer is the server API for AiService service.
 // All implementations must embed UnimplementedAiServiceServer
 // for forward compatibility.
@@ -84,6 +123,12 @@ type AiServiceServer interface {
 	TfClassification(context.Context, *TfClassificationRequest) (*TfClassificationResponse, error)
 	// CaffeClassification
 	CaffeClassification(context.Context, *CaffeClassificationRequest) (*CaffeClassificationResponse, error)
+	// QueryFaceLibrary
+	QueryFaceLibrary(context.Context, *QueryFaceLibraryRequest) (*QueryFaceLibraryResponse, error)
+	// ModifyFaceName
+	ModifyFaceName(context.Context, *ModifyFaceNameRequest) (*ModifyFaceNameResponse, error)
+	// ModifyFaceType
+	ModifyFaceType(context.Context, *ModifyFaceTypeRequest) (*ModifyFaceTypeResponse, error)
 	mustEmbedUnimplementedAiServiceServer()
 }
 
@@ -102,6 +147,15 @@ func (UnimplementedAiServiceServer) TfClassification(context.Context, *TfClassif
 }
 func (UnimplementedAiServiceServer) CaffeClassification(context.Context, *CaffeClassificationRequest) (*CaffeClassificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CaffeClassification not implemented")
+}
+func (UnimplementedAiServiceServer) QueryFaceLibrary(context.Context, *QueryFaceLibraryRequest) (*QueryFaceLibraryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method QueryFaceLibrary not implemented")
+}
+func (UnimplementedAiServiceServer) ModifyFaceName(context.Context, *ModifyFaceNameRequest) (*ModifyFaceNameResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyFaceName not implemented")
+}
+func (UnimplementedAiServiceServer) ModifyFaceType(context.Context, *ModifyFaceTypeRequest) (*ModifyFaceTypeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ModifyFaceType not implemented")
 }
 func (UnimplementedAiServiceServer) mustEmbedUnimplementedAiServiceServer() {}
 func (UnimplementedAiServiceServer) testEmbeddedByValue()                   {}
@@ -178,6 +232,60 @@ func _AiService_CaffeClassification_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiService_QueryFaceLibrary_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(QueryFaceLibraryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiServiceServer).QueryFaceLibrary(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiService_QueryFaceLibrary_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiServiceServer).QueryFaceLibrary(ctx, req.(*QueryFaceLibraryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AiService_ModifyFaceName_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyFaceNameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiServiceServer).ModifyFaceName(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiService_ModifyFaceName_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiServiceServer).ModifyFaceName(ctx, req.(*ModifyFaceNameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AiService_ModifyFaceType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ModifyFaceTypeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiServiceServer).ModifyFaceType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiService_ModifyFaceType_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiServiceServer).ModifyFaceType(ctx, req.(*ModifyFaceTypeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AiService_ServiceDesc is the grpc.ServiceDesc for AiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -196,6 +304,18 @@ var AiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CaffeClassification",
 			Handler:    _AiService_CaffeClassification_Handler,
+		},
+		{
+			MethodName: "QueryFaceLibrary",
+			Handler:    _AiService_QueryFaceLibrary_Handler,
+		},
+		{
+			MethodName: "ModifyFaceName",
+			Handler:    _AiService_ModifyFaceName_Handler,
+		},
+		{
+			MethodName: "ModifyFaceType",
+			Handler:    _AiService_ModifyFaceType_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

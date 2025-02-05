@@ -47,6 +47,8 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.Gps = field.NewString(tableName, "gps")
 	_scaStorageInfo.Screenshot = field.NewString(tableName, "screenshot")
 	_scaStorageInfo.Exif = field.NewString(tableName, "exif")
+	_scaStorageInfo.Hide = field.NewInt64(tableName, "hide")
+	_scaStorageInfo.AlbumID = field.NewInt64(tableName, "album_id")
 	_scaStorageInfo.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageInfo.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageInfo.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -80,6 +82,8 @@ type scaStorageInfo struct {
 	Gps          field.String // GPS
 	Screenshot   field.String // 是否是截图
 	Exif         field.String // exif 信息
+	Hide         field.Int64  // 是否隐藏（0 不隐藏 1 隐藏）
+	AlbumID      field.Int64  // 相册ID
 	CreatedAt    field.Time   // 创建时间
 	UpdatedAt    field.Time   // 更新时间
 	DeletedAt    field.Field  // 删除时间
@@ -119,6 +123,8 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.Gps = field.NewString(table, "gps")
 	s.Screenshot = field.NewString(table, "screenshot")
 	s.Exif = field.NewString(table, "exif")
+	s.Hide = field.NewInt64(table, "hide")
+	s.AlbumID = field.NewInt64(table, "album_id")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -138,7 +144,7 @@ func (s *scaStorageInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaStorageInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 23)
+	s.fieldMap = make(map[string]field.Expr, 25)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["provider"] = s.Provider
@@ -159,6 +165,8 @@ func (s *scaStorageInfo) fillFieldMap() {
 	s.fieldMap["gps"] = s.Gps
 	s.fieldMap["screenshot"] = s.Screenshot
 	s.fieldMap["exif"] = s.Exif
+	s.fieldMap["hide"] = s.Hide
+	s.fieldMap["album_id"] = s.AlbumID
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

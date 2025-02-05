@@ -28,6 +28,38 @@ message CaffeClassificationResponse {
   string class_name = 2;
   float  score = 3;
 }
+// 查询人脸样本库
+message QueryFaceLibraryRequest {
+  string user_id = 1;
+  int64 type = 2;
+}
+message FaceLibrary {
+  int64 id = 1;
+  string face_name = 2;
+  string face_image = 3;
+}
+message QueryFaceLibraryResponse {
+  repeated FaceLibrary faces = 1;
+}
+// 添加或修改人脸样本名称
+message ModifyFaceNameRequest {
+  string user_id = 1;
+  int64 face_id = 2;
+  string face_name = 3;
+}
+message ModifyFaceNameResponse {
+  int64 face_id = 1;
+  string face_name = 2;
+}
+// 修改人脸类型
+message ModifyFaceTypeRequest {
+  string user_id = 1;
+  repeated int64 face_id = 2;
+  int64 type = 3;
+}
+message ModifyFaceTypeResponse {
+  string result = 1;
+}
 service AiService {
   // FaceRecognition
   rpc FaceRecognition (FaceRecognitionRequest) returns (FaceRecognitionResponse);
@@ -35,4 +67,12 @@ service AiService {
   rpc TfClassification (TfClassificationRequest) returns (TfClassificationResponse);
   // CaffeClassification
   rpc CaffeClassification (CaffeClassificationRequest) returns (CaffeClassificationResponse);
+  // QueryFaceLibrary
+  rpc QueryFaceLibrary (QueryFaceLibraryRequest) returns (QueryFaceLibraryResponse);
+  // ModifyFaceName
+  rpc ModifyFaceName (ModifyFaceNameRequest) returns (ModifyFaceNameResponse);
+  // ModifyFaceType
+  rpc ModifyFaceType (ModifyFaceTypeRequest) returns (ModifyFaceTypeResponse);
 }
+
+

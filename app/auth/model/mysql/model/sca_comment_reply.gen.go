@@ -27,6 +27,7 @@ type ScaCommentReply struct {
 	Author          int64                  `gorm:"column:author;type:tinyint(4);comment:评论回复是否作者  0否 1是" json:"author"`                                                         // 评论回复是否作者  0否 1是
 	Likes           int64                  `gorm:"column:likes;type:bigint(20);comment:点赞数" json:"likes"`                                                                       // 点赞数
 	ReplyCount      int64                  `gorm:"column:reply_count;type:bigint(20);comment:回复数量" json:"reply_count"`                                                          // 回复数量
+	ImagePath       string                 `gorm:"column:image_path;type:text;comment:评论图片地址" json:"image_path"`                                                                // 评论图片地址
 	Browser         string                 `gorm:"column:browser;type:varchar(50);comment:浏览器" json:"browser"`                                                                  // 浏览器
 	OperatingSystem string                 `gorm:"column:operating_system;type:varchar(50);comment:操作系统" json:"operating_system"`                                               // 操作系统
 	CommentIP       string                 `gorm:"column:comment_ip;type:varchar(50);comment:IP地址" json:"comment_ip"`                                                           // IP地址
