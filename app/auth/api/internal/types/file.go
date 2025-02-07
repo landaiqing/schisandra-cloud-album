@@ -2,6 +2,8 @@ package types
 
 // File represents a file uploaded by the user.
 type File struct {
+	Provider     string   `json:"provider"`
+	Bucket       string   `json:"bucket"`
 	FileType     string   `json:"fileType"`
 	IsAnime      bool     `json:"isAnime"`
 	ObjectArray  []string `json:"objectArray"`

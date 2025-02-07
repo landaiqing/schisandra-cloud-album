@@ -74,4 +74,5 @@ type Service interface {
 	ListObjects(ctx context.Context, bucketName string, maxKeys int32) ([]ObjectProperties, error)
 	DeleteObject(ctx context.Context, bucketName, objectName string) (int, error)
 	RenameObject(ctx context.Context, destBucketName, destObjectName, srcObjectName, srcBucketName string) (int, error)
+	PresignedURL(ctx context.Context, bucketName, objectKey string, expires time.Duration) (string, error)
 }

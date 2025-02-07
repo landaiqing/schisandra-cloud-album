@@ -18,7 +18,7 @@ type ScaStorageInfo struct {
 	UserID       string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID
 	Provider     string         `gorm:"column:provider;type:varchar(50);comment:供应商" json:"provider"`                                    // 供应商
 	Bucket       string         `gorm:"column:bucket;type:varchar(50);comment:存储桶" json:"bucket"`                                        // 存储桶
-	Path         string         `gorm:"column:path;type:varchar(255);comment:路径" json:"path"`                                            // 路径
+	Path         string         `gorm:"column:path;type:text;comment:路径" json:"path"`                                                    // 路径
 	FileName     string         `gorm:"column:file_name;type:varchar(100);comment:文件名称" json:"file_name"`                                // 文件名称
 	FileSize     string         `gorm:"column:file_size;type:varchar(50);comment:文件大小" json:"file_size"`                                 // 文件大小
 	FileType     string         `gorm:"column:file_type;type:varchar(50);comment:文件类型" json:"file_type"`                                 // 文件类型

@@ -13,6 +13,7 @@ import (
 	"schisandra-album-cloud-microservices/common/storage/config"
 	"schisandra-album-cloud-microservices/common/storage/events"
 	"sync"
+	"time"
 )
 
 type AliOSS struct {
@@ -400,5 +401,19 @@ func (a *AliOSS) RenameObject(ctx context.Context, destBucketName, destObjectNam
 		return -1, fmt.Errorf("failed to delete object, error: %v", err)
 	}
 	return deleteResult.StatusCode, nil
+}
 
+// PresignedURL 生成预签名URL
+func (a *AliOSS) PresignedURL(ctx context.Context, bucketName, objectKey string, expires time.Duration) (string, error) {
+
+	// 生成预签名URL
+	presignedResult, err := a.client.Presign(ctx, &oss.GetObjectRequest{
+		Bucket: oss.Ptr(bucketName),
+		Key:    oss.Ptr(objectKey),
+	}, oss.PresignExpires(expires))
+	if err != nil {
+		return "", fmt.Errorf("failed to generate presigned URL, error: %v", err)
+	}
+
+	return presignedResult.URL, nil
 }

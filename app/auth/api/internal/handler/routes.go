@@ -190,8 +190,38 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/album/create",
+					Handler: storage.CreateAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/album/delete",
+					Handler: storage.DeleteAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/album/detail/list",
+					Handler: storage.GetAlbumDetailHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/album/list",
+					Handler: storage.GetAlbumListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/album/rename",
+					Handler: storage.RenameAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/config",
 					Handler: storage.SetStorageConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/face/detail/list",
+					Handler: storage.GetFaceDetailListHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -207,6 +237,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/face/sample/modify/type",
 					Handler: storage.ModifyFaceLibraryTypeHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/all/list",
+					Handler: storage.QueryAllImageListHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

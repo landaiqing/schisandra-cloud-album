@@ -11,6 +11,65 @@ type AccountLoginRequest struct {
 	Key       string `json:"key"`
 }
 
+type Album struct {
+	ID         int64  `json:"id"`
+	Name       string `json:"name"`
+	CreatedAt  string `json:"created_at"`
+	Type       string `json:"type"`
+	CoverImage string `json:"cover_image"`
+}
+
+type AlbumCreateRequest struct {
+	Name string `json:"name"`
+}
+
+type AlbumCreateResponse struct {
+	ID int64 `json:"id"`
+}
+
+type AlbumDeleteRequest struct {
+	ID int64 `json:"id"`
+}
+
+type AlbumDetailListRequest struct {
+	ID int64 `json:"id"`
+}
+
+type AlbumListRequest struct {
+	Type string `json:"type"`
+	Sort bool   `json:"sort"`
+}
+
+type AlbumListResponse struct {
+	Albums []Album `json:"albums"`
+}
+
+type AlbumRenameRequest struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+type AlbumRenameResponse struct {
+	ID   int64  `json:"id"`
+	Name string `json:"name"`
+}
+
+type AllImageDetail struct {
+	Date string      `json:"date"`
+	List []ImageMeta `json:"list"`
+}
+
+type AllImageListRequest struct {
+	Type     string `json:"type"`
+	Sort     bool   `json:"sort"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
+type AllImageListResponse struct {
+	Records []AllImageDetail `json:"records"`
+}
+
 type CommentContent struct {
 	NickName        string `json:"nickname"`
 	Avatar          string `json:"avatar"`
@@ -82,6 +141,10 @@ type CommentResponse struct {
 	ReplyTo         int64  `json:"reply_to,omitempty"`
 }
 
+type FaceDetailListRequest struct {
+	FaceID int64 `json:"face_id"`
+}
+
 type FaceSampleLibrary struct {
 	ID        int64  `json:"id"`
 	FaceName  string `json:"face_name"`
@@ -94,6 +157,15 @@ type FaceSampleLibraryListRequest struct {
 
 type FaceSampleLibraryListResponse struct {
 	Faces []FaceSampleLibrary `json:"faces"`
+}
+
+type ImageMeta struct {
+	ID        int64  `json:"id"`
+	FileName  string `json:"file_name"`
+	FilePath  string `json:"file_path"`
+	URL       string `json:"url"`
+	FileSize  string `json:"file_size"`
+	CreatedAt string `json:"created_at"`
 }
 
 type LoginResponse struct {

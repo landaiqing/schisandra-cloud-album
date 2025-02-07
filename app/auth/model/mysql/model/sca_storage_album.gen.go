@@ -14,13 +14,14 @@ const TableNameScaStorageAlbum = "sca_storage_album"
 
 // ScaStorageAlbum mapped from table <sca_storage_album>
 type ScaStorageAlbum struct {
-	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
-	UserID    string         `gorm:"column:user_id;type:varchar(50);comment:用户ID" json:"user_id"`                                     // 用户ID
-	AlbumName string         `gorm:"column:album_name;type:varchar(50);comment:相册名称" json:"album_name"`                               // 相册名称
-	AlbumType string         `gorm:"column:album_type;type:varchar(50);comment:相册类型" json:"album_type"`                               // 相册类型
-	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
-	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
-	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间
+	ID         int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
+	UserID     string         `gorm:"column:user_id;type:varchar(50);comment:用户ID" json:"user_id"`                                     // 用户ID
+	AlbumName  string         `gorm:"column:album_name;type:varchar(50);comment:相册名称" json:"album_name"`                               // 相册名称
+	AlbumType  string         `gorm:"column:album_type;type:varchar(50);comment:相册类型" json:"album_type"`                               // 相册类型
+	CoverImage string         `gorm:"column:cover_image;type:text;comment:封面图片" json:"cover_image"`                                    // 封面图片
+	CreatedAt  time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
+	UpdatedAt  time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
+	DeletedAt  gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间
 }
 
 // TableName ScaStorageAlbum's table name

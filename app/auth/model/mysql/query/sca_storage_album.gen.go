@@ -31,6 +31,7 @@ func newScaStorageAlbum(db *gorm.DB, opts ...gen.DOOption) scaStorageAlbum {
 	_scaStorageAlbum.UserID = field.NewString(tableName, "user_id")
 	_scaStorageAlbum.AlbumName = field.NewString(tableName, "album_name")
 	_scaStorageAlbum.AlbumType = field.NewString(tableName, "album_type")
+	_scaStorageAlbum.CoverImage = field.NewString(tableName, "cover_image")
 	_scaStorageAlbum.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageAlbum.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageAlbum.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -43,14 +44,15 @@ func newScaStorageAlbum(db *gorm.DB, opts ...gen.DOOption) scaStorageAlbum {
 type scaStorageAlbum struct {
 	scaStorageAlbumDo
 
-	ALL       field.Asterisk
-	ID        field.Int64  // 主键
-	UserID    field.String // 用户ID
-	AlbumName field.String // 相册名称
-	AlbumType field.String // 相册类型
-	CreatedAt field.Time   // 创建时间
-	UpdatedAt field.Time   // 更新时间
-	DeletedAt field.Field  // 删除时间
+	ALL        field.Asterisk
+	ID         field.Int64  // 主键
+	UserID     field.String // 用户ID
+	AlbumName  field.String // 相册名称
+	AlbumType  field.String // 相册类型
+	CoverImage field.String // 封面图片
+	CreatedAt  field.Time   // 创建时间
+	UpdatedAt  field.Time   // 更新时间
+	DeletedAt  field.Field  // 删除时间
 
 	fieldMap map[string]field.Expr
 }
@@ -71,6 +73,7 @@ func (s *scaStorageAlbum) updateTableName(table string) *scaStorageAlbum {
 	s.UserID = field.NewString(table, "user_id")
 	s.AlbumName = field.NewString(table, "album_name")
 	s.AlbumType = field.NewString(table, "album_type")
+	s.CoverImage = field.NewString(table, "cover_image")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -90,11 +93,12 @@ func (s *scaStorageAlbum) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaStorageAlbum) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 7)
+	s.fieldMap = make(map[string]field.Expr, 8)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["album_name"] = s.AlbumName
 	s.fieldMap["album_type"] = s.AlbumType
+	s.fieldMap["cover_image"] = s.CoverImage
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

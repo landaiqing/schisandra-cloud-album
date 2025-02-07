@@ -5,14 +5,19 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/ccpwcn/kgo"
+	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 	"io"
 	"mime/multipart"
 	"net/http"
+	"path"
+	"path/filepath"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/pb"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
+	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	"schisandra-album-cloud-microservices/common/gao_map"
 	"schisandra-album-cloud-microservices/common/storage/config"
@@ -47,6 +52,7 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if err != nil {
 		return "", err
 	}
+
 	defer func(file multipart.File) {
 		_ = file.Close()
 	}(file)
@@ -102,15 +108,22 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	}
 
 	// 上传文件到 OSS
-	bucket, provider, err := l.uploadFileToOSS(uid, header, file)
+	// 重新设置文件指针到文件开头
+	if _, err = file.Seek(0, 0); err != nil {
+		return "", err
+	}
+	bucket, provider, filePath, err := l.uploadFileToOSS(uid, header, file, result)
 	if err != nil {
 		return "", err
 	}
 
 	// 将 EXIF 和文件信息存入数据库
-	if err = l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, gpsString, locationString, exif, faceId, className); err != nil {
+	if err = l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, gpsString, locationString, exif, faceId, className, filePath); err != nil {
 		return "", err
 	}
+
+	// 删除缓存
+	l.afterImageUpload(uid, provider, bucket)
 
 	return "success", nil
 }
@@ -122,6 +135,22 @@ func (l *UploadFileLogic) getUserID() (string, error) {
 		return "", errors.New("user_id not found")
 	}
 	return uid, nil
+}
+
+// 在UploadImageLogic或其他需要使缓存失效的逻辑中添加：
+func (l *UploadFileLogic) afterImageUpload(uid, provider, bucket string) {
+	// 构造所有可能的缓存键组合（sort为true/false）
+	keysToDelete := []string{
+		fmt.Sprintf("%s%s:%s:%s:true", constant.ImageListPrefix, uid, provider, bucket),
+		fmt.Sprintf("%s%s:%s:%s:false", constant.ImageListPrefix, uid, provider, bucket),
+	}
+
+	// 批量删除缓存
+	for _, key := range keysToDelete {
+		if err := l.svcCtx.RedisClient.Del(l.ctx, key).Err(); err != nil {
+			logx.Errorf("Failed to delete cache key %s: %v", key, err)
+		}
+	}
 }
 
 // 解析上传的文件
@@ -224,45 +253,34 @@ func (l *UploadFileLogic) getGeoLocation(latitude, longitude float64) (string, s
 }
 
 // 上传文件到 OSS
-func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File) (string, string, error) {
-	ossConfig := l.svcCtx.DB.ScaStorageConfig
-	dbConfig, err := ossConfig.Where(ossConfig.UserID.Eq(uid)).First()
+func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, string, string, error) {
+	cacheKey := constant.UserOssConfigPrefix + uid + ":" + result.Provider
+	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheKey, uid, result.Provider)
 	if err != nil {
-		return "", "", errors.New("oss config not found")
+		return "", "", "", errors.New("get oss config failed")
+	}
+	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	if err != nil {
+		return "", "", "", errors.New("get storage failed")
 	}
 
-	accessKey, err := encrypt.Decrypt(dbConfig.AccessKey, l.svcCtx.Config.Encrypt.Key)
-	if err != nil {
-		return "", "", errors.New("decrypt access key failed")
-	}
-	secretKey, err := encrypt.Decrypt(dbConfig.SecretKey, l.svcCtx.Config.Encrypt.Key)
-	if err != nil {
-		return "", "", errors.New("decrypt secret key failed")
-	}
+	objectKey := path.Join(
+		uid,
+		time.Now().Format("2006/01"), // 按年/月划分目录
+		fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), filepath.Ext(header.Filename)),
+	)
 
-	storageConfig := &config.StorageConfig{
-		Provider:   dbConfig.Type,
-		Endpoint:   dbConfig.Endpoint,
-		AccessKey:  accessKey,
-		SecretKey:  secretKey,
-		BucketName: dbConfig.Bucket,
-		Region:     dbConfig.Region,
-	}
-
-	service, err := l.svcCtx.StorageManager.GetStorage(uid, storageConfig)
+	_, err = service.UploadFileSimple(l.ctx, ossConfig.BucketName, objectKey, file, map[string]string{
+		"Content-Type": header.Header.Get("Content-Type"),
+	})
 	if err != nil {
-		return "", "", errors.New("get storage failed")
+		return "", "", "", errors.New("upload file failed")
 	}
-
-	_, err = service.UploadFileSimple(l.ctx, dbConfig.Bucket, header.Filename, file, map[string]string{})
-	if err != nil {
-		return "", "", errors.New("upload file failed")
-	}
-	return dbConfig.Bucket, dbConfig.Type, nil
+	return ossConfig.BucketName, ossConfig.Provider, objectKey, nil
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64, className string) error {
+func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64, className, filePath string) error {
 	exifJSON, err := json.Marshal(exif)
 	if err != nil {
 		return errors.New("marshal exif failed")
@@ -278,6 +296,7 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header 
 		FileName:     header.Filename,
 		FileSize:     strconv.FormatInt(header.Size, 10),
 		FileType:     result.FileType,
+		Path:         filePath,
 		Landscape:    landscape,
 		Objects:      strings.Join(result.ObjectArray, ", "),
 		Anime:        strconv.FormatBool(result.IsAnime),
@@ -296,4 +315,64 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header 
 		return errors.New("create storage info failed")
 	}
 	return nil
+}
+
+// 提取解密操作为函数
+func (l *UploadFileLogic) decryptConfig(dbConfig *model.ScaStorageConfig) (*config.StorageConfig, error) {
+	accessKey, err := encrypt.Decrypt(dbConfig.AccessKey, l.svcCtx.Config.Encrypt.Key)
+	if err != nil {
+		return nil, errors.New("decrypt access key failed")
+	}
+	secretKey, err := encrypt.Decrypt(dbConfig.SecretKey, l.svcCtx.Config.Encrypt.Key)
+	if err != nil {
+		return nil, errors.New("decrypt secret key failed")
+	}
+	return &config.StorageConfig{
+		Provider:   dbConfig.Type,
+		Endpoint:   dbConfig.Endpoint,
+		AccessKey:  accessKey,
+		SecretKey:  secretKey,
+		BucketName: dbConfig.Bucket,
+		Region:     dbConfig.Region,
+	}, nil
+}
+
+// 从缓存或数据库中获取 OSS 配置
+func (l *UploadFileLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider string) (*config.StorageConfig, error) {
+	result, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return nil, errors.New("get oss config failed")
+	}
+
+	var ossConfig *config.StorageConfig
+	if result != "" {
+		var redisOssConfig model.ScaStorageConfig
+		if err = json.Unmarshal([]byte(result), &redisOssConfig); err != nil {
+			return nil, errors.New("unmarshal oss config failed")
+		}
+		return l.decryptConfig(&redisOssConfig)
+	}
+
+	// 缓存未命中，从数据库中加载
+	scaOssConfig := l.svcCtx.DB.ScaStorageConfig
+	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Type.Eq(provider)).First()
+	if err != nil {
+		return nil, err
+	}
+
+	// 缓存数据库配置
+	ossConfig, err = l.decryptConfig(dbOssConfig)
+	if err != nil {
+		return nil, err
+	}
+	marshalData, err := json.Marshal(dbOssConfig)
+	if err != nil {
+		return nil, errors.New("marshal oss config failed")
+	}
+	err = l.svcCtx.RedisClient.Set(l.ctx, cacheKey, marshalData, 0).Err()
+	if err != nil {
+		return nil, errors.New("set oss config failed")
+	}
+
+	return ossConfig, nil
 }

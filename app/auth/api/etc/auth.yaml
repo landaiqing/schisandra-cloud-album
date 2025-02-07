@@ -72,18 +72,6 @@ Mysql:
   MaxOpenConn: 10
   # 最大空闲连接数
   MaxIdleConn: 5
-# Mongo 配置
-Mongo:
-  # MongoDB 地址
-  Uri: mongodb://1.95.0.111:27017
-  # MongoDB 用户名
-  Username: landaiqing
-  # MongoDB 密码
-  Password: LDQ20020618xxx
-  # MongoDB 数据库
-  Database: schisandra-cloud-album
-  # MongoDB 认证源
-  AuthSource: admin
 # Auth 配置
 Auth:
   # 访问密钥

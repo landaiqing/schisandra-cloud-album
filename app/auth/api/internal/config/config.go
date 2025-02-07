@@ -23,13 +23,6 @@ type Config struct {
 		MaxOpenConn int
 		MaxIdleConn int
 	}
-	Mongo struct {
-		Uri        string
-		Username   string
-		Password   string
-		AuthSource string
-		Database   string
-	}
 	Redis struct {
 		Host string
 		Pass string

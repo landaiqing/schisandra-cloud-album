@@ -449,6 +449,74 @@ type (
 	ModifyFaceTypeResponse {
 		result string `json:"result"`
 	}
+	FaceDetailListRequest {
+		FaceID int64 `json:"face_id"`
+	}
+	// 创建相册请求参数
+	AlbumCreateRequest {
+		Name string `json:"name"`
+	}
+	// 创建相册响应参数
+	AlbumCreateResponse {
+		ID int64 `json:"id"`
+	}
+	// 相册列表请求参数
+	AlbumListRequest {
+		Type string `json:"type"`
+		Sort bool   `json:"sort"`
+	}
+	// 相册列表响应参数
+	Album {
+		ID         int64  `json:"id"`
+		Name       string `json:"name"`
+		CreatedAt  string `json:"created_at"`
+		Type       string `json:"type"`
+		CoverImage string `json:"cover_image"`
+	}
+	AlbumListResponse {
+		Albums []Album `json:"albums"`
+	}
+	// 相册详情请求参数
+	AlbumDetailListRequest {
+		ID int64 `json:"id"`
+	}
+	// 重命名相册请求参数
+	AlbumRenameRequest {
+		ID   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+	// 重命名相册响应参数
+	AlbumRenameResponse {
+		ID   int64  `json:"id"`
+		Name string `json:"name"`
+	}
+	// 删除相册请求参数
+	AlbumDeleteRequest {
+		ID int64 `json:"id"`
+	}
+	// 所有图片列表请求参数
+	AllImageListRequest {
+		Type     string `json:"type"`
+		Sort     bool   `json:"sort"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	// 所有图片列表响应参数
+	ImageMeta {
+		ID        int64  `json:"id"`
+		fileName  string `json:"file_name"`
+		filePath  string `json:"file_path"`
+		URL       string `json:"url"`
+		fileSize  string `json:"file_size"`
+		CreatedAt string `json:"created_at"`
+	}
+	AllImageDetail {
+		Date string      `json:"date"`
+		list []ImageMeta `json:"list"`
+	}
+	AllImageListResponse {
+		records []AllImageDetail `json:"records"`
+	}
 )
 
 // 文件上传
@@ -483,5 +551,33 @@ service auth {
 	// 修改人脸样本类型
 	@handler modifyFaceLibraryType
 	post /face/sample/modify/type (ModifyFaceTypeRequest) returns (ModifyFaceTypeResponse)
+
+	// 获取人脸详情列表 (暂定)
+	@handler getFaceDetailList
+	post /face/detail/list (FaceDetailListRequest) returns (string)
+
+	// 创建相册
+	@handler createAlbum
+	post /album/create (AlbumCreateRequest) returns (AlbumCreateResponse)
+
+	// 获取相册列表
+	@handler getAlbumList
+	post /album/list (AlbumListRequest) returns (AlbumListResponse)
+
+	// 获取相册详情（暂定）
+	@handler getAlbumDetail
+	post /album/detail/list (AlbumDetailListRequest) returns (string)
+
+	// 重命名相册
+	@handler renameAlbum
+	post /album/rename (AlbumRenameRequest) returns (AlbumRenameResponse)
+
+	// 删除相册
+	@handler deleteAlbum
+	post /album/delete (AlbumDeleteRequest) returns (string)
+
+	// 获取所有图片列表
+	@handler queryAllImageList
+	post /image/all/list (AllImageListRequest) returns (AllImageListResponse)
 }
 
