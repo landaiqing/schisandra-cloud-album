@@ -11,4 +11,6 @@ type File struct {
 	TopCategory  string   `json:"topCategory"`
 	IsScreenshot bool     `json:"isScreenshot"`
 	Exif         any      `json:"exif"`
+	Width        float64  `json:"width"`
+	Height       float64  `json:"height"`
 }

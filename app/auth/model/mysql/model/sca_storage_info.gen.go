@@ -22,19 +22,21 @@ type ScaStorageInfo struct {
 	FileName     string         `gorm:"column:file_name;type:varchar(100);comment:文件名称" json:"file_name"`                                // 文件名称
 	FileSize     string         `gorm:"column:file_size;type:varchar(50);comment:文件大小" json:"file_size"`                                 // 文件大小
 	FileType     string         `gorm:"column:file_type;type:varchar(50);comment:文件类型" json:"file_type"`                                 // 文件类型
+	Width        float64        `gorm:"column:width;type:double;comment:宽" json:"width"`                                                 // 宽
+	Height       float64        `gorm:"column:height;type:double;comment:高" json:"height"`                                               // 高
 	Category     string         `gorm:"column:category;type:varchar(50);comment:分类" json:"category"`                                     // 分类
 	Tags         string         `gorm:"column:tags;type:varchar(255);comment:标签" json:"tags"`                                            // 标签
+	Type         string         `gorm:"column:type;type:varchar(50);comment:类型" json:"type"`                                             // 类型
 	Location     string         `gorm:"column:location;type:varchar(100);comment:地址" json:"location"`                                    // 地址
 	Hash         string         `gorm:"column:hash;type:varchar(255);comment:哈希值" json:"hash"`                                           // 哈希值
 	Anime        string         `gorm:"column:anime;type:varchar(50);comment:是否是动漫图片" json:"anime"`                                      // 是否是动漫图片
 	FaceID       int64          `gorm:"column:face_id;type:bigint(20);comment:人像ID" json:"face_id"`                                      // 人像ID
 	Landscape    string         `gorm:"column:landscape;type:varchar(50);comment:风景类型" json:"landscape"`                                 // 风景类型
-	Objects      string         `gorm:"column:objects;type:varchar(50);comment:对象识别" json:"objects"`                                     // 对象识别
 	OriginalTime string         `gorm:"column:original_time;type:varchar(50);comment:拍摄时间" json:"original_time"`                         // 拍摄时间
 	Gps          string         `gorm:"column:gps;type:varchar(255);comment:GPS" json:"gps"`                                             // GPS
 	Screenshot   string         `gorm:"column:screenshot;type:varchar(50);comment:是否是截图" json:"screenshot"`                              // 是否是截图
 	Exif         string         `gorm:"column:exif;type:json;comment:exif 信息" json:"exif"`                                               // exif 信息
-	Hide         int64          `gorm:"column:hide;type:int(11) unsigned zerofill;comment:是否隐藏（0 不隐藏 1 隐藏）" json:"hide"`                 // 是否隐藏（0 不隐藏 1 隐藏）
+	Show         string         `gorm:"column:show;type:varchar(50);comment:是否隐藏（0 不隐藏 1 隐藏）" json:"show"`                               // 是否隐藏（0 不隐藏 1 隐藏）
 	AlbumID      int64          `gorm:"column:album_id;type:bigint(20);comment:相册ID" json:"album_id"`                                    // 相册ID
 	CreatedAt    time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt    time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间

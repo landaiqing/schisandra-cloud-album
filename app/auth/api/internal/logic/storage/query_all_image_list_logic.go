@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/redis/go-redis/v9"
+	"github.com/zeromicro/go-zero/core/logx"
 	"math/rand"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
@@ -16,8 +17,6 @@ import (
 	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
 	"sync"
 	"time"
-
-	"github.com/zeromicro/go-zero/core/logx"
 )
 
 type QueryAllImageListLogic struct {
@@ -39,7 +38,7 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 	if !ok {
 		return nil, errors.New("user_id not found")
 	}
-	//  从缓存获取数据
+	//  缓存获取数据 v1.0.0
 	cacheKey := fmt.Sprintf("%s%s:%s:%s:%t", constant.ImageListPrefix, uid, req.Provider, req.Bucket, req.Sort)
 	// 尝试从缓存获取
 	cachedResult, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
@@ -60,9 +59,20 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 	// 数据库查询文件信息列表
 	var storageInfoQuery query.IScaStorageInfoDo
 	if req.Sort {
-		storageInfoQuery = storageInfo.Where(storageInfo.UserID.Eq(uid), storageInfo.Provider.Eq(req.Provider), storageInfo.Bucket.Eq(req.Bucket), storageInfo.AlbumID.IsNull()).Order(storageInfo.CreatedAt.Desc())
+		storageInfoQuery = storageInfo.Where(
+			storageInfo.UserID.Eq(uid),
+			storageInfo.Provider.Eq(req.Provider),
+			storageInfo.Bucket.Eq(req.Bucket),
+			storageInfo.Type.Eq(req.Type),
+			storageInfo.AlbumID.IsNull()).
+			Order(storageInfo.CreatedAt.Desc())
 	} else {
-		storageInfoQuery = storageInfo.Where(storageInfo.UserID.Eq(uid), storageInfo.Provider.Eq(req.Provider), storageInfo.Bucket.Eq(req.Bucket)).Order(storageInfo.CreatedAt.Desc())
+		storageInfoQuery = storageInfo.Where(
+			storageInfo.UserID.Eq(uid),
+			storageInfo.Provider.Eq(req.Provider),
+			storageInfo.Bucket.Eq(req.Bucket),
+			storageInfo.Type.Eq(req.Type)).
+			Order(storageInfo.CreatedAt.Desc())
 	}
 	storageInfoList, err := storageInfoQuery.Find()
 	if err != nil {
@@ -109,6 +119,8 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 				URL:       url,
 				FileSize:  dbFileInfo.FileSize,
 				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),
+				Width:     dbFileInfo.Width,
+				Height:    dbFileInfo.Height,
 			})
 
 			// 重新存储更新后的图像列表
@@ -127,6 +139,7 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 	resp = &types.AllImageListResponse{
 		Records: imageList,
 	}
+
 	// 缓存结果
 	if data, err := json.Marshal(resp); err == nil {
 		expireTime := 7*24*time.Hour - time.Duration(rand.Intn(60))*time.Minute

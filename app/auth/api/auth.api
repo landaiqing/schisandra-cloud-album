@@ -503,12 +503,14 @@ type (
 	}
 	// 所有图片列表响应参数
 	ImageMeta {
-		ID        int64  `json:"id"`
-		fileName  string `json:"file_name"`
-		filePath  string `json:"file_path"`
-		URL       string `json:"url"`
-		fileSize  string `json:"file_size"`
-		CreatedAt string `json:"created_at"`
+		ID        int64   `json:"id"`
+		fileName  string  `json:"file_name"`
+		filePath  string  `json:"file_path"`
+		URL       string  `json:"url"`
+		fileSize  string  `json:"file_size"`
+		CreatedAt string  `json:"created_at"`
+		Width     float64 `json:"width"`
+		Height    float64 `json:"height"`
 	}
 	AllImageDetail {
 		Date string      `json:"date"`

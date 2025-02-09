@@ -63,7 +63,6 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		return "", err
 	}
 	var faceId int64 = 0
-	var className string
 	bytes, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
@@ -78,12 +77,12 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 			faceId = face.GetFaceId()
 		}
 
-		// 图像分类
-		classification, err := l.svcCtx.AiSvcRpc.TfClassification(l.ctx, &pb.TfClassificationRequest{Image: bytes})
-		if err != nil {
-			return "", err
-		}
-		className = classification.GetClassName()
+		//// 图像分类
+		//classification, err := l.svcCtx.AiSvcRpc.TfClassification(l.ctx, &pb.TfClassificationRequest{Image: bytes})
+		//if err != nil {
+		//	return "", err
+		//}
+		//className = classification.GetClassName()
 	}
 
 	// 解析 EXIF 信息
@@ -118,7 +117,7 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	}
 
 	// 将 EXIF 和文件信息存入数据库
-	if err = l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, gpsString, locationString, exif, faceId, className, filePath); err != nil {
+	if err = l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, gpsString, locationString, exif, faceId, filePath); err != nil {
 		return "", err
 	}
 
@@ -280,15 +279,12 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64, className, filePath string) error {
+func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64, filePath string) error {
 	exifJSON, err := json.Marshal(exif)
 	if err != nil {
 		return errors.New("marshal exif failed")
 	}
-	var landscape string
-	if result.Landscape != "none" {
-		landscape = result.Landscape
-	}
+	typeName := l.classifyFile(result.FileType, result.IsScreenshot)
 	scaStorageInfo := &model.ScaStorageInfo{
 		UserID:       uid,
 		Provider:     provider,
@@ -297,8 +293,8 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header 
 		FileSize:     strconv.FormatInt(header.Size, 10),
 		FileType:     result.FileType,
 		Path:         filePath,
-		Landscape:    landscape,
-		Objects:      strings.Join(result.ObjectArray, ", "),
+		Landscape:    result.Landscape,
+		Tags:         strings.Join(result.ObjectArray, ","),
 		Anime:        strconv.FormatBool(result.IsAnime),
 		Category:     result.TopCategory,
 		Screenshot:   strconv.FormatBool(result.IsScreenshot),
@@ -307,7 +303,9 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header 
 		Location:     locationString,
 		Exif:         string(exifJSON),
 		FaceID:       faceId,
-		Tags:         className,
+		Type:         typeName,
+		Width:        result.Width,
+		Height:       result.Height,
 	}
 
 	err = l.svcCtx.DB.ScaStorageInfo.Create(scaStorageInfo)
@@ -375,4 +373,34 @@ func (l *UploadFileLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider stri
 	}
 
 	return ossConfig, nil
+}
+
+func (l *UploadFileLogic) classifyFile(mimeType string, isScreenshot bool) string {
+	// 使用map存储MIME类型及其对应的分类
+	typeMap := map[string]string{
+		"image/jpeg":       "image",
+		"image/png":        "image",
+		"image/gif":        "gif",
+		"image/bmp":        "image",
+		"image/tiff":       "image",
+		"image/webp":       "image",
+		"video/mp4":        "video",
+		"video/avi":        "video",
+		"video/mpeg":       "video",
+		"video/quicktime":  "video",
+		"video/x-msvideo":  "video",
+		"video/x-flv":      "video",
+		"video/x-matroska": "video",
+	}
+
+	// 根据MIME类型从map中获取分类
+	if classification, exists := typeMap[mimeType]; exists {
+		return classification
+	}
+
+	// 如果isScreenshot为true，则返回"screenshot"
+	if isScreenshot {
+		return "screenshot"
+	}
+	return "unknown"
 }

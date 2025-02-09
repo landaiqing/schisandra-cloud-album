@@ -160,12 +160,14 @@ type FaceSampleLibraryListResponse struct {
 }
 
 type ImageMeta struct {
-	ID        int64  `json:"id"`
-	FileName  string `json:"file_name"`
-	FilePath  string `json:"file_path"`
-	URL       string `json:"url"`
-	FileSize  string `json:"file_size"`
-	CreatedAt string `json:"created_at"`
+	ID        int64   `json:"id"`
+	FileName  string  `json:"file_name"`
+	FilePath  string  `json:"file_path"`
+	URL       string  `json:"url"`
+	FileSize  string  `json:"file_size"`
+	CreatedAt string  `json:"created_at"`
+	Width     float64 `json:"width"`
+	Height    float64 `json:"height"`
 }
 
 type LoginResponse struct {
