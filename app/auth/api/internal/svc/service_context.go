@@ -18,7 +18,7 @@ import (
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"schisandra-album-cloud-microservices/common/captcha/initialize"
 	"schisandra-album-cloud-microservices/common/casbinx"
-	"schisandra-album-cloud-microservices/common/gao_map"
+	"schisandra-album-cloud-microservices/common/geo_json"
 	"schisandra-album-cloud-microservices/common/ip2region"
 	"schisandra-album-cloud-microservices/common/miniox"
 	"schisandra-album-cloud-microservices/common/redisx"
@@ -43,8 +43,8 @@ type ServiceContext struct {
 	SlideCaptcha              slide.Captcha
 	Sensitive                 *sensitive.Manager
 	StorageManager            *manager.Manager
-	GaoMap                    *gao_map.AmapClient
 	MinioClient               *minio.Client
+	GeoRegionData             *geo_json.RegionData
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -65,8 +65,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SlideCaptcha:              initialize.NewSlideCaptcha(),
 		Sensitive:                 sensitivex.NewSensitive(),
 		StorageManager:            storage.InitStorageManager(),
-		GaoMap:                    gao_map.NewAmapClient(c.Map.Key, ""),
 		AiSvcRpc:                  aiservice.NewAiService(zrpc.MustNewClient(c.AiSvcRpc)),
 		MinioClient:               miniox.NewMinio(c.Minio.Endpoint, c.Minio.AccessKeyID, c.Minio.SecretAccessKey, c.Minio.UseSSL),
+		GeoRegionData:             geo_json.NewGeoJSON(),
 	}
 }

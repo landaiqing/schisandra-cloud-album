@@ -19,7 +19,7 @@ type ScaStorageFace struct {
 	FaceName      string         `gorm:"column:face_name;type:varchar(255);comment:人脸名称" json:"face_name"`                                // 人脸名称
 	FaceVector    string         `gorm:"column:face_vector;type:json;comment:人脸特征向量" json:"face_vector"`                                  // 人脸特征向量
 	FaceImagePath string         `gorm:"column:face_image_path;type:varchar(255);comment:人脸图像路径" json:"face_image_path"`                  // 人脸图像路径
-	FaceType      int64          `gorm:"column:face_type;type:int(10);comment:人脸类型标识" json:"face_type"`                                   // 人脸类型标识
+	FaceShow      int64          `gorm:"column:face_show;type:int(10);comment:人脸是否展示" json:"face_show"`                                   // 人脸是否展示
 	CreatedAt     time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt     time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
 	DeletedAt     gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间

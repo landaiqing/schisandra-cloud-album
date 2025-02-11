@@ -245,6 +245,31 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/image/location/detail/list",
+					Handler: storage.QueryLocationDetailListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/location/list",
+					Handler: storage.QueryLocationImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/recent/list",
+					Handler: storage.QueryRecentImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/thing/detail/list",
+					Handler: storage.QueryThingDetailListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/thing/list",
+					Handler: storage.QueryThingImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/uploads",
 					Handler: storage.UploadFileHandler(serverCtx),
 				},

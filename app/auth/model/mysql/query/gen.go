@@ -29,6 +29,7 @@ var (
 	ScaStorageAlbum       *scaStorageAlbum
 	ScaStorageConfig      *scaStorageConfig
 	ScaStorageInfo        *scaStorageInfo
+	ScaStorageLocation    *scaStorageLocation
 	ScaStorageTag         *scaStorageTag
 	ScaStorageTagInfo     *scaStorageTagInfo
 	ScaUserFollow         *scaUserFollow
@@ -50,6 +51,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaStorageAlbum = &Q.ScaStorageAlbum
 	ScaStorageConfig = &Q.ScaStorageConfig
 	ScaStorageInfo = &Q.ScaStorageInfo
+	ScaStorageLocation = &Q.ScaStorageLocation
 	ScaStorageTag = &Q.ScaStorageTag
 	ScaStorageTagInfo = &Q.ScaStorageTagInfo
 	ScaUserFollow = &Q.ScaUserFollow
@@ -72,6 +74,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaStorageAlbum:       newScaStorageAlbum(db, opts...),
 		ScaStorageConfig:      newScaStorageConfig(db, opts...),
 		ScaStorageInfo:        newScaStorageInfo(db, opts...),
+		ScaStorageLocation:    newScaStorageLocation(db, opts...),
 		ScaStorageTag:         newScaStorageTag(db, opts...),
 		ScaStorageTagInfo:     newScaStorageTagInfo(db, opts...),
 		ScaUserFollow:         newScaUserFollow(db, opts...),
@@ -95,6 +98,7 @@ type Query struct {
 	ScaStorageAlbum       scaStorageAlbum
 	ScaStorageConfig      scaStorageConfig
 	ScaStorageInfo        scaStorageInfo
+	ScaStorageLocation    scaStorageLocation
 	ScaStorageTag         scaStorageTag
 	ScaStorageTagInfo     scaStorageTagInfo
 	ScaUserFollow         scaUserFollow
@@ -119,6 +123,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaStorageAlbum:       q.ScaStorageAlbum.clone(db),
 		ScaStorageConfig:      q.ScaStorageConfig.clone(db),
 		ScaStorageInfo:        q.ScaStorageInfo.clone(db),
+		ScaStorageLocation:    q.ScaStorageLocation.clone(db),
 		ScaStorageTag:         q.ScaStorageTag.clone(db),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.clone(db),
 		ScaUserFollow:         q.ScaUserFollow.clone(db),
@@ -150,6 +155,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaStorageAlbum:       q.ScaStorageAlbum.replaceDB(db),
 		ScaStorageConfig:      q.ScaStorageConfig.replaceDB(db),
 		ScaStorageInfo:        q.ScaStorageInfo.replaceDB(db),
+		ScaStorageLocation:    q.ScaStorageLocation.replaceDB(db),
 		ScaStorageTag:         q.ScaStorageTag.replaceDB(db),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.replaceDB(db),
 		ScaUserFollow:         q.ScaUserFollow.replaceDB(db),
@@ -171,6 +177,7 @@ type queryCtx struct {
 	ScaStorageAlbum       IScaStorageAlbumDo
 	ScaStorageConfig      IScaStorageConfigDo
 	ScaStorageInfo        IScaStorageInfoDo
+	ScaStorageLocation    IScaStorageLocationDo
 	ScaStorageTag         IScaStorageTagDo
 	ScaStorageTagInfo     IScaStorageTagInfoDo
 	ScaUserFollow         IScaUserFollowDo
@@ -192,6 +199,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaStorageAlbum:       q.ScaStorageAlbum.WithContext(ctx),
 		ScaStorageConfig:      q.ScaStorageConfig.WithContext(ctx),
 		ScaStorageInfo:        q.ScaStorageInfo.WithContext(ctx),
+		ScaStorageLocation:    q.ScaStorageLocation.WithContext(ctx),
 		ScaStorageTag:         q.ScaStorageTag.WithContext(ctx),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.WithContext(ctx),
 		ScaUserFollow:         q.ScaUserFollow.WithContext(ctx),

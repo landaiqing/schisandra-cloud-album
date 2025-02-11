@@ -505,18 +505,62 @@ type (
 	ImageMeta {
 		ID        int64   `json:"id"`
 		fileName  string  `json:"file_name"`
-		filePath  string  `json:"file_path"`
 		URL       string  `json:"url"`
-		fileSize  string  `json:"file_size"`
-		CreatedAt string  `json:"created_at"`
 		Width     float64 `json:"width"`
 		Height    float64 `json:"height"`
+		CreatedAt string  `json:"created_at"`
 	}
 	AllImageDetail {
 		Date string      `json:"date"`
 		list []ImageMeta `json:"list"`
 	}
 	AllImageListResponse {
+		records []AllImageDetail `json:"records"`
+	}
+	// 最近上传图片列表请求参数
+	RecentListResponse {
+		records []AllImageDetail `json:"records"`
+	}
+	LocationMeta {
+		ID    int64  `json:"id"`
+		City  string `json:"city"`
+		Total int64  `json:"total"`
+	}
+	LocationListData {
+		location string         `json:"location"` // 中国 新疆维吾尔自治区
+		list     []LocationMeta `json:"list"` // 图片列表
+	}
+	// 地点相册列表响应参数
+	LocationListResponse {
+		records []LocationListData `json:"records"`
+	}
+	// 地点详情列表请求参数
+	LocationDetailListRequest {
+		ID int64 `json:"id"`
+	}
+	// 地点详情列表响应参数
+	LocationDetailListResponse {
+		records []AllImageDetail `json:"records"`
+	}
+	ThingMeta {
+		TagName   string `json:"tag_name"`
+		CreatedAt string `json:"created_at"`
+		TagCount  int64  `json:"tag_count"`
+	}
+	ThingListData {
+		Category string      `json:"category"` // 分类
+		list     []ThingMeta `json:"list"` // 图片列表
+	}
+	// 事物相册列表响应参数
+	ThingListResponse {
+		records []ThingListData `json:"records"`
+	}
+	// 事物详情列表请求参数
+	ThingDetailListRequest {
+		ID int64 `json:"id"`
+	}
+	// 事物详情列表响应参数
+	ThingDetailListResponse {
 		records []AllImageDetail `json:"records"`
 	}
 )
@@ -581,5 +625,25 @@ service auth {
 	// 获取所有图片列表
 	@handler queryAllImageList
 	post /image/all/list (AllImageListRequest) returns (AllImageListResponse)
+
+	// 获取最近上传图片列表
+	@handler queryRecentImageList
+	post /image/recent/list returns (RecentListResponse)
+
+	// 获取地点相册列表
+	@handler queryLocationImageList
+	post /image/location/list returns (LocationListResponse)
+
+	// 获取地点详情列表
+	@handler queryLocationDetailList
+	post /image/location/detail/list (LocationDetailListRequest) returns (LocationDetailListResponse)
+
+	// 获取事物相册列表
+	@handler queryThingImageList
+	post /image/thing/list returns (ThingListResponse)
+
+	// 获取事物详情列表
+	@handler queryThingDetailList
+	post /image/thing/detail/list (ThingDetailListRequest) returns (ThingDetailListResponse)
 }
 

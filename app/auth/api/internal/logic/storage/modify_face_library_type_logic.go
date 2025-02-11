@@ -35,7 +35,7 @@ func (l *ModifyFaceLibraryTypeLogic) ModifyFaceLibraryType(req *types.ModifyFace
 		return nil, err
 	}
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
-	resultInfo, err := storageInfo.Where(storageInfo.FaceID.In(req.IDs...)).Update(storageInfo.Show, req.FaceType)
+	resultInfo, err := storageInfo.Where(storageInfo.FaceID.In(req.IDs...)).Update(storageInfo.ImgShow, req.FaceType)
 	if err != nil {
 		return nil, err
 	}

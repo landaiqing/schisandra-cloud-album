@@ -162,12 +162,33 @@ type FaceSampleLibraryListResponse struct {
 type ImageMeta struct {
 	ID        int64   `json:"id"`
 	FileName  string  `json:"file_name"`
-	FilePath  string  `json:"file_path"`
 	URL       string  `json:"url"`
-	FileSize  string  `json:"file_size"`
-	CreatedAt string  `json:"created_at"`
 	Width     float64 `json:"width"`
 	Height    float64 `json:"height"`
+	CreatedAt string  `json:"created_at"`
+}
+
+type LocationDetailListRequest struct {
+	ID int64 `json:"id"`
+}
+
+type LocationDetailListResponse struct {
+	Records []AllImageDetail `json:"records"`
+}
+
+type LocationListData struct {
+	Location string         `json:"location"` // 中国 新疆维吾尔自治区
+	List     []LocationMeta `json:"list"`     // 图片列表
+}
+
+type LocationListResponse struct {
+	Records []LocationListData `json:"records"`
+}
+
+type LocationMeta struct {
+	ID    int64  `json:"id"`
+	City  string `json:"city"`
+	Total int64  `json:"total"`
 }
 
 type LoginResponse struct {
@@ -210,6 +231,10 @@ type PhoneLoginRequest struct {
 	Phone     string `json:"phone"`
 	Captcha   string `json:"captcha"`
 	AutoLogin bool   `json:"auto_login"`
+}
+
+type RecentListResponse struct {
+	Records []AllImageDetail `json:"records"`
 }
 
 type RefreshTokenResponse struct {
@@ -283,6 +308,29 @@ type StorageConfigRequest struct {
 	Endpoint  string `json:"endpoint"`
 	Bucket    string `json:"bucket"`
 	Region    string `json:"region"`
+}
+
+type ThingDetailListRequest struct {
+	ID int64 `json:"id"`
+}
+
+type ThingDetailListResponse struct {
+	Records []AllImageDetail `json:"records"`
+}
+
+type ThingListData struct {
+	Category string      `json:"category"` // 分类
+	List     []ThingMeta `json:"list"`     // 图片列表
+}
+
+type ThingListResponse struct {
+	Records []ThingListData `json:"records"`
+}
+
+type ThingMeta struct {
+	TagName   string `json:"tag_name"`
+	CreatedAt string `json:"created_at"`
+	TagCount  int64  `json:"tag_count"`
 }
 
 type UploadRequest struct {

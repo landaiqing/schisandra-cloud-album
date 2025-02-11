@@ -197,6 +197,8 @@ func (l *FaceRecognitionLogic) loadExistingFaces(userId string) ([]face.Descript
 const (
 	minFaceWidth  = 50 // 最小允许的人脸宽度
 	minFaceHeight = 50 // 最小允许的人脸高度
+	FaceShow      = 0  // 人脸展示状态
+	FaceHide      = 1
 )
 
 // 判断人脸是否有效
@@ -216,6 +218,7 @@ func (l *FaceRecognitionLogic) saveFaceToDatabase(userId string, descriptor face
 		FaceVector:    string(jsonBytes),
 		FaceImagePath: faceImagePath,
 		UserID:        userId,
+		FaceShow:      FaceShow,
 	}
 	err = l.svcCtx.DB.ScaStorageFace.Create(&storageFace)
 	if err != nil {

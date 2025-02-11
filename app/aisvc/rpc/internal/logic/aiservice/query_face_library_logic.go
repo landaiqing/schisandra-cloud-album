@@ -51,7 +51,7 @@ func (l *QueryFaceLibraryLogic) QueryFaceLibrary(in *pb.QueryFaceLibraryRequest)
 		storageFace.FaceVector,
 		storageFace.FaceImagePath,
 		storageFace.FaceName).
-		Where(storageFace.UserID.Eq(in.GetUserId()), storageFace.FaceType.Eq(in.GetType())).
+		Where(storageFace.UserID.Eq(in.GetUserId()), storageFace.FaceShow.Eq(in.GetType())).
 		Find()
 	if err != nil {
 		return nil, fmt.Errorf("failed to query face library: %v", err)

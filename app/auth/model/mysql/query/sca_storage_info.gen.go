@@ -40,16 +40,15 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.Category = field.NewString(tableName, "category")
 	_scaStorageInfo.Tags = field.NewString(tableName, "tags")
 	_scaStorageInfo.Type = field.NewString(tableName, "type")
-	_scaStorageInfo.Location = field.NewString(tableName, "location")
+	_scaStorageInfo.LocationID = field.NewInt64(tableName, "location_id")
 	_scaStorageInfo.Hash = field.NewString(tableName, "hash")
 	_scaStorageInfo.Anime = field.NewString(tableName, "anime")
 	_scaStorageInfo.FaceID = field.NewInt64(tableName, "face_id")
 	_scaStorageInfo.Landscape = field.NewString(tableName, "landscape")
 	_scaStorageInfo.OriginalTime = field.NewString(tableName, "original_time")
-	_scaStorageInfo.Gps = field.NewString(tableName, "gps")
 	_scaStorageInfo.Screenshot = field.NewString(tableName, "screenshot")
 	_scaStorageInfo.Exif = field.NewString(tableName, "exif")
-	_scaStorageInfo.Show = field.NewString(tableName, "show")
+	_scaStorageInfo.ImgShow = field.NewInt64(tableName, "img_show")
 	_scaStorageInfo.AlbumID = field.NewInt64(tableName, "album_id")
 	_scaStorageInfo.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageInfo.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -77,16 +76,15 @@ type scaStorageInfo struct {
 	Category     field.String  // 分类
 	Tags         field.String  // 标签
 	Type         field.String  // 类型
-	Location     field.String  // 地址
+	LocationID   field.Int64   // 地址ID
 	Hash         field.String  // 哈希值
 	Anime        field.String  // 是否是动漫图片
 	FaceID       field.Int64   // 人像ID
 	Landscape    field.String  // 风景类型
 	OriginalTime field.String  // 拍摄时间
-	Gps          field.String  // GPS
 	Screenshot   field.String  // 是否是截图
 	Exif         field.String  // exif 信息
-	Show         field.String  // 是否隐藏（0 不隐藏 1 隐藏）
+	ImgShow      field.Int64   // 是否隐藏（0 不隐藏 1 隐藏）
 	AlbumID      field.Int64   // 相册ID
 	CreatedAt    field.Time    // 创建时间
 	UpdatedAt    field.Time    // 更新时间
@@ -120,16 +118,15 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.Category = field.NewString(table, "category")
 	s.Tags = field.NewString(table, "tags")
 	s.Type = field.NewString(table, "type")
-	s.Location = field.NewString(table, "location")
+	s.LocationID = field.NewInt64(table, "location_id")
 	s.Hash = field.NewString(table, "hash")
 	s.Anime = field.NewString(table, "anime")
 	s.FaceID = field.NewInt64(table, "face_id")
 	s.Landscape = field.NewString(table, "landscape")
 	s.OriginalTime = field.NewString(table, "original_time")
-	s.Gps = field.NewString(table, "gps")
 	s.Screenshot = field.NewString(table, "screenshot")
 	s.Exif = field.NewString(table, "exif")
-	s.Show = field.NewString(table, "show")
+	s.ImgShow = field.NewInt64(table, "img_show")
 	s.AlbumID = field.NewInt64(table, "album_id")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
@@ -150,7 +147,7 @@ func (s *scaStorageInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaStorageInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 27)
+	s.fieldMap = make(map[string]field.Expr, 26)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["provider"] = s.Provider
@@ -164,16 +161,15 @@ func (s *scaStorageInfo) fillFieldMap() {
 	s.fieldMap["category"] = s.Category
 	s.fieldMap["tags"] = s.Tags
 	s.fieldMap["type"] = s.Type
-	s.fieldMap["location"] = s.Location
+	s.fieldMap["location_id"] = s.LocationID
 	s.fieldMap["hash"] = s.Hash
 	s.fieldMap["anime"] = s.Anime
 	s.fieldMap["face_id"] = s.FaceID
 	s.fieldMap["landscape"] = s.Landscape
 	s.fieldMap["original_time"] = s.OriginalTime
-	s.fieldMap["gps"] = s.Gps
 	s.fieldMap["screenshot"] = s.Screenshot
 	s.fieldMap["exif"] = s.Exif
-	s.fieldMap["show"] = s.Show
+	s.fieldMap["img_show"] = s.ImgShow
 	s.fieldMap["album_id"] = s.AlbumID
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt

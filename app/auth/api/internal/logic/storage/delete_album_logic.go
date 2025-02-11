@@ -16,8 +16,6 @@ type DeleteAlbumLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
-//43454A
-
 func NewDeleteAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DeleteAlbumLogic {
 	return &DeleteAlbumLogic{
 		Logger: logx.WithContext(ctx),
@@ -39,7 +37,7 @@ func (l *DeleteAlbumLogic) DeleteAlbum(req *types.AlbumDeleteRequest) (resp stri
 		return "", errors.New("album not found")
 	}
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
-	_, err = storageInfo.Where(storageInfo.AlbumID.Eq(req.ID), storageInfo.UserID.Eq(uid)).Update(storageInfo.AlbumID, nil)
+	_, err = storageInfo.Where(storageInfo.AlbumID.Eq(req.ID), storageInfo.UserID.Eq(uid)).Update(storageInfo.AlbumID, 0)
 	if err != nil {
 		return "", err
 	}

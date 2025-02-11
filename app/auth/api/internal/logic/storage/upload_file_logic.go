@@ -8,6 +8,7 @@ import (
 	"github.com/ccpwcn/kgo"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gorm"
 	"io"
 	"mime/multipart"
 	"net/http"
@@ -19,10 +20,11 @@ import (
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
-	"schisandra-album-cloud-microservices/common/gao_map"
+	"schisandra-album-cloud-microservices/common/geo_json"
 	"schisandra-album-cloud-microservices/common/storage/config"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -30,6 +32,7 @@ type UploadFileLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+	wg     sync.WaitGroup
 }
 
 func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UploadFileLogic {
@@ -37,6 +40,7 @@ func NewUploadFileLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Upload
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
+		wg:     sync.WaitGroup{},
 	}
 }
 
@@ -67,6 +71,7 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if err != nil {
 		return "", err
 	}
+
 	// 人脸识别
 	if result.FileType == "image/png" || result.FileType == "image/jpeg" {
 		face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{Face: bytes, UserId: uid})
@@ -76,13 +81,6 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		if face != nil {
 			faceId = face.GetFaceId()
 		}
-
-		//// 图像分类
-		//classification, err := l.svcCtx.AiSvcRpc.TfClassification(l.ctx, &pb.TfClassificationRequest{Image: bytes})
-		//if err != nil {
-		//	return "", err
-		//}
-		//className = classification.GetClassName()
 	}
 
 	// 解析 EXIF 信息
@@ -101,7 +99,13 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	latitude, longitude := l.extractGPSCoordinates(exif)
 
 	// 根据 GPS 信息获取地理位置信息
-	locationString, gpsString, err := l.getGeoLocation(latitude, longitude)
+	country, province, city, err := l.getGeoLocation(latitude, longitude)
+	if err != nil {
+		return "", err
+	}
+
+	// 将地址信息保存到数据库
+	locationId, err := l.saveFileLocationInfoToDB(uid, latitude, longitude, country, province, city)
 	if err != nil {
 		return "", err
 	}
@@ -111,18 +115,24 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if _, err = file.Seek(0, 0); err != nil {
 		return "", err
 	}
-	bucket, provider, filePath, err := l.uploadFileToOSS(uid, header, file, result)
+	bucket, provider, filePath, url, err := l.uploadFileToOSS(uid, header, file, result)
 	if err != nil {
 		return "", err
 	}
 
 	// 将 EXIF 和文件信息存入数据库
-	if err = l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, gpsString, locationString, exif, faceId, filePath); err != nil {
+	id, err := l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, locationId, exif, faceId, filePath)
+	if err != nil {
 		return "", err
 	}
-
 	// 删除缓存
 	l.afterImageUpload(uid, provider, bucket)
+
+	// redis 保存最近7天上传的文件列表
+	err = l.saveRecentFileList(uid, url, id, result, header.Filename)
+	if err != nil {
+		return "", err
+	}
 
 	return "success", nil
 }
@@ -138,16 +148,10 @@ func (l *UploadFileLogic) getUserID() (string, error) {
 
 // 在UploadImageLogic或其他需要使缓存失效的逻辑中添加：
 func (l *UploadFileLogic) afterImageUpload(uid, provider, bucket string) {
-	// 构造所有可能的缓存键组合（sort为true/false）
-	keysToDelete := []string{
-		fmt.Sprintf("%s%s:%s:%s:true", constant.ImageListPrefix, uid, provider, bucket),
-		fmt.Sprintf("%s%s:%s:%s:false", constant.ImageListPrefix, uid, provider, bucket),
-	}
-
-	// 批量删除缓存
-	for _, key := range keysToDelete {
+	for _, sort := range []bool{true, false} {
+		key := fmt.Sprintf("%s%s:%s:%s:%v", constant.ImageListPrefix, uid, provider, bucket, sort)
 		if err := l.svcCtx.RedisClient.Del(l.ctx, key).Err(); err != nil {
-			logx.Errorf("Failed to delete cache key %s: %v", key, err)
+			logx.Errorf("删除缓存键 %s 失败: %v", key, err)
 		}
 	}
 }
@@ -173,6 +177,9 @@ func (l *UploadFileLogic) parseAIRecognitionResult(r *http.Request) (types.File,
 
 // 解析 EXIF 数据
 func (l *UploadFileLogic) parseExifData(exifData interface{}) (map[string]interface{}, error) {
+	if exifData == "" {
+		return nil, nil
+	}
 	marshaledExif, err := json.Marshal(exifData)
 	if err != nil {
 		return nil, errors.New("invalid exif")
@@ -209,58 +216,53 @@ func (l *UploadFileLogic) extractGPSCoordinates(exif map[string]interface{}) (fl
 }
 
 // 根据 GPS 信息获取地理位置信息
-func (l *UploadFileLogic) getGeoLocation(latitude, longitude float64) (string, string, error) {
-	if latitude == 0 || longitude == 0 {
-		return "", "", nil
+func (l *UploadFileLogic) getGeoLocation(latitude, longitude float64) (string, string, string, error) {
+	if latitude == 0.000000 || longitude == 0.000000 {
+		return "", "", "", nil
 	}
 
-	gpsString := fmt.Sprintf("[%f,%f]", latitude, longitude)
-	request := gao_map.ReGeoRequest{Location: fmt.Sprintf("%f,%f", latitude, longitude)}
+	//request := gao_map.ReGeoRequest{Location: fmt.Sprintf("%f,%f", latitude, longitude)}
+	//
+	//location, err := l.svcCtx.GaoMap.Location.ReGeo(&request)
+	//if err != nil {
+	//	return nil, errors.New("regeo failed")
+	//}
+	//
+	//addressInfo := map[string]string{}
+	//if location.ReGeoCode.AddressComponent.Country != "" {
+	//	addressInfo["country"] = location.ReGeoCode.AddressComponent.Country
+	//}
+	//if location.ReGeoCode.AddressComponent.Province != "" {
+	//	addressInfo["province"] = location.ReGeoCode.AddressComponent.Province
+	//}
+	//if location.ReGeoCode.AddressComponent.City != "" {
+	//	addressInfo["city"] = location.ReGeoCode.AddressComponent.City.(string)
+	//}
+	//if location.ReGeoCode.AddressComponent.District != "" {
+	//	addressInfo["district"] = location.ReGeoCode.AddressComponent.District.(string)
+	//}
+	//if location.ReGeoCode.AddressComponent.Township != "" {
+	//	addressInfo["township"] = location.ReGeoCode.AddressComponent.Township
+	//}
 
-	location, err := l.svcCtx.GaoMap.Location.ReGeo(&request)
+	country, province, city, err := geo_json.GetAddress(latitude, longitude, l.svcCtx.GeoRegionData)
 	if err != nil {
-		return "", "", errors.New("regeo failed")
+		return "", "", "", errors.New("get geo location failed")
 	}
 
-	addressInfo := map[string]string{}
-	if location.ReGeoCode.AddressComponent.Country != "" {
-		addressInfo["county"] = location.ReGeoCode.AddressComponent.Country
-	}
-	if location.ReGeoCode.AddressComponent.Province != "" {
-		addressInfo["province"] = location.ReGeoCode.AddressComponent.Province
-	}
-	if location.ReGeoCode.AddressComponent.City != "" {
-		addressInfo["city"] = location.ReGeoCode.AddressComponent.City.(string)
-	}
-	if location.ReGeoCode.AddressComponent.District != "" {
-		addressInfo["district"] = location.ReGeoCode.AddressComponent.District.(string)
-	}
-	if location.ReGeoCode.AddressComponent.Township != "" {
-		addressInfo["township"] = location.ReGeoCode.AddressComponent.Township
-	}
-
-	locationString := ""
-	if len(addressInfo) > 0 {
-		addressJSON, err := json.Marshal(addressInfo)
-		if err != nil {
-			return "", "", errors.New("marshal address info failed")
-		}
-		locationString = string(addressJSON)
-	}
-
-	return locationString, gpsString, nil
+	return country, province, city, nil
 }
 
 // 上传文件到 OSS
-func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, string, string, error) {
+func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, string, string, string, error) {
 	cacheKey := constant.UserOssConfigPrefix + uid + ":" + result.Provider
 	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheKey, uid, result.Provider)
 	if err != nil {
-		return "", "", "", errors.New("get oss config failed")
+		return "", "", "", "", errors.New("get oss config failed")
 	}
 	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
 	if err != nil {
-		return "", "", "", errors.New("get storage failed")
+		return "", "", "", "", errors.New("get storage failed")
 	}
 
 	objectKey := path.Join(
@@ -273,16 +275,56 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 		"Content-Type": header.Header.Get("Content-Type"),
 	})
 	if err != nil {
-		return "", "", "", errors.New("upload file failed")
+		return "", "", "", "", errors.New("upload file failed")
 	}
-	return ossConfig.BucketName, ossConfig.Provider, objectKey, nil
+	url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, objectKey, time.Hour*24*7)
+	if err != nil {
+		return "", "", "", "", errors.New("presigned url failed")
+	}
+	return ossConfig.BucketName, ossConfig.Provider, objectKey, url, nil
+}
+
+func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, latitude float64, longitude float64, country string, province string, city string) (int64, error) {
+	if latitude == 0.000000 || longitude == 0.000000 {
+		return 0, nil
+	}
+	locationDB := l.svcCtx.DB.ScaStorageLocation
+	storageLocations, err := locationDB.Where(locationDB.UserID.Eq(uid), locationDB.Province.Eq(province), locationDB.City.Eq(city)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return 0, err
+	}
+	if storageLocations == nil {
+		locationInfo := model.ScaStorageLocation{
+			UserID:    uid,
+			Country:   country,
+			City:      city,
+			Province:  province,
+			Latitude:  fmt.Sprintf("%f", latitude),
+			Longitude: fmt.Sprintf("%f", longitude),
+			Total:     1,
+		}
+		err = locationDB.Create(&locationInfo)
+		if err != nil {
+			return 0, err
+		}
+		return locationInfo.ID, nil
+	} else {
+		info, err := locationDB.Where(locationDB.ID.Eq(storageLocations.ID), locationDB.UserID.Eq(uid)).Update(locationDB.Total, locationDB.Total.Add(1))
+		if err != nil {
+			return 0, err
+		}
+		if info.RowsAffected == 0 {
+			return 0, errors.New("update location failed")
+		}
+		return storageLocations.ID, nil
+	}
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime, gpsString, locationString string, exif map[string]interface{}, faceId int64, filePath string) error {
+func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime string, locationId int64, exif map[string]interface{}, faceId int64, filePath string) (int64, error) {
 	exifJSON, err := json.Marshal(exif)
 	if err != nil {
-		return errors.New("marshal exif failed")
+		return 0, errors.New("marshal exif failed")
 	}
 	typeName := l.classifyFile(result.FileType, result.IsScreenshot)
 	scaStorageInfo := &model.ScaStorageInfo{
@@ -294,13 +336,12 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header 
 		FileType:     result.FileType,
 		Path:         filePath,
 		Landscape:    result.Landscape,
-		Tags:         strings.Join(result.ObjectArray, ","),
+		Tags:         result.TagName,
 		Anime:        strconv.FormatBool(result.IsAnime),
 		Category:     result.TopCategory,
 		Screenshot:   strconv.FormatBool(result.IsScreenshot),
 		OriginalTime: originalDateTime,
-		Gps:          gpsString,
-		Location:     locationString,
+		LocationID:   locationId,
 		Exif:         string(exifJSON),
 		FaceID:       faceId,
 		Type:         typeName,
@@ -310,9 +351,9 @@ func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header 
 
 	err = l.svcCtx.DB.ScaStorageInfo.Create(scaStorageInfo)
 	if err != nil {
-		return errors.New("create storage info failed")
+		return 0, errors.New("create storage info failed")
 	}
-	return nil
+	return scaStorageInfo.ID, nil
 }
 
 // 提取解密操作为函数
@@ -403,4 +444,29 @@ func (l *UploadFileLogic) classifyFile(mimeType string, isScreenshot bool) strin
 		return "screenshot"
 	}
 	return "unknown"
+}
+
+// 保存最近7天上传的文件列表
+func (l *UploadFileLogic) saveRecentFileList(uid, url string, id int64, result types.File, filename string) error {
+
+	redisKey := constant.ImageRecentPrefix + uid + ":" + strconv.FormatInt(id, 10)
+	imageMeta := types.ImageMeta{
+		ID:        id,
+		URL:       url,
+		FileName:  filename,
+		Width:     result.Width,
+		Height:    result.Height,
+		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
+	}
+	marshal, err := json.Marshal(imageMeta)
+	if err != nil {
+		logx.Error(err)
+		return errors.New("marshal image meta failed")
+	}
+	err = l.svcCtx.RedisClient.Set(l.ctx, redisKey, marshal, time.Hour*24*7).Err()
+	if err != nil {
+		logx.Error(err)
+		return errors.New("save recent file list failed")
+	}
+	return nil
 }

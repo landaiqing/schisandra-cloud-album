@@ -28,7 +28,7 @@ func NewModifyFaceTypeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Mo
 func (l *ModifyFaceTypeLogic) ModifyFaceType(in *pb.ModifyFaceTypeRequest) (*pb.ModifyFaceTypeResponse, error) {
 	storageFace := l.svcCtx.DB.ScaStorageFace
 	faceIds := in.GetFaceId()
-	info, err := storageFace.Where(storageFace.ID.In(faceIds...), storageFace.UserID.Eq(in.GetUserId())).Update(storageFace.FaceType, in.GetType())
+	info, err := storageFace.Where(storageFace.ID.In(faceIds...), storageFace.UserID.Eq(in.GetUserId())).Update(storageFace.FaceShow, in.GetType())
 	if err != nil {
 		return nil, err
 	}

@@ -25,6 +25,16 @@ type QueryAllImageListLogic struct {
 	svcCtx *svc.ServiceContext
 }
 
+var WeekdayMap = map[time.Weekday]string{
+	time.Sunday:    "日",
+	time.Monday:    "一",
+	time.Tuesday:   "二",
+	time.Wednesday: "三",
+	time.Thursday:  "四",
+	time.Friday:    "五",
+	time.Saturday:  "六",
+}
+
 func NewQueryAllImageListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryAllImageListLogic {
 	return &QueryAllImageListLogic{
 		Logger: logx.WithContext(ctx),
@@ -102,7 +112,8 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		wg.Add(1)
 		go func(dbFileInfo *model.ScaStorageInfo) {
 			defer wg.Done()
-			date := dbFileInfo.CreatedAt.Format("2006-01-02")
+			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
+			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
 			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
 			if err != nil {
 				logx.Error(err)
@@ -115,12 +126,10 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				FilePath:  dbFileInfo.Path,
 				URL:       url,
-				FileSize:  dbFileInfo.FileSize,
-				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),
 				Width:     dbFileInfo.Width,
 				Height:    dbFileInfo.Height,
+				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),
 			})
 
 			// 重新存储更新后的图像列表
