@@ -15,18 +15,21 @@ const TableNameScaStorageLocation = "sca_storage_location"
 
 // ScaStorageLocation mapped from table <sca_storage_location>
 type ScaStorageLocation struct {
-	ID        int64                  `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
-	UserID    string                 `gorm:"column:user_id;type:varchar(50);comment:用户id" json:"user_id"`                                     // 用户id
-	Country   string                 `gorm:"column:country;type:varchar(100);comment:国家" json:"country"`                                      // 国家
-	Province  string                 `gorm:"column:province;type:varchar(100);comment:省" json:"province"`                                     // 省
-	City      string                 `gorm:"column:city;type:varchar(100);comment:城市" json:"city"`                                            // 城市
-	Latitude  string                 `gorm:"column:latitude;type:varchar(50);comment:纬度" json:"latitude"`                                     // 纬度
-	Longitude string                 `gorm:"column:longitude;type:varchar(50);comment:经度" json:"longitude"`                                   // 经度
-	Total     int64                  `gorm:"column:total;type:bigint(20);comment:数量" json:"total"`                                            // 数量
-	Version   optimisticlock.Version `gorm:"column:version;type:bigint(20);comment:版本" json:"version"`                                        // 版本
-	CreatedAt time.Time              `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
-	UpdatedAt time.Time              `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
-	DeletedAt gorm.DeletedAt         `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间
+	ID         int64                  `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
+	UserID     string                 `gorm:"column:user_id;type:varchar(50);comment:用户id" json:"user_id"`                                     // 用户id
+	Provider   string                 `gorm:"column:provider;type:varchar(50);comment:供应商" json:"provider"`                                    // 供应商
+	Bucket     string                 `gorm:"column:bucket;type:varchar(50);comment:存储桶" json:"bucket"`                                        // 存储桶
+	Country    string                 `gorm:"column:country;type:varchar(100);comment:国家" json:"country"`                                      // 国家
+	Province   string                 `gorm:"column:province;type:varchar(100);comment:省" json:"province"`                                     // 省
+	City       string                 `gorm:"column:city;type:varchar(100);comment:城市" json:"city"`                                            // 城市
+	Latitude   string                 `gorm:"column:latitude;type:varchar(50);comment:纬度" json:"latitude"`                                     // 纬度
+	Longitude  string                 `gorm:"column:longitude;type:varchar(50);comment:经度" json:"longitude"`                                   // 经度
+	Total      int64                  `gorm:"column:total;type:bigint(20);comment:数量" json:"total"`                                            // 数量
+	CoverImage string                 `gorm:"column:cover_image;type:text;comment:封面图片" json:"cover_image"`                                    // 封面图片
+	Version    optimisticlock.Version `gorm:"column:version;type:bigint(20);comment:版本" json:"version"`                                        // 版本
+	CreatedAt  time.Time              `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
+	UpdatedAt  time.Time              `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
+	DeletedAt  gorm.DeletedAt         `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间
 }
 
 // TableName ScaStorageLocation's table name

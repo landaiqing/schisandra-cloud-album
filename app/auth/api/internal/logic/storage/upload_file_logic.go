@@ -83,29 +83,8 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		}
 	}
 
-	// 解析 EXIF 信息
-	exif, err := l.parseExifData(result.Exif)
-	if err != nil {
-		return "", err
-	}
-
-	// 提取拍摄时间
-	originalDateTime, err := l.extractOriginalDateTime(exif)
-	if err != nil {
-		return "", err
-	}
-
-	// 提取 GPS 信息
-	latitude, longitude := l.extractGPSCoordinates(exif)
-
 	// 根据 GPS 信息获取地理位置信息
-	country, province, city, err := l.getGeoLocation(latitude, longitude)
-	if err != nil {
-		return "", err
-	}
-
-	// 将地址信息保存到数据库
-	locationId, err := l.saveFileLocationInfoToDB(uid, latitude, longitude, country, province, city)
+	country, province, city, err := l.getGeoLocation(result.Latitude, result.Longitude)
 	if err != nil {
 		return "", err
 	}
@@ -120,8 +99,14 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		return "", err
 	}
 
+	// 将地址信息保存到数据库
+	locationId, err := l.saveFileLocationInfoToDB(uid, result.Provider, result.Bucket, result.Latitude, result.Longitude, country, province, city, filePath)
+	if err != nil {
+		return "", err
+	}
+
 	// 将 EXIF 和文件信息存入数据库
-	id, err := l.saveFileInfoToDB(uid, bucket, provider, header, result, originalDateTime, locationId, exif, faceId, filePath)
+	id, err := l.saveFileInfoToDB(uid, bucket, provider, header, result, locationId, faceId, filePath)
 	if err != nil {
 		return "", err
 	}
@@ -175,23 +160,6 @@ func (l *UploadFileLogic) parseAIRecognitionResult(r *http.Request) (types.File,
 	return result, nil
 }
 
-// 解析 EXIF 数据
-func (l *UploadFileLogic) parseExifData(exifData interface{}) (map[string]interface{}, error) {
-	if exifData == "" {
-		return nil, nil
-	}
-	marshaledExif, err := json.Marshal(exifData)
-	if err != nil {
-		return nil, errors.New("invalid exif")
-	}
-
-	var exif map[string]interface{}
-	if err = json.Unmarshal(marshaledExif, &exif); err != nil {
-		return nil, errors.New("invalid exif")
-	}
-	return exif, nil
-}
-
 // 提取拍摄时间
 func (l *UploadFileLogic) extractOriginalDateTime(exif map[string]interface{}) (string, error) {
 	if dateTimeOriginal, ok := exif["DateTimeOriginal"].(string); ok {
@@ -201,18 +169,6 @@ func (l *UploadFileLogic) extractOriginalDateTime(exif map[string]interface{}) (
 		}
 	}
 	return "", nil
-}
-
-// 提取 GPS 信息
-func (l *UploadFileLogic) extractGPSCoordinates(exif map[string]interface{}) (float64, float64) {
-	var latitude, longitude float64
-	if lat, ok := exif["latitude"].(float64); ok {
-		latitude = lat
-	}
-	if long, ok := exif["longitude"].(float64); ok {
-		longitude = long
-	}
-	return latitude, longitude
 }
 
 // 根据 GPS 信息获取地理位置信息
@@ -284,7 +240,7 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 	return ossConfig.BucketName, ossConfig.Provider, objectKey, url, nil
 }
 
-func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, latitude float64, longitude float64, country string, province string, city string) (int64, error) {
+func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, provider string, bucket string, latitude float64, longitude float64, country string, province string, city string, filePath string) (int64, error) {
 	if latitude == 0.000000 || longitude == 0.000000 {
 		return 0, nil
 	}
@@ -295,13 +251,16 @@ func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, latitude float64,
 	}
 	if storageLocations == nil {
 		locationInfo := model.ScaStorageLocation{
-			UserID:    uid,
-			Country:   country,
-			City:      city,
-			Province:  province,
-			Latitude:  fmt.Sprintf("%f", latitude),
-			Longitude: fmt.Sprintf("%f", longitude),
-			Total:     1,
+			Provider:   provider,
+			Bucket:     bucket,
+			UserID:     uid,
+			Country:    country,
+			City:       city,
+			Province:   province,
+			Latitude:   fmt.Sprintf("%f", latitude),
+			Longitude:  fmt.Sprintf("%f", longitude),
+			Total:      1,
+			CoverImage: filePath,
 		}
 		err = locationDB.Create(&locationInfo)
 		if err != nil {
@@ -309,7 +268,7 @@ func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, latitude float64,
 		}
 		return locationInfo.ID, nil
 	} else {
-		info, err := locationDB.Where(locationDB.ID.Eq(storageLocations.ID), locationDB.UserID.Eq(uid)).Update(locationDB.Total, locationDB.Total.Add(1))
+		info, err := locationDB.Where(locationDB.ID.Eq(storageLocations.ID), locationDB.UserID.Eq(uid)).UpdateColumnSimple(locationDB.Total.Add(1), locationDB.CoverImage.Value(filePath))
 		if err != nil {
 			return 0, err
 		}
@@ -321,35 +280,29 @@ func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, latitude float64,
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, originalDateTime string, locationId int64, exif map[string]interface{}, faceId int64, filePath string) (int64, error) {
-	exifJSON, err := json.Marshal(exif)
-	if err != nil {
-		return 0, errors.New("marshal exif failed")
-	}
+func (l *UploadFileLogic) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, locationId, faceId int64, filePath string) (int64, error) {
+
 	typeName := l.classifyFile(result.FileType, result.IsScreenshot)
 	scaStorageInfo := &model.ScaStorageInfo{
-		UserID:       uid,
-		Provider:     provider,
-		Bucket:       bucket,
-		FileName:     header.Filename,
-		FileSize:     strconv.FormatInt(header.Size, 10),
-		FileType:     result.FileType,
-		Path:         filePath,
-		Landscape:    result.Landscape,
-		Tags:         result.TagName,
-		Anime:        strconv.FormatBool(result.IsAnime),
-		Category:     result.TopCategory,
-		Screenshot:   strconv.FormatBool(result.IsScreenshot),
-		OriginalTime: originalDateTime,
-		LocationID:   locationId,
-		Exif:         string(exifJSON),
-		FaceID:       faceId,
-		Type:         typeName,
-		Width:        result.Width,
-		Height:       result.Height,
+		UserID:     uid,
+		Provider:   provider,
+		Bucket:     bucket,
+		FileName:   header.Filename,
+		FileSize:   strconv.FormatInt(header.Size, 10),
+		FileType:   result.FileType,
+		Path:       filePath,
+		Landscape:  result.Landscape,
+		Tag:        result.TagName,
+		IsAnime:    strconv.FormatBool(result.IsAnime),
+		Category:   result.TopCategory,
+		LocationID: locationId,
+		FaceID:     faceId,
+		Type:       typeName,
+		Width:      result.Width,
+		Height:     result.Height,
 	}
 
-	err = l.svcCtx.DB.ScaStorageInfo.Create(scaStorageInfo)
+	err := l.svcCtx.DB.ScaStorageInfo.Create(scaStorageInfo)
 	if err != nil {
 		return 0, errors.New("create storage info failed")
 	}
@@ -367,7 +320,7 @@ func (l *UploadFileLogic) decryptConfig(dbConfig *model.ScaStorageConfig) (*conf
 		return nil, errors.New("decrypt secret key failed")
 	}
 	return &config.StorageConfig{
-		Provider:   dbConfig.Type,
+		Provider:   dbConfig.Provider,
 		Endpoint:   dbConfig.Endpoint,
 		AccessKey:  accessKey,
 		SecretKey:  secretKey,
@@ -394,7 +347,7 @@ func (l *UploadFileLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider stri
 
 	// 缓存未命中，从数据库中加载
 	scaOssConfig := l.svcCtx.DB.ScaStorageConfig
-	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Type.Eq(provider)).First()
+	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Provider.Eq(provider)).First()
 	if err != nil {
 		return nil, err
 	}

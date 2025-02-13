@@ -17,7 +17,6 @@ func GetAlbumDetailHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
-
 		l := storage.NewGetAlbumDetailLogic(r.Context(), svcCtx)
 		resp, err := l.GetAlbumDetail(&req)
 		if err != nil {

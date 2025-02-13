@@ -10,7 +10,8 @@ type File struct {
 	Landscape    string  `json:"landscape"`
 	TopCategory  string  `json:"topCategory"`
 	IsScreenshot bool    `json:"isScreenshot"`
-	Exif         any     `json:"exif"`
 	Width        float64 `json:"width"`
 	Height       float64 `json:"height"`
+	Longitude    float64 `json:"longitude"`
+	Latitude     float64 `json:"latitude"`
 }

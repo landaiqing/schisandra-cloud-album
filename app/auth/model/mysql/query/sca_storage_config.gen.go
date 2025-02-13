@@ -29,7 +29,7 @@ func newScaStorageConfig(db *gorm.DB, opts ...gen.DOOption) scaStorageConfig {
 	_scaStorageConfig.ALL = field.NewAsterisk(tableName)
 	_scaStorageConfig.ID = field.NewInt64(tableName, "id")
 	_scaStorageConfig.UserID = field.NewString(tableName, "user_id")
-	_scaStorageConfig.Type = field.NewString(tableName, "type")
+	_scaStorageConfig.Provider = field.NewString(tableName, "provider")
 	_scaStorageConfig.Endpoint = field.NewString(tableName, "endpoint")
 	_scaStorageConfig.AccessKey = field.NewString(tableName, "access_key")
 	_scaStorageConfig.SecretKey = field.NewString(tableName, "secret_key")
@@ -50,7 +50,7 @@ type scaStorageConfig struct {
 	ALL       field.Asterisk
 	ID        field.Int64  // 主键
 	UserID    field.String // 用户ID
-	Type      field.String // 类型
+	Provider  field.String // 供应商
 	Endpoint  field.String // 地址
 	AccessKey field.String // 密钥key
 	SecretKey field.String // 密钥
@@ -77,7 +77,7 @@ func (s *scaStorageConfig) updateTableName(table string) *scaStorageConfig {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
-	s.Type = field.NewString(table, "type")
+	s.Provider = field.NewString(table, "provider")
 	s.Endpoint = field.NewString(table, "endpoint")
 	s.AccessKey = field.NewString(table, "access_key")
 	s.SecretKey = field.NewString(table, "secret_key")
@@ -105,7 +105,7 @@ func (s *scaStorageConfig) fillFieldMap() {
 	s.fieldMap = make(map[string]field.Expr, 11)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
-	s.fieldMap["type"] = s.Type
+	s.fieldMap["provider"] = s.Provider
 	s.fieldMap["endpoint"] = s.Endpoint
 	s.fieldMap["access_key"] = s.AccessKey
 	s.fieldMap["secret_key"] = s.SecretKey

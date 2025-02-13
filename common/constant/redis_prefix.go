@@ -24,4 +24,5 @@ const (
 	ImageListPrefix     = "image:list:"
 	ImageListMetaPrefix = "image:meta:"
 	ImageRecentPrefix   = "image:recent:"
+	ImageFaceListPrefix = "image:face:list:"
 )

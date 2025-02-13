@@ -16,7 +16,7 @@ const TableNameScaStorageConfig = "sca_storage_config"
 type ScaStorageConfig struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID    string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID
-	Type      string         `gorm:"column:type;type:varchar(50);comment:类型" json:"type"`                                             // 类型
+	Provider  string         `gorm:"column:provider;type:varchar(50);comment:供应商" json:"provider"`                                    // 供应商
 	Endpoint  string         `gorm:"column:endpoint;type:varchar(50);comment:地址" json:"endpoint"`                                     // 地址
 	AccessKey string         `gorm:"column:access_key;type:varchar(100);comment:密钥key" json:"access_key"`                             // 密钥key
 	SecretKey string         `gorm:"column:secret_key;type:varchar(100);comment:密钥" json:"secret_key"`                                // 密钥

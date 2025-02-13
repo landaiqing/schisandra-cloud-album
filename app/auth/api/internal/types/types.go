@@ -32,7 +32,13 @@ type AlbumDeleteRequest struct {
 }
 
 type AlbumDetailListRequest struct {
-	ID int64 `json:"id"`
+	ID       int64  `json:"id"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
+type AlbumDetailListResponse struct {
+	Records []AllImageDetail `json:"records"`
 }
 
 type AlbumListRequest struct {
@@ -142,7 +148,13 @@ type CommentResponse struct {
 }
 
 type FaceDetailListRequest struct {
-	FaceID int64 `json:"face_id"`
+	FaceID   int64  `json:"face_id"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
+type FaceDetailListResponse struct {
+	Records []AllImageDetail `json:"records"`
 }
 
 type FaceSampleLibrary struct {
@@ -169,7 +181,9 @@ type ImageMeta struct {
 }
 
 type LocationDetailListRequest struct {
-	ID int64 `json:"id"`
+	ID       int64  `json:"id"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
 }
 
 type LocationDetailListResponse struct {
@@ -181,14 +195,20 @@ type LocationListData struct {
 	List     []LocationMeta `json:"list"`     // 图片列表
 }
 
+type LocationListRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type LocationListResponse struct {
 	Records []LocationListData `json:"records"`
 }
 
 type LocationMeta struct {
-	ID    int64  `json:"id"`
-	City  string `json:"city"`
-	Total int64  `json:"total"`
+	ID         int64  `json:"id"`
+	City       string `json:"city"`
+	Total      int64  `json:"total"`
+	CoverImage string `json:"cover_image"`
 }
 
 type LoginResponse struct {
@@ -311,7 +331,9 @@ type StorageConfigRequest struct {
 }
 
 type ThingDetailListRequest struct {
-	ID int64 `json:"id"`
+	TagName  string `json:"tag_name"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
 }
 
 type ThingDetailListResponse struct {
@@ -323,14 +345,20 @@ type ThingListData struct {
 	List     []ThingMeta `json:"list"`     // 图片列表
 }
 
+type ThingListRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type ThingListResponse struct {
 	Records []ThingListData `json:"records"`
 }
 
 type ThingMeta struct {
-	TagName   string `json:"tag_name"`
-	CreatedAt string `json:"created_at"`
-	TagCount  int64  `json:"tag_count"`
+	TagName    string `json:"tag_name"`
+	CreatedAt  string `json:"created_at"`
+	TagCount   int64  `json:"tag_count"`
+	CoverImage string `json:"cover_image"`
 }
 
 type UploadRequest struct {

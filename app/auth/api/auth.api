@@ -450,7 +450,12 @@ type (
 		result string `json:"result"`
 	}
 	FaceDetailListRequest {
-		FaceID int64 `json:"face_id"`
+		FaceID   int64  `json:"face_id"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	FaceDetailListResponse {
+		records []AllImageDetail `json:"records"`
 	}
 	// 创建相册请求参数
 	AlbumCreateRequest {
@@ -478,7 +483,13 @@ type (
 	}
 	// 相册详情请求参数
 	AlbumDetailListRequest {
-		ID int64 `json:"id"`
+		ID       int64  `json:"id"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	// 相册详情响应参数
+	AlbumDetailListResponse {
+		records []AllImageDetail `json:"records"`
 	}
 	// 重命名相册请求参数
 	AlbumRenameRequest {
@@ -522,13 +533,18 @@ type (
 		records []AllImageDetail `json:"records"`
 	}
 	LocationMeta {
-		ID    int64  `json:"id"`
-		City  string `json:"city"`
-		Total int64  `json:"total"`
+		ID         int64  `json:"id"`
+		City       string `json:"city"`
+		Total      int64  `json:"total"`
+		CoverImage string `json:"cover_image"`
 	}
 	LocationListData {
 		location string         `json:"location"` // 中国 新疆维吾尔自治区
 		list     []LocationMeta `json:"list"` // 图片列表
+	}
+	LocationListRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 	// 地点相册列表响应参数
 	LocationListResponse {
@@ -536,20 +552,27 @@ type (
 	}
 	// 地点详情列表请求参数
 	LocationDetailListRequest {
-		ID int64 `json:"id"`
+		ID       int64  `json:"id"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 	// 地点详情列表响应参数
 	LocationDetailListResponse {
 		records []AllImageDetail `json:"records"`
 	}
 	ThingMeta {
-		TagName   string `json:"tag_name"`
-		CreatedAt string `json:"created_at"`
-		TagCount  int64  `json:"tag_count"`
+		TagName    string `json:"tag_name"`
+		CreatedAt  string `json:"created_at"`
+		TagCount   int64  `json:"tag_count"`
+		CoverImage string `json:"cover_image"`
 	}
 	ThingListData {
 		Category string      `json:"category"` // 分类
 		list     []ThingMeta `json:"list"` // 图片列表
+	}
+	ThingListRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 	// 事物相册列表响应参数
 	ThingListResponse {
@@ -557,7 +580,9 @@ type (
 	}
 	// 事物详情列表请求参数
 	ThingDetailListRequest {
-		ID int64 `json:"id"`
+		TagName  string `json:"tag_name"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 	// 事物详情列表响应参数
 	ThingDetailListResponse {
@@ -598,9 +623,9 @@ service auth {
 	@handler modifyFaceLibraryType
 	post /face/sample/modify/type (ModifyFaceTypeRequest) returns (ModifyFaceTypeResponse)
 
-	// 获取人脸详情列表 (暂定)
+	// 获取人脸详情列表
 	@handler getFaceDetailList
-	post /face/detail/list (FaceDetailListRequest) returns (string)
+	post /face/detail/list (FaceDetailListRequest) returns (FaceDetailListResponse)
 
 	// 创建相册
 	@handler createAlbum
@@ -610,9 +635,9 @@ service auth {
 	@handler getAlbumList
 	post /album/list (AlbumListRequest) returns (AlbumListResponse)
 
-	// 获取相册详情（暂定）
+	// 获取相册详情
 	@handler getAlbumDetail
-	post /album/detail/list (AlbumDetailListRequest) returns (string)
+	post /album/detail/list (AlbumDetailListRequest) returns (AlbumDetailListResponse)
 
 	// 重命名相册
 	@handler renameAlbum
@@ -632,7 +657,7 @@ service auth {
 
 	// 获取地点相册列表
 	@handler queryLocationImageList
-	post /image/location/list returns (LocationListResponse)
+	post /image/location/list (LocationListRequest) returns (LocationListResponse)
 
 	// 获取地点详情列表
 	@handler queryLocationDetailList
@@ -640,7 +665,7 @@ service auth {
 
 	// 获取事物相册列表
 	@handler queryThingImageList
-	post /image/thing/list returns (ThingListResponse)
+	post /image/thing/list (ThingListRequest) returns (ThingListResponse)
 
 	// 获取事物详情列表
 	@handler queryThingDetailList

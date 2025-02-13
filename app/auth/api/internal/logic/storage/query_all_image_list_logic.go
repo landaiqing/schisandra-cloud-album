@@ -173,7 +173,7 @@ func (l *QueryAllImageListLogic) decryptConfig(config *model.ScaStorageConfig) (
 		return nil, errors.New("decrypt secret key failed")
 	}
 	return &storageConfig.StorageConfig{
-		Provider:   config.Type,
+		Provider:   config.Provider,
 		Endpoint:   config.Endpoint,
 		AccessKey:  accessKey,
 		SecretKey:  secretKey,
@@ -200,7 +200,7 @@ func (l *QueryAllImageListLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provid
 
 	// 缓存未命中，从数据库中加载
 	scaOssConfig := l.svcCtx.DB.ScaStorageConfig
-	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Type.Eq(provider)).First()
+	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Provider.Eq(provider)).First()
 	if err != nil {
 		return nil, err
 	}
