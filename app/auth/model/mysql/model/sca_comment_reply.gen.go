@@ -13,7 +13,7 @@ import (
 
 const TableNameScaCommentReply = "sca_comment_reply"
 
-// ScaCommentReply mapped from table <sca_comment_reply>
+// ScaCommentReply 评论表
 type ScaCommentReply struct {
 	ID              int64                  `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;uniqueIndex:id,priority:1;comment:主键id;primary_key" json:"id,string"` // 主键id
 	UserID          string                 `gorm:"column:user_id;type:varchar(50);not null;comment:评论用户id" json:"user_id"`                                                      // 评论用户id

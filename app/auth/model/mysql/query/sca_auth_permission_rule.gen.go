@@ -41,6 +41,7 @@ func newScaAuthPermissionRule(db *gorm.DB, opts ...gen.DOOption) scaAuthPermissi
 	return _scaAuthPermissionRule
 }
 
+// scaAuthPermissionRule 接口权限表
 type scaAuthPermissionRule struct {
 	scaAuthPermissionRuleDo
 

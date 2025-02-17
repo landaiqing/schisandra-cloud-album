@@ -50,6 +50,7 @@ func newScaAuthUserDevice(db *gorm.DB, opts ...gen.DOOption) scaAuthUserDevice {
 	return _scaAuthUserDevice
 }
 
+// scaAuthUserDevice 用户设备表
 type scaAuthUserDevice struct {
 	scaAuthUserDeviceDo
 

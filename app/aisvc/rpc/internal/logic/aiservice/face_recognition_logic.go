@@ -53,11 +53,8 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 	}
 	// 提取人脸特征
 	faceFeatures, err := l.svcCtx.FaceRecognizer.RecognizeSingle(toJPEG)
-	if err != nil {
+	if err != nil || faceFeatures == nil {
 		return nil, err
-	}
-	if faceFeatures == nil {
-		return nil, nil
 	}
 
 	hashKey := constant.FaceVectorPrefix + in.GetUserId()

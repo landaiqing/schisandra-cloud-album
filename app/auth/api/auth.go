@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
+	"schisandra-album-cloud-microservices/app/auth/api/internal/mq"
 	"schisandra-album-cloud-microservices/common/idgenerator"
 	"schisandra-album-cloud-microservices/common/middleware"
 
@@ -31,6 +32,8 @@ func main() {
 	server.Use(middleware.I18nMiddleware)
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)
+	// start image process consumer
+	go mq.NewImageProcessConsumer(ctx)
 	// initialize id generator
 	idgenerator.NewIDGenerator(0)
 	fmt.Printf("Starting server at %s:%d...\n", c.Host, c.Port)

@@ -39,6 +39,7 @@ func newScaStorageTag(db *gorm.DB, opts ...gen.DOOption) scaStorageTag {
 	return _scaStorageTag
 }
 
+// scaStorageTag 标签表
 type scaStorageTag struct {
 	scaStorageTagDo
 

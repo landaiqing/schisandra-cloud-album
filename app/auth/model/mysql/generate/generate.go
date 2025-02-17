@@ -117,6 +117,7 @@ func main() {
 	scaUserMessage := g.GenerateModel("sca_user_message", fieldOpts...)
 	scaStorageAlbum := g.GenerateModel("sca_storage_album", fieldOpts...)
 	scaStorageLocation := g.GenerateModel("sca_storage_location", fieldOpts...)
+	scaStorageThumb := g.GenerateModel("sca_storage_thumb", fieldOpts...)
 
 	g.ApplyBasic(
 		scaAuthMenu,
@@ -137,6 +138,7 @@ func main() {
 		scaUserMessage,
 		scaStorageAlbum,
 		scaStorageLocation,
+		scaStorageThumb,
 	)
 
 	g.Execute()

@@ -55,6 +55,7 @@ func newScaCommentReply(db *gorm.DB, opts ...gen.DOOption) scaCommentReply {
 	return _scaCommentReply
 }
 
+// scaCommentReply 评论表
 type scaCommentReply struct {
 	scaCommentReplyDo
 

@@ -12,7 +12,7 @@ import (
 
 const TableNameScaStorageConfig = "sca_storage_config"
 
-// ScaStorageConfig mapped from table <sca_storage_config>
+// ScaStorageConfig 用户存储配置表
 type ScaStorageConfig struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID    string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID

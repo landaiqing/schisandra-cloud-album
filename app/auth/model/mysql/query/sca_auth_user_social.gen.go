@@ -41,6 +41,7 @@ func newScaAuthUserSocial(db *gorm.DB, opts ...gen.DOOption) scaAuthUserSocial {
 	return _scaAuthUserSocial
 }
 
+// scaAuthUserSocial 第三方登录信息表
 type scaAuthUserSocial struct {
 	scaAuthUserSocialDo
 

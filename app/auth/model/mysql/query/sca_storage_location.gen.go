@@ -48,6 +48,7 @@ func newScaStorageLocation(db *gorm.DB, opts ...gen.DOOption) scaStorageLocation
 	return _scaStorageLocation
 }
 
+// scaStorageLocation 文件地理位置信息表
 type scaStorageLocation struct {
 	scaStorageLocationDo
 

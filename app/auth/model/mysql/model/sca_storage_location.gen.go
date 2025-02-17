@@ -13,7 +13,7 @@ import (
 
 const TableNameScaStorageLocation = "sca_storage_location"
 
-// ScaStorageLocation mapped from table <sca_storage_location>
+// ScaStorageLocation 文件地理位置信息表
 type ScaStorageLocation struct {
 	ID         int64                  `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID     string                 `gorm:"column:user_id;type:varchar(50);comment:用户id" json:"user_id"`                                     // 用户id

@@ -12,7 +12,7 @@ import (
 
 const TableNameScaUserLevel = "sca_user_level"
 
-// ScaUserLevel mapped from table <sca_user_level>
+// ScaUserLevel 用户等级表
 type ScaUserLevel struct {
 	ID          int64          `gorm:"column:id;type:bigint(20);primaryKey;comment:主键;primary_key" json:"id,string"`                             // 主键
 	UserID      string         `gorm:"column:user_id;type:varchar(50);comment:用户Id" json:"user_id"`                                              // 用户Id

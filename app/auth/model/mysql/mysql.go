@@ -23,11 +23,11 @@ func NewMySQL(url string, maxOpenConn int, maxIdleConn int, client *redis.Client
 		Logger: logger.New(
 			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
-				SlowThreshold:             time.Second,  // 慢sql日志
-				LogLevel:                  logger.Error, // 级别
-				Colorful:                  true,         // 颜色
-				IgnoreRecordNotFoundError: true,         // 忽略RecordNotFoundError
-				ParameterizedQueries:      true,         // 格式化SQL语句
+				SlowThreshold:             time.Second, // 慢sql日志
+				LogLevel:                  logger.Info, // 级别
+				Colorful:                  true,        // 颜色
+				IgnoreRecordNotFoundError: true,        // 忽略RecordNotFoundError
+				ParameterizedQueries:      true,        // 格式化SQL语句
 			}),
 	})
 	if err != nil {
@@ -41,7 +41,7 @@ func NewMySQL(url string, maxOpenConn int, maxIdleConn int, client *redis.Client
 	sqlDB.SetMaxIdleConns(maxIdleConn)
 	useDB := query.Use(db)
 	// migrate
-	Migrate(db)
+	//Migrate(db)
 	// cache
 	gormCache, err := cache.NewGorm2Cache(&config.CacheConfig{
 		CacheLevel: config.CacheLevelAll,

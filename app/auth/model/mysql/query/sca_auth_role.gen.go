@@ -39,6 +39,7 @@ func newScaAuthRole(db *gorm.DB, opts ...gen.DOOption) scaAuthRole {
 	return _scaAuthRole
 }
 
+// scaAuthRole 角色表
 type scaAuthRole struct {
 	scaAuthRoleDo
 

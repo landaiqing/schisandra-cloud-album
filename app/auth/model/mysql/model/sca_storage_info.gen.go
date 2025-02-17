@@ -12,7 +12,7 @@ import (
 
 const TableNameScaStorageInfo = "sca_storage_info"
 
-// ScaStorageInfo mapped from table <sca_storage_info>
+// ScaStorageInfo 文件存储信息表
 type ScaStorageInfo struct {
 	ID          int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID      string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID
@@ -24,6 +24,7 @@ type ScaStorageInfo struct {
 	FileType    string         `gorm:"column:file_type;type:varchar(50);comment:文件类型" json:"file_type"`                                 // 文件类型
 	Width       float64        `gorm:"column:width;type:double;comment:宽" json:"width"`                                                 // 宽
 	Height      float64        `gorm:"column:height;type:double;comment:高" json:"height"`                                               // 高
+	ThumbID     int64          `gorm:"column:thumb_id;type:bigint(20);comment:缩略图id" json:"thumb_id"`                                   // 缩略图id
 	Category    string         `gorm:"column:category;type:varchar(50);comment:分类" json:"category"`                                     // 分类
 	Tag         string         `gorm:"column:tag;type:varchar(255);comment:标签" json:"tag"`                                              // 标签
 	Type        string         `gorm:"column:type;type:varchar(50);comment:类型" json:"type"`                                             // 类型

@@ -41,6 +41,7 @@ func newScaStorageAlbum(db *gorm.DB, opts ...gen.DOOption) scaStorageAlbum {
 	return _scaStorageAlbum
 }
 
+// scaStorageAlbum 相册信息表
 type scaStorageAlbum struct {
 	scaStorageAlbumDo
 

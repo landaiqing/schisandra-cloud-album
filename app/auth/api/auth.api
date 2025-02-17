@@ -520,6 +520,7 @@ type (
 		Width     float64 `json:"width"`
 		Height    float64 `json:"height"`
 		CreatedAt string  `json:"created_at"`
+		Thumbnail string  `json:"thumbnail"`
 	}
 	AllImageDetail {
 		Date string      `json:"date"`
@@ -587,6 +588,10 @@ type (
 	// 事物详情列表响应参数
 	ThingDetailListResponse {
 		records []AllImageDetail `json:"records"`
+	}
+	// 单张图片请求参数
+	SingleImageRequest {
+		ID int64 `json:"id"`
 	}
 )
 
@@ -670,5 +675,9 @@ service auth {
 	// 获取事物详情列表
 	@handler queryThingDetailList
 	post /image/thing/detail/list (ThingDetailListRequest) returns (ThingDetailListResponse)
+
+	// 获取单张图片连接
+	@handler getImageUrl
+	post /image/url/single (SingleImageRequest) returns (string)
 }
 

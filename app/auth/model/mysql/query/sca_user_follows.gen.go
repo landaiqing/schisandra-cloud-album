@@ -40,6 +40,7 @@ func newScaUserFollow(db *gorm.DB, opts ...gen.DOOption) scaUserFollow {
 	return _scaUserFollow
 }
 
+// scaUserFollow 用户关注表
 type scaUserFollow struct {
 	scaUserFollowDo
 

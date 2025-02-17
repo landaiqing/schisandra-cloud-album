@@ -12,7 +12,7 @@ import (
 
 const TableNameScaAuthUserDevice = "sca_auth_user_device"
 
-// ScaAuthUserDevice mapped from table <sca_auth_user_device>
+// ScaAuthUserDevice 用户设备表
 type ScaAuthUserDevice struct {
 	ID              int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键ID;primary_key" json:"id,string"` // 主键ID
 	UserID          string         `gorm:"column:user_id;type:varchar(20);not null;comment:用户ID" json:"user_id"`                              // 用户ID

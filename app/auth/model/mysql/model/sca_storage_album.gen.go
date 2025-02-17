@@ -12,7 +12,7 @@ import (
 
 const TableNameScaStorageAlbum = "sca_storage_album"
 
-// ScaStorageAlbum mapped from table <sca_storage_album>
+// ScaStorageAlbum 相册信息表
 type ScaStorageAlbum struct {
 	ID         int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID     string         `gorm:"column:user_id;type:varchar(50);comment:用户ID" json:"user_id"`                                     // 用户ID

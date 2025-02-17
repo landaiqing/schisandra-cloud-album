@@ -172,3 +172,8 @@ Minio:
   SecretAccessKey: XEHkwExqQdAlEPfpRk36xpc0Sie8hZkcmlhXQJXw
   # Minio 使用SSL
   UseSSL: false
+#NSQ配置
+NSQ:
+  # NSQD地址
+  NSQDHost: 1.95.0.111:4150
+  LookUpdHost: 1.95.0.111:4161

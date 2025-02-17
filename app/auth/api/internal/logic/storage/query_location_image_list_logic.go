@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/redis/go-redis/v9"
+	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
@@ -53,16 +54,16 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 	}
 
 	// 加载用户oss配置信息
-	cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
-	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
-	if err != nil {
-		return nil, err
-	}
-
-	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
-	if err != nil {
-		return nil, errors.New("get storage failed")
-	}
+	//cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
+	//ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	//if err != nil {
+	//	return nil, errors.New("get storage failed")
+	//}
 	locationMap := make(map[string][]types.LocationMeta)
 
 	for _, loc := range locations {
@@ -77,7 +78,8 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 		if city == "" {
 			city = loc.Country
 		}
-		url, err := service.PresignedURL(l.ctx, req.Bucket, loc.CoverImage, 7*24*time.Hour)
+		reqParams := make(url.Values)
+		presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, loc.CoverImage, 7*24*time.Hour, reqParams)
 		if err != nil {
 			return nil, errors.New("get presigned url failed")
 		}
@@ -85,7 +87,7 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 			ID:         loc.ID,
 			City:       city,
 			Total:      loc.Total,
-			CoverImage: url,
+			CoverImage: presignedUrl.String(),
 		}
 		locationMap[locationKey] = append(locationMap[locationKey], locationMeta)
 	}

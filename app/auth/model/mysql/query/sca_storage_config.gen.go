@@ -44,6 +44,7 @@ func newScaStorageConfig(db *gorm.DB, opts ...gen.DOOption) scaStorageConfig {
 	return _scaStorageConfig
 }
 
+// scaStorageConfig 用户存储配置表
 type scaStorageConfig struct {
 	scaStorageConfigDo
 

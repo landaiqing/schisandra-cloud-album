@@ -44,6 +44,7 @@ func newScaUserLevel(db *gorm.DB, opts ...gen.DOOption) scaUserLevel {
 	return _scaUserLevel
 }
 
+// scaUserLevel 用户等级表
 type scaUserLevel struct {
 	scaUserLevelDo
 

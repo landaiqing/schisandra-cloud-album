@@ -32,6 +32,7 @@ var (
 	ScaStorageLocation    *scaStorageLocation
 	ScaStorageTag         *scaStorageTag
 	ScaStorageTagInfo     *scaStorageTagInfo
+	ScaStorageThumb       *scaStorageThumb
 	ScaUserFollow         *scaUserFollow
 	ScaUserLevel          *scaUserLevel
 	ScaUserMessage        *scaUserMessage
@@ -54,6 +55,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaStorageLocation = &Q.ScaStorageLocation
 	ScaStorageTag = &Q.ScaStorageTag
 	ScaStorageTagInfo = &Q.ScaStorageTagInfo
+	ScaStorageThumb = &Q.ScaStorageThumb
 	ScaUserFollow = &Q.ScaUserFollow
 	ScaUserLevel = &Q.ScaUserLevel
 	ScaUserMessage = &Q.ScaUserMessage
@@ -77,6 +79,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaStorageLocation:    newScaStorageLocation(db, opts...),
 		ScaStorageTag:         newScaStorageTag(db, opts...),
 		ScaStorageTagInfo:     newScaStorageTagInfo(db, opts...),
+		ScaStorageThumb:       newScaStorageThumb(db, opts...),
 		ScaUserFollow:         newScaUserFollow(db, opts...),
 		ScaUserLevel:          newScaUserLevel(db, opts...),
 		ScaUserMessage:        newScaUserMessage(db, opts...),
@@ -101,6 +104,7 @@ type Query struct {
 	ScaStorageLocation    scaStorageLocation
 	ScaStorageTag         scaStorageTag
 	ScaStorageTagInfo     scaStorageTagInfo
+	ScaStorageThumb       scaStorageThumb
 	ScaUserFollow         scaUserFollow
 	ScaUserLevel          scaUserLevel
 	ScaUserMessage        scaUserMessage
@@ -126,6 +130,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaStorageLocation:    q.ScaStorageLocation.clone(db),
 		ScaStorageTag:         q.ScaStorageTag.clone(db),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.clone(db),
+		ScaStorageThumb:       q.ScaStorageThumb.clone(db),
 		ScaUserFollow:         q.ScaUserFollow.clone(db),
 		ScaUserLevel:          q.ScaUserLevel.clone(db),
 		ScaUserMessage:        q.ScaUserMessage.clone(db),
@@ -158,6 +163,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaStorageLocation:    q.ScaStorageLocation.replaceDB(db),
 		ScaStorageTag:         q.ScaStorageTag.replaceDB(db),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.replaceDB(db),
+		ScaStorageThumb:       q.ScaStorageThumb.replaceDB(db),
 		ScaUserFollow:         q.ScaUserFollow.replaceDB(db),
 		ScaUserLevel:          q.ScaUserLevel.replaceDB(db),
 		ScaUserMessage:        q.ScaUserMessage.replaceDB(db),
@@ -180,6 +186,7 @@ type queryCtx struct {
 	ScaStorageLocation    IScaStorageLocationDo
 	ScaStorageTag         IScaStorageTagDo
 	ScaStorageTagInfo     IScaStorageTagInfoDo
+	ScaStorageThumb       IScaStorageThumbDo
 	ScaUserFollow         IScaUserFollowDo
 	ScaUserLevel          IScaUserLevelDo
 	ScaUserMessage        IScaUserMessageDo
@@ -202,6 +209,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaStorageLocation:    q.ScaStorageLocation.WithContext(ctx),
 		ScaStorageTag:         q.ScaStorageTag.WithContext(ctx),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.WithContext(ctx),
+		ScaStorageThumb:       q.ScaStorageThumb.WithContext(ctx),
 		ScaUserFollow:         q.ScaUserFollow.WithContext(ctx),
 		ScaUserLevel:          q.ScaUserLevel.WithContext(ctx),
 		ScaUserMessage:        q.ScaUserMessage.WithContext(ctx),

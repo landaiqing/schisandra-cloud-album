@@ -12,7 +12,7 @@ import (
 
 const TableNameScaAuthMenu = "sca_auth_menu"
 
-// ScaAuthMenu mapped from table <sca_auth_menu>
+// ScaAuthMenu 菜单表
 type ScaAuthMenu struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键ID;primary_key" json:"id,string"` // 主键ID
 	MenuName  string         `gorm:"column:menu_name;type:varchar(64);comment:名称" json:"menu_name"`                                     // 名称

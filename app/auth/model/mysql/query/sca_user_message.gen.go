@@ -42,6 +42,7 @@ func newScaUserMessage(db *gorm.DB, opts ...gen.DOOption) scaUserMessage {
 	return _scaUserMessage
 }
 
+// scaUserMessage 用户消息表
 type scaUserMessage struct {
 	scaUserMessageDo
 

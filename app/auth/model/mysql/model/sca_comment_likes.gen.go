@@ -10,7 +10,7 @@ import (
 
 const TableNameScaCommentLike = "sca_comment_likes"
 
-// ScaCommentLike mapped from table <sca_comment_likes>
+// ScaCommentLike 评论点赞表
 type ScaCommentLike struct {
 	ID        int64     `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键id;primary_key" json:"id,string"` // 主键id
 	TopicID   string    `gorm:"column:topic_id;type:varchar(50);not null;comment:话题ID" json:"topic_id"`                            // 话题ID

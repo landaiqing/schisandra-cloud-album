@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"math/rand"
+	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"schisandra-album-cloud-microservices/common/constant"
@@ -56,18 +57,28 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 		return nil, errors.New("get cached image list failed")
 	}
 
-	// 缓存未命中，从数据库中查询
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
+	storageThumb := l.svcCtx.DB.ScaStorageThumb
 	// 数据库查询文件信息列表
 	var storageInfoQuery query.IScaStorageInfoDo
+	var storageInfoList []types.FileInfoResult
 
-	storageInfoQuery = storageInfo.Where(
-		storageInfo.UserID.Eq(uid),
-		storageInfo.Provider.Eq(req.Provider),
-		storageInfo.Bucket.Eq(req.Bucket),
-		storageInfo.AlbumID.Eq(req.ID)).
+	storageInfoQuery = storageInfo.Select(
+		storageInfo.ID,
+		storageInfo.FileName,
+		storageInfo.CreatedAt,
+		storageThumb.ThumbPath,
+		storageThumb.ThumbW,
+		storageThumb.ThumbH,
+		storageThumb.ThumbSize).
+		LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
+		Where(
+			storageInfo.UserID.Eq(uid),
+			storageInfo.Provider.Eq(req.Provider),
+			storageInfo.Bucket.Eq(req.Bucket),
+			storageInfo.AlbumID.Eq(req.ID)).
 		Order(storageInfo.CreatedAt.Desc())
-	storageInfoList, err := storageInfoQuery.Find()
+	err = storageInfoQuery.Scan(&storageInfoList)
 	if err != nil {
 		return nil, err
 	}
@@ -75,17 +86,17 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 		return &types.AlbumDetailListResponse{}, nil
 	}
 
-	// 加载用户oss配置信息
-	cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
-	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
-	if err != nil {
-		return nil, err
-	}
-
-	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
-	if err != nil {
-		return nil, errors.New("get storage failed")
-	}
+	//// 加载用户oss配置信息
+	//cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
+	//ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	//if err != nil {
+	//	return nil, errors.New("get storage failed")
+	//}
 
 	// 按日期进行分组
 	var wg sync.WaitGroup
@@ -93,11 +104,12 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 
 	for _, dbFileInfo := range storageInfoList {
 		wg.Add(1)
-		go func(dbFileInfo *model.ScaStorageInfo) {
+		go func(dbFileInfo *types.FileInfoResult) {
 			defer wg.Done()
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
-			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
+			reqParams := make(url.Values)
+			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, time.Hour*24*7, reqParams)
 			if err != nil {
 				logx.Error(err)
 				return
@@ -109,15 +121,15 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				URL:       url,
-				Width:     dbFileInfo.Width,
-				Height:    dbFileInfo.Height,
+				URL:       presignedUrl.String(),
+				Width:     dbFileInfo.ThumbW,
+				Height:    dbFileInfo.ThumbH,
 				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),
 			})
 
 			// 重新存储更新后的图像列表
 			groupedImages.Store(date, images)
-		}(dbFileInfo)
+		}(&dbFileInfo)
 	}
 	wg.Wait()
 	var imageList []types.AllImageDetail

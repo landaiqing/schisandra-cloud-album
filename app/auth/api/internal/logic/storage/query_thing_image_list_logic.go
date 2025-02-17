@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/redis/go-redis/v9"
+	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
@@ -38,12 +39,15 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 		return nil, errors.New("user_id not found")
 	}
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
-	storageInfos, err := storageInfo.Select(
+	storageThumb := l.svcCtx.DB.ScaStorageThumb
+	var thingList []types.ThingImageList
+	err = storageInfo.Select(
 		storageInfo.ID,
 		storageInfo.Category,
 		storageInfo.Tag,
-		storageInfo.Path,
+		storageThumb.ThumbPath,
 		storageInfo.CreatedAt).
+		LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
 		Where(storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
@@ -52,28 +56,28 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 			storageInfo.Category.Length().Gt(0),
 			storageInfo.Tag.Length().Gte(0)).
 		Order(storageInfo.CreatedAt.Desc()).
-		Find()
+		Scan(&thingList)
 	if err != nil {
 		return nil, err
 	}
 
 	// 加载用户oss配置信息
-	cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
-	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
-	if err != nil {
-		return nil, err
-	}
-
-	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
-	if err != nil {
-		return nil, errors.New("get storage failed")
-	}
+	//cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
+	//ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	//if err != nil {
+	//	return nil, errors.New("get storage failed")
+	//}
 
 	categoryMap := sync.Map{}
 	tagCountMap := sync.Map{}
 	tagCoverMap := sync.Map{} // 用于存储每个 Tag 的封面图片路径
 
-	for _, info := range storageInfos {
+	for _, info := range thingList {
 		tagKey := info.Category + "::" + info.Tag
 		if _, exists := tagCountMap.Load(tagKey); !exists {
 			tagCountMap.Store(tagKey, int64(0))
@@ -90,14 +94,15 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 		// 为每个 Tag 存储封面图片路径
 		if _, exists := tagCoverMap.Load(tagKey); !exists {
 			// 使用服务生成预签名 URL
-			coverImageURL, err := service.PresignedURL(l.ctx, req.Bucket, info.Path, 7*24*time.Hour)
+			reqParams := make(url.Values)
+			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, info.ThumbPath, time.Hour*24*7, reqParams)
 			if err == nil {
-				tagCoverMap.Store(tagKey, coverImageURL)
+				tagCoverMap.Store(tagKey, presignedUrl.String())
 			}
 		}
 	}
 
-	var thingListData []types.ThingListData
+	var thingListResponse []types.ThingListData
 	categoryMap.Range(func(category, tagData interface{}) bool {
 		var metas []types.ThingMeta
 		tagData.(*sync.Map).Range(func(tag, item interface{}) bool {
@@ -113,14 +118,14 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 			metas = append(metas, meta)
 			return true
 		})
-		thingListData = append(thingListData, types.ThingListData{
+		thingListResponse = append(thingListResponse, types.ThingListData{
 			Category: category.(string),
 			List:     metas,
 		})
 		return true
 	})
 
-	return &types.ThingListResponse{Records: thingListData}, nil
+	return &types.ThingListResponse{Records: thingListResponse}, nil
 }
 
 // 提取解密操作为函数

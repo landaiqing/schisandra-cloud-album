@@ -270,6 +270,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/image/url/single",
+					Handler: storage.GetImageUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/uploads",
 					Handler: storage.UploadFileHandler(serverCtx),
 				},

@@ -22,7 +22,7 @@ const (
 
 const (
 	ImageListPrefix     = "image:list:"
-	ImageListMetaPrefix = "image:meta:"
 	ImageRecentPrefix   = "image:recent:"
-	ImageFaceListPrefix = "image:face:list:"
+	ImageFaceListPrefix = "image:faces:"
+	ImageSinglePrefix   = "image:single:"
 )

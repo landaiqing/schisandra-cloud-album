@@ -8,10 +8,10 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 	"math/rand"
+	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
-	"schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
@@ -66,25 +66,44 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 
 	// 缓存未命中，从数据库中查询
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
-	// 数据库查询文件信息列表
-	var storageInfoQuery query.IScaStorageInfoDo
+	storageThumb := l.svcCtx.DB.ScaStorageThumb
+	var storageInfoList []types.FileInfoResult
 	if req.Sort {
-		storageInfoQuery = storageInfo.Where(
-			storageInfo.UserID.Eq(uid),
-			storageInfo.Provider.Eq(req.Provider),
-			storageInfo.Bucket.Eq(req.Bucket),
-			storageInfo.Type.Eq(req.Type),
-			storageInfo.AlbumID.IsNull()).
-			Order(storageInfo.CreatedAt.Desc())
+		err = storageInfo.Select(
+			storageInfo.ID,
+			storageInfo.FileName,
+			storageInfo.CreatedAt,
+			storageInfo.Path,
+			storageThumb.ThumbPath,
+			storageThumb.ThumbW,
+			storageThumb.ThumbH,
+			storageThumb.ThumbSize).
+			LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
+			Where(
+				storageInfo.UserID.Eq(uid),
+				storageInfo.Provider.Eq(req.Provider),
+				storageInfo.Bucket.Eq(req.Bucket),
+				storageInfo.Type.Eq(req.Type),
+				storageInfo.AlbumID.IsNull()).
+			Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
 	} else {
-		storageInfoQuery = storageInfo.Where(
-			storageInfo.UserID.Eq(uid),
-			storageInfo.Provider.Eq(req.Provider),
-			storageInfo.Bucket.Eq(req.Bucket),
-			storageInfo.Type.Eq(req.Type)).
-			Order(storageInfo.CreatedAt.Desc())
+		err = storageInfo.Select(
+			storageInfo.ID,
+			storageInfo.FileName,
+			storageInfo.CreatedAt,
+			storageThumb.ThumbPath,
+			storageInfo.Path,
+			storageThumb.ThumbW,
+			storageThumb.ThumbH,
+			storageThumb.ThumbSize).
+			LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
+			Where(
+				storageInfo.UserID.Eq(uid),
+				storageInfo.Provider.Eq(req.Provider),
+				storageInfo.Bucket.Eq(req.Bucket),
+				storageInfo.Type.Eq(req.Type)).
+			Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
 	}
-	storageInfoList, err := storageInfoQuery.Find()
 	if err != nil {
 		return nil, err
 	}
@@ -110,10 +129,16 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 
 	for _, dbFileInfo := range storageInfoList {
 		wg.Add(1)
-		go func(dbFileInfo *model.ScaStorageInfo) {
+		go func(dbFileInfo *types.FileInfoResult) {
 			defer wg.Done()
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
+			reqParams := make(url.Values)
+			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, time.Hour*24*7, reqParams)
+			if err != nil {
+				logx.Error(err)
+				return
+			}
 			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
 			if err != nil {
 				logx.Error(err)
@@ -126,15 +151,16 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
+				Thumbnail: presignedUrl.String(),
 				URL:       url,
-				Width:     dbFileInfo.Width,
-				Height:    dbFileInfo.Height,
+				Width:     dbFileInfo.ThumbW,
+				Height:    dbFileInfo.ThumbH,
 				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),
 			})
 
 			// 重新存储更新后的图像列表
 			groupedImages.Store(date, images)
-		}(dbFileInfo)
+		}(&dbFileInfo)
 	}
 	wg.Wait()
 	var imageList []types.AllImageDetail

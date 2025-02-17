@@ -12,7 +12,7 @@ import (
 
 const TableNameScaStorageTag = "sca_storage_tag"
 
-// ScaStorageTag mapped from table <sca_storage_tag>
+// ScaStorageTag 标签表
 type ScaStorageTag struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	FileID    int64          `gorm:"column:file_id;type:bigint(20);comment:文件ID" json:"file_id"`                                      // 文件ID

@@ -12,7 +12,7 @@ import (
 
 const TableNameScaUserFollow = "sca_user_follows"
 
-// ScaUserFollow mapped from table <sca_user_follows>
+// ScaUserFollow 用户关注表
 type ScaUserFollow struct {
 	FollowerID string         `gorm:"column:follower_id;type:varchar(50);not null;comment:关注者" json:"follower_id"`                              // 关注者
 	FolloweeID string         `gorm:"column:followee_id;type:varchar(50);not null;comment:被关注者" json:"followee_id"`                             // 被关注者

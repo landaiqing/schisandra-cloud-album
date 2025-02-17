@@ -62,37 +62,34 @@ func (l *QueryRecentImageListLogic) QueryRecentImageList() (resp *types.RecentLi
 		if cmd == nil {
 			continue
 		}
+		val, ok := cmd.(string)
+		if !ok {
+			logx.Error("invalid value type")
+			return nil, errors.New("invalid value type")
+		}
+		var imageMeta types.ImageMeta
+		err = json.Unmarshal([]byte(val), &imageMeta)
+		if err != nil {
+			logx.Error(err)
+			return nil, errors.New("unmarshal recent file list failed")
+		}
+		parse, err := time.Parse("2006-01-02 15:04:05", imageMeta.CreatedAt)
+		if err != nil {
+			logx.Error(err)
+			return nil, errors.New("parse recent file list failed")
+		}
+		date := parse.Format("2006年1月2日 星期" + WeekdayMap[parse.Weekday()])
+		// 使用LoadOrStore来检查并存储或者追加
 		wg.Add(1)
-		go func(cmd interface{}) {
+		go func(date string, imageMeta types.ImageMeta) {
 			defer wg.Done()
-			val, ok := cmd.(string)
-			if !ok {
-				logx.Error("invalid value type")
-				return
+			value, loaded := groupedImages.LoadOrStore(date, []types.ImageMeta{imageMeta})
+			if loaded {
+				images := value.([]types.ImageMeta)
+				images = append(images, imageMeta)
+				groupedImages.Store(date, images)
 			}
-			var imageMeta types.ImageMeta
-			err = json.Unmarshal([]byte(val), &imageMeta)
-			if err != nil {
-				logx.Error(err)
-				return
-			}
-			parse, err := time.Parse("2006-01-02 15:04:05", imageMeta.CreatedAt)
-			if err != nil {
-				logx.Error(err)
-				return
-			}
-			date := parse.Format("2006年1月2日 星期" + WeekdayMap[parse.Weekday()])
-			groupedImages.Range(func(key, value interface{}) bool {
-				if key == date {
-					images := value.([]types.ImageMeta)
-					images = append(images, imageMeta)
-					groupedImages.Store(date, images)
-					return false
-				}
-				return true
-			})
-			groupedImages.Store(date, []types.ImageMeta{imageMeta})
-		}(cmd)
+		}(date, imageMeta)
 	}
 
 	wg.Wait()

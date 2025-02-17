@@ -12,7 +12,7 @@ import (
 
 const TableNameScaMessageReport = "sca_message_report"
 
-// ScaMessageReport mapped from table <sca_message_report>
+// ScaMessageReport 评论举报表
 type ScaMessageReport struct {
 	ID            int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"`          // 主键
 	UserID        string         `gorm:"column:user_id;type:varchar(20);comment:用户Id" json:"user_id"`                                              // 用户Id

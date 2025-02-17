@@ -12,7 +12,7 @@ import (
 
 const TableNameScaUserMessage = "sca_user_message"
 
-// ScaUserMessage mapped from table <sca_user_message>
+// ScaUserMessage 用户消息表
 type ScaUserMessage struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	TopicID   string         `gorm:"column:topic_id;type:varchar(50);comment:话题Id" json:"topic_id"`                                   // 话题Id

@@ -38,6 +38,7 @@ func newScaCommentLike(db *gorm.DB, opts ...gen.DOOption) scaCommentLike {
 	return _scaCommentLike
 }
 
+// scaCommentLike 评论点赞表
 type scaCommentLike struct {
 	scaCommentLikeDo
 

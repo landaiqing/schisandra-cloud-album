@@ -12,7 +12,7 @@ import (
 
 const TableNameScaAuthUserSocial = "sca_auth_user_social"
 
-// ScaAuthUserSocial mapped from table <sca_auth_user_social>
+// ScaAuthUserSocial 第三方登录信息表
 type ScaAuthUserSocial struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键ID;primary_key" json:"id,string"` // 主键ID
 	UserID    string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                              // 用户ID

@@ -37,6 +37,7 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.FileType = field.NewString(tableName, "file_type")
 	_scaStorageInfo.Width = field.NewFloat64(tableName, "width")
 	_scaStorageInfo.Height = field.NewFloat64(tableName, "height")
+	_scaStorageInfo.ThumbID = field.NewInt64(tableName, "thumb_id")
 	_scaStorageInfo.Category = field.NewString(tableName, "category")
 	_scaStorageInfo.Tag = field.NewString(tableName, "tag")
 	_scaStorageInfo.Type = field.NewString(tableName, "type")
@@ -56,6 +57,7 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	return _scaStorageInfo
 }
 
+// scaStorageInfo 文件存储信息表
 type scaStorageInfo struct {
 	scaStorageInfoDo
 
@@ -70,6 +72,7 @@ type scaStorageInfo struct {
 	FileType    field.String  // 文件类型
 	Width       field.Float64 // 宽
 	Height      field.Float64 // 高
+	ThumbID     field.Int64   // 缩略图id
 	Category    field.String  // 分类
 	Tag         field.String  // 标签
 	Type        field.String  // 类型
@@ -109,6 +112,7 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.FileType = field.NewString(table, "file_type")
 	s.Width = field.NewFloat64(table, "width")
 	s.Height = field.NewFloat64(table, "height")
+	s.ThumbID = field.NewInt64(table, "thumb_id")
 	s.Category = field.NewString(table, "category")
 	s.Tag = field.NewString(table, "tag")
 	s.Type = field.NewString(table, "type")
@@ -138,7 +142,7 @@ func (s *scaStorageInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaStorageInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 23)
+	s.fieldMap = make(map[string]field.Expr, 24)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["provider"] = s.Provider
@@ -149,6 +153,7 @@ func (s *scaStorageInfo) fillFieldMap() {
 	s.fieldMap["file_type"] = s.FileType
 	s.fieldMap["width"] = s.Width
 	s.fieldMap["height"] = s.Height
+	s.fieldMap["thumb_id"] = s.ThumbID
 	s.fieldMap["category"] = s.Category
 	s.fieldMap["tag"] = s.Tag
 	s.fieldMap["type"] = s.Type

@@ -45,6 +45,7 @@ func newScaMessageReport(db *gorm.DB, opts ...gen.DOOption) scaMessageReport {
 	return _scaMessageReport
 }
 
+// scaMessageReport 评论举报表
 type scaMessageReport struct {
 	scaMessageReportDo
 

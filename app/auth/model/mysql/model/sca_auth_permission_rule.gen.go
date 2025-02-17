@@ -6,7 +6,7 @@ package model
 
 const TableNameScaAuthPermissionRule = "sca_auth_permission_rule"
 
-// ScaAuthPermissionRule mapped from table <sca_auth_permission_rule>
+// ScaAuthPermissionRule 接口权限表
 type ScaAuthPermissionRule struct {
 	ID    int64  `gorm:"column:id;type:int(11);primaryKey;autoIncrement:true;primary_key" json:"id,string"`
 	Ptype string `gorm:"column:ptype;type:varchar(100);uniqueIndex:idx_sca_auth_permission_rule,priority:1;index:IDX_sca_auth_permission_rule_ptype,priority:1" json:"ptype"`

@@ -178,6 +178,7 @@ type ImageMeta struct {
 	Width     float64 `json:"width"`
 	Height    float64 `json:"height"`
 	CreatedAt string  `json:"created_at"`
+	Thumbnail string  `json:"thumbnail"`
 }
 
 type LocationDetailListRequest struct {
@@ -303,6 +304,10 @@ type RotateCaptchaResponse struct {
 	Key   string `json:"key"`
 	Image string `json:"image"`
 	Thumb string `json:"thumb"`
+}
+
+type SingleImageRequest struct {
+	ID int64 `json:"id"`
 }
 
 type SlideCaptchaResponse struct {

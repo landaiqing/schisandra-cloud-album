@@ -12,7 +12,7 @@ import (
 
 const TableNameScaAuthRole = "sca_auth_role"
 
-// ScaAuthRole mapped from table <sca_auth_role>
+// ScaAuthRole 角色表
 type ScaAuthRole struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键ID;primary_key" json:"id,string"` // 主键ID
 	RoleName  string         `gorm:"column:role_name;type:varchar(32);not null;comment:角色名称" json:"role_name"`                          // 角色名称

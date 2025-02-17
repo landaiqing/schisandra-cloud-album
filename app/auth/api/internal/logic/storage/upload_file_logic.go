@@ -1,17 +1,23 @@
 package storage
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"github.com/ccpwcn/kgo"
+	"github.com/minio/minio-go/v7"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/sync/errgroup"
+	"golang.org/x/sync/semaphore"
 	"gorm.io/gorm"
 	"io"
 	"mime/multipart"
 	"net/http"
+	"net/url"
 	"path"
 	"path/filepath"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/pb"
@@ -56,70 +62,157 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if err != nil {
 		return "", err
 	}
+	defer file.Close()
 
-	defer func(file multipart.File) {
-		_ = file.Close()
-	}(file)
-
-	// 解析 AI 识别结果
-	result, err := l.parseAIRecognitionResult(r)
-	if err != nil {
-		return "", err
-	}
-	var faceId int64 = 0
-	bytes, err := io.ReadAll(file)
+	data, err := io.ReadAll(file)
 	if err != nil {
 		return "", err
 	}
 
-	// 人脸识别
-	if result.FileType == "image/png" || result.FileType == "image/jpeg" {
-		face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{Face: bytes, UserId: uid})
-		if err != nil {
-			return "", err
+	// 解析上传的缩略图
+	thumbnail, _, err := l.getUploadedThumbnail(r)
+	if err != nil {
+		return "", err
+	}
+	defer thumbnail.Close()
+
+	// 解析图片信息识别结果
+	result, err := l.parseImageInfoResult(r)
+	if err != nil {
+		return "", err
+	}
+
+	// 使用 `errgroup.Group` 处理并发任务
+	var (
+		faceId        int64
+		filePath      string
+		minioFilePath string
+		presignedURL  string
+	)
+	g, ctx := errgroup.WithContext(context.Background())
+	// 创建信号量，限制最大并发上传数（比如最多同时 5 个任务）
+	sem := semaphore.NewWeighted(5)
+
+	// 进行人脸识别
+	g.Go(func() error {
+		if result.FileType == "image/png" || result.FileType == "image/jpeg" {
+			face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{
+				Face:   data,
+				UserId: uid,
+			})
+			if err != nil {
+				return err
+			}
+			if face != nil {
+				faceId = face.GetFaceId()
+			}
 		}
-		if face != nil {
-			faceId = face.GetFaceId()
-		}
-	}
-
-	// 根据 GPS 信息获取地理位置信息
-	country, province, city, err := l.getGeoLocation(result.Latitude, result.Longitude)
-	if err != nil {
-		return "", err
-	}
-
+		return nil
+	})
 	// 上传文件到 OSS
-	// 重新设置文件指针到文件开头
-	if _, err = file.Seek(0, 0); err != nil {
-		return "", err
-	}
-	bucket, provider, filePath, url, err := l.uploadFileToOSS(uid, header, file, result)
-	if err != nil {
+	g.Go(func() error {
+		if err := sem.Acquire(ctx, 1); err != nil {
+			return err
+		}
+		defer sem.Release(1)
+
+		// 重新创建 `multipart.File` 兼容的 `Reader`
+		fileReader := struct {
+			*bytes.Reader
+			io.Closer
+		}{
+			Reader: bytes.NewReader(data),
+			Closer: io.NopCloser(nil),
+		}
+
+		fileUrl, err := l.uploadFileToOSS(uid, header, fileReader, result)
+		if err != nil {
+			return err
+		}
+		filePath = fileUrl
+		return nil
+	})
+
+	// 上传缩略图到 MinIO
+	g.Go(func() error {
+		if err := sem.Acquire(ctx, 1); err != nil {
+			return err
+		}
+		defer sem.Release(1)
+
+		path, url, err := l.uploadFileToMinio(uid, header, thumbnail, result)
+		if err != nil {
+			return err
+		}
+		minioFilePath = path
+		presignedURL = url
+		return nil
+	})
+
+	// 等待所有 goroutine 执行完毕
+	if err = g.Wait(); err != nil {
 		return "", err
 	}
 
-	// 将地址信息保存到数据库
-	locationId, err := l.saveFileLocationInfoToDB(uid, result.Provider, result.Bucket, result.Latitude, result.Longitude, country, province, city, filePath)
+	fileUploadMessage := &types.FileUploadMessage{
+		UID:          uid,
+		Data:         result,
+		FaceID:       faceId,
+		FileHeader:   header,
+		FilePath:     filePath,
+		PresignedURL: presignedURL,
+		ThumbPath:    minioFilePath,
+	}
+	// 转换为 JSON
+	messageData, err := json.Marshal(fileUploadMessage)
 	if err != nil {
 		return "", err
+	}
+	err = l.svcCtx.NSQProducer.Publish(constant.MQTopicImageProcess, messageData)
+	if err != nil {
+		return "", errors.New("publish message failed")
 	}
 
-	// 将 EXIF 和文件信息存入数据库
-	id, err := l.saveFileInfoToDB(uid, bucket, provider, header, result, locationId, faceId, filePath)
-	if err != nil {
-		return "", err
-	}
-	// 删除缓存
-	l.afterImageUpload(uid, provider, bucket)
+	// ------------------------------------------------------------------------
 
-	// redis 保存最近7天上传的文件列表
-	err = l.saveRecentFileList(uid, url, id, result, header.Filename)
-	if err != nil {
-		return "", err
-	}
+	//// 根据 GPS 信息获取地理位置信息
+	//country, province, city, err := l.getGeoLocation(result.Latitude, result.Longitude)
+	//if err != nil {
+	//	return "", err
+	//}
+	//// 将地址信息保存到数据库
+	//locationId, err := l.saveFileLocationInfoToDB(uid, result.Provider, result.Bucket, result.Latitude, result.Longitude, country, province, city, filePath)
+	//if err != nil {
+	//	return "", err
+	//}
+	//
+	//// 将 EXIF 和文件信息存入数据库
+	//id, err := l.saveFileInfoToDB(uid, bucket, provider, header, result, locationId, faceId, filePath)
+	//if err != nil {
+	//	return "", err
+	//}
+	//// 删除缓存
+	//l.afterImageUpload(uid, provider, bucket)
+	//
+	//// redis 保存最近7天上传的文件列表
+	//err = l.saveRecentFileList(uid, url, id, result, header.Filename)
+	//if err != nil {
+	//	return "", err
+	//}
 
 	return "success", nil
+}
+
+// 将 multipart.File 转为 Base64 字符串
+func (l *UploadFileLogic) fileToBase64(file multipart.File) (string, error) {
+	// 读取文件内容
+	fileBytes, err := io.ReadAll(file)
+	if err != nil {
+		return "", err
+	}
+
+	// 将文件内容转为 Base64 编码
+	return base64.StdEncoding.EncodeToString(fileBytes), nil
 }
 
 // 获取用户 ID
@@ -150,8 +243,17 @@ func (l *UploadFileLogic) getUploadedFile(r *http.Request) (multipart.File, *mul
 	return file, header, nil
 }
 
-// 解析 AI 识别结果
-func (l *UploadFileLogic) parseAIRecognitionResult(r *http.Request) (types.File, error) {
+// 解析上传的文件
+func (l *UploadFileLogic) getUploadedThumbnail(r *http.Request) (multipart.File, *multipart.FileHeader, error) {
+	file, header, err := r.FormFile("thumbnail")
+	if err != nil {
+		return nil, nil, errors.New("file not found")
+	}
+	return file, header, nil
+}
+
+// 解析图片信息结果
+func (l *UploadFileLogic) parseImageInfoResult(r *http.Request) (types.File, error) {
 	formValue := r.PostFormValue("data")
 	var result types.File
 	if err := json.Unmarshal([]byte(formValue), &result); err != nil {
@@ -160,47 +262,11 @@ func (l *UploadFileLogic) parseAIRecognitionResult(r *http.Request) (types.File,
 	return result, nil
 }
 
-// 提取拍摄时间
-func (l *UploadFileLogic) extractOriginalDateTime(exif map[string]interface{}) (string, error) {
-	if dateTimeOriginal, ok := exif["DateTimeOriginal"].(string); ok {
-		parsedTime, err := time.Parse(time.RFC3339, dateTimeOriginal)
-		if err == nil {
-			return parsedTime.Format("2006-01-02 15:04:05"), nil
-		}
-	}
-	return "", nil
-}
-
 // 根据 GPS 信息获取地理位置信息
 func (l *UploadFileLogic) getGeoLocation(latitude, longitude float64) (string, string, string, error) {
 	if latitude == 0.000000 || longitude == 0.000000 {
 		return "", "", "", nil
 	}
-
-	//request := gao_map.ReGeoRequest{Location: fmt.Sprintf("%f,%f", latitude, longitude)}
-	//
-	//location, err := l.svcCtx.GaoMap.Location.ReGeo(&request)
-	//if err != nil {
-	//	return nil, errors.New("regeo failed")
-	//}
-	//
-	//addressInfo := map[string]string{}
-	//if location.ReGeoCode.AddressComponent.Country != "" {
-	//	addressInfo["country"] = location.ReGeoCode.AddressComponent.Country
-	//}
-	//if location.ReGeoCode.AddressComponent.Province != "" {
-	//	addressInfo["province"] = location.ReGeoCode.AddressComponent.Province
-	//}
-	//if location.ReGeoCode.AddressComponent.City != "" {
-	//	addressInfo["city"] = location.ReGeoCode.AddressComponent.City.(string)
-	//}
-	//if location.ReGeoCode.AddressComponent.District != "" {
-	//	addressInfo["district"] = location.ReGeoCode.AddressComponent.District.(string)
-	//}
-	//if location.ReGeoCode.AddressComponent.Township != "" {
-	//	addressInfo["township"] = location.ReGeoCode.AddressComponent.Township
-	//}
-
 	country, province, city, err := geo_json.GetAddress(latitude, longitude, l.svcCtx.GeoRegionData)
 	if err != nil {
 		return "", "", "", errors.New("get geo location failed")
@@ -210,20 +276,21 @@ func (l *UploadFileLogic) getGeoLocation(latitude, longitude float64) (string, s
 }
 
 // 上传文件到 OSS
-func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, string, string, string, error) {
+func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, error) {
 	cacheKey := constant.UserOssConfigPrefix + uid + ":" + result.Provider
 	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheKey, uid, result.Provider)
 	if err != nil {
-		return "", "", "", "", errors.New("get oss config failed")
+		return "", errors.New("get oss config failed")
 	}
 	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
 	if err != nil {
-		return "", "", "", "", errors.New("get storage failed")
+		return "", errors.New("get storage failed")
 	}
 
 	objectKey := path.Join(
 		uid,
 		time.Now().Format("2006/01"), // 按年/月划分目录
+		l.classifyFile(result.FileType, result.IsScreenshot),
 		fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), filepath.Ext(header.Filename)),
 	)
 
@@ -231,13 +298,50 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 		"Content-Type": header.Header.Get("Content-Type"),
 	})
 	if err != nil {
-		return "", "", "", "", errors.New("upload file failed")
+		return "", errors.New("upload file failed")
 	}
-	url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, objectKey, time.Hour*24*7)
+	//url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, objectKey, time.Hour*24*7)
+	//if err != nil {
+	//	return "", "", errors.New("presigned url failed")
+	//}
+	return objectKey, nil
+}
+
+func (l *UploadFileLogic) uploadFileToMinio(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, string, error) {
+	objectKey := path.Join(
+		uid,
+		time.Now().Format("2006/01"), // 按年/月划分目录
+		l.classifyFile(result.FileType, result.IsScreenshot),
+		fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), filepath.Ext(header.Filename)),
+	)
+	exists, err := l.svcCtx.MinioClient.BucketExists(l.ctx, constant.ThumbnailBucketName)
+	if err != nil || !exists {
+		err = l.svcCtx.MinioClient.MakeBucket(l.ctx, constant.ThumbnailBucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
+		if err != nil {
+			logx.Errorf("Failed to create MinIO bucket: %v", err)
+			return "", "", err
+		}
+	}
+	// 上传到MinIO
+	_, err = l.svcCtx.MinioClient.PutObject(
+		l.ctx,
+		constant.ThumbnailBucketName,
+		objectKey,
+		file,
+		int64(result.ThumbSize),
+		minio.PutObjectOptions{
+			ContentType: result.FileType,
+		},
+	)
 	if err != nil {
-		return "", "", "", "", errors.New("presigned url failed")
+		return "", "", err
 	}
-	return ossConfig.BucketName, ossConfig.Provider, objectKey, url, nil
+	reqParams := make(url.Values)
+	presignedURL, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, objectKey, time.Hour*24*7, reqParams)
+	if err != nil {
+		return "", "", err
+	}
+	return objectKey, presignedURL.String(), nil
 }
 
 func (l *UploadFileLogic) saveFileLocationInfoToDB(uid string, provider string, bucket string, latitude float64, longitude float64, country string, province string, city string, filePath string) (int64, error) {

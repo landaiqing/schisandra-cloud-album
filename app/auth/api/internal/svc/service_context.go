@@ -5,6 +5,7 @@ import (
 	"github.com/casbin/casbin/v2"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/minio/minio-go/v7"
+	"github.com/nsqio/go-nsq"
 	"github.com/redis/go-redis/v9"
 	"github.com/wenlng/go-captcha/v2/rotate"
 	"github.com/wenlng/go-captcha/v2/slide"
@@ -21,6 +22,7 @@ import (
 	"schisandra-album-cloud-microservices/common/geo_json"
 	"schisandra-album-cloud-microservices/common/ip2region"
 	"schisandra-album-cloud-microservices/common/miniox"
+	"schisandra-album-cloud-microservices/common/nsqx"
 	"schisandra-album-cloud-microservices/common/redisx"
 	"schisandra-album-cloud-microservices/common/sensitivex"
 	"schisandra-album-cloud-microservices/common/storage"
@@ -45,13 +47,14 @@ type ServiceContext struct {
 	StorageManager            *manager.Manager
 	MinioClient               *minio.Client
 	GeoRegionData             *geo_json.RegionData
+	NSQProducer               *nsq.Producer
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
 	redisClient := redisx.NewRedis(c.Redis.Host, c.Redis.Pass, c.Redis.DB)
 	db, queryDB := mysql.NewMySQL(c.Mysql.DataSource, c.Mysql.MaxOpenConn, c.Mysql.MaxIdleConn, redisClient)
 	casbinEnforcer := casbinx.NewCasbin(db)
-	return &ServiceContext{
+	serviceContext := &ServiceContext{
 		Config:                    c,
 		SecurityHeadersMiddleware: middleware.NewSecurityHeadersMiddleware().Handle,
 		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer).Handle,
@@ -68,5 +71,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		AiSvcRpc:                  aiservice.NewAiService(zrpc.MustNewClient(c.AiSvcRpc)),
 		MinioClient:               miniox.NewMinio(c.Minio.Endpoint, c.Minio.AccessKeyID, c.Minio.SecretAccessKey, c.Minio.UseSSL),
 		GeoRegionData:             geo_json.NewGeoJSON(),
+		NSQProducer:               nsqx.NewNsqProducer(c.NSQ.NSQDHost),
 	}
+	return serviceContext
 }

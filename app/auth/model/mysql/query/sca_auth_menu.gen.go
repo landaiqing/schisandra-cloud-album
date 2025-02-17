@@ -46,6 +46,7 @@ func newScaAuthMenu(db *gorm.DB, opts ...gen.DOOption) scaAuthMenu {
 	return _scaAuthMenu
 }
 
+// scaAuthMenu 菜单表
 type scaAuthMenu struct {
 	scaAuthMenuDo
 

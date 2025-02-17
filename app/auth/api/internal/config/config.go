@@ -73,4 +73,8 @@ type Config struct {
 		SecretAccessKey string
 		UseSSL          bool
 	}
+	NSQ struct {
+		NSQDHost    string
+		LookUpdHost string
+	}
 }
