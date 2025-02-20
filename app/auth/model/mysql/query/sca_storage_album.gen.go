@@ -30,7 +30,7 @@ func newScaStorageAlbum(db *gorm.DB, opts ...gen.DOOption) scaStorageAlbum {
 	_scaStorageAlbum.ID = field.NewInt64(tableName, "id")
 	_scaStorageAlbum.UserID = field.NewString(tableName, "user_id")
 	_scaStorageAlbum.AlbumName = field.NewString(tableName, "album_name")
-	_scaStorageAlbum.AlbumType = field.NewString(tableName, "album_type")
+	_scaStorageAlbum.AlbumType = field.NewInt64(tableName, "album_type")
 	_scaStorageAlbum.CoverImage = field.NewString(tableName, "cover_image")
 	_scaStorageAlbum.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageAlbum.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -49,7 +49,7 @@ type scaStorageAlbum struct {
 	ID         field.Int64  // 主键
 	UserID     field.String // 用户ID
 	AlbumName  field.String // 相册名称
-	AlbumType  field.String // 相册类型
+	AlbumType  field.Int64  // 相册类型(0 我的 1 分享 2 收藏)
 	CoverImage field.String // 封面图片
 	CreatedAt  field.Time   // 创建时间
 	UpdatedAt  field.Time   // 更新时间
@@ -73,7 +73,7 @@ func (s *scaStorageAlbum) updateTableName(table string) *scaStorageAlbum {
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
 	s.AlbumName = field.NewString(table, "album_name")
-	s.AlbumType = field.NewString(table, "album_type")
+	s.AlbumType = field.NewInt64(table, "album_type")
 	s.CoverImage = field.NewString(table, "cover_image")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")

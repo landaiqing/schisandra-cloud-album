@@ -30,6 +30,8 @@ var (
 	ScaStorageConfig      *scaStorageConfig
 	ScaStorageInfo        *scaStorageInfo
 	ScaStorageLocation    *scaStorageLocation
+	ScaStorageShare       *scaStorageShare
+	ScaStorageShareVisit  *scaStorageShareVisit
 	ScaStorageTag         *scaStorageTag
 	ScaStorageTagInfo     *scaStorageTagInfo
 	ScaStorageThumb       *scaStorageThumb
@@ -53,6 +55,8 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaStorageConfig = &Q.ScaStorageConfig
 	ScaStorageInfo = &Q.ScaStorageInfo
 	ScaStorageLocation = &Q.ScaStorageLocation
+	ScaStorageShare = &Q.ScaStorageShare
+	ScaStorageShareVisit = &Q.ScaStorageShareVisit
 	ScaStorageTag = &Q.ScaStorageTag
 	ScaStorageTagInfo = &Q.ScaStorageTagInfo
 	ScaStorageThumb = &Q.ScaStorageThumb
@@ -77,6 +81,8 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaStorageConfig:      newScaStorageConfig(db, opts...),
 		ScaStorageInfo:        newScaStorageInfo(db, opts...),
 		ScaStorageLocation:    newScaStorageLocation(db, opts...),
+		ScaStorageShare:       newScaStorageShare(db, opts...),
+		ScaStorageShareVisit:  newScaStorageShareVisit(db, opts...),
 		ScaStorageTag:         newScaStorageTag(db, opts...),
 		ScaStorageTagInfo:     newScaStorageTagInfo(db, opts...),
 		ScaStorageThumb:       newScaStorageThumb(db, opts...),
@@ -102,6 +108,8 @@ type Query struct {
 	ScaStorageConfig      scaStorageConfig
 	ScaStorageInfo        scaStorageInfo
 	ScaStorageLocation    scaStorageLocation
+	ScaStorageShare       scaStorageShare
+	ScaStorageShareVisit  scaStorageShareVisit
 	ScaStorageTag         scaStorageTag
 	ScaStorageTagInfo     scaStorageTagInfo
 	ScaStorageThumb       scaStorageThumb
@@ -128,6 +136,8 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaStorageConfig:      q.ScaStorageConfig.clone(db),
 		ScaStorageInfo:        q.ScaStorageInfo.clone(db),
 		ScaStorageLocation:    q.ScaStorageLocation.clone(db),
+		ScaStorageShare:       q.ScaStorageShare.clone(db),
+		ScaStorageShareVisit:  q.ScaStorageShareVisit.clone(db),
 		ScaStorageTag:         q.ScaStorageTag.clone(db),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.clone(db),
 		ScaStorageThumb:       q.ScaStorageThumb.clone(db),
@@ -161,6 +171,8 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaStorageConfig:      q.ScaStorageConfig.replaceDB(db),
 		ScaStorageInfo:        q.ScaStorageInfo.replaceDB(db),
 		ScaStorageLocation:    q.ScaStorageLocation.replaceDB(db),
+		ScaStorageShare:       q.ScaStorageShare.replaceDB(db),
+		ScaStorageShareVisit:  q.ScaStorageShareVisit.replaceDB(db),
 		ScaStorageTag:         q.ScaStorageTag.replaceDB(db),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.replaceDB(db),
 		ScaStorageThumb:       q.ScaStorageThumb.replaceDB(db),
@@ -184,6 +196,8 @@ type queryCtx struct {
 	ScaStorageConfig      IScaStorageConfigDo
 	ScaStorageInfo        IScaStorageInfoDo
 	ScaStorageLocation    IScaStorageLocationDo
+	ScaStorageShare       IScaStorageShareDo
+	ScaStorageShareVisit  IScaStorageShareVisitDo
 	ScaStorageTag         IScaStorageTagDo
 	ScaStorageTagInfo     IScaStorageTagInfoDo
 	ScaStorageThumb       IScaStorageThumbDo
@@ -207,6 +221,8 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaStorageConfig:      q.ScaStorageConfig.WithContext(ctx),
 		ScaStorageInfo:        q.ScaStorageInfo.WithContext(ctx),
 		ScaStorageLocation:    q.ScaStorageLocation.WithContext(ctx),
+		ScaStorageShare:       q.ScaStorageShare.WithContext(ctx),
+		ScaStorageShareVisit:  q.ScaStorageShareVisit.WithContext(ctx),
 		ScaStorageTag:         q.ScaStorageTag.WithContext(ctx),
 		ScaStorageTagInfo:     q.ScaStorageTagInfo.WithContext(ctx),
 		ScaStorageThumb:       q.ScaStorageThumb.WithContext(ctx),

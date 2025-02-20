@@ -68,6 +68,7 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 		storageInfo.FileName,
 		storageInfo.CreatedAt,
 		storageThumb.ThumbPath,
+		storageInfo.Path,
 		storageThumb.ThumbW,
 		storageThumb.ThumbH,
 		storageThumb.ThumbSize).
@@ -86,17 +87,17 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 		return &types.AlbumDetailListResponse{}, nil
 	}
 
-	//// 加载用户oss配置信息
-	//cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
-	//ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
-	//if err != nil {
-	//	return nil, errors.New("get storage failed")
-	//}
+	// 加载用户oss配置信息
+	cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
+	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
+	if err != nil {
+		return nil, err
+	}
+
+	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	if err != nil {
+		return nil, errors.New("get storage failed")
+	}
 
 	// 按日期进行分组
 	var wg sync.WaitGroup
@@ -114,6 +115,11 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 				logx.Error(err)
 				return
 			}
+			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
+			if err != nil {
+				logx.Error(err)
+				return
+			}
 			// 使用 Load 或 Store 确保原子操作
 			value, _ := groupedImages.LoadOrStore(date, []types.ImageMeta{})
 			images := value.([]types.ImageMeta)
@@ -121,7 +127,8 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				URL:       presignedUrl.String(),
+				Thumbnail: presignedUrl.String(),
+				URL:       url,
 				Width:     dbFileInfo.ThumbW,
 				Height:    dbFileInfo.ThumbH,
 				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),

@@ -11,6 +11,7 @@ import (
 	client "schisandra-album-cloud-microservices/app/auth/api/internal/handler/client"
 	comment "schisandra-album-cloud-microservices/app/auth/api/internal/handler/comment"
 	oauth "schisandra-album-cloud-microservices/app/auth/api/internal/handler/oauth"
+	share "schisandra-album-cloud-microservices/app/auth/api/internal/handler/share"
 	sms "schisandra-album-cloud-microservices/app/auth/api/internal/handler/sms"
 	storage "schisandra-album-cloud-microservices/app/auth/api/internal/handler/storage"
 	token "schisandra-album-cloud-microservices/app/auth/api/internal/handler/token"
@@ -160,6 +161,33 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/list",
+					Handler: share.QueryShareImageHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/record/list",
+					Handler: share.ListShareRecordHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/upload",
+					Handler: share.UploadShareImageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/auth/share"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(104857600),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
@@ -277,6 +305,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/uploads",
 					Handler: storage.UploadFileHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/config/list",
+					Handler: storage.GetUserStorageListHandler(serverCtx),
 				},
 			}...,
 		),

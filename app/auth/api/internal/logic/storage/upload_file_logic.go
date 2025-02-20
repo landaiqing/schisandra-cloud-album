@@ -288,6 +288,7 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 	}
 
 	objectKey := path.Join(
+		"image_space",
 		uid,
 		time.Now().Format("2006/01"), // 按年/月划分目录
 		l.classifyFile(result.FileType, result.IsScreenshot),

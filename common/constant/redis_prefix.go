@@ -21,8 +21,10 @@ const (
 )
 
 const (
-	ImageListPrefix     = "image:list:"
-	ImageRecentPrefix   = "image:recent:"
-	ImageFaceListPrefix = "image:faces:"
-	ImageSinglePrefix   = "image:single:"
+	ImageListPrefix       = "image:list:"
+	ImageRecentPrefix     = "image:recent:"
+	ImageFaceListPrefix   = "image:faces:"
+	ImageSinglePrefix     = "image:single:"
+	ImageSharePrefix      = "image:share:"
+	ImageShareVisitPrefix = "image:share:visit:"
 )

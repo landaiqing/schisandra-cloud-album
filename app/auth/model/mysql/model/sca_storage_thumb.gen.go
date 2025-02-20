@@ -12,7 +12,7 @@ import (
 
 const TableNameScaStorageThumb = "sca_storage_thumb"
 
-// ScaStorageThumb mapped from table <sca_storage_thumb>
+// ScaStorageThumb 缩略图表
 type ScaStorageThumb struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID    string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID

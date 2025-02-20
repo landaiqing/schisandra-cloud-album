@@ -42,6 +42,7 @@ func newScaStorageThumb(db *gorm.DB, opts ...gen.DOOption) scaStorageThumb {
 	return _scaStorageThumb
 }
 
+// scaStorageThumb 缩略图表
 type scaStorageThumb struct {
 	scaStorageThumbDo
 

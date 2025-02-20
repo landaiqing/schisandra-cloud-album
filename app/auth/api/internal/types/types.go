@@ -15,7 +15,7 @@ type Album struct {
 	ID         int64  `json:"id"`
 	Name       string `json:"name"`
 	CreatedAt  string `json:"created_at"`
-	Type       string `json:"type"`
+	Type       int64  `json:"type"`
 	CoverImage string `json:"cover_image"`
 }
 
@@ -42,8 +42,8 @@ type AlbumDetailListResponse struct {
 }
 
 type AlbumListRequest struct {
-	Type string `json:"type"`
-	Sort bool   `json:"sort"`
+	Type int64 `json:"type,omitempty"`
+	Sort bool  `json:"sort"`
 }
 
 type AlbumListResponse struct {
@@ -254,6 +254,15 @@ type PhoneLoginRequest struct {
 	AutoLogin bool   `json:"auto_login"`
 }
 
+type QueryShareImageRequest struct {
+	ShareCode      string `json:"share_code"`
+	AccessPassword string `json:"access_password,omitempty"`
+}
+
+type QueryShareImageResponse struct {
+	List []ShareImageListMeta `json:"list"`
+}
+
 type RecentListResponse struct {
 	Records []AllImageDetail `json:"records"`
 }
@@ -306,6 +315,55 @@ type RotateCaptchaResponse struct {
 	Thumb string `json:"thumb"`
 }
 
+type ShareImageListMeta struct {
+	ID        int64   `json:"id"`
+	FileName  string  `json:"file_name"`
+	URL       string  `json:"url"`
+	Thumbnail string  `json:"thumbnail"`
+	ThumbW    float64 `json:"thumb_w"`
+	ThumbH    float64 `json:"thumb_h"`
+	ThumbSize float64 `json:"thumb_size"`
+	CreatedAt string  `json:"created_at"`
+}
+
+type ShareImageMeta struct {
+	FileName    string  `json:"file_name"`
+	OriginImage string  `json:"origin_image"`
+	FileType    string  `json:"file_type"`
+	Thumbnail   string  `json:"thumbnail"`
+	ThumbW      float64 `json:"thumb_w"`
+	ThumbH      float64 `json:"thumb_h"`
+	ThumbSize   int64   `json:"thumb_size"`
+}
+
+type ShareImageRequest struct {
+	Title          string           `json:"title,omitempty"`
+	ExpireDate     string           `json:"expire_date"`
+	AccessLimit    int64            `json:"access_limit,omitempty"`
+	AccessPassword string           `json:"access_password,omitempty"`
+	Provider       string           `json:"provider"`
+	Bucket         string           `json:"bucket"`
+	Images         []ShareImageMeta `json:"images"`
+}
+
+type ShareRecord struct {
+	ID             int64  `json:"id"`
+	CoverImage     string `json:"cover_image"`
+	CreatedAt      string `json:"created_at"`
+	ShareCode      string `json:"share_code"`
+	VisitLimit     int64  `json:"visit_limit"`
+	AccessPassword string `json:"access_password"`
+	ValidityPeriod int64  `json:"validity_period"`
+}
+
+type ShareRecordListRequest struct {
+	DateRange []string `json:"date_range"`
+}
+
+type ShareRecordListResponse struct {
+	Records []ShareRecord `json:"records"`
+}
+
 type SingleImageRequest struct {
 	ID int64 `json:"id"`
 }
@@ -333,6 +391,21 @@ type StorageConfigRequest struct {
 	Endpoint  string `json:"endpoint"`
 	Bucket    string `json:"bucket"`
 	Region    string `json:"region"`
+}
+
+type StorageListResponse struct {
+	Records []StroageNode `json:"records"`
+}
+
+type StorageMeta struct {
+	Name  string `json:"name"`
+	Value string `json:"value"`
+}
+
+type StroageNode struct {
+	Value    string        `json:"value"`
+	Name     string        `json:"name"`
+	Children []StorageMeta `json:"children"`
 }
 
 type ThingDetailListRequest struct {

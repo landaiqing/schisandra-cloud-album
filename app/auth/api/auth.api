@@ -467,15 +467,15 @@ type (
 	}
 	// 相册列表请求参数
 	AlbumListRequest {
-		Type string `json:"type"`
-		Sort bool   `json:"sort"`
+		Type int64 `json:"type,omitempty"`
+		Sort bool  `json:"sort"`
 	}
 	// 相册列表响应参数
 	Album {
 		ID         int64  `json:"id"`
 		Name       string `json:"name"`
 		CreatedAt  string `json:"created_at"`
-		Type       string `json:"type"`
+		Type       int64  `json:"type"`
 		CoverImage string `json:"cover_image"`
 	}
 	AlbumListResponse {
@@ -593,6 +593,18 @@ type (
 	SingleImageRequest {
 		ID int64 `json:"id"`
 	}
+	StorageMeta {
+		Name  string `json:"name"`
+		Value string `json:"value"`
+	}
+	StroageNode {
+		Value    string        `json:"value"`
+		Name     string        `json:"name"`
+		Children []StorageMeta `json:"children"`
+	}
+	StorageListResponse {
+		Records []StroageNode `json:"records"`
+	}
 )
 
 // 文件上传
@@ -679,5 +691,88 @@ service auth {
 	// 获取单张图片连接
 	@handler getImageUrl
 	post /image/url/single (SingleImageRequest) returns (string)
+
+	// 获取用户存储配置列表
+	@handler getUserStorageList
+	post /user/config/list returns (StorageListResponse)
+}
+
+type (
+	ShareImageMeta {
+		FileName    string  `json:"file_name"`
+		OriginImage string  `json:"origin_image"`
+		FileType    string  `json:"file_type"`
+		Thumbnail   string  `json:"thumbnail"`
+		ThumbW      float64 `json:"thumb_w"`
+		ThumbH      float64 `json:"thumb_h"`
+		ThumbSize   int64   `json:"thumb_size"`
+	}
+	ShareImageRequest {
+		Title          string           `json:"title,omitempty"`
+		ExpireDate     string           `json:"expire_date"`
+		AccessLimit    int64            `json:"access_limit,omitempty"`
+		AccessPassword string           `json:"access_password,omitempty"`
+		Provider       string           `json:"provider"`
+		Bucket         string           `json:"bucket"`
+		Images         []ShareImageMeta `json:"images"`
+	}
+	QueryShareImageRequest {
+		ShareCode      string `json:"share_code"`
+		AccessPassword string `json:"access_password,omitempty"`
+	}
+	ShareImageListMeta {
+		ID        int64   `json:"id"`
+		FileName  string  `json:"file_name"`
+		URL       string  `json:"url"`
+		Thumbnail string  `json:"thumbnail"`
+		ThumbW    float64 `json:"thumb_w"`
+		ThumbH    float64 `json:"thumb_h"`
+		ThumbSize float64 `json:"thumb_size"`
+		CreatedAt string  `json:"created_at"`
+	}
+	QueryShareImageResponse {
+		List []ShareImageListMeta `json:"list"`
+	}
+	ShareRecordListRequest {
+		DateRange []string `json:"date_range"`
+	}
+	// 分享记录列表响应参数
+	ShareRecord {
+		ID             int64  `json:"id"`
+		CoverImage     string `json:"cover_image"`
+		CreatedAt      string `json:"created_at"`
+		ShareCode      string `json:"share_code"`
+		VisitLimit     int64  `json:"visit_limit"`
+		AccessPassword string `json:"access_password"`
+		ValidityPeriod int64  `json:"validity_period"`
+	}
+	ShareRecordListResponse {
+		records []ShareRecord `json:"records"`
+	}
+)
+
+// 分享服务
+@server (
+	group:      share // 微服务分组
+	prefix:     /api/auth/share // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   104857600 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+	jwt:        Auth // 是否开启jwt验证
+)
+service auth {
+	@handler uploadShareImage
+	post /upload (ShareImageRequest) returns (string)
+
+	//查看分享图片
+	@handler queryShareImage
+	post /image/list (QueryShareImageRequest) returns (QueryShareImageResponse)
+
+	// 列出分享记录
+	@handler listShareRecord
+	post /record/list (ShareRecordListRequest) returns (ShareRecordListResponse)
 }
 

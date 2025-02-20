@@ -54,3 +54,12 @@ type ThingImageList struct {
 	ThumbPath string    `json:"thumb_path"`
 	Path      string    `json:"path"`
 }
+
+type ShareImageInfo struct {
+	Title          string `json:"title"`
+	ExpireDate     string `json:"expire_date"`
+	AccessLimit    int64  `json:"access_limit"`
+	AccessPassword string `json:"access_password"`
+	Provider       string `json:"provider"`
+	Bucket         string `json:"bucket"`
+}

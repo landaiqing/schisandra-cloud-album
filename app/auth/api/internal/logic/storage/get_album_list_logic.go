@@ -3,6 +3,7 @@ package storage
 import (
 	"context"
 	"errors"
+	"gorm.io/gen"
 	"gorm.io/gen/field"
 
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
@@ -37,7 +38,15 @@ func (l *GetAlbumListLogic) GetAlbumList(req *types.AlbumListRequest) (resp *typ
 	} else {
 		orderConditions = append(orderConditions, storageAlbum.AlbumName.Desc())
 	}
-	albums, err := storageAlbum.Where(storageAlbum.UserID.Eq(uid), storageAlbum.AlbumType.Eq(req.Type)).Order(orderConditions...).Find()
+	var typeConditions []gen.Condition
+	if req.Type != -1 {
+		// 获取全部相册
+		typeConditions = append(typeConditions, storageAlbum.AlbumType.Eq(req.Type))
+		typeConditions = append(typeConditions, storageAlbum.UserID.Eq(uid))
+	}
+	albums, err := storageAlbum.Where(
+		typeConditions...).
+		Order(orderConditions...).Find()
 	if err != nil {
 		return nil, err
 	}

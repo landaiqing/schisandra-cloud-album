@@ -18,7 +18,7 @@ require (
 	github.com/lionsoul2014/ip2region/binding/golang v0.0.0-20241220152942-06eb5c6e8230
 	github.com/lxzan/gws v1.8.8
 	github.com/microcosm-cc/bluemonday v1.0.27
-	github.com/minio/minio-go/v7 v7.0.85
+	github.com/minio/minio-go/v7 v7.0.86
 	github.com/mssola/useragent v1.0.0
 	github.com/nicksnyder/go-i18n/v2 v2.5.1
 	github.com/nsqio/go-nsq v1.1.0
@@ -28,12 +28,13 @@ require (
 	github.com/redis/go-redis/v9 v9.7.0
 	github.com/tencentyun/cos-go-sdk-v5 v0.7.61
 	github.com/wenlng/go-captcha-assets v1.0.1
-	github.com/wenlng/go-captcha/v2 v2.0.2
+	github.com/wenlng/go-captcha/v2 v2.0.3
 	github.com/yitter/idgenerator-go v1.3.3
 	github.com/zeromicro/go-zero v1.8.0
 	github.com/zmexing/go-sensitive-word v1.3.0
 	gocv.io/x/gocv v0.40.0
 	golang.org/x/crypto v0.33.0
+	golang.org/x/sync v0.11.0
 	golang.org/x/text v0.22.0
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.5
@@ -62,7 +63,6 @@ require (
 	github.com/coreos/go-systemd/v22 v22.5.0 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/dolthub/maphash v0.1.0 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.12.1 // indirect
@@ -114,6 +114,7 @@ require (
 	github.com/mattn/go-colorable v0.1.14 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/microsoft/go-mssqldb v1.8.0 // indirect
+	github.com/minio/crc64nvme v1.0.1 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -159,12 +160,11 @@ require (
 	go.uber.org/mock v0.5.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	go.uber.org/zap v1.27.0 // indirect
-	golang.org/x/exp v0.0.0-20250210185358-939b2ce775ac // indirect
+	golang.org/x/exp v0.0.0-20250215185904-eff6e970281f // indirect
 	golang.org/x/image v0.24.0 // indirect
 	golang.org/x/mod v0.23.0 // indirect
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/oauth2 v0.26.0 // indirect
-	golang.org/x/sync v0.11.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/time v0.10.0 // indirect

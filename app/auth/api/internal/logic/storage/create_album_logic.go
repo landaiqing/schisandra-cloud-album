@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
+	"schisandra-album-cloud-microservices/common/constant"
 
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
@@ -33,7 +34,7 @@ func (l *CreateAlbumLogic) CreateAlbum(req *types.AlbumCreateRequest) (resp *typ
 	storageAlbum := &model.ScaStorageAlbum{
 		UserID:    uid,
 		AlbumName: req.Name,
-		AlbumType: "0",
+		AlbumType: constant.AlbumTypeMine,
 	}
 	err = l.svcCtx.DB.ScaStorageAlbum.Create(storageAlbum)
 	if err != nil {
