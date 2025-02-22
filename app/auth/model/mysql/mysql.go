@@ -78,8 +78,6 @@ func Migrate(db *gorm.DB) {
 		&model.ScaCommentLike{},
 		&model.ScaCommentReply{},
 		&model.ScaStorageInfo{},
-		&model.ScaStorageTag{},
-		&model.ScaStorageTagInfo{},
 		&model.ScaMessageReport{},
 		&model.ScaStorageConfig{},
 		&model.ScaUserFollow{},

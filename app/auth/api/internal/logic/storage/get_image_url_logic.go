@@ -75,12 +75,12 @@ func (l *GetImageUrlLogic) GetImageUrl(req *types.SingleImageRequest) (resp stri
 	if err != nil {
 		return "", errors.New("get storage failed")
 	}
-	url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, result.Path, 7*24*time.Hour)
+	url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, result.Path, 15*time.Minute)
 	if err != nil {
 		return "", errors.New("get presigned url failed")
 	}
 	// 缓存url
-	err = l.svcCtx.RedisClient.Set(l.ctx, cacheKey, url, 7*24*time.Hour).Err()
+	err = l.svcCtx.RedisClient.Set(l.ctx, cacheKey, url, 15*time.Minute).Err()
 	if err != nil {
 		logx.Info(err)
 	}

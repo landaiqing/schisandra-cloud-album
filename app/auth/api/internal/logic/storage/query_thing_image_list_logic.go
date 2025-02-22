@@ -40,21 +40,24 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 	}
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
 	storageThumb := l.svcCtx.DB.ScaStorageThumb
+	storageExtra := l.svcCtx.DB.ScaStorageExtra
+
 	var thingList []types.ThingImageList
 	err = storageInfo.Select(
 		storageInfo.ID,
-		storageInfo.Category,
-		storageInfo.Tag,
+		storageExtra.Category,
+		storageExtra.Tag,
 		storageThumb.ThumbPath,
 		storageInfo.CreatedAt).
-		LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
+		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
+		LeftJoin(storageExtra, storageInfo.ID.EqCol(storageExtra.InfoID)).
 		Where(storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
-			storageInfo.Category.IsNotNull(),
-			storageInfo.Tag.IsNotNull(),
-			storageInfo.Category.Length().Gt(0),
-			storageInfo.Tag.Length().Gte(0)).
+			storageExtra.Category.IsNotNull(),
+			storageExtra.Tag.IsNotNull(),
+			storageExtra.Category.Length().Gt(0),
+			storageExtra.Tag.Length().Gte(0)).
 		Order(storageInfo.CreatedAt.Desc()).
 		Scan(&thingList)
 	if err != nil {

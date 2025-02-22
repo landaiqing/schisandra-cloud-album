@@ -21,10 +21,13 @@ const (
 )
 
 const (
-	ImageListPrefix       = "image:list:"
+	ImageCachePrefix      = "image:cache:"
 	ImageRecentPrefix     = "image:recent:"
-	ImageFaceListPrefix   = "image:faces:"
 	ImageSinglePrefix     = "image:single:"
 	ImageSharePrefix      = "image:share:"
 	ImageShareVisitPrefix = "image:share:visit:"
+)
+
+const (
+	BucketCapacityCachePrefix = "bucket:capacity:"
 )

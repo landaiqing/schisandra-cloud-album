@@ -41,7 +41,7 @@ func (l *QueryShareImageLogic) QueryShareImage(req *types.QueryShareImageRequest
 		return nil, errors.New("user_id not found")
 	}
 	// 获取分享记录
-	cacheKey := constant.ImageSharePrefix + req.ShareCode
+	cacheKey := constant.ImageSharePrefix + req.InviteCode
 	shareData, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
@@ -66,7 +66,7 @@ func (l *QueryShareImageLogic) QueryShareImage(req *types.QueryShareImageRequest
 
 	// 检查访问限制
 	if storageShare.VisitLimit > 0 {
-		err = l.incrementVisitCount(req.ShareCode, storageShare.VisitLimit)
+		err = l.incrementVisitCount(req.InviteCode, storageShare.VisitLimit)
 		if err != nil {
 			return nil, err
 		}
@@ -79,7 +79,7 @@ func (l *QueryShareImageLogic) QueryShareImage(req *types.QueryShareImageRequest
 	}
 
 	// 生成缓存键（在验证通过后）
-	resultCacheKey := constant.ImageListPrefix + req.ShareCode + ":" + req.AccessPassword
+	resultCacheKey := constant.ImageCachePrefix + storageShare.UserID + ":share:" + req.InviteCode
 
 	// 尝试从缓存中获取结果
 	cachedResult, err := l.svcCtx.RedisClient.Get(l.ctx, resultCacheKey).Result()
@@ -131,7 +131,7 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 		storageThumb.ThumbW,
 		storageThumb.ThumbH,
 		storageThumb.ThumbSize).
-		LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
+		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
 		Where(
 			storageInfo.Type.Eq(constant.ImageTypeShared),
 			storageInfo.AlbumID.Eq(storageShare.AlbumID)).
@@ -175,8 +175,8 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 			ResultList = append(ResultList, types.ShareImageListMeta{
 				ID:        imgInfo.ID,
 				FileName:  imgInfo.FileName,
-				ThumbH:    imgInfo.ThumbH,
-				ThumbW:    imgInfo.ThumbW,
+				Height:    imgInfo.ThumbH,
+				Width:     imgInfo.ThumbW,
 				ThumbSize: imgInfo.ThumbSize,
 				CreatedAt: imgInfo.CreatedAt.Format(constant.TimeFormat),
 				URL:       ossURL,
@@ -192,7 +192,7 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 	}
 
 	return &types.QueryShareImageResponse{
-		List: ResultList}, nil
+		Records: ResultList}, nil
 }
 
 func (l *QueryShareImageLogic) recordUserVisit(shareID int64, userID string) error {

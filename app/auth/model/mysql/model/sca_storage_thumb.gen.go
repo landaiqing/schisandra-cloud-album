@@ -16,6 +16,7 @@ const TableNameScaStorageThumb = "sca_storage_thumb"
 type ScaStorageThumb struct {
 	ID        int64          `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID    string         `gorm:"column:user_id;type:varchar(50);not null;comment:用户ID" json:"user_id"`                            // 用户ID
+	InfoID    int64          `gorm:"column:info_id;type:bigint(20);comment:信息ID" json:"info_id"`                                      // 信息ID
 	ThumbPath string         `gorm:"column:thumb_path;type:text;comment:缩略图路径" json:"thumb_path"`                                     // 缩略图路径
 	ThumbW    float64        `gorm:"column:thumb_w;type:double;comment:缩略图宽" json:"thumb_w"`                                          // 缩略图宽
 	ThumbH    float64        `gorm:"column:thumb_h;type:double;comment:缩略图高" json:"thumb_h"`                                          // 缩略图高

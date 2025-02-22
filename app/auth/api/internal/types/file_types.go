@@ -63,3 +63,12 @@ type ShareImageInfo struct {
 	Provider       string `json:"provider"`
 	Bucket         string `json:"bucket"`
 }
+
+type LocationInfo struct {
+	ID         int64  `json:"id"`
+	Country    string `json:"country"`
+	City       string `json:"city"`
+	Province   string `json:"province"`
+	CoverImage string `json:"cover_image"`
+	Total      int64  `json:"total"`
+}

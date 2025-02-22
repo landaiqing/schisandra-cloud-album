@@ -22,6 +22,7 @@ type ScaStorageConfig struct {
 	SecretKey string         `gorm:"column:secret_key;type:varchar(100);comment:密钥" json:"secret_key"`                                // 密钥
 	Bucket    string         `gorm:"column:bucket;type:varchar(50);comment:存储桶" json:"bucket"`                                        // 存储桶
 	Region    string         `gorm:"column:region;type:varchar(50);comment:地域" json:"region"`                                         // 地域
+	Capacity  int64          `gorm:"column:capacity;type:bigint(20);comment:容量" json:"capacity"`                                      // 容量
 	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间

@@ -94,12 +94,13 @@ func (l *UploadShareImageLogic) UploadShareImage(req *types.ShareImageRequest) (
 	storageShare := model.ScaStorageShare{
 		UserID:         uid,
 		AlbumID:        album.ID,
-		ShareCode:      kgo.SimpleUuid(),
+		InviteCode:     kgo.SimpleUuid(),
 		Status:         0,
 		AccessPassword: req.AccessPassword,
 		VisitLimit:     req.AccessLimit,
 		ValidityPeriod: int64(duration),
 		ExpireTime:     expiryTime,
+		ImageCount:     int64(len(req.Images)),
 	}
 	err = tx.ScaStorageShare.Create(&storageShare)
 	if err != nil {
@@ -112,7 +113,7 @@ func (l *UploadShareImageLogic) UploadShareImage(req *types.ShareImageRequest) (
 		tx.Rollback()
 		return "", err
 	}
-	cacheKey := constant.ImageSharePrefix + storageShare.ShareCode
+	cacheKey := constant.ImageSharePrefix + storageShare.InviteCode
 	err = l.svcCtx.RedisClient.Set(l.ctx, cacheKey, marshal, time.Duration(duration)*time.Hour*24).Err()
 	if err != nil {
 		tx.Rollback()
@@ -124,56 +125,10 @@ func (l *UploadShareImageLogic) UploadShareImage(req *types.ShareImageRequest) (
 		logx.Errorf("Transaction commit failed: %v", err)
 		return "", err
 	}
-	return storageShare.ShareCode, nil
+	return storageShare.InviteCode, nil
 }
 
 func (l *UploadShareImageLogic) uploadImageAndRecord(tx *query.QueryTx, uid string, album model.ScaStorageAlbum, img types.ShareImageMeta, req *types.ShareImageRequest) error {
-	// 上传缩略图到 Minio
-	thumbnail, err := base64.StdEncoding.DecodeString(img.Thumbnail)
-	if err != nil {
-		return fmt.Errorf("base64 decode failed: %v", err)
-	}
-	thumbObjectKey := path.Join(
-		uid,
-		time.Now().Format("2006/01"),
-		l.classifyFile(img.FileType),
-		fmt.Sprintf("%s_%s.jpg", time.Now().Format("20060102150405"), kgo.SimpleUuid()),
-	)
-	exists, err := l.svcCtx.MinioClient.BucketExists(l.ctx, constant.ThumbnailBucketName)
-	if err != nil || !exists {
-		err = l.svcCtx.MinioClient.MakeBucket(l.ctx, constant.ThumbnailBucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
-		if err != nil {
-			logx.Errorf("Failed to create MinIO bucket: %v", err)
-			return err
-		}
-	}
-	_, err = l.svcCtx.MinioClient.PutObject(
-		l.ctx,
-		constant.ThumbnailBucketName,
-		thumbObjectKey,
-		bytes.NewReader(thumbnail),
-		int64(len(thumbnail)),
-		minio.PutObjectOptions{
-			ContentType: "image/jpeg",
-		},
-	)
-	if err != nil {
-		logx.Errorf("Failed to upload MinIO object: %v", err)
-		return err
-	}
-
-	// 记录缩略图
-	thumbRecord := model.ScaStorageThumb{
-		UserID:    uid,
-		ThumbPath: thumbObjectKey,
-		ThumbW:    img.ThumbW,
-		ThumbH:    img.ThumbH,
-		ThumbSize: float64(len(thumbnail)),
-	}
-	err = tx.ScaStorageThumb.Create(&thumbRecord)
-	if err != nil {
-		return err
-	}
 
 	// 上传原始图片到用户的存储桶
 	originImage, err := base64.StdEncoding.DecodeString(img.OriginImage)
@@ -211,20 +166,68 @@ func (l *UploadShareImageLogic) uploadImageAndRecord(tx *query.QueryTx, uid stri
 
 	// 记录原始图片信息
 	imageRecord := model.ScaStorageInfo{
-		UserID:   uid,
-		Provider: req.Provider,
-		Bucket:   req.Bucket,
-		Path:     originObjectKey,
-		FileName: img.FileName,
-		FileSize: strconv.Itoa(size),
-		FileType: img.FileType,
-		Width:    float64(width),
-		Height:   float64(height),
-		Type:     constant.ImageTypeShared,
-		AlbumID:  album.ID,
-		ThumbID:  thumbRecord.ID,
+		UserID:      uid,
+		Provider:    req.Provider,
+		Bucket:      req.Bucket,
+		Path:        originObjectKey,
+		FileName:    img.FileName,
+		FileSize:    strconv.Itoa(size),
+		FileType:    img.FileType,
+		Width:       float64(width),
+		Height:      float64(height),
+		Type:        constant.ImageTypeShared,
+		AlbumID:     album.ID,
+		IsDisplayed: 1,
 	}
 	err = tx.ScaStorageInfo.Create(&imageRecord)
+	if err != nil {
+		return err
+	}
+
+	// 上传缩略图到 Minio
+	thumbnail, err := base64.StdEncoding.DecodeString(img.Thumbnail)
+	if err != nil {
+		return fmt.Errorf("base64 decode failed: %v", err)
+	}
+	thumbObjectKey := path.Join(
+		uid,
+		time.Now().Format("2006/01"),
+		l.classifyFile(img.FileType),
+		fmt.Sprintf("%s_%s.jpg", time.Now().Format("20060102150405"), kgo.SimpleUuid()),
+	)
+	exists, err := l.svcCtx.MinioClient.BucketExists(l.ctx, constant.ThumbnailBucketName)
+	if err != nil || !exists {
+		err = l.svcCtx.MinioClient.MakeBucket(l.ctx, constant.ThumbnailBucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
+		if err != nil {
+			logx.Errorf("Failed to create MinIO bucket: %v", err)
+			return err
+		}
+	}
+	_, err = l.svcCtx.MinioClient.PutObject(
+		l.ctx,
+		constant.ThumbnailBucketName,
+		thumbObjectKey,
+		bytes.NewReader(thumbnail),
+		int64(len(thumbnail)),
+		minio.PutObjectOptions{
+			ContentType: "image/jpeg",
+		},
+	)
+	if err != nil {
+		logx.Errorf("Failed to upload MinIO object: %v", err)
+		return err
+	}
+
+	// 记录缩略图
+	thumbRecord := model.ScaStorageThumb{
+		InfoID:    imageRecord.ID,
+		UserID:    uid,
+		ThumbPath: thumbObjectKey,
+		ThumbW:    img.ThumbW,
+		ThumbH:    img.ThumbH,
+		ThumbSize: float64(len(thumbnail)),
+	}
+	err = tx.ScaStorageThumb.Create(&thumbRecord)
 	if err != nil {
 		return err
 	}

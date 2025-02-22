@@ -28,12 +28,11 @@ var (
 	ScaMessageReport      *scaMessageReport
 	ScaStorageAlbum       *scaStorageAlbum
 	ScaStorageConfig      *scaStorageConfig
+	ScaStorageExtra       *scaStorageExtra
 	ScaStorageInfo        *scaStorageInfo
 	ScaStorageLocation    *scaStorageLocation
 	ScaStorageShare       *scaStorageShare
 	ScaStorageShareVisit  *scaStorageShareVisit
-	ScaStorageTag         *scaStorageTag
-	ScaStorageTagInfo     *scaStorageTagInfo
 	ScaStorageThumb       *scaStorageThumb
 	ScaUserFollow         *scaUserFollow
 	ScaUserLevel          *scaUserLevel
@@ -53,12 +52,11 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaMessageReport = &Q.ScaMessageReport
 	ScaStorageAlbum = &Q.ScaStorageAlbum
 	ScaStorageConfig = &Q.ScaStorageConfig
+	ScaStorageExtra = &Q.ScaStorageExtra
 	ScaStorageInfo = &Q.ScaStorageInfo
 	ScaStorageLocation = &Q.ScaStorageLocation
 	ScaStorageShare = &Q.ScaStorageShare
 	ScaStorageShareVisit = &Q.ScaStorageShareVisit
-	ScaStorageTag = &Q.ScaStorageTag
-	ScaStorageTagInfo = &Q.ScaStorageTagInfo
 	ScaStorageThumb = &Q.ScaStorageThumb
 	ScaUserFollow = &Q.ScaUserFollow
 	ScaUserLevel = &Q.ScaUserLevel
@@ -79,12 +77,11 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaMessageReport:      newScaMessageReport(db, opts...),
 		ScaStorageAlbum:       newScaStorageAlbum(db, opts...),
 		ScaStorageConfig:      newScaStorageConfig(db, opts...),
+		ScaStorageExtra:       newScaStorageExtra(db, opts...),
 		ScaStorageInfo:        newScaStorageInfo(db, opts...),
 		ScaStorageLocation:    newScaStorageLocation(db, opts...),
 		ScaStorageShare:       newScaStorageShare(db, opts...),
 		ScaStorageShareVisit:  newScaStorageShareVisit(db, opts...),
-		ScaStorageTag:         newScaStorageTag(db, opts...),
-		ScaStorageTagInfo:     newScaStorageTagInfo(db, opts...),
 		ScaStorageThumb:       newScaStorageThumb(db, opts...),
 		ScaUserFollow:         newScaUserFollow(db, opts...),
 		ScaUserLevel:          newScaUserLevel(db, opts...),
@@ -106,12 +103,11 @@ type Query struct {
 	ScaMessageReport      scaMessageReport
 	ScaStorageAlbum       scaStorageAlbum
 	ScaStorageConfig      scaStorageConfig
+	ScaStorageExtra       scaStorageExtra
 	ScaStorageInfo        scaStorageInfo
 	ScaStorageLocation    scaStorageLocation
 	ScaStorageShare       scaStorageShare
 	ScaStorageShareVisit  scaStorageShareVisit
-	ScaStorageTag         scaStorageTag
-	ScaStorageTagInfo     scaStorageTagInfo
 	ScaStorageThumb       scaStorageThumb
 	ScaUserFollow         scaUserFollow
 	ScaUserLevel          scaUserLevel
@@ -134,12 +130,11 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaMessageReport:      q.ScaMessageReport.clone(db),
 		ScaStorageAlbum:       q.ScaStorageAlbum.clone(db),
 		ScaStorageConfig:      q.ScaStorageConfig.clone(db),
+		ScaStorageExtra:       q.ScaStorageExtra.clone(db),
 		ScaStorageInfo:        q.ScaStorageInfo.clone(db),
 		ScaStorageLocation:    q.ScaStorageLocation.clone(db),
 		ScaStorageShare:       q.ScaStorageShare.clone(db),
 		ScaStorageShareVisit:  q.ScaStorageShareVisit.clone(db),
-		ScaStorageTag:         q.ScaStorageTag.clone(db),
-		ScaStorageTagInfo:     q.ScaStorageTagInfo.clone(db),
 		ScaStorageThumb:       q.ScaStorageThumb.clone(db),
 		ScaUserFollow:         q.ScaUserFollow.clone(db),
 		ScaUserLevel:          q.ScaUserLevel.clone(db),
@@ -169,12 +164,11 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaMessageReport:      q.ScaMessageReport.replaceDB(db),
 		ScaStorageAlbum:       q.ScaStorageAlbum.replaceDB(db),
 		ScaStorageConfig:      q.ScaStorageConfig.replaceDB(db),
+		ScaStorageExtra:       q.ScaStorageExtra.replaceDB(db),
 		ScaStorageInfo:        q.ScaStorageInfo.replaceDB(db),
 		ScaStorageLocation:    q.ScaStorageLocation.replaceDB(db),
 		ScaStorageShare:       q.ScaStorageShare.replaceDB(db),
 		ScaStorageShareVisit:  q.ScaStorageShareVisit.replaceDB(db),
-		ScaStorageTag:         q.ScaStorageTag.replaceDB(db),
-		ScaStorageTagInfo:     q.ScaStorageTagInfo.replaceDB(db),
 		ScaStorageThumb:       q.ScaStorageThumb.replaceDB(db),
 		ScaUserFollow:         q.ScaUserFollow.replaceDB(db),
 		ScaUserLevel:          q.ScaUserLevel.replaceDB(db),
@@ -194,12 +188,11 @@ type queryCtx struct {
 	ScaMessageReport      IScaMessageReportDo
 	ScaStorageAlbum       IScaStorageAlbumDo
 	ScaStorageConfig      IScaStorageConfigDo
+	ScaStorageExtra       IScaStorageExtraDo
 	ScaStorageInfo        IScaStorageInfoDo
 	ScaStorageLocation    IScaStorageLocationDo
 	ScaStorageShare       IScaStorageShareDo
 	ScaStorageShareVisit  IScaStorageShareVisitDo
-	ScaStorageTag         IScaStorageTagDo
-	ScaStorageTagInfo     IScaStorageTagInfoDo
 	ScaStorageThumb       IScaStorageThumbDo
 	ScaUserFollow         IScaUserFollowDo
 	ScaUserLevel          IScaUserLevelDo
@@ -219,12 +212,11 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaMessageReport:      q.ScaMessageReport.WithContext(ctx),
 		ScaStorageAlbum:       q.ScaStorageAlbum.WithContext(ctx),
 		ScaStorageConfig:      q.ScaStorageConfig.WithContext(ctx),
+		ScaStorageExtra:       q.ScaStorageExtra.WithContext(ctx),
 		ScaStorageInfo:        q.ScaStorageInfo.WithContext(ctx),
 		ScaStorageLocation:    q.ScaStorageLocation.WithContext(ctx),
 		ScaStorageShare:       q.ScaStorageShare.WithContext(ctx),
 		ScaStorageShareVisit:  q.ScaStorageShareVisit.WithContext(ctx),
-		ScaStorageTag:         q.ScaStorageTag.WithContext(ctx),
-		ScaStorageTagInfo:     q.ScaStorageTagInfo.WithContext(ctx),
 		ScaStorageThumb:       q.ScaStorageThumb.WithContext(ctx),
 		ScaUserFollow:         q.ScaUserFollow.WithContext(ctx),
 		ScaUserLevel:          q.ScaUserLevel.WithContext(ctx),

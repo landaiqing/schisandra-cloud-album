@@ -76,6 +76,17 @@ type AllImageListResponse struct {
 	Records []AllImageDetail `json:"records"`
 }
 
+type BucketCapacityRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
+type BucketCapacityResponse struct {
+	Capacity   string  `json:"capacity"`
+	Used       string  `json:"used"`
+	Percentage float64 `json:"percentage"`
+}
+
 type CommentContent struct {
 	NickName        string `json:"nickname"`
 	Avatar          string `json:"avatar"`
@@ -145,6 +156,16 @@ type CommentResponse struct {
 	ReplyId         int64  `json:"reply_id,omitempty"`
 	ReplyUser       string `json:"reply_user,omitempty"`
 	ReplyTo         int64  `json:"reply_to,omitempty"`
+}
+
+type DeleteImageRequest struct {
+	IDS      []int64 `json:"ids"`
+	Provider string  `json:"provider"`
+	Bucket   string  `json:"bucket"`
+}
+
+type DeleteRecordListResponse struct {
+	Records []AllImageDetail `json:"records"`
 }
 
 type FaceDetailListRequest struct {
@@ -254,13 +275,22 @@ type PhoneLoginRequest struct {
 	AutoLogin bool   `json:"auto_login"`
 }
 
+type QueryDeleteRecordRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type QueryShareImageRequest struct {
-	ShareCode      string `json:"share_code"`
+	InviteCode     string `json:"invite_code"`
 	AccessPassword string `json:"access_password,omitempty"`
 }
 
 type QueryShareImageResponse struct {
-	List []ShareImageListMeta `json:"list"`
+	Records []ShareImageListMeta `json:"records"`
+}
+
+type QueryShareInfoRequest struct {
+	InviteCode string `json:"invite_code"`
 }
 
 type RecentListResponse struct {
@@ -320,8 +350,8 @@ type ShareImageListMeta struct {
 	FileName  string  `json:"file_name"`
 	URL       string  `json:"url"`
 	Thumbnail string  `json:"thumbnail"`
-	ThumbW    float64 `json:"thumb_w"`
-	ThumbH    float64 `json:"thumb_h"`
+	Width     float64 `json:"width"`
+	Height    float64 `json:"height"`
 	ThumbSize float64 `json:"thumb_size"`
 	CreatedAt string  `json:"created_at"`
 }
@@ -346,11 +376,34 @@ type ShareImageRequest struct {
 	Images         []ShareImageMeta `json:"images"`
 }
 
+type ShareInfoResponse struct {
+	ID           int64  `json:"id"`
+	CoverImage   string `json:"cover_image"`
+	CreatedAt    string `json:"created_at"`
+	VisitLimit   int64  `json:"visit_limit"`
+	ExpireTime   string `json:"expire_time"`
+	ImageCount   int64  `json:"image_count"`
+	VisitCount   int64  `json:"visit_count"`
+	ViewerCount  int64  `json:"viewer_count"`
+	SharerAvatar string `json:"sharer_avatar"`
+	SharerName   string `json:"sharer_name"`
+	AlbumName    string `json:"album_name"`
+}
+
+type ShareOverviewResponse struct {
+	VisitCount        int64 `json:"visit_count"`
+	VisitCountToday   int64 `json:"visit_count_today"`
+	ViewerCount       int64 `json:"viewer_count"`
+	ViewerCountToday  int64 `json:"viewer_count_today"`
+	PublishCount      int64 `json:"publish_count"`
+	PublishCountToday int64 `json:"publish_count_today"`
+}
+
 type ShareRecord struct {
 	ID             int64  `json:"id"`
 	CoverImage     string `json:"cover_image"`
 	CreatedAt      string `json:"created_at"`
-	ShareCode      string `json:"share_code"`
+	InviteCode     string `json:"invite_code"`
 	VisitLimit     int64  `json:"visit_limit"`
 	AccessPassword string `json:"access_password"`
 	ValidityPeriod int64  `json:"validity_period"`

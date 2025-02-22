@@ -18,12 +18,13 @@ type ScaStorageShare struct {
 	ID             int64                  `gorm:"column:id;type:bigint(20);primaryKey;autoIncrement:true;comment:主键;primary_key" json:"id,string"` // 主键
 	UserID         string                 `gorm:"column:user_id;type:varchar(50);comment:用户ID" json:"user_id"`                                     // 用户ID
 	AlbumID        int64                  `gorm:"column:album_id;type:bigint(20);comment:相册ID" json:"album_id"`                                    // 相册ID
-	ShareCode      string                 `gorm:"column:share_code;type:varchar(50);comment:分享码（用于访问分享链接）" json:"share_code"`                      // 分享码（用于访问分享链接）
+	InviteCode     string                 `gorm:"column:invite_code;type:varchar(50);comment:邀请码（用于访问分享链接）" json:"invite_code"`                    // 邀请码（用于访问分享链接）
 	ExpireTime     time.Time              `gorm:"column:expire_time;type:datetime;comment:过期时间" json:"expire_time"`                                // 过期时间
 	ValidityPeriod int64                  `gorm:"column:validity_period;type:int(11);comment:有效期" json:"validity_period"`                          // 有效期
 	Status         int64                  `gorm:"column:status;type:tinyint(4);comment:是否失效（0 有效 -1已失效 1 永久）" json:"status"`                       // 是否失效（0 有效 -1已失效 1 永久）
 	AccessPassword string                 `gorm:"column:access_password;type:varchar(50);comment:访问密码" json:"access_password"`                     // 访问密码
 	VisitLimit     int64                  `gorm:"column:visit_limit;type:bigint(20);comment:限制次数" json:"visit_limit"`                              // 限制次数
+	ImageCount     int64                  `gorm:"column:image_count;type:bigint(20);comment:图片数量" json:"image_count"`                              // 图片数量
 	Version        optimisticlock.Version `gorm:"column:version;type:bigint(20);comment:版本" json:"version"`                                        // 版本
 	CreatedAt      time.Time              `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt      time.Time              `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间

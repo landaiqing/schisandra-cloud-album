@@ -13,6 +13,7 @@ import (
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
+	"sort"
 	"sync"
 	"time"
 
@@ -42,7 +43,7 @@ func (l *QueryThingDetailListLogic) QueryThingDetailList(req *types.ThingDetailL
 		return nil, errors.New("user_id not found")
 	}
 	//  缓存获取数据 v1.0.0
-	cacheKey := fmt.Sprintf("%s%s:%s:%s:%v", constant.ImageListPrefix, uid, req.Provider, req.Bucket, req.TagName)
+	cacheKey := fmt.Sprintf("%s%s:%s:%s:%s:%v", constant.ImageCachePrefix, uid, "thing", req.Provider, req.Bucket, req.TagName)
 	// 尝试从缓存获取
 	cachedResult, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
 	if err == nil {
@@ -59,6 +60,7 @@ func (l *QueryThingDetailListLogic) QueryThingDetailList(req *types.ThingDetailL
 
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
 	storageThumb := l.svcCtx.DB.ScaStorageThumb
+	storageExtra := l.svcCtx.DB.ScaStorageExtra
 	// 数据库查询文件信息列表
 	var storageInfoQuery query.IScaStorageInfoDo
 	var storageInfoList []types.FileInfoResult
@@ -72,12 +74,13 @@ func (l *QueryThingDetailListLogic) QueryThingDetailList(req *types.ThingDetailL
 		storageThumb.ThumbW,
 		storageThumb.ThumbH,
 		storageThumb.ThumbSize).
-		LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
+		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
+		LeftJoin(storageExtra, storageInfo.ID.EqCol(storageExtra.InfoID)).
 		Where(
 			storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
-			storageInfo.Tag.Eq(req.TagName)).
+			storageExtra.Tag.Eq(req.TagName)).
 		Order(storageInfo.CreatedAt.Desc())
 	err = storageInfoQuery.Scan(&storageInfoList)
 	if err != nil {
@@ -147,13 +150,19 @@ func (l *QueryThingDetailListLogic) QueryThingDetailList(req *types.ThingDetailL
 		})
 		return true
 	})
+	// 按日期排序，最新的在最上面
+	sort.Slice(imageList, func(i, j int) bool {
+		dateI, _ := time.Parse("2006年1月2日 星期一", imageList[i].Date)
+		dateJ, _ := time.Parse("2006年1月2日 星期一", imageList[j].Date)
+		return dateI.After(dateJ)
+	})
 	resp = &types.ThingDetailListResponse{
 		Records: imageList,
 	}
 
 	// 缓存结果
 	if data, err := json.Marshal(resp); err == nil {
-		expireTime := 7*24*time.Hour - time.Duration(rand.Intn(60))*time.Minute
+		expireTime := 5*time.Minute + time.Duration(rand.Intn(300))*time.Second
 		if err := l.svcCtx.RedisClient.Set(l.ctx, cacheKey, data, expireTime).Err(); err != nil {
 			logx.Error("Failed to cache image list:", err)
 		}

@@ -29,6 +29,7 @@ func newScaStorageThumb(db *gorm.DB, opts ...gen.DOOption) scaStorageThumb {
 	_scaStorageThumb.ALL = field.NewAsterisk(tableName)
 	_scaStorageThumb.ID = field.NewInt64(tableName, "id")
 	_scaStorageThumb.UserID = field.NewString(tableName, "user_id")
+	_scaStorageThumb.InfoID = field.NewInt64(tableName, "info_id")
 	_scaStorageThumb.ThumbPath = field.NewString(tableName, "thumb_path")
 	_scaStorageThumb.ThumbW = field.NewFloat64(tableName, "thumb_w")
 	_scaStorageThumb.ThumbH = field.NewFloat64(tableName, "thumb_h")
@@ -49,6 +50,7 @@ type scaStorageThumb struct {
 	ALL       field.Asterisk
 	ID        field.Int64   // 主键
 	UserID    field.String  // 用户ID
+	InfoID    field.Int64   // 信息ID
 	ThumbPath field.String  // 缩略图路径
 	ThumbW    field.Float64 // 缩略图宽
 	ThumbH    field.Float64 // 缩略图高
@@ -74,6 +76,7 @@ func (s *scaStorageThumb) updateTableName(table string) *scaStorageThumb {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
+	s.InfoID = field.NewInt64(table, "info_id")
 	s.ThumbPath = field.NewString(table, "thumb_path")
 	s.ThumbW = field.NewFloat64(table, "thumb_w")
 	s.ThumbH = field.NewFloat64(table, "thumb_h")
@@ -97,9 +100,10 @@ func (s *scaStorageThumb) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaStorageThumb) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 9)
+	s.fieldMap = make(map[string]field.Expr, 10)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
+	s.fieldMap["info_id"] = s.InfoID
 	s.fieldMap["thumb_path"] = s.ThumbPath
 	s.fieldMap["thumb_w"] = s.ThumbW
 	s.fieldMap["thumb_h"] = s.ThumbH

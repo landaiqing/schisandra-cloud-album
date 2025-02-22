@@ -37,17 +37,11 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.FileType = field.NewString(tableName, "file_type")
 	_scaStorageInfo.Width = field.NewFloat64(tableName, "width")
 	_scaStorageInfo.Height = field.NewFloat64(tableName, "height")
-	_scaStorageInfo.ThumbID = field.NewInt64(tableName, "thumb_id")
-	_scaStorageInfo.Category = field.NewString(tableName, "category")
-	_scaStorageInfo.Tag = field.NewString(tableName, "tag")
 	_scaStorageInfo.Type = field.NewString(tableName, "type")
-	_scaStorageInfo.LocationID = field.NewInt64(tableName, "location_id")
-	_scaStorageInfo.Hash = field.NewString(tableName, "hash")
-	_scaStorageInfo.IsAnime = field.NewString(tableName, "is_anime")
 	_scaStorageInfo.FaceID = field.NewInt64(tableName, "face_id")
-	_scaStorageInfo.Landscape = field.NewString(tableName, "landscape")
 	_scaStorageInfo.IsDisplayed = field.NewInt64(tableName, "is_displayed")
 	_scaStorageInfo.AlbumID = field.NewInt64(tableName, "album_id")
+	_scaStorageInfo.LocationID = field.NewInt64(tableName, "location_id")
 	_scaStorageInfo.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageInfo.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageInfo.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -72,17 +66,11 @@ type scaStorageInfo struct {
 	FileType    field.String  // 文件类型
 	Width       field.Float64 // 宽
 	Height      field.Float64 // 高
-	ThumbID     field.Int64   // 缩略图id
-	Category    field.String  // 分类
-	Tag         field.String  // 标签
 	Type        field.String  // 类型
-	LocationID  field.Int64   // 地址ID
-	Hash        field.String  // 哈希值
-	IsAnime     field.String  // 是否是动漫图片
 	FaceID      field.Int64   // 人像ID
-	Landscape   field.String  // 风景类型
 	IsDisplayed field.Int64   // 是否隐藏（0 不隐藏 1 隐藏）
 	AlbumID     field.Int64   // 相册ID
+	LocationID  field.Int64   // 地址ID
 	CreatedAt   field.Time    // 创建时间
 	UpdatedAt   field.Time    // 更新时间
 	DeletedAt   field.Field   // 删除时间
@@ -112,17 +100,11 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.FileType = field.NewString(table, "file_type")
 	s.Width = field.NewFloat64(table, "width")
 	s.Height = field.NewFloat64(table, "height")
-	s.ThumbID = field.NewInt64(table, "thumb_id")
-	s.Category = field.NewString(table, "category")
-	s.Tag = field.NewString(table, "tag")
 	s.Type = field.NewString(table, "type")
-	s.LocationID = field.NewInt64(table, "location_id")
-	s.Hash = field.NewString(table, "hash")
-	s.IsAnime = field.NewString(table, "is_anime")
 	s.FaceID = field.NewInt64(table, "face_id")
-	s.Landscape = field.NewString(table, "landscape")
 	s.IsDisplayed = field.NewInt64(table, "is_displayed")
 	s.AlbumID = field.NewInt64(table, "album_id")
+	s.LocationID = field.NewInt64(table, "location_id")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -142,7 +124,7 @@ func (s *scaStorageInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaStorageInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 24)
+	s.fieldMap = make(map[string]field.Expr, 18)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["provider"] = s.Provider
@@ -153,17 +135,11 @@ func (s *scaStorageInfo) fillFieldMap() {
 	s.fieldMap["file_type"] = s.FileType
 	s.fieldMap["width"] = s.Width
 	s.fieldMap["height"] = s.Height
-	s.fieldMap["thumb_id"] = s.ThumbID
-	s.fieldMap["category"] = s.Category
-	s.fieldMap["tag"] = s.Tag
 	s.fieldMap["type"] = s.Type
-	s.fieldMap["location_id"] = s.LocationID
-	s.fieldMap["hash"] = s.Hash
-	s.fieldMap["is_anime"] = s.IsAnime
 	s.fieldMap["face_id"] = s.FaceID
-	s.fieldMap["landscape"] = s.Landscape
 	s.fieldMap["is_displayed"] = s.IsDisplayed
 	s.fieldMap["album_id"] = s.AlbumID
+	s.fieldMap["location_id"] = s.LocationID
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

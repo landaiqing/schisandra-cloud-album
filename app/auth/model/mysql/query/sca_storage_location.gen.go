@@ -29,14 +29,11 @@ func newScaStorageLocation(db *gorm.DB, opts ...gen.DOOption) scaStorageLocation
 	_scaStorageLocation.ALL = field.NewAsterisk(tableName)
 	_scaStorageLocation.ID = field.NewInt64(tableName, "id")
 	_scaStorageLocation.UserID = field.NewString(tableName, "user_id")
-	_scaStorageLocation.Provider = field.NewString(tableName, "provider")
-	_scaStorageLocation.Bucket = field.NewString(tableName, "bucket")
 	_scaStorageLocation.Country = field.NewString(tableName, "country")
 	_scaStorageLocation.Province = field.NewString(tableName, "province")
 	_scaStorageLocation.City = field.NewString(tableName, "city")
 	_scaStorageLocation.Latitude = field.NewString(tableName, "latitude")
 	_scaStorageLocation.Longitude = field.NewString(tableName, "longitude")
-	_scaStorageLocation.Total = field.NewInt64(tableName, "total")
 	_scaStorageLocation.CoverImage = field.NewString(tableName, "cover_image")
 	_scaStorageLocation.Version = field.NewField(tableName, "version")
 	_scaStorageLocation.CreatedAt = field.NewTime(tableName, "created_at")
@@ -55,14 +52,11 @@ type scaStorageLocation struct {
 	ALL        field.Asterisk
 	ID         field.Int64  // 主键
 	UserID     field.String // 用户id
-	Provider   field.String // 供应商
-	Bucket     field.String // 存储桶
 	Country    field.String // 国家
 	Province   field.String // 省
 	City       field.String // 城市
 	Latitude   field.String // 纬度
 	Longitude  field.String // 经度
-	Total      field.Int64  // 数量
 	CoverImage field.String // 封面图片
 	Version    field.Field  // 版本
 	CreatedAt  field.Time   // 创建时间
@@ -86,14 +80,11 @@ func (s *scaStorageLocation) updateTableName(table string) *scaStorageLocation {
 	s.ALL = field.NewAsterisk(table)
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
-	s.Provider = field.NewString(table, "provider")
-	s.Bucket = field.NewString(table, "bucket")
 	s.Country = field.NewString(table, "country")
 	s.Province = field.NewString(table, "province")
 	s.City = field.NewString(table, "city")
 	s.Latitude = field.NewString(table, "latitude")
 	s.Longitude = field.NewString(table, "longitude")
-	s.Total = field.NewInt64(table, "total")
 	s.CoverImage = field.NewString(table, "cover_image")
 	s.Version = field.NewField(table, "version")
 	s.CreatedAt = field.NewTime(table, "created_at")
@@ -115,17 +106,14 @@ func (s *scaStorageLocation) GetFieldByName(fieldName string) (field.OrderExpr, 
 }
 
 func (s *scaStorageLocation) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 15)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
-	s.fieldMap["provider"] = s.Provider
-	s.fieldMap["bucket"] = s.Bucket
 	s.fieldMap["country"] = s.Country
 	s.fieldMap["province"] = s.Province
 	s.fieldMap["city"] = s.City
 	s.fieldMap["latitude"] = s.Latitude
 	s.fieldMap["longitude"] = s.Longitude
-	s.fieldMap["total"] = s.Total
 	s.fieldMap["cover_image"] = s.CoverImage
 	s.fieldMap["version"] = s.Version
 	s.fieldMap["created_at"] = s.CreatedAt

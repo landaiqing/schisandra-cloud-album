@@ -593,6 +593,11 @@ type (
 	SingleImageRequest {
 		ID int64 `json:"id"`
 	}
+	DeleteImageRequest {
+		IDS      []int64 `json:"ids"`
+		Provider string  `json:"provider"`
+		Bucket   string  `json:"bucket"`
+	}
 	StorageMeta {
 		Name  string `json:"name"`
 		Value string `json:"value"`
@@ -604,6 +609,22 @@ type (
 	}
 	StorageListResponse {
 		Records []StroageNode `json:"records"`
+	}
+	QueryDeleteRecordRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	DeleteRecordListResponse {
+		Records []AllImageDetail `json:"records"`
+	}
+	BucketCapacityRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	BucketCapacityResponse {
+		Capacity   string  `json:"capacity"`
+		Used       string  `json:"used"`
+		Percentage float64 `json:"percentage"`
 	}
 )
 
@@ -695,6 +716,18 @@ service auth {
 	// 获取用户存储配置列表
 	@handler getUserStorageList
 	post /user/config/list returns (StorageListResponse)
+
+	// 删除图片
+	@handler deleteImage
+	post /image/delete (DeleteImageRequest) returns (string)
+
+	// 获取删除记录
+	@handler getDeleteRecord
+	post /delete/record (QueryDeleteRecordRequest) returns (DeleteRecordListResponse)
+
+	// 获取存储桶的容量信息
+	@handler getBucketCapacity
+	post /bucket/capacity (BucketCapacityRequest) returns (BucketCapacityResponse)
 }
 
 type (
@@ -717,7 +750,7 @@ type (
 		Images         []ShareImageMeta `json:"images"`
 	}
 	QueryShareImageRequest {
-		ShareCode      string `json:"share_code"`
+		InviteCode     string `json:"invite_code"`
 		AccessPassword string `json:"access_password,omitempty"`
 	}
 	ShareImageListMeta {
@@ -725,13 +758,13 @@ type (
 		FileName  string  `json:"file_name"`
 		URL       string  `json:"url"`
 		Thumbnail string  `json:"thumbnail"`
-		ThumbW    float64 `json:"thumb_w"`
-		ThumbH    float64 `json:"thumb_h"`
+		Width     float64 `json:"width"`
+		Height    float64 `json:"height"`
 		ThumbSize float64 `json:"thumb_size"`
 		CreatedAt string  `json:"created_at"`
 	}
 	QueryShareImageResponse {
-		List []ShareImageListMeta `json:"list"`
+		Records []ShareImageListMeta `json:"records"`
 	}
 	ShareRecordListRequest {
 		DateRange []string `json:"date_range"`
@@ -741,13 +774,38 @@ type (
 		ID             int64  `json:"id"`
 		CoverImage     string `json:"cover_image"`
 		CreatedAt      string `json:"created_at"`
-		ShareCode      string `json:"share_code"`
+		InviteCode     string `json:"invite_code"`
 		VisitLimit     int64  `json:"visit_limit"`
 		AccessPassword string `json:"access_password"`
 		ValidityPeriod int64  `json:"validity_period"`
 	}
 	ShareRecordListResponse {
 		records []ShareRecord `json:"records"`
+	}
+	QueryShareInfoRequest {
+		InviteCode string `json:"invite_code"`
+	}
+	ShareInfoResponse {
+		ID           int64  `json:"id"`
+		CoverImage   string `json:"cover_image"`
+		CreatedAt    string `json:"created_at"`
+		VisitLimit   int64  `json:"visit_limit"`
+		ExpireTime   string `json:"expire_time"`
+		ImageCount   int64  `json:"image_count"`
+		VisitCount   int64  `json:"visit_count"`
+		ViewerCount  int64  `json:"viewer_count"`
+		SharerAvatar string `json:"sharer_avatar"`
+		SharerName   string `json:"sharer_name"`
+		AlbumName    string `json:"album_name"`
+	}
+	// 分享数据概览响应参数
+	ShareOverviewResponse {
+		VisitCount        int64 `json:"visit_count"`
+		VisitCountToday   int64 `json:"visit_count_today"`
+		ViewerCount       int64 `json:"viewer_count"`
+		ViewerCountToday  int64 `json:"viewer_count_today"`
+		PublishCount      int64 `json:"publish_count"`
+		PublishCountToday int64 `json:"publish_count_today"`
 	}
 )
 
@@ -774,5 +832,13 @@ service auth {
 	// 列出分享记录
 	@handler listShareRecord
 	post /record/list (ShareRecordListRequest) returns (ShareRecordListResponse)
+
+	// 查看分享信息
+	@handler queryShareInfo
+	post /info (QueryShareInfoRequest) returns (ShareInfoResponse)
+
+	// 查询浏览数据概览
+	@handler queryShareOverview
+	post /overview returns (ShareOverviewResponse)
 }
 

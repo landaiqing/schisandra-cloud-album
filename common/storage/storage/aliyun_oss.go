@@ -131,9 +131,11 @@ func (a *AliOSS) GetBucketStat(ctx context.Context, bucketName string) (*BucketS
 		return nil, fmt.Errorf("failed to get bucket stat, error: %v", err)
 	}
 	return &BucketStat{
-		Storage:      result.Storage,
-		ObjectCount:  result.ObjectCount,
-		LastModified: result.LastModifiedTime,
+		Storage:             result.Storage,
+		ObjectCount:         result.ObjectCount,
+		LastModified:        result.LastModifiedTime,
+		StandardStorage:     result.StandardStorage,
+		StandardObjectCount: result.StandardObjectCount,
 	}, nil
 }
 

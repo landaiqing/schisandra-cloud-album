@@ -110,8 +110,6 @@ func main() {
 	scaMessageReport := g.GenerateModel("sca_message_report", fieldOpts...)
 	scaStorageConfig := g.GenerateModel("sca_storage_config", fieldOpts...)
 	scaStorageInfo := g.GenerateModel("sca_storage_info", fieldOpts...)
-	scaStorageTag := g.GenerateModel("sca_storage_tag", fieldOpts...)
-	scaStorageTagInfo := g.GenerateModel("sca_storage_tag_info", fieldOpts...)
 	scaUserFollows := g.GenerateModel("sca_user_follows", fieldOpts...)
 	scaUserLevel := g.GenerateModel("sca_user_level", fieldOpts...)
 	scaUserMessage := g.GenerateModel("sca_user_message", fieldOpts...)
@@ -120,6 +118,7 @@ func main() {
 	scaStorageThumb := g.GenerateModel("sca_storage_thumb", fieldOpts...)
 	scaStorageShare := g.GenerateModel("sca_storage_share", fieldOpts...)
 	scaStorageShareVisit := g.GenerateModel("sca_storage_share_visit", fieldOpts...)
+	scaStorageExtra := g.GenerateModel("sca_storage_extra", fieldOpts...)
 
 	g.ApplyBasic(
 		scaAuthMenu,
@@ -133,8 +132,6 @@ func main() {
 		scaMessageReport,
 		scaStorageConfig,
 		scaStorageInfo,
-		scaStorageTag,
-		scaStorageTagInfo,
 		scaUserFollows,
 		scaUserLevel,
 		scaUserMessage,
@@ -143,6 +140,7 @@ func main() {
 		scaStorageThumb,
 		scaStorageShare,
 		scaStorageShareVisit,
+		scaStorageExtra,
 	)
 
 	g.Execute()

@@ -35,6 +35,7 @@ func newScaStorageConfig(db *gorm.DB, opts ...gen.DOOption) scaStorageConfig {
 	_scaStorageConfig.SecretKey = field.NewString(tableName, "secret_key")
 	_scaStorageConfig.Bucket = field.NewString(tableName, "bucket")
 	_scaStorageConfig.Region = field.NewString(tableName, "region")
+	_scaStorageConfig.Capacity = field.NewInt64(tableName, "capacity")
 	_scaStorageConfig.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageConfig.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageConfig.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -57,6 +58,7 @@ type scaStorageConfig struct {
 	SecretKey field.String // 密钥
 	Bucket    field.String // 存储桶
 	Region    field.String // 地域
+	Capacity  field.Int64  // 容量
 	CreatedAt field.Time   // 创建时间
 	UpdatedAt field.Time   // 更新时间
 	DeletedAt field.Field  // 删除时间
@@ -84,6 +86,7 @@ func (s *scaStorageConfig) updateTableName(table string) *scaStorageConfig {
 	s.SecretKey = field.NewString(table, "secret_key")
 	s.Bucket = field.NewString(table, "bucket")
 	s.Region = field.NewString(table, "region")
+	s.Capacity = field.NewInt64(table, "capacity")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -103,7 +106,7 @@ func (s *scaStorageConfig) GetFieldByName(fieldName string) (field.OrderExpr, bo
 }
 
 func (s *scaStorageConfig) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 11)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["provider"] = s.Provider
@@ -112,6 +115,7 @@ func (s *scaStorageConfig) fillFieldMap() {
 	s.fieldMap["secret_key"] = s.SecretKey
 	s.fieldMap["bucket"] = s.Bucket
 	s.fieldMap["region"] = s.Region
+	s.fieldMap["capacity"] = s.Capacity
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

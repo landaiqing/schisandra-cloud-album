@@ -19,9 +19,11 @@ type BucketProperties struct {
 
 // 通用存储桶统计信息
 type BucketStat struct {
-	Storage      int64
-	ObjectCount  int64
-	LastModified int64
+	Storage             int64
+	ObjectCount         int64
+	LastModified        int64
+	StandardStorage     int64
+	StandardObjectCount int64
 }
 
 // 通用存储桶信息

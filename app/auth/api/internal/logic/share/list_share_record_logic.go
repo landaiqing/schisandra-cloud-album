@@ -35,7 +35,7 @@ func (l *ListShareRecordLogic) ListShareRecord(req *types.ShareRecordListRequest
 	var recordList []types.ShareRecord
 	query := storageShare.
 		Select(storageShare.ID,
-			storageShare.ShareCode,
+			storageShare.InviteCode,
 			storageShare.VisitLimit,
 			storageShare.AccessPassword,
 			storageShare.ValidityPeriod,

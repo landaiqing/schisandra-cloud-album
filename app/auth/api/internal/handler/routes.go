@@ -170,6 +170,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/info",
+					Handler: share.QueryShareInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/overview",
+					Handler: share.QueryShareOverviewHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/record/list",
 					Handler: share.ListShareRecordHandler(serverCtx),
 				},
@@ -243,8 +253,18 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/bucket/capacity",
+					Handler: storage.GetBucketCapacityHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/config",
 					Handler: storage.SetStorageConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/delete/record",
+					Handler: storage.GetDeleteRecordHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -270,6 +290,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/image/all/list",
 					Handler: storage.QueryAllImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/delete",
+					Handler: storage.DeleteImageHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

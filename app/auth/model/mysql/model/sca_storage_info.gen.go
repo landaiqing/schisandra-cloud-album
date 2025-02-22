@@ -24,17 +24,11 @@ type ScaStorageInfo struct {
 	FileType    string         `gorm:"column:file_type;type:varchar(50);comment:文件类型" json:"file_type"`                                 // 文件类型
 	Width       float64        `gorm:"column:width;type:double;comment:宽" json:"width"`                                                 // 宽
 	Height      float64        `gorm:"column:height;type:double;comment:高" json:"height"`                                               // 高
-	ThumbID     int64          `gorm:"column:thumb_id;type:bigint(20);comment:缩略图id" json:"thumb_id"`                                   // 缩略图id
-	Category    string         `gorm:"column:category;type:varchar(50);comment:分类" json:"category"`                                     // 分类
-	Tag         string         `gorm:"column:tag;type:varchar(255);comment:标签" json:"tag"`                                              // 标签
 	Type        string         `gorm:"column:type;type:varchar(50);comment:类型" json:"type"`                                             // 类型
-	LocationID  int64          `gorm:"column:location_id;type:bigint(20);comment:地址ID" json:"location_id"`                              // 地址ID
-	Hash        string         `gorm:"column:hash;type:varchar(255);comment:哈希值" json:"hash"`                                           // 哈希值
-	IsAnime     string         `gorm:"column:is_anime;type:varchar(50);comment:是否是动漫图片" json:"is_anime"`                                // 是否是动漫图片
 	FaceID      int64          `gorm:"column:face_id;type:bigint(20);comment:人像ID" json:"face_id"`                                      // 人像ID
-	Landscape   string         `gorm:"column:landscape;type:varchar(50);comment:风景类型" json:"landscape"`                                 // 风景类型
 	IsDisplayed int64          `gorm:"column:is_displayed;type:tinyint(4);comment:是否隐藏（0 不隐藏 1 隐藏）" json:"is_displayed"`                // 是否隐藏（0 不隐藏 1 隐藏）
 	AlbumID     int64          `gorm:"column:album_id;type:bigint(20);comment:相册ID" json:"album_id"`                                    // 相册ID
+	LocationID  int64          `gorm:"column:location_id;type:bigint(20);comment:地址ID" json:"location_id"`                              // 地址ID
 	CreatedAt   time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt   time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间

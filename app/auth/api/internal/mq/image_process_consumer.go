@@ -55,23 +55,27 @@ func (c *NsqImageProcessConsumer) HandleMessage(msg *nsq.Message) error {
 		return err
 	}
 	// 将地址信息保存到数据库
-	locationId, err := c.saveFileLocationInfoToDB(message.UID, message.Data.Provider, message.Data.Bucket, message.Data.Latitude, message.Data.Longitude, country, province, city, message.ThumbPath)
+	locationId, err := c.saveFileLocationInfoToDB(message.UID, message.Data.Latitude, message.Data.Longitude, country, province, city, message.ThumbPath)
 	if err != nil {
 		return err
 	}
-
-	thumbnailId, err := c.saveFileThumbnailInfoToDB(message.UID, message.ThumbPath, message.Data.ThumbW, message.Data.ThumbH, message.Data.ThumbSize)
 
 	// 将文件信息存入数据库
-	id, err := c.saveFileInfoToDB(message.UID, message.Data.Bucket, message.Data.Provider, message.FileHeader, message.Data, locationId, message.FaceID, message.FilePath, thumbnailId)
+	storageId, err := c.saveFileInfoToDB(message.UID, message.Data.Bucket, message.Data.Provider, message.FileHeader, message.Data, message.FaceID, message.FilePath, locationId)
 	if err != nil {
 		return err
 	}
+	err = c.saveFileThumbnailInfoToDB(message.UID, message.ThumbPath, message.Data.ThumbW, message.Data.ThumbH, message.Data.ThumbSize, storageId)
+
+	if err != nil {
+		return err
+	}
+
 	// 删除缓存
-	c.afterImageUpload(message.UID, message.Data.Provider, message.Data.Bucket)
+	c.afterImageUpload(message.UID)
 
 	// redis 保存最近7天上传的文件列表
-	err = c.saveRecentFileList(message.UID, message.PresignedURL, id, message.Data, message.FileHeader.Filename)
+	err = c.saveRecentFileList(message.UID, message.PresignedURL, storageId, message.Data, message.FileHeader.Filename)
 	if err != nil {
 		return err
 	}
@@ -150,15 +154,16 @@ func (c *NsqImageProcessConsumer) classifyFile(mimeType string, isScreenshot boo
 		"video/x-matroska": "video",
 	}
 
+	// 如果isScreenshot为true，则返回"screenshot"
+	if isScreenshot {
+		return "screenshot"
+	}
+
 	// 根据MIME类型从map中获取分类
 	if classification, exists := typeMap[mimeType]; exists {
 		return classification
 	}
 
-	// 如果isScreenshot为true，则返回"screenshot"
-	if isScreenshot {
-		return "screenshot"
-	}
 	return "unknown"
 }
 
@@ -207,7 +212,7 @@ func (c *NsqImageProcessConsumer) decryptConfig(dbConfig *model.ScaStorageConfig
 	}, nil
 }
 
-func (c *NsqImageProcessConsumer) saveFileLocationInfoToDB(uid string, provider string, bucket string, latitude float64, longitude float64, country string, province string, city string, filePath string) (int64, error) {
+func (c *NsqImageProcessConsumer) saveFileLocationInfoToDB(uid string, latitude float64, longitude float64, country string, province string, city string, filePath string) (int64, error) {
 	if latitude == 0.000000 || longitude == 0.000000 {
 		return 0, nil
 	}
@@ -218,35 +223,24 @@ func (c *NsqImageProcessConsumer) saveFileLocationInfoToDB(uid string, provider 
 	}
 	if storageLocations == nil {
 		locationInfo := model.ScaStorageLocation{
-			Provider:   provider,
-			Bucket:     bucket,
 			UserID:     uid,
 			Country:    country,
 			City:       city,
 			Province:   province,
 			Latitude:   fmt.Sprintf("%f", latitude),
 			Longitude:  fmt.Sprintf("%f", longitude),
-			Total:      1,
 			CoverImage: filePath,
 		}
 		err = locationDB.Create(&locationInfo)
 		if err != nil {
 			return 0, err
 		}
-		return locationInfo.ID, nil
-	} else {
-		info, err := locationDB.Where(locationDB.ID.Eq(storageLocations.ID), locationDB.UserID.Eq(uid)).UpdateColumnSimple(locationDB.Total.Add(1), locationDB.CoverImage.Value(filePath))
-		if err != nil {
-			return 0, err
-		}
-		if info.RowsAffected == 0 {
-			return 0, errors.New("update location failed")
-		}
-		return storageLocations.ID, nil
+		return 0, nil
 	}
+	return storageLocations.ID, nil
 }
 
-func (c *NsqImageProcessConsumer) saveFileThumbnailInfoToDB(uid string, filePath string, width, height float64, size float64) (int64, error) {
+func (c *NsqImageProcessConsumer) saveFileThumbnailInfoToDB(uid string, filePath string, width, height float64, size float64, storageId int64) error {
 	storageThumb := c.svcCtx.DB.ScaStorageThumb
 	storageThumbInfo := &model.ScaStorageThumb{
 		UserID:    uid,
@@ -254,18 +248,25 @@ func (c *NsqImageProcessConsumer) saveFileThumbnailInfoToDB(uid string, filePath
 		ThumbW:    width,
 		ThumbH:    height,
 		ThumbSize: size,
+		InfoID:    storageId,
 	}
 	err := storageThumb.Create(storageThumbInfo)
 	if err != nil {
 		logx.Error(err)
-		return 0, errors.New("create storage thumb failed")
+		return errors.New("create storage thumb failed")
 	}
-	return storageThumbInfo.ID, nil
+	return nil
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, locationId, faceId int64, filePath string, thumbnailId int64) (int64, error) {
-
+func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, faceId int64, filePath string, locationID int64) (int64, error) {
+	tx := c.svcCtx.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback() // 如果有panic发生，回滚事务
+			logx.Errorf("transaction rollback: %v", r)
+		}
+	}()
 	typeName := c.classifyFile(result.FileType, result.IsScreenshot)
 	scaStorageInfo := &model.ScaStorageInfo{
 		UserID:     uid,
@@ -275,31 +276,55 @@ func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string,
 		FileSize:   strconv.FormatInt(header.Size, 10),
 		FileType:   result.FileType,
 		Path:       filePath,
-		Landscape:  result.Landscape,
-		Tag:        result.TagName,
-		IsAnime:    strconv.FormatBool(result.IsAnime),
-		Category:   result.TopCategory,
-		LocationID: locationId,
 		FaceID:     faceId,
 		Type:       typeName,
 		Width:      result.Width,
 		Height:     result.Height,
-		ThumbID:    thumbnailId,
+		LocationID: locationID,
 	}
-
-	err := c.svcCtx.DB.ScaStorageInfo.Create(scaStorageInfo)
+	err := tx.ScaStorageInfo.Create(scaStorageInfo)
 	if err != nil {
+		tx.Rollback()
 		return 0, errors.New("create storage info failed")
+	}
+	scaStorageExtra := &model.ScaStorageExtra{
+		UserID:    uid,
+		InfoID:    scaStorageInfo.ID,
+		Landscape: result.Landscape,
+		Tag:       result.TagName,
+		IsAnime:   strconv.FormatBool(result.IsAnime),
+		Category:  result.TopCategory,
+	}
+	err = tx.ScaStorageExtra.Create(scaStorageExtra)
+	if err != nil {
+		tx.Rollback()
+		return 0, errors.New("create storage extra failed")
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return 0, errors.New("commit failed")
 	}
 	return scaStorageInfo.ID, nil
 }
 
 // 在UploadImageLogic或其他需要使缓存失效的逻辑中添加：
-func (c *NsqImageProcessConsumer) afterImageUpload(uid, provider, bucket string) {
-	for _, sort := range []bool{true, false} {
-		key := fmt.Sprintf("%s%s:%s:%s:%v", constant.ImageListPrefix, uid, provider, bucket, sort)
-		if err := c.svcCtx.RedisClient.Del(c.ctx, key).Err(); err != nil {
-			logx.Errorf("删除缓存键 %s 失败: %v", key, err)
-		}
+func (c *NsqImageProcessConsumer) afterImageUpload(uid string) {
+	// 删除缓存
+	keyPattern := fmt.Sprintf("%s%s:%s", constant.ImageCachePrefix, uid, "*")
+	// 获取所有匹配的键
+	keys, err := c.svcCtx.RedisClient.Keys(c.ctx, keyPattern).Result()
+	if err != nil {
+		logx.Errorf("获取缓存键 %s 失败: %v", keyPattern, err)
+	}
+	// 如果没有匹配的键，直接返回
+	if len(keys) == 0 {
+		logx.Infof("没有找到匹配的缓存键: %s", keyPattern)
+		return
+	}
+	// 删除所有匹配的键
+	if err := c.svcCtx.RedisClient.Del(c.ctx, keys...).Err(); err != nil {
+		logx.Errorf("删除缓存键 %s 失败: %v", keyPattern, err)
+
 	}
 }

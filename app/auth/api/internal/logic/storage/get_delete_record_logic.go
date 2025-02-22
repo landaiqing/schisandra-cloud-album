@@ -9,7 +9,6 @@ import (
 	"math/rand"
 	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
-	"schisandra-album-cloud-microservices/app/auth/model/mysql/query"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
@@ -23,31 +22,31 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type QueryLocationDetailListLogic struct {
+type GetDeleteRecordLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
-func NewQueryLocationDetailListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryLocationDetailListLogic {
-	return &QueryLocationDetailListLogic{
+func NewGetDeleteRecordLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetDeleteRecordLogic {
+	return &GetDeleteRecordLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *QueryLocationDetailListLogic) QueryLocationDetailList(req *types.LocationDetailListRequest) (resp *types.LocationDetailListResponse, err error) {
+func (l *GetDeleteRecordLogic) GetDeleteRecord(req *types.QueryDeleteRecordRequest) (resp *types.DeleteRecordListResponse, err error) {
 	uid, ok := l.ctx.Value("user_id").(string)
 	if !ok {
 		return nil, errors.New("user_id not found")
 	}
 	//  缓存获取数据 v1.0.0
-	cacheKey := fmt.Sprintf("%s%s:%s:%s:%s:%v", constant.ImageCachePrefix, uid, "location", req.Provider, req.Bucket, req.ID)
+	cacheKey := fmt.Sprintf("%s%s:%s:%s:%s", constant.ImageCachePrefix, uid, "deleted", req.Provider, req.Bucket)
 	// 尝试从缓存获取
 	cachedResult, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
 	if err == nil {
-		var cachedResponse types.LocationDetailListResponse
+		var cachedResponse types.DeleteRecordListResponse
 		if err := json.Unmarshal([]byte(cachedResult), &cachedResponse); err == nil {
 			return &cachedResponse, nil
 		}
@@ -57,15 +56,11 @@ func (l *QueryLocationDetailListLogic) QueryLocationDetailList(req *types.Locati
 		logx.Error("Redis error:", err)
 		return nil, errors.New("get cached image list failed")
 	}
-
+	// 缓存未命中，从数据库中查询
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
 	storageThumb := l.svcCtx.DB.ScaStorageThumb
-	storageLocation := l.svcCtx.DB.ScaStorageLocation
-	// 数据库查询文件信息列表
-	var storageInfoQuery query.IScaStorageInfoDo
 	var storageInfoList []types.FileInfoResult
-
-	storageInfoQuery = storageInfo.Select(
+	err = storageInfo.Select(
 		storageInfo.ID,
 		storageInfo.FileName,
 		storageInfo.CreatedAt,
@@ -75,19 +70,20 @@ func (l *QueryLocationDetailListLogic) QueryLocationDetailList(req *types.Locati
 		storageThumb.ThumbH,
 		storageThumb.ThumbSize).
 		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
-		LeftJoin(storageLocation, storageInfo.LocationID.EqCol(storageLocation.ID)).
+		Unscoped().
 		Where(
 			storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
-			storageLocation.ID.Eq(req.ID)).
-		Order(storageInfo.CreatedAt.Desc())
-	err = storageInfoQuery.Scan(&storageInfoList)
+			storageInfo.DeletedAt.IsNotNull(),
+			storageInfo.Type.Neq(constant.ImageTypeShared)).
+		Order(storageInfo.CreatedAt.Desc()).
+		Scan(&storageInfoList)
 	if err != nil {
 		return nil, err
 	}
 	if len(storageInfoList) == 0 {
-		return &types.LocationDetailListResponse{}, nil
+		return &types.DeleteRecordListResponse{}, nil
 	}
 
 	// 加载用户oss配置信息
@@ -156,7 +152,7 @@ func (l *QueryLocationDetailListLogic) QueryLocationDetailList(req *types.Locati
 		dateJ, _ := time.Parse("2006年1月2日 星期一", imageList[j].Date)
 		return dateI.After(dateJ)
 	})
-	resp = &types.LocationDetailListResponse{
+	resp = &types.DeleteRecordListResponse{
 		Records: imageList,
 	}
 
@@ -171,10 +167,11 @@ func (l *QueryLocationDetailListLogic) QueryLocationDetailList(req *types.Locati
 	}
 
 	return resp, nil
+
 }
 
 // 提取解密操作为函数
-func (l *QueryLocationDetailListLogic) decryptConfig(config *model.ScaStorageConfig) (*storageConfig.StorageConfig, error) {
+func (l *GetDeleteRecordLogic) decryptConfig(config *model.ScaStorageConfig) (*storageConfig.StorageConfig, error) {
 	accessKey, err := encrypt.Decrypt(config.AccessKey, l.svcCtx.Config.Encrypt.Key)
 	if err != nil {
 		return nil, errors.New("decrypt access key failed")
@@ -194,7 +191,7 @@ func (l *QueryLocationDetailListLogic) decryptConfig(config *model.ScaStorageCon
 }
 
 // 从缓存或数据库中获取 OSS 配置
-func (l *QueryLocationDetailListLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider string) (*storageConfig.StorageConfig, error) {
+func (l *GetDeleteRecordLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider string) (*storageConfig.StorageConfig, error) {
 	result, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
 	if err != nil && !errors.Is(err, redis.Nil) {
 		return nil, errors.New("get oss config failed")

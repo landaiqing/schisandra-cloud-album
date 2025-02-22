@@ -30,12 +30,13 @@ func newScaStorageShare(db *gorm.DB, opts ...gen.DOOption) scaStorageShare {
 	_scaStorageShare.ID = field.NewInt64(tableName, "id")
 	_scaStorageShare.UserID = field.NewString(tableName, "user_id")
 	_scaStorageShare.AlbumID = field.NewInt64(tableName, "album_id")
-	_scaStorageShare.ShareCode = field.NewString(tableName, "share_code")
+	_scaStorageShare.InviteCode = field.NewString(tableName, "invite_code")
 	_scaStorageShare.ExpireTime = field.NewTime(tableName, "expire_time")
 	_scaStorageShare.ValidityPeriod = field.NewInt64(tableName, "validity_period")
 	_scaStorageShare.Status = field.NewInt64(tableName, "status")
 	_scaStorageShare.AccessPassword = field.NewString(tableName, "access_password")
 	_scaStorageShare.VisitLimit = field.NewInt64(tableName, "visit_limit")
+	_scaStorageShare.ImageCount = field.NewInt64(tableName, "image_count")
 	_scaStorageShare.Version = field.NewField(tableName, "version")
 	_scaStorageShare.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageShare.UpdatedAt = field.NewTime(tableName, "updated_at")
@@ -54,12 +55,13 @@ type scaStorageShare struct {
 	ID             field.Int64  // 主键
 	UserID         field.String // 用户ID
 	AlbumID        field.Int64  // 相册ID
-	ShareCode      field.String // 分享码（用于访问分享链接）
+	InviteCode     field.String // 邀请码（用于访问分享链接）
 	ExpireTime     field.Time   // 过期时间
 	ValidityPeriod field.Int64  // 有效期
 	Status         field.Int64  // 是否失效（0 有效 -1已失效 1 永久）
 	AccessPassword field.String // 访问密码
 	VisitLimit     field.Int64  // 限制次数
+	ImageCount     field.Int64  // 图片数量
 	Version        field.Field  // 版本
 	CreatedAt      field.Time   // 创建时间
 	UpdatedAt      field.Time   // 更新时间
@@ -83,12 +85,13 @@ func (s *scaStorageShare) updateTableName(table string) *scaStorageShare {
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
 	s.AlbumID = field.NewInt64(table, "album_id")
-	s.ShareCode = field.NewString(table, "share_code")
+	s.InviteCode = field.NewString(table, "invite_code")
 	s.ExpireTime = field.NewTime(table, "expire_time")
 	s.ValidityPeriod = field.NewInt64(table, "validity_period")
 	s.Status = field.NewInt64(table, "status")
 	s.AccessPassword = field.NewString(table, "access_password")
 	s.VisitLimit = field.NewInt64(table, "visit_limit")
+	s.ImageCount = field.NewInt64(table, "image_count")
 	s.Version = field.NewField(table, "version")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
@@ -109,16 +112,17 @@ func (s *scaStorageShare) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaStorageShare) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 13)
+	s.fieldMap = make(map[string]field.Expr, 14)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["album_id"] = s.AlbumID
-	s.fieldMap["share_code"] = s.ShareCode
+	s.fieldMap["invite_code"] = s.InviteCode
 	s.fieldMap["expire_time"] = s.ExpireTime
 	s.fieldMap["validity_period"] = s.ValidityPeriod
 	s.fieldMap["status"] = s.Status
 	s.fieldMap["access_password"] = s.AccessPassword
 	s.fieldMap["visit_limit"] = s.VisitLimit
+	s.fieldMap["image_count"] = s.ImageCount
 	s.fieldMap["version"] = s.Version
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt

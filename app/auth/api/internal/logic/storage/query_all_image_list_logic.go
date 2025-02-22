@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
+	"gorm.io/gen"
 	"math/rand"
 	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
@@ -15,6 +16,7 @@ import (
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
+	"sort"
 	"sync"
 	"time"
 )
@@ -49,7 +51,7 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		return nil, errors.New("user_id not found")
 	}
 	//  缓存获取数据 v1.0.0
-	cacheKey := fmt.Sprintf("%s%s:%s:%s:%t", constant.ImageListPrefix, uid, req.Provider, req.Bucket, req.Sort)
+	cacheKey := fmt.Sprintf("%s%s:%s:%s:%s:%s:%t", constant.ImageCachePrefix, uid, "list", req.Provider, req.Bucket, req.Type, req.Sort)
 	// 尝试从缓存获取
 	cachedResult, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
 	if err == nil {
@@ -63,47 +65,36 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		logx.Error("Redis error:", err)
 		return nil, errors.New("get cached image list failed")
 	}
-
 	// 缓存未命中，从数据库中查询
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
 	storageThumb := l.svcCtx.DB.ScaStorageThumb
-	var storageInfoList []types.FileInfoResult
-	if req.Sort {
-		err = storageInfo.Select(
-			storageInfo.ID,
-			storageInfo.FileName,
-			storageInfo.CreatedAt,
-			storageInfo.Path,
-			storageThumb.ThumbPath,
-			storageThumb.ThumbW,
-			storageThumb.ThumbH,
-			storageThumb.ThumbSize).
-			LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
-			Where(
-				storageInfo.UserID.Eq(uid),
-				storageInfo.Provider.Eq(req.Provider),
-				storageInfo.Bucket.Eq(req.Bucket),
-				storageInfo.Type.Eq(req.Type),
-				storageInfo.AlbumID.IsNull()).
-			Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
-	} else {
-		err = storageInfo.Select(
-			storageInfo.ID,
-			storageInfo.FileName,
-			storageInfo.CreatedAt,
-			storageThumb.ThumbPath,
-			storageInfo.Path,
-			storageThumb.ThumbW,
-			storageThumb.ThumbH,
-			storageThumb.ThumbSize).
-			LeftJoin(storageThumb, storageInfo.ThumbID.EqCol(storageThumb.ID)).
-			Where(
-				storageInfo.UserID.Eq(uid),
-				storageInfo.Provider.Eq(req.Provider),
-				storageInfo.Bucket.Eq(req.Bucket),
-				storageInfo.Type.Eq(req.Type)).
-			Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
+	var queryCondition []gen.Condition
+	conditions := []gen.Condition{
+		storageInfo.UserID.Eq(uid),
+		storageInfo.Provider.Eq(req.Provider),
+		storageInfo.Bucket.Eq(req.Bucket),
+		storageInfo.Type.Neq(constant.ImageTypeShared),
 	}
+	queryCondition = append(queryCondition, conditions...)
+	if req.Type != "all" {
+		queryCondition = append(queryCondition, storageInfo.Type.Eq(req.Type))
+	}
+	if req.Sort {
+		queryCondition = append(queryCondition, storageInfo.AlbumID.Eq(0))
+	}
+	var storageInfoList []types.FileInfoResult
+	err = storageInfo.Select(
+		storageInfo.ID,
+		storageInfo.FileName,
+		storageInfo.CreatedAt,
+		storageThumb.ThumbPath,
+		storageInfo.Path,
+		storageThumb.ThumbW,
+		storageThumb.ThumbH,
+		storageThumb.ThumbSize).
+		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
+		Where(queryCondition...).
+		Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
 	if err != nil {
 		return nil, err
 	}
@@ -171,13 +162,19 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		})
 		return true
 	})
+	// 按日期排序，最新的在最上面
+	sort.Slice(imageList, func(i, j int) bool {
+		dateI, _ := time.Parse("2006年1月2日 星期一", imageList[i].Date)
+		dateJ, _ := time.Parse("2006年1月2日 星期一", imageList[j].Date)
+		return dateI.After(dateJ)
+	})
 	resp = &types.AllImageListResponse{
 		Records: imageList,
 	}
 
 	// 缓存结果
 	if data, err := json.Marshal(resp); err == nil {
-		expireTime := 7*24*time.Hour - time.Duration(rand.Intn(60))*time.Minute
+		expireTime := 5*time.Minute + time.Duration(rand.Intn(300))*time.Second
 		if err := l.svcCtx.RedisClient.Set(l.ctx, cacheKey, data, expireTime).Err(); err != nil {
 			logx.Error("Failed to cache image list:", err)
 		}
