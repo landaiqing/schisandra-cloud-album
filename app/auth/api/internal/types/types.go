@@ -168,6 +168,12 @@ type DeleteRecordListResponse struct {
 	Records []AllImageDetail `json:"records"`
 }
 
+type DownloadAlbumRequest struct {
+	ID       int64  `json:"id"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type FaceDetailListRequest struct {
 	FaceID   int64  `json:"face_id"`
 	Provider string `json:"provider"`
@@ -293,6 +299,11 @@ type QueryShareInfoRequest struct {
 	InviteCode string `json:"invite_code"`
 }
 
+type RecentListRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type RecentListResponse struct {
 	Records []AllImageDetail `json:"records"`
 }
@@ -343,6 +354,15 @@ type RotateCaptchaResponse struct {
 	Key   string `json:"key"`
 	Image string `json:"image"`
 	Thumb string `json:"thumb"`
+}
+
+type ShareAlbumRequest struct {
+	ID             int64  `json:"id"`
+	ExpireDate     string `json:"expire_date"`
+	AccessLimit    int64  `json:"access_limit,omitempty"`
+	AccessPassword string `json:"access_password,omitempty"`
+	Provider       string `json:"provider"`
+	Bucket         string `json:"bucket"`
 }
 
 type ShareImageListMeta struct {

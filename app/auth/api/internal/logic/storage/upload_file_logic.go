@@ -15,7 +15,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"net/url"
 	"path"
 	"path/filepath"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/pb"
@@ -83,7 +82,6 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		faceId        int64
 		filePath      string
 		minioFilePath string
-		presignedURL  string
 	)
 	g, ctx := errgroup.WithContext(context.Background())
 	// 创建信号量，限制最大并发上传数（比如最多同时 5 个任务）
@@ -136,12 +134,11 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		}
 		defer sem.Release(1)
 
-		path, url, err := l.uploadFileToMinio(uid, header, thumbnail, result)
+		path, err := l.uploadFileToMinio(uid, header, thumbnail, result)
 		if err != nil {
 			return err
 		}
 		minioFilePath = path
-		presignedURL = url
 		return nil
 	})
 
@@ -151,13 +148,12 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	}
 
 	fileUploadMessage := &types.FileUploadMessage{
-		UID:          uid,
-		Data:         result,
-		FaceID:       faceId,
-		FileHeader:   header,
-		FilePath:     filePath,
-		PresignedURL: presignedURL,
-		ThumbPath:    minioFilePath,
+		UID:        uid,
+		Data:       result,
+		FaceID:     faceId,
+		FileHeader: header,
+		FilePath:   filePath,
+		ThumbPath:  minioFilePath,
 	}
 	// 转换为 JSON
 	messageData, err := json.Marshal(fileUploadMessage)
@@ -241,7 +237,7 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 	return objectKey, nil
 }
 
-func (l *UploadFileLogic) uploadFileToMinio(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, string, error) {
+func (l *UploadFileLogic) uploadFileToMinio(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, error) {
 	objectKey := path.Join(
 		uid,
 		time.Now().Format("2006/01"), // 按年/月划分目录
@@ -253,7 +249,7 @@ func (l *UploadFileLogic) uploadFileToMinio(uid string, header *multipart.FileHe
 		err = l.svcCtx.MinioClient.MakeBucket(l.ctx, constant.ThumbnailBucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
 		if err != nil {
 			logx.Errorf("Failed to create MinIO bucket: %v", err)
-			return "", "", err
+			return "", err
 		}
 	}
 	// 上传到MinIO
@@ -268,14 +264,14 @@ func (l *UploadFileLogic) uploadFileToMinio(uid string, header *multipart.FileHe
 		},
 	)
 	if err != nil {
-		return "", "", err
+		return "", err
 	}
-	reqParams := make(url.Values)
-	presignedURL, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, objectKey, time.Hour*24*7, reqParams)
-	if err != nil {
-		return "", "", err
-	}
-	return objectKey, presignedURL.String(), nil
+	//reqParams := make(url.Values)
+	//presignedURL, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, objectKey, time.Hour*24*7, reqParams)
+	//if err != nil {
+	//	return "", "", err
+	//}
+	return objectKey, nil
 }
 
 // 提取解密操作为函数

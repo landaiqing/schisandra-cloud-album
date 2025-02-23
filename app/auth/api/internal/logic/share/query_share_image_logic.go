@@ -140,6 +140,18 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 		return nil, err
 	}
 
+	// 加载用户oss配置信息
+	cacheOssConfigKey := constant.UserOssConfigPrefix + storageShare.UserID + ":" + storageShare.Provider
+	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, storageShare.UserID, storageShare.Provider)
+	if err != nil {
+		return nil, err
+	}
+
+	service, err := l.svcCtx.StorageManager.GetStorage(storageShare.UserID, ossConfig)
+	if err != nil {
+		return nil, errors.New("get storage failed")
+	}
+
 	// 使用 errgroup 和 semaphore 并发处理图片信息
 	var ResultList []types.ShareImageListMeta
 	g, ctx := errgroup.WithContext(l.ctx)
@@ -152,17 +164,6 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 		}
 		g.Go(func() error {
 			defer sem.Release(1)
-			// 加载用户oss配置信息
-			cacheOssConfigKey := constant.UserOssConfigPrefix + storageShare.UserID + ":" + imgInfo.Provider
-			ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, storageShare.UserID, imgInfo.Provider)
-			if err != nil {
-				return err
-			}
-
-			service, err := l.svcCtx.StorageManager.GetStorage(storageShare.UserID, ossConfig)
-			if err != nil {
-				return errors.New("get storage failed")
-			}
 			ossURL, err := service.PresignedURL(ctx, ossConfig.BucketName, imgInfo.Path, 30*time.Minute)
 			if err != nil {
 				return errors.New("get presigned url failed")

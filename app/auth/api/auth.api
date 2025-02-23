@@ -403,8 +403,8 @@ type (
 )
 
 @server (
-	group:      upscale // 微服务分组
-	prefix:     /api/auth/upscale // 微服务前缀
+	group:      phone // 微服务分组
+	prefix:     /api/auth/phone // 微服务前缀
 	timeout:    10s // 超时时间
 	maxBytes:   10485760 // 最大请求大小
 	signature:  false // 是否开启签名验证
@@ -414,7 +414,7 @@ type (
 )
 service auth {
 	@handler uploadImage
-	post /phone/upload (UploadRequest)
+	post /upload (UploadRequest)
 }
 
 // 文件上传配置请求参数
@@ -529,6 +529,10 @@ type (
 	AllImageListResponse {
 		records []AllImageDetail `json:"records"`
 	}
+	RecentListRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
 	// 最近上传图片列表请求参数
 	RecentListResponse {
 		records []AllImageDetail `json:"records"`
@@ -626,6 +630,19 @@ type (
 		Used       string  `json:"used"`
 		Percentage float64 `json:"percentage"`
 	}
+	ShareAlbumRequest {
+		ID             int64  `json:"id"`
+		ExpireDate     string `json:"expire_date"`
+		AccessLimit    int64  `json:"access_limit,omitempty"`
+		AccessPassword string `json:"access_password,omitempty"`
+		Provider       string `json:"provider"`
+		Bucket         string `json:"bucket"`
+	}
+	DownloadAlbumRequest {
+		ID       int64  `json:"id"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
 )
 
 // 文件上传
@@ -691,7 +708,7 @@ service auth {
 
 	// 获取最近上传图片列表
 	@handler queryRecentImageList
-	post /image/recent/list returns (RecentListResponse)
+	post /image/recent/list (RecentListRequest) returns (RecentListResponse)
 
 	// 获取地点相册列表
 	@handler queryLocationImageList
@@ -728,6 +745,14 @@ service auth {
 	// 获取存储桶的容量信息
 	@handler getBucketCapacity
 	post /bucket/capacity (BucketCapacityRequest) returns (BucketCapacityResponse)
+
+	// 分享相册
+	@handler shareAlbum
+	post /album/share (ShareAlbumRequest) returns (string)
+
+	// 下载相册
+	@handler downloadAlbum
+	post /album/download (DownloadAlbumRequest) returns (string)
 }
 
 type (

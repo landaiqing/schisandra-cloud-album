@@ -101,6 +101,8 @@ func (l *UploadShareImageLogic) UploadShareImage(req *types.ShareImageRequest) (
 		ValidityPeriod: int64(duration),
 		ExpireTime:     expiryTime,
 		ImageCount:     int64(len(req.Images)),
+		Provider:       req.Provider,
+		Bucket:         req.Bucket,
 	}
 	err = tx.ScaStorageShare.Create(&storageShare)
 	if err != nil {

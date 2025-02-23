@@ -19,7 +19,6 @@ import (
 	"schisandra-album-cloud-microservices/common/nsqx"
 	"schisandra-album-cloud-microservices/common/storage/config"
 	"strconv"
-	"time"
 )
 
 type NsqImageProcessConsumer struct {
@@ -61,7 +60,7 @@ func (c *NsqImageProcessConsumer) HandleMessage(msg *nsq.Message) error {
 	}
 
 	// 将文件信息存入数据库
-	storageId, err := c.saveFileInfoToDB(message.UID, message.Data.Bucket, message.Data.Provider, message.FileHeader, message.Data, message.FaceID, message.FilePath, locationId)
+	storageId, err := c.saveFileInfoToDB(message.UID, message.Data.Bucket, message.Data.Provider, message.FileHeader, message.Data, message.FaceID, message.FilePath, locationId, message.Data.AlbumId)
 	if err != nil {
 		return err
 	}
@@ -75,10 +74,10 @@ func (c *NsqImageProcessConsumer) HandleMessage(msg *nsq.Message) error {
 	c.afterImageUpload(message.UID)
 
 	// redis 保存最近7天上传的文件列表
-	err = c.saveRecentFileList(message.UID, message.PresignedURL, storageId, message.Data, message.FileHeader.Filename)
-	if err != nil {
-		return err
-	}
+	//err = c.saveRecentFileList(message.UID, message.Thumbnail, message.URL, storageId, message.Data, message.FileHeader.Filename)
+	//if err != nil {
+	//	return err
+	//}
 
 	return nil
 }
@@ -167,30 +166,31 @@ func (c *NsqImageProcessConsumer) classifyFile(mimeType string, isScreenshot boo
 	return "unknown"
 }
 
-// 保存最近7天上传的文件列表
-func (c *NsqImageProcessConsumer) saveRecentFileList(uid, url string, id int64, result types.File, filename string) error {
-
-	redisKey := constant.ImageRecentPrefix + uid + ":" + strconv.FormatInt(id, 10)
-	imageMeta := types.ImageMeta{
-		ID:        id,
-		URL:       url,
-		FileName:  filename,
-		Width:     result.Width,
-		Height:    result.Height,
-		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
-	}
-	marshal, err := json.Marshal(imageMeta)
-	if err != nil {
-		logx.Error(err)
-		return errors.New("marshal image meta failed")
-	}
-	err = c.svcCtx.RedisClient.Set(c.ctx, redisKey, marshal, time.Hour*24*7).Err()
-	if err != nil {
-		logx.Error(err)
-		return errors.New("save recent file list failed")
-	}
-	return nil
-}
+//// 保存最近7天上传的文件列表
+//func (c *NsqImageProcessConsumer) saveRecentFileList(uid, thumbnail, url string, id int64, result types.File, filename string) error {
+//
+//	redisKey := constant.ImageRecentPrefix + uid + ":" + strconv.FormatInt(id, 10)
+//	imageMeta := types.ImageMeta{
+//		ID:        id,
+//		URL:       url,
+//		FileName:  filename,
+//		Width:     result.ThumbW,
+//		Height:    result.ThumbH,
+//		Thumbnail: thumbnail,
+//		CreatedAt: time.Now().Format("2006-01-02 15:04:05"),
+//	}
+//	marshal, err := json.Marshal(imageMeta)
+//	if err != nil {
+//		logx.Error(err)
+//		return errors.New("marshal image meta failed")
+//	}
+//	err = c.svcCtx.RedisClient.Set(c.ctx, redisKey, marshal, time.Hour*24*7).Err()
+//	if err != nil {
+//		logx.Error(err)
+//		return errors.New("save recent file list failed")
+//	}
+//	return nil
+//}
 
 // 提取解密操作为函数
 func (c *NsqImageProcessConsumer) decryptConfig(dbConfig *model.ScaStorageConfig) (*config.StorageConfig, error) {
@@ -259,7 +259,7 @@ func (c *NsqImageProcessConsumer) saveFileThumbnailInfoToDB(uid string, filePath
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, faceId int64, filePath string, locationID int64) (int64, error) {
+func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, faceId int64, filePath string, locationID, albumId int64) (int64, error) {
 	tx := c.svcCtx.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -281,6 +281,7 @@ func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string,
 		Width:      result.Width,
 		Height:     result.Height,
 		LocationID: locationID,
+		AlbumID:    albumId,
 	}
 	err := tx.ScaStorageInfo.Create(scaStorageInfo)
 	if err != nil {

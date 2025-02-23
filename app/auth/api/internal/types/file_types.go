@@ -22,17 +22,19 @@ type File struct {
 	ThumbW       float64 `json:"thumb_w"`
 	ThumbH       float64 `json:"thumb_h"`
 	ThumbSize    float64 `json:"thumb_size"`
+	AlbumId      int64   `json:"albumId"`
 }
 
 // FileUploadMessage represents a message sent to the user after a file upload.
 type FileUploadMessage struct {
-	FaceID       int64                 `json:"face_id"`
-	FileHeader   *multipart.FileHeader `json:"fileHeader"`
-	Data         File                  `json:"data"`
-	UID          string                `json:"uid"`
-	FilePath     string                `json:"filePath"`
-	PresignedURL string                `json:"presignedURL"`
-	ThumbPath    string                `json:"thumbPath"`
+	FaceID     int64                 `json:"face_id"`
+	FileHeader *multipart.FileHeader `json:"fileHeader"`
+	Data       File                  `json:"data"`
+	UID        string                `json:"uid"`
+	FilePath   string                `json:"filePath"`
+	URL        string                `json:"url"`
+	ThumbPath  string                `json:"thumbPath"`
+	Thumbnail  string                `json:"thumbnail"`
 }
 
 type FileInfoResult struct {

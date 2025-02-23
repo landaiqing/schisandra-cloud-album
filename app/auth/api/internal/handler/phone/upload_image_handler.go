@@ -1,12 +1,12 @@
-package upscale
+package phone
 
 import (
-	"github.com/zeromicro/go-zero/rest/httpx"
 	"net/http"
-	"schisandra-album-cloud-microservices/app/auth/api/internal/logic/upscale"
+
+	"github.com/zeromicro/go-zero/rest/httpx"
+	"schisandra-album-cloud-microservices/app/auth/api/internal/logic/phone"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
-
 	"schisandra-album-cloud-microservices/common/xhttp"
 )
 
@@ -18,7 +18,7 @@ func UploadImageHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			return
 		}
 
-		l := upscale.NewUploadImageLogic(r.Context(), svcCtx)
+		l := phone.NewUploadImageLogic(r.Context(), svcCtx)
 		err := l.UploadImage(r, &req)
 		xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 	}

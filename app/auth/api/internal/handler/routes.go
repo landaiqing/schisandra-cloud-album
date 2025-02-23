@@ -11,11 +11,11 @@ import (
 	client "schisandra-album-cloud-microservices/app/auth/api/internal/handler/client"
 	comment "schisandra-album-cloud-microservices/app/auth/api/internal/handler/comment"
 	oauth "schisandra-album-cloud-microservices/app/auth/api/internal/handler/oauth"
+	phone "schisandra-album-cloud-microservices/app/auth/api/internal/handler/phone"
 	share "schisandra-album-cloud-microservices/app/auth/api/internal/handler/share"
 	sms "schisandra-album-cloud-microservices/app/auth/api/internal/handler/sms"
 	storage "schisandra-album-cloud-microservices/app/auth/api/internal/handler/storage"
 	token "schisandra-album-cloud-microservices/app/auth/api/internal/handler/token"
-	upscale "schisandra-album-cloud-microservices/app/auth/api/internal/handler/upscale"
 	user "schisandra-album-cloud-microservices/app/auth/api/internal/handler/user"
 	websocket "schisandra-album-cloud-microservices/app/auth/api/internal/handler/websocket"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
@@ -161,6 +161,22 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/upload",
+					Handler: phone.UploadImageHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithPrefix("/api/auth/phone"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(10485760),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
@@ -243,6 +259,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/album/download",
+					Handler: storage.DownloadAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/album/list",
 					Handler: storage.GetAlbumListHandler(serverCtx),
 				},
@@ -250,6 +271,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/album/rename",
 					Handler: storage.RenameAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/album/share",
+					Handler: storage.ShareAlbumHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -359,22 +385,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithPrefix("/api/auth"),
 		rest.WithTimeout(10000*time.Millisecond),
 		rest.WithMaxBytes(1048576),
-	)
-
-	server.AddRoutes(
-		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
-			[]rest.Route{
-				{
-					Method:  http.MethodPost,
-					Path:    "/phone/upload",
-					Handler: upscale.UploadImageHandler(serverCtx),
-				},
-			}...,
-		),
-		rest.WithPrefix("/api/auth/upscale"),
-		rest.WithTimeout(10000*time.Millisecond),
-		rest.WithMaxBytes(10485760),
 	)
 
 	server.AddRoutes(

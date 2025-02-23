@@ -29,16 +29,31 @@ func (l *DeleteAlbumLogic) DeleteAlbum(req *types.AlbumDeleteRequest) (resp stri
 	if !ok {
 		return "", errors.New("user_id not found")
 	}
-	info, err := l.svcCtx.DB.ScaStorageAlbum.Where(l.svcCtx.DB.ScaStorageAlbum.ID.Eq(req.ID), l.svcCtx.DB.ScaStorageAlbum.UserID.Eq(uid)).Delete()
+	tx := l.svcCtx.DB.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	info, err := tx.ScaStorageAlbum.Where(tx.ScaStorageAlbum.ID.Eq(req.ID), tx.ScaStorageAlbum.UserID.Eq(uid)).Delete()
 	if err != nil {
+		tx.Rollback()
 		return "", err
 	}
 	if info.RowsAffected == 0 {
+		tx.Rollback()
 		return "", errors.New("album not found")
 	}
-	storageInfo := l.svcCtx.DB.ScaStorageInfo
-	_, err = storageInfo.Where(storageInfo.AlbumID.Eq(req.ID), storageInfo.UserID.Eq(uid)).Update(storageInfo.AlbumID, 0)
+	storageInfo := tx.ScaStorageInfo
+	_, err = storageInfo.Where(storageInfo.AlbumID.Eq(req.ID), storageInfo.UserID.Eq(uid)).Delete()
 	if err != nil {
+		tx.Rollback()
+		return "", err
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
 		return "", err
 	}
 	return "success", nil

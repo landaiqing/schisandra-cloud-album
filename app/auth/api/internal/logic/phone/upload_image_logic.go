@@ -1,17 +1,16 @@
-package upscale
+package phone
 
 import (
 	"context"
 	"encoding/json"
 	"net/http"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/logic/websocket"
-	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
-	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
-
-	"schisandra-album-cloud-microservices/common/xhttp"
-
 	"schisandra-album-cloud-microservices/common/errors"
 	"schisandra-album-cloud-microservices/common/jwt"
+	"schisandra-album-cloud-microservices/common/xhttp"
+
+	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
+	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -30,7 +29,7 @@ func NewUploadImageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Uploa
 	}
 }
 
-func (l *UploadImageLogic) UploadImage(r *http.Request, req *types.UploadRequest) (err error) {
+func (l *UploadImageLogic) UploadImage(r *http.Request, req *types.UploadRequest) error {
 	token, ok := jwt.ParseAccessToken(l.svcCtx.Config.Auth.AccessSecret, req.AccessToken)
 	if !ok {
 		return errors.New(http.StatusForbidden, "invalid access token")

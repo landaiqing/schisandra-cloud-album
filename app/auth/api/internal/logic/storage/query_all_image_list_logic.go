@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/sync/errgroup"
+	"golang.org/x/sync/semaphore"
 	"gorm.io/gen"
 	"math/rand"
 	"net/url"
@@ -59,8 +61,11 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		if err := json.Unmarshal([]byte(cachedResult), &cachedResponse); err == nil {
 			return &cachedResponse, nil
 		}
-		logx.Error("Failed to unmarshal cached image list:", err)
-		return nil, errors.New("get cached image list failed")
+		logx.Error("Failed to unmarshal cached image list, deleting invalid cache:", err)
+		// 删除无效缓存
+		if err := l.svcCtx.RedisClient.Del(l.ctx, cacheKey).Err(); err != nil {
+			logx.Error("Failed to delete invalid cache:", err)
+		}
 	} else if !errors.Is(err, redis.Nil) {
 		logx.Error("Redis error:", err)
 		return nil, errors.New("get cached image list failed")
@@ -115,25 +120,30 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 	}
 
 	// 按日期进行分组
-	var wg sync.WaitGroup
+	g, ctx := errgroup.WithContext(l.ctx)
+	sem := semaphore.NewWeighted(10) // 限制并发数为 10
 	groupedImages := sync.Map{}
 
 	for _, dbFileInfo := range storageInfoList {
-		wg.Add(1)
-		go func(dbFileInfo *types.FileInfoResult) {
-			defer wg.Done()
+		dbFileInfo := dbFileInfo // 创建局部变量以避免闭包问题
+		if err := sem.Acquire(ctx, 1); err != nil {
+			logx.Error("Failed to acquire semaphore:", err)
+			continue
+		}
+		g.Go(func() error {
+			defer sem.Release(1)
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
 			reqParams := make(url.Values)
 			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, time.Hour*24*7, reqParams)
 			if err != nil {
 				logx.Error(err)
-				return
+				return err
 			}
 			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
 			if err != nil {
 				logx.Error(err)
-				return
+				return err
 			}
 			// 使用 Load 或 Store 确保原子操作
 			value, _ := groupedImages.LoadOrStore(date, []types.ImageMeta{})
@@ -151,9 +161,13 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 
 			// 重新存储更新后的图像列表
 			groupedImages.Store(date, images)
-		}(&dbFileInfo)
+			return nil
+		})
 	}
-	wg.Wait()
+	// 等待所有 goroutine 完成
+	if err = g.Wait(); err != nil {
+		return nil, err
+	}
 	var imageList []types.AllImageDetail
 	groupedImages.Range(func(key, value interface{}) bool {
 		imageList = append(imageList, types.AllImageDetail{
@@ -162,11 +176,13 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		})
 		return true
 	})
-	// 按日期排序，最新的在最上面
 	sort.Slice(imageList, func(i, j int) bool {
-		dateI, _ := time.Parse("2006年1月2日 星期一", imageList[i].Date)
-		dateJ, _ := time.Parse("2006年1月2日 星期一", imageList[j].Date)
-		return dateI.After(dateJ)
+		if len(imageList[i].List) == 0 || len(imageList[j].List) == 0 {
+			return false // 空列表不参与排序
+		}
+		createdAtI, _ := time.Parse("2006-01-02 15:04:05", imageList[i].List[0].CreatedAt)
+		createdAtJ, _ := time.Parse("2006-01-02 15:04:05", imageList[j].List[0].CreatedAt)
+		return createdAtI.After(createdAtJ) // 降序排序
 	})
 	resp = &types.AllImageListResponse{
 		Records: imageList,

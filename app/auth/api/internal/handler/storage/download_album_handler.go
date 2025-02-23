@@ -10,16 +10,16 @@ import (
 	"schisandra-album-cloud-microservices/common/xhttp"
 )
 
-func QueryRecentImageListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func DownloadAlbumHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.RecentListRequest
+		var req types.DownloadAlbumRequest
 		if err := httpx.Parse(r, &req); err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 			return
 		}
 
-		l := storage.NewQueryRecentImageListLogic(r.Context(), svcCtx)
-		resp, err := l.QueryRecentImageList(&req)
+		l := storage.NewDownloadAlbumLogic(r.Context(), svcCtx)
+		resp, err := l.DownloadAlbum(&req)
 		if err != nil {
 			xhttp.JsonBaseResponseCtx(r.Context(), w, err)
 		} else {
