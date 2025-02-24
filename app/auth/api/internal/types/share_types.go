@@ -14,3 +14,10 @@ type ShareFileInfoResult struct {
 	Provider  string    `json:"provider"`
 	Bucket    string    `json:"bucket"`
 }
+
+type SharePhoneUploadResult struct {
+	OriginFileObj string `json:"origin_file_obj"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Size          int64  `json:"size"`
+}

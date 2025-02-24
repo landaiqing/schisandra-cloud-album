@@ -168,6 +168,12 @@ type DeleteRecordListResponse struct {
 	Records []AllImageDetail `json:"records"`
 }
 
+type DeleteShareRecordRequest struct {
+	ID         int64  `json:"id"`
+	InviteCode string `json:"invite_code"`
+	AlbumID    int64  `json:"album_id"`
+}
+
 type DownloadAlbumRequest struct {
 	ID       int64  `json:"id"`
 	Provider string `json:"provider"`
@@ -419,6 +425,15 @@ type ShareOverviewResponse struct {
 	PublishCountToday int64 `json:"publish_count_today"`
 }
 
+type SharePhoneUploadRequest struct {
+	OriginFileObj string `json:"origin_file_obj"`
+	Name          string `json:"name"`
+	Type          string `json:"type"`
+	Size          int64  `json:"size"`
+	AccessToken   string `json:"access_token"`
+	UserId        string `json:"user_id"`
+}
+
 type ShareRecord struct {
 	ID             int64  `json:"id"`
 	CoverImage     string `json:"cover_image"`
@@ -427,6 +442,7 @@ type ShareRecord struct {
 	VisitLimit     int64  `json:"visit_limit"`
 	AccessPassword string `json:"access_password"`
 	ValidityPeriod int64  `json:"validity_period"`
+	AlbumID        int64  `json:"album_id"`
 }
 
 type ShareRecordListRequest struct {

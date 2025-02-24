@@ -400,6 +400,14 @@ type (
 		AccessToken string `json:"access_token"`
 		userId      string `json:"user_id"`
 	}
+	SharePhoneUploadRequest {
+		OriginFileObj string `json:"origin_file_obj"`
+		Name          string `json:"name"`
+		Type          string `json:"type"`
+		Size          int64  `json:"size"`
+		AccessToken   string `json:"access_token"`
+		userId        string `json:"user_id"`
+	}
 )
 
 @server (
@@ -415,6 +423,9 @@ type (
 service auth {
 	@handler uploadImage
 	post /upload (UploadRequest)
+
+	@handler sharePhoneUpload
+	post /share/upload (SharePhoneUploadRequest)
 }
 
 // 文件上传配置请求参数
@@ -803,6 +814,7 @@ type (
 		VisitLimit     int64  `json:"visit_limit"`
 		AccessPassword string `json:"access_password"`
 		ValidityPeriod int64  `json:"validity_period"`
+		AlbumID        int64  `json:"album_id"`
 	}
 	ShareRecordListResponse {
 		records []ShareRecord `json:"records"`
@@ -831,6 +843,12 @@ type (
 		ViewerCountToday  int64 `json:"viewer_count_today"`
 		PublishCount      int64 `json:"publish_count"`
 		PublishCountToday int64 `json:"publish_count_today"`
+	}
+	// 删除分享记录请求参数
+	DeleteShareRecordRequest {
+		ID         int64  `json:"id"`
+		InviteCode string `json:"invite_code"`
+		AlbumID    int64  `json:"album_id"`
 	}
 )
 
@@ -865,5 +883,9 @@ service auth {
 	// 查询浏览数据概览
 	@handler queryShareOverview
 	post /overview returns (ShareOverviewResponse)
+
+	// 删除分享记录
+	@handler deleteShareRecord
+	post /record/delete (DeleteShareRecordRequest) returns (string)
 }
 

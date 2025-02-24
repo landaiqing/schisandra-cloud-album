@@ -79,6 +79,7 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 		storageInfo.Provider.Eq(req.Provider),
 		storageInfo.Bucket.Eq(req.Bucket),
 		storageInfo.Type.Neq(constant.ImageTypeShared),
+		storageInfo.IsDisplayed.Eq(0),
 	}
 	queryCondition = append(queryCondition, conditions...)
 	if req.Type != "all" {

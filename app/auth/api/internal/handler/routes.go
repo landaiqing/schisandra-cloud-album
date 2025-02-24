@@ -165,6 +165,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/share/upload",
+					Handler: phone.SharePhoneUploadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/upload",
 					Handler: phone.UploadImageHandler(serverCtx),
 				},
@@ -193,6 +198,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/overview",
 					Handler: share.QueryShareOverviewHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/record/delete",
+					Handler: share.DeleteShareRecordHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

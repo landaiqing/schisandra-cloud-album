@@ -39,6 +39,7 @@ func (l *ListShareRecordLogic) ListShareRecord(req *types.ShareRecordListRequest
 			storageShare.VisitLimit,
 			storageShare.AccessPassword,
 			storageShare.ValidityPeriod,
+			storageShare.AlbumID,
 			storageShare.CreatedAt,
 			storageAlbum.CoverImage).
 		LeftJoin(storageAlbum, storageShare.AlbumID.EqCol(storageAlbum.ID)).
