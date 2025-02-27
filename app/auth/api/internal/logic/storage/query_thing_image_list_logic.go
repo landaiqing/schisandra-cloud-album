@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"github.com/redis/go-redis/v9"
-	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
@@ -65,16 +64,16 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 	}
 
 	// 加载用户oss配置信息
-	//cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
-	//ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
-	//if err != nil {
-	//	return nil, errors.New("get storage failed")
-	//}
+	cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
+	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
+	if err != nil {
+		return nil, err
+	}
+
+	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	if err != nil {
+		return nil, errors.New("get storage failed")
+	}
 
 	categoryMap := sync.Map{}
 	tagCountMap := sync.Map{}
@@ -97,11 +96,12 @@ func (l *QueryThingImageListLogic) QueryThingImageList(req *types.ThingListReque
 		// 为每个 Tag 存储封面图片路径
 		if _, exists := tagCoverMap.Load(tagKey); !exists {
 			// 使用服务生成预签名 URL
-			reqParams := make(url.Values)
-			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, info.ThumbPath, time.Hour*24*7, reqParams)
-			if err == nil {
-				tagCoverMap.Store(tagKey, presignedUrl.String())
+			thumbnailUrl, err := service.PresignedURL(l.ctx, ossConfig.BucketName, info.ThumbPath, time.Minute*30)
+			if err != nil {
+				logx.Error(err)
+				return nil, errors.New("get presigned url failed")
 			}
+			tagCoverMap.Store(tagKey, thumbnailUrl)
 		}
 	}
 

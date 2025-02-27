@@ -437,6 +437,7 @@ type (
 		Endpoint  string `json:"endpoint"`
 		Bucket    string `json:"bucket"`
 		Region    string `json:"region"`
+		Capacity  int64  `json:"capacity"`
 	}
 	FaceSampleLibrary {
 		ID        int64  `json:"id"`
@@ -497,6 +498,7 @@ type (
 		ID       int64  `json:"id"`
 		Provider string `json:"provider"`
 		Bucket   string `json:"bucket"`
+		Type     int64  `json:"type"`
 	}
 	// 相册详情响应参数
 	AlbumDetailListResponse {
@@ -781,26 +783,14 @@ type (
 		ExpireDate     string           `json:"expire_date"`
 		AccessLimit    int64            `json:"access_limit,omitempty"`
 		AccessPassword string           `json:"access_password,omitempty"`
-		Provider       string           `json:"provider"`
-		Bucket         string           `json:"bucket"`
 		Images         []ShareImageMeta `json:"images"`
 	}
 	QueryShareImageRequest {
 		InviteCode     string `json:"invite_code"`
 		AccessPassword string `json:"access_password,omitempty"`
 	}
-	ShareImageListMeta {
-		ID        int64   `json:"id"`
-		FileName  string  `json:"file_name"`
-		URL       string  `json:"url"`
-		Thumbnail string  `json:"thumbnail"`
-		Width     float64 `json:"width"`
-		Height    float64 `json:"height"`
-		ThumbSize float64 `json:"thumb_size"`
-		CreatedAt string  `json:"created_at"`
-	}
 	QueryShareImageResponse {
-		Records []ShareImageListMeta `json:"records"`
+		Records []AllImageDetail `json:"records"`
 	}
 	ShareRecordListRequest {
 		DateRange []string `json:"date_range"`

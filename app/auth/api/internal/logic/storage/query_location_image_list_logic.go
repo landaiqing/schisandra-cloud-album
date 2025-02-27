@@ -2,12 +2,16 @@ package storage
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
-	"net/url"
+	"github.com/redis/go-redis/v9"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
+	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
+	"schisandra-album-cloud-microservices/common/encrypt"
+	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
 	"time"
 
 	"github.com/zeromicro/go-zero/core/logx"
@@ -54,6 +58,18 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 		return nil, err
 	}
 
+	// 加载用户oss配置信息
+	cacheOssConfigKey := constant.UserOssConfigPrefix + uid + ":" + req.Provider
+	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, uid, req.Provider)
+	if err != nil {
+		return nil, err
+	}
+
+	service, err := l.svcCtx.StorageManager.GetStorage(uid, ossConfig)
+	if err != nil {
+		return nil, errors.New("get storage failed")
+	}
+
 	locationMap := make(map[string][]types.LocationMeta)
 
 	for _, loc := range locations {
@@ -68,16 +84,16 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 		if city == "" {
 			city = loc.Country
 		}
-		reqParams := make(url.Values)
-		presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, loc.CoverImage, 15*time.Minute, reqParams)
+		thumbnailUrl, err := service.PresignedURL(l.ctx, ossConfig.BucketName, loc.CoverImage, time.Minute*30)
 		if err != nil {
-			return nil, errors.New("get presigned url failed")
+			logx.Error(err)
+			return nil, err
 		}
 		locationMeta := types.LocationMeta{
 			ID:         loc.ID,
 			City:       city,
 			Total:      loc.Total,
-			CoverImage: presignedUrl.String(),
+			CoverImage: thumbnailUrl,
 		}
 		locationMap[locationKey] = append(locationMap[locationKey], locationMeta)
 	}
@@ -92,4 +108,64 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 	}
 
 	return &types.LocationListResponse{Records: locationListData}, nil
+}
+
+// 提取解密操作为函数
+func (l *QueryLocationImageListLogic) decryptConfig(config *model.ScaStorageConfig) (*storageConfig.StorageConfig, error) {
+	accessKey, err := encrypt.Decrypt(config.AccessKey, l.svcCtx.Config.Encrypt.Key)
+	if err != nil {
+		return nil, errors.New("decrypt access key failed")
+	}
+	secretKey, err := encrypt.Decrypt(config.SecretKey, l.svcCtx.Config.Encrypt.Key)
+	if err != nil {
+		return nil, errors.New("decrypt secret key failed")
+	}
+	return &storageConfig.StorageConfig{
+		Provider:   config.Provider,
+		Endpoint:   config.Endpoint,
+		AccessKey:  accessKey,
+		SecretKey:  secretKey,
+		BucketName: config.Bucket,
+		Region:     config.Region,
+	}, nil
+}
+
+// 从缓存或数据库中获取 OSS 配置
+func (l *QueryLocationImageListLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider string) (*storageConfig.StorageConfig, error) {
+	result, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
+	if err != nil && !errors.Is(err, redis.Nil) {
+		return nil, errors.New("get oss config failed")
+	}
+
+	var ossConfig *storageConfig.StorageConfig
+	if result != "" {
+		var redisOssConfig model.ScaStorageConfig
+		if err = json.Unmarshal([]byte(result), &redisOssConfig); err != nil {
+			return nil, errors.New("unmarshal oss config failed")
+		}
+		return l.decryptConfig(&redisOssConfig)
+	}
+
+	// 缓存未命中，从数据库中加载
+	scaOssConfig := l.svcCtx.DB.ScaStorageConfig
+	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Provider.Eq(provider)).First()
+	if err != nil {
+		return nil, err
+	}
+
+	// 缓存数据库配置
+	ossConfig, err = l.decryptConfig(dbOssConfig)
+	if err != nil {
+		return nil, err
+	}
+	marshalData, err := json.Marshal(dbOssConfig)
+	if err != nil {
+		return nil, errors.New("marshal oss config failed")
+	}
+	err = l.svcCtx.RedisClient.Set(l.ctx, cacheKey, marshalData, 0).Err()
+	if err != nil {
+		return nil, errors.New("set oss config failed")
+	}
+
+	return ossConfig, nil
 }

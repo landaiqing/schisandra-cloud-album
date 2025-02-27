@@ -35,6 +35,7 @@ type AlbumDetailListRequest struct {
 	ID       int64  `json:"id"`
 	Provider string `json:"provider"`
 	Bucket   string `json:"bucket"`
+	Type     int64  `json:"type"`
 }
 
 type AlbumDetailListResponse struct {
@@ -298,7 +299,7 @@ type QueryShareImageRequest struct {
 }
 
 type QueryShareImageResponse struct {
-	Records []ShareImageListMeta `json:"records"`
+	Records []AllImageDetail `json:"records"`
 }
 
 type QueryShareInfoRequest struct {
@@ -371,17 +372,6 @@ type ShareAlbumRequest struct {
 	Bucket         string `json:"bucket"`
 }
 
-type ShareImageListMeta struct {
-	ID        int64   `json:"id"`
-	FileName  string  `json:"file_name"`
-	URL       string  `json:"url"`
-	Thumbnail string  `json:"thumbnail"`
-	Width     float64 `json:"width"`
-	Height    float64 `json:"height"`
-	ThumbSize float64 `json:"thumb_size"`
-	CreatedAt string  `json:"created_at"`
-}
-
 type ShareImageMeta struct {
 	FileName    string  `json:"file_name"`
 	OriginImage string  `json:"origin_image"`
@@ -397,8 +387,6 @@ type ShareImageRequest struct {
 	ExpireDate     string           `json:"expire_date"`
 	AccessLimit    int64            `json:"access_limit,omitempty"`
 	AccessPassword string           `json:"access_password,omitempty"`
-	Provider       string           `json:"provider"`
-	Bucket         string           `json:"bucket"`
 	Images         []ShareImageMeta `json:"images"`
 }
 
@@ -480,6 +468,7 @@ type StorageConfigRequest struct {
 	Endpoint  string `json:"endpoint"`
 	Bucket    string `json:"bucket"`
 	Region    string `json:"region"`
+	Capacity  int64  `json:"capacity"`
 }
 
 type StorageListResponse struct {

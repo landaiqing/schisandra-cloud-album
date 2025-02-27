@@ -1,5 +1,5 @@
 # to build this docker image:
-#   docker build -f auth.Dockerfile -t schisandra-auth-server .
+#   docker build -f auth.Dockerfile -t landaiqing/schisandra-auth-server:v1.0.0 .
 
 FROM golang:1.23.5-bullseye AS builder
 
@@ -29,17 +29,19 @@ ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
-    apk add --no-cache tzdata libjpeg-turbo
+    apk add --no-cache tzdata libjpeg-turbo && \
+    mkdir -p /app/api/etc
 
 WORKDIR /app
 
 COPY --from=builder /app/schisandra-auth-server .
-
-COPY --from=builder /app/app/auth/api/etc ./api/etc
 
 COPY --from=builder /app/app/auth/resources ./resources
 
 EXPOSE 80
 
 CMD ["./schisandra-auth-server"]
+
+
+# To run this docker image:
+#   docker run -p 80:80 -v /home/schisandra/backed/auth/etc:/app/api/etc --name schisandra-auth-server --restart=always landaiqing/schisandra-auth-server:v1.0.0

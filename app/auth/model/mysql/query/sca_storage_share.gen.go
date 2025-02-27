@@ -30,8 +30,6 @@ func newScaStorageShare(db *gorm.DB, opts ...gen.DOOption) scaStorageShare {
 	_scaStorageShare.ID = field.NewInt64(tableName, "id")
 	_scaStorageShare.UserID = field.NewString(tableName, "user_id")
 	_scaStorageShare.AlbumID = field.NewInt64(tableName, "album_id")
-	_scaStorageShare.Provider = field.NewString(tableName, "provider")
-	_scaStorageShare.Bucket = field.NewString(tableName, "bucket")
 	_scaStorageShare.InviteCode = field.NewString(tableName, "invite_code")
 	_scaStorageShare.ExpireTime = field.NewTime(tableName, "expire_time")
 	_scaStorageShare.ValidityPeriod = field.NewInt64(tableName, "validity_period")
@@ -57,8 +55,6 @@ type scaStorageShare struct {
 	ID             field.Int64  // 主键
 	UserID         field.String // 用户ID
 	AlbumID        field.Int64  // 相册ID
-	Provider       field.String // 存储商
-	Bucket         field.String // 存储桶
 	InviteCode     field.String // 邀请码（用于访问分享链接）
 	ExpireTime     field.Time   // 过期时间
 	ValidityPeriod field.Int64  // 有效期
@@ -89,8 +85,6 @@ func (s *scaStorageShare) updateTableName(table string) *scaStorageShare {
 	s.ID = field.NewInt64(table, "id")
 	s.UserID = field.NewString(table, "user_id")
 	s.AlbumID = field.NewInt64(table, "album_id")
-	s.Provider = field.NewString(table, "provider")
-	s.Bucket = field.NewString(table, "bucket")
 	s.InviteCode = field.NewString(table, "invite_code")
 	s.ExpireTime = field.NewTime(table, "expire_time")
 	s.ValidityPeriod = field.NewInt64(table, "validity_period")
@@ -118,12 +112,10 @@ func (s *scaStorageShare) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaStorageShare) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 16)
+	s.fieldMap = make(map[string]field.Expr, 14)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["album_id"] = s.AlbumID
-	s.fieldMap["provider"] = s.Provider
-	s.fieldMap["bucket"] = s.Bucket
 	s.fieldMap["invite_code"] = s.InviteCode
 	s.fieldMap["expire_time"] = s.ExpireTime
 	s.fieldMap["validity_period"] = s.ValidityPeriod

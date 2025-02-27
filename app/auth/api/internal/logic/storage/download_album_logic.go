@@ -24,7 +24,7 @@ func NewDownloadAlbumLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dow
 }
 
 func (l *DownloadAlbumLogic) DownloadAlbum(req *types.DownloadAlbumRequest) (resp string, err error) {
-	// todo: add your logic here and delete this line
+	// todo: download album logic
 
 	return
 }

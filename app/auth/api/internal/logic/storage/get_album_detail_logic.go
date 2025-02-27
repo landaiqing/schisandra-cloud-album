@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/redis/go-redis/v9"
+	"gorm.io/gen"
 	"math/rand"
 	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
@@ -63,6 +64,14 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 	// 数据库查询文件信息列表
 	var storageInfoQuery query.IScaStorageInfoDo
 	var storageInfoList []types.FileInfoResult
+	var queryCondition []gen.Condition
+	queryCondition = append(queryCondition, storageInfo.UserID.Eq(uid))
+	queryCondition = append(queryCondition, storageInfo.AlbumID.Eq(req.ID))
+	// 类型筛选 1 是分享类型
+	if req.Type != constant.AlbumTypeShared {
+		queryCondition = append(queryCondition, storageInfo.Provider.Eq(req.Provider))
+		queryCondition = append(queryCondition, storageInfo.Bucket.Eq(req.Bucket))
+	}
 
 	storageInfoQuery = storageInfo.Select(
 		storageInfo.ID,
@@ -74,11 +83,7 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 		storageThumb.ThumbH,
 		storageThumb.ThumbSize).
 		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
-		Where(
-			storageInfo.UserID.Eq(uid),
-			storageInfo.Provider.Eq(req.Provider),
-			storageInfo.Bucket.Eq(req.Bucket),
-			storageInfo.AlbumID.Eq(req.ID)).
+		Where(queryCondition...).
 		Order(storageInfo.CreatedAt.Desc())
 	err = storageInfoQuery.Scan(&storageInfoList)
 	if err != nil {
@@ -103,24 +108,41 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 	// 按日期进行分组
 	var wg sync.WaitGroup
 	groupedImages := sync.Map{}
-
+	reqParams := make(url.Values)
 	for _, dbFileInfo := range storageInfoList {
 		wg.Add(1)
 		go func(dbFileInfo *types.FileInfoResult) {
 			defer wg.Done()
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
-			reqParams := make(url.Values)
-			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, time.Hour*24*7, reqParams)
-			if err != nil {
-				logx.Error(err)
-				return
+
+			var thumbnailUrl string
+			var originalUrl string
+
+			if req.Type == constant.AlbumTypeShared {
+				minioOriginalUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ShareImagesBucketName, dbFileInfo.Path, 30*time.Minute, reqParams)
+				originalUrl = minioOriginalUrl.String()
+				if err != nil {
+					return
+				}
+				minioThumbnailUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, 30*time.Minute, reqParams)
+				thumbnailUrl = minioThumbnailUrl.String()
+				if err != nil {
+					return
+				}
+			} else {
+				thumbnailUrl, err = service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.ThumbPath, time.Minute*30)
+				if err != nil {
+					logx.Error(err)
+					return
+				}
+				originalUrl, err = service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Minute*30)
+				if err != nil {
+					logx.Error(err)
+					return
+				}
 			}
-			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
-			if err != nil {
-				logx.Error(err)
-				return
-			}
+
 			// 使用 Load 或 Store 确保原子操作
 			value, _ := groupedImages.LoadOrStore(date, []types.ImageMeta{})
 			images := value.([]types.ImageMeta)
@@ -128,8 +150,8 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				Thumbnail: presignedUrl.String(),
-				URL:       url,
+				Thumbnail: thumbnailUrl,
+				URL:       originalUrl,
 				Width:     dbFileInfo.ThumbW,
 				Height:    dbFileInfo.ThumbH,
 				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),

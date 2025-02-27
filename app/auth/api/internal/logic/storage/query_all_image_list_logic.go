@@ -11,7 +11,6 @@ import (
 	"golang.org/x/sync/semaphore"
 	"gorm.io/gen"
 	"math/rand"
-	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
@@ -135,13 +134,12 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 			defer sem.Release(1)
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
-			reqParams := make(url.Values)
-			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, time.Hour*24*7, reqParams)
+			thumbnailUrl, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.ThumbPath, time.Minute*30)
 			if err != nil {
 				logx.Error(err)
 				return err
 			}
-			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
+			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Minute*30)
 			if err != nil {
 				logx.Error(err)
 				return err
@@ -153,7 +151,7 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				Thumbnail: presignedUrl.String(),
+				Thumbnail: thumbnailUrl,
 				URL:       url,
 				Width:     dbFileInfo.ThumbW,
 				Height:    dbFileInfo.ThumbH,

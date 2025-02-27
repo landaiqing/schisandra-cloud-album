@@ -1,5 +1,5 @@
 # to build this docker image:
-#   docker build --build-arg OPENCV_VERSION="4.11.0" -f aisvc.Dockerfile -t schisandra-ai-server .
+#   docker build --build-arg OPENCV_VERSION="4.11.0" -f aisvc.Dockerfile -t landaiqing/schisandra-ai-server:v1.0.0 .
 #   docker build --build-arg OPENCV_VERSION="4.x" --build-arg OPENCV_FILE="https://github.com/opencv/opencv/archive/refs/heads/4.x.zip" --build-arg OPENCV_CONTRIB_FILE="https://github.com/opencv/opencv_contrib/archive/refs/heads/4.x.zip" -f opencv.Dockerfile -t schisandra-cloud-album-server .
 
 FROM golang:1.23.5-bullseye AS builder
@@ -84,9 +84,10 @@ ENV TZ=Asia/Shanghai \
     DEBIAN_FRONTEND=noninteractive
 
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone && \
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get update  --fix-missing && apt-get install -y --no-install-recommends \
     tzdata libjpeg62-turbo libblas3 liblapack3 libdlib-dev  libtiff5 && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    mkdir -p /app/rpc/etc
 
 WORKDIR /app
 
@@ -96,7 +97,7 @@ COPY --from=builder /usr/local/include/opencv4 /usr/local/include/opencv4/
 
 COPY --from=builder /app/schisandra-ai-server .
 
-COPY --from=builder /app/app/aisvc/rpc/etc ./rpc/etc
+#COPY --from=builder /app/app/aisvc/rpc/etc ./rpc/etc
 
 COPY --from=builder /app/app/aisvc/resources ./resources
 
@@ -105,3 +106,6 @@ ENV LD_LIBRARY_PATH=/usr/local/lib
 EXPOSE 8888
 
 CMD ["./schisandra-ai-server"]
+
+
+# docker run -p 8888:8888 -v /home/schisandra/backed/aisvc/aisvc.yaml:/app/rpc/etc/aisvc.yaml --name schisandra-ai-server --restart unless-stopped landaiqing/schisandra-ai-server:v1.0.0

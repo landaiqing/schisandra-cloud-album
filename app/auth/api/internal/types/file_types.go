@@ -29,7 +29,7 @@ type File struct {
 type FileUploadMessage struct {
 	FaceID     int64                 `json:"face_id"`
 	FileHeader *multipart.FileHeader `json:"fileHeader"`
-	Data       File                  `json:"data"`
+	Result     File                  `json:"result"`
 	UID        string                `json:"uid"`
 	FilePath   string                `json:"filePath"`
 	URL        string                `json:"url"`

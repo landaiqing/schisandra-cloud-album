@@ -7,7 +7,6 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"math/rand"
-	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
@@ -106,13 +105,13 @@ func (l *GetFaceDetailListLogic) GetFaceDetailList(req *types.FaceDetailListRequ
 			defer wg.Done()
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
-			reqParams := make(url.Values)
-			presignedUrl, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, dbFileInfo.ThumbPath, time.Hour*24*7, reqParams)
+
+			thumbnailUrl, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.ThumbPath, time.Minute*30)
 			if err != nil {
 				logx.Error(err)
 				return
 			}
-			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Hour*24*7)
+			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Minute*30)
 			if err != nil {
 				logx.Error(err)
 				return
@@ -125,7 +124,7 @@ func (l *GetFaceDetailListLogic) GetFaceDetailList(req *types.FaceDetailListRequ
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				Thumbnail: presignedUrl.String(),
+				Thumbnail: thumbnailUrl,
 				URL:       url,
 				Width:     dbFileInfo.ThumbW,
 				Height:    dbFileInfo.ThumbH,

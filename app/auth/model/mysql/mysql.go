@@ -24,7 +24,7 @@ func NewMySQL(url string, maxOpenConn int, maxIdleConn int, client *redis.Client
 			log.New(os.Stdout, "\r\n", log.LstdFlags),
 			logger.Config{
 				SlowThreshold:             time.Second, // 慢sql日志
-				LogLevel:                  logger.Info, // 级别
+				LogLevel:                  logger.Warn, // 级别
 				Colorful:                  true,        // 颜色
 				IgnoreRecordNotFoundError: true,        // 忽略RecordNotFoundError
 				ParameterizedQueries:      true,        // 格式化SQL语句

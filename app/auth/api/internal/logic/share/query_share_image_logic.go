@@ -11,8 +11,7 @@ import (
 	"net/url"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
-	"schisandra-album-cloud-microservices/common/encrypt"
-	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
+	"sync"
 	"time"
 
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
@@ -25,6 +24,16 @@ type QueryShareImageLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
+}
+
+var WeekdayMap = map[time.Weekday]string{
+	time.Sunday:    "日",
+	time.Monday:    "一",
+	time.Tuesday:   "二",
+	time.Wednesday: "三",
+	time.Thursday:  "四",
+	time.Friday:    "五",
+	time.Saturday:  "六",
 }
 
 func NewQueryShareImageLogic(ctx context.Context, svcCtx *svc.ServiceContext) *QueryShareImageLogic {
@@ -139,24 +148,11 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 	if err != nil {
 		return nil, err
 	}
-
-	// 加载用户oss配置信息
-	cacheOssConfigKey := constant.UserOssConfigPrefix + storageShare.UserID + ":" + storageShare.Provider
-	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheOssConfigKey, storageShare.UserID, storageShare.Provider)
-	if err != nil {
-		return nil, err
-	}
-
-	service, err := l.svcCtx.StorageManager.GetStorage(storageShare.UserID, ossConfig)
-	if err != nil {
-		return nil, errors.New("get storage failed")
-	}
-
+	reqParams := make(url.Values)
 	// 使用 errgroup 和 semaphore 并发处理图片信息
-	var ResultList []types.ShareImageListMeta
 	g, ctx := errgroup.WithContext(l.ctx)
 	sem := semaphore.NewWeighted(10) // 限制并发数为 10
-
+	groupedImages := sync.Map{}
 	for _, imgInfo := range storageInfoList {
 		imgInfo := imgInfo // 创建局部变量，避免闭包问题
 		if err := sem.Acquire(ctx, 1); err != nil {
@@ -164,25 +160,32 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 		}
 		g.Go(func() error {
 			defer sem.Release(1)
-			ossURL, err := service.PresignedURL(ctx, ossConfig.BucketName, imgInfo.Path, 30*time.Minute)
+
+			// 生成日期分类键
+			weekday := WeekdayMap[imgInfo.CreatedAt.Weekday()]
+			date := imgInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
+
+			ossUrl, err := l.svcCtx.MinioClient.PresignedGetObject(ctx, constant.ShareImagesBucketName, imgInfo.Path, 30*time.Minute, reqParams)
 			if err != nil {
 				return errors.New("get presigned url failed")
 			}
-			reqParams := make(url.Values)
 			presignedURL, err := l.svcCtx.MinioClient.PresignedGetObject(ctx, constant.ThumbnailBucketName, imgInfo.ThumbPath, 30*time.Minute, reqParams)
 			if err != nil {
 				return errors.New("get presigned thumbnail url failed")
 			}
-			ResultList = append(ResultList, types.ShareImageListMeta{
+			// 原子操作更新分组数据
+			value, _ := groupedImages.LoadOrStore(date, []types.ImageMeta{})
+			images := value.([]types.ImageMeta)
+			images = append(images, types.ImageMeta{
 				ID:        imgInfo.ID,
 				FileName:  imgInfo.FileName,
 				Height:    imgInfo.ThumbH,
 				Width:     imgInfo.ThumbW,
-				ThumbSize: imgInfo.ThumbSize,
 				CreatedAt: imgInfo.CreatedAt.Format(constant.TimeFormat),
-				URL:       ossURL,
+				URL:       ossUrl.String(),
 				Thumbnail: presignedURL.String(),
 			})
+			groupedImages.Store(date, images)
 			return nil
 		})
 	}
@@ -192,8 +195,17 @@ func (l *QueryShareImageLogic) queryShareImageFromSource(storageShare *model.Sca
 		return nil, err
 	}
 
+	// 转换为切片并排序
+	var imageList []types.AllImageDetail
+	groupedImages.Range(func(key, value interface{}) bool {
+		imageList = append(imageList, types.AllImageDetail{
+			Date: key.(string),
+			List: value.([]types.ImageMeta),
+		})
+		return true
+	})
 	return &types.QueryShareImageResponse{
-		Records: ResultList}, nil
+		Records: imageList}, nil
 }
 
 func (l *QueryShareImageLogic) recordUserVisit(shareID int64, userID string) error {
@@ -254,64 +266,4 @@ func (l *QueryShareImageLogic) incrementVisitCount(shareCode string, limit int64
 	}
 
 	return nil
-}
-
-// 提取解密操作为函数
-func (l *QueryShareImageLogic) decryptConfig(config *model.ScaStorageConfig) (*storageConfig.StorageConfig, error) {
-	accessKey, err := encrypt.Decrypt(config.AccessKey, l.svcCtx.Config.Encrypt.Key)
-	if err != nil {
-		return nil, errors.New("decrypt access key failed")
-	}
-	secretKey, err := encrypt.Decrypt(config.SecretKey, l.svcCtx.Config.Encrypt.Key)
-	if err != nil {
-		return nil, errors.New("decrypt secret key failed")
-	}
-	return &storageConfig.StorageConfig{
-		Provider:   config.Provider,
-		Endpoint:   config.Endpoint,
-		AccessKey:  accessKey,
-		SecretKey:  secretKey,
-		BucketName: config.Bucket,
-		Region:     config.Region,
-	}, nil
-}
-
-// 从缓存或数据库中获取 OSS 配置
-func (l *QueryShareImageLogic) getOssConfigFromCacheOrDb(cacheKey, uid, provider string) (*storageConfig.StorageConfig, error) {
-	result, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
-	if err != nil && !errors.Is(err, redis.Nil) {
-		return nil, errors.New("get oss config failed")
-	}
-
-	var ossConfig *storageConfig.StorageConfig
-	if result != "" {
-		var redisOssConfig model.ScaStorageConfig
-		if err = json.Unmarshal([]byte(result), &redisOssConfig); err != nil {
-			return nil, errors.New("unmarshal oss config failed")
-		}
-		return l.decryptConfig(&redisOssConfig)
-	}
-
-	// 缓存未命中，从数据库中加载
-	scaOssConfig := l.svcCtx.DB.ScaStorageConfig
-	dbOssConfig, err := scaOssConfig.Where(scaOssConfig.UserID.Eq(uid), scaOssConfig.Provider.Eq(provider)).First()
-	if err != nil {
-		return nil, err
-	}
-
-	// 缓存数据库配置
-	ossConfig, err = l.decryptConfig(dbOssConfig)
-	if err != nil {
-		return nil, err
-	}
-	marshalData, err := json.Marshal(dbOssConfig)
-	if err != nil {
-		return nil, errors.New("marshal oss config failed")
-	}
-	err = l.svcCtx.RedisClient.Set(l.ctx, cacheKey, marshalData, 0).Err()
-	if err != nil {
-		return nil, errors.New("set oss config failed")
-	}
-
-	return ossConfig, nil
 }

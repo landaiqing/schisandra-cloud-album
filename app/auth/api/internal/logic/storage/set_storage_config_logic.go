@@ -46,6 +46,7 @@ func (l *SetStorageConfigLogic) SetStorageConfig(req *types.StorageConfigRequest
 		AccessKey: accessKey,
 		SecretKey: secretKey,
 		Region:    req.Region,
+		Capacity:  req.Capacity,
 	}
 	err = l.svcCtx.DB.ScaStorageConfig.Create(ossConfig)
 	if err != nil {

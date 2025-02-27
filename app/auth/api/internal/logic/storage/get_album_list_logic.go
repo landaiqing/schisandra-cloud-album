@@ -39,10 +39,10 @@ func (l *GetAlbumListLogic) GetAlbumList(req *types.AlbumListRequest) (resp *typ
 		orderConditions = append(orderConditions, storageAlbum.AlbumName.Desc())
 	}
 	var typeConditions []gen.Condition
+	typeConditions = append(typeConditions, storageAlbum.UserID.Eq(uid))
 	if req.Type != -1 {
 		// 获取全部相册
 		typeConditions = append(typeConditions, storageAlbum.AlbumType.Eq(req.Type))
-		typeConditions = append(typeConditions, storageAlbum.UserID.Eq(uid))
 	}
 	albums, err := storageAlbum.Where(
 		typeConditions...).

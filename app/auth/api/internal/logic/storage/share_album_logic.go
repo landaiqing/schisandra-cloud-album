@@ -87,8 +87,6 @@ func (l *ShareAlbumLogic) ShareAlbum(req *types.ShareAlbumRequest) (resp string,
 		AccessPassword: req.AccessPassword,
 		VisitLimit:     req.AccessLimit,
 		ImageCount:     imageCount,
-		Provider:       req.Provider,
-		Bucket:         req.Bucket,
 		Status:         0,
 	}
 	err = storageShare.Create(storageShareInfo)
