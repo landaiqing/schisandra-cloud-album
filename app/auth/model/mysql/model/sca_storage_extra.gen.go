@@ -22,6 +22,7 @@ type ScaStorageExtra struct {
 	IsAnime   string         `gorm:"column:is_anime;type:varchar(50);comment:是否是动漫图片" json:"is_anime"`                                // 是否是动漫图片
 	Landscape string         `gorm:"column:landscape;type:varchar(50);comment:风景类型" json:"landscape"`                                 // 风景类型
 	Hash      string         `gorm:"column:hash;type:varchar(255);comment:哈希值" json:"hash"`                                           // 哈希值
+	HasQrcode string         `gorm:"column:has_qrcode;type:varchar(50);comment:是否有二维码" json:"has_qrcode"`                             // 是否有二维码
 	CreatedAt time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
 	DeletedAt gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间

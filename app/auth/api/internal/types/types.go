@@ -303,7 +303,8 @@ type QueryShareImageResponse struct {
 }
 
 type QueryShareInfoRequest struct {
-	InviteCode string `json:"invite_code"`
+	InviteCode     string `json:"invite_code"`
+	AccessPassword string `json:"access_password,omitempty"`
 }
 
 type RecentListRequest struct {
@@ -363,6 +364,18 @@ type RotateCaptchaResponse struct {
 	Thumb string `json:"thumb"`
 }
 
+type SearchImageRequest struct {
+	Type       string `json:"type"`
+	Keyword    string `json:"keyword"`
+	Provider   string `json:"provider"`
+	Bucket     string `json:"bucket"`
+	InputImage string `json:"input_image,omitempty"`
+}
+
+type SearchImageResponse struct {
+	Records []AllImageDetail `json:"records"`
+}
+
 type ShareAlbumRequest struct {
 	ID             int64  `json:"id"`
 	ExpireDate     string `json:"expire_date"`
@@ -402,6 +415,8 @@ type ShareInfoResponse struct {
 	SharerAvatar string `json:"sharer_avatar"`
 	SharerName   string `json:"sharer_name"`
 	AlbumName    string `json:"album_name"`
+	InviteCode   string `json:"invite_code"`
+	SharerUID    string `json:"sharer_uid"`
 }
 
 type ShareOverviewResponse struct {

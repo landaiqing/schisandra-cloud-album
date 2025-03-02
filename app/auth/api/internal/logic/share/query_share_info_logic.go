@@ -48,12 +48,14 @@ func (l *QueryShareInfoLogic) QueryShareInfo(req *types.QueryShareInfoRequest) (
 		shareVisit.Views.As("visit_count"),
 		shareVisit.UserID.Count().As("viewer_count"),
 		authUser.Avatar.As("sharer_avatar"),
-		authUser.Nickname.As("sharer_name")).
+		authUser.Nickname.As("sharer_name"),
+		authUser.UID.As("sharer_uid")).
 		LeftJoin(storageAlbum, storageShare.AlbumID.EqCol(storageAlbum.ID)).
 		Join(shareVisit, storageShare.ID.EqCol(shareVisit.ShareID)).
 		LeftJoin(authUser, storageShare.UserID.EqCol(authUser.UID)).
 		Where(
 			storageShare.InviteCode.Eq(req.InviteCode),
+			storageShare.AccessPassword.Eq(req.AccessPassword),
 			shareVisit.UserID.Eq(uid)).
 		Group(
 			storageShare.ID,

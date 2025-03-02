@@ -76,6 +76,12 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		return "", err
 	}
 
+	// 解析上传配置信息
+	settingResult, err := l.parseUploadSettingResult(r)
+	if err != nil {
+		return "", err
+	}
+
 	// 使用 `errgroup.Group` 处理并发任务
 	var (
 		faceId    int64
@@ -86,22 +92,24 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	// 创建信号量，限制最大并发上传数（比如最多同时 5 个任务）
 	sem := semaphore.NewWeighted(5)
 
-	// 进行人脸识别
-	g.Go(func() error {
-		if result.FileType == "image/png" || result.FileType == "image/jpeg" {
-			face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{
-				Face:   data,
-				UserId: uid,
-			})
-			if err != nil {
-				return err
+	if settingResult.FaceDetection {
+		// 进行人脸识别
+		g.Go(func() error {
+			if result.FileType == "image/png" || result.FileType == "image/jpeg" {
+				face, err := l.svcCtx.AiSvcRpc.FaceRecognition(l.ctx, &pb.FaceRecognitionRequest{
+					Face:   data,
+					UserId: uid,
+				})
+				if err != nil {
+					return err
+				}
+				if face != nil {
+					faceId = face.GetFaceId()
+				}
 			}
-			if face != nil {
-				faceId = face.GetFaceId()
-			}
-		}
-		return nil
-	})
+			return nil
+		})
+	}
 	// 上传文件到 OSS
 	g.Go(func() error {
 		if err := sem.Acquire(ctx, 1); err != nil {
@@ -133,12 +141,13 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	}
 
 	fileUploadMessage := &types.FileUploadMessage{
-		UID:        uid,
-		Result:     result,
-		FaceID:     faceId,
-		FileHeader: header,
-		FilePath:   filePath,
-		ThumbPath:  thumbPath,
+		UID:       uid,
+		Result:    result,
+		FaceID:    faceId,
+		FileName:  header.Filename,
+		FileSize:  header.Size,
+		FilePath:  filePath,
+		ThumbPath: thumbPath,
 	}
 	// 转换为 JSON
 	messageData, err := json.Marshal(fileUploadMessage)
@@ -189,6 +198,16 @@ func (l *UploadFileLogic) parseImageInfoResult(r *http.Request) (types.File, err
 	return result, nil
 }
 
+// 解析设置结果
+func (l *UploadFileLogic) parseUploadSettingResult(r *http.Request) (types.UploadSetting, error) {
+	formValue := r.PostFormValue("setting")
+	var result types.UploadSetting
+	if err := json.Unmarshal([]byte(formValue), &result); err != nil {
+		return result, errors.New("invalid result")
+	}
+	return result, nil
+}
+
 // 上传文件到 OSS
 func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, thumbnail multipart.File, result types.File) (string, string, error) {
 	cacheKey := constant.UserOssConfigPrefix + uid + ":" + result.Provider
@@ -231,43 +250,6 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 	}
 	return objectKey, thumbObjectKey, nil
 }
-
-//func (l *UploadFileLogic) uploadFileToMinio(uid string, header *multipart.FileHeader, file multipart.File, result types.File) (string, error) {
-//	objectKey := path.Join(
-//		uid,
-//		time.Now().Format("2006/01"), // 按年/月划分目录
-//		l.classifyFile(result.FileType, result.IsScreenshot),
-//		fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), filepath.Ext(header.Filename)),
-//	)
-//	exists, err := l.svcCtx.MinioClient.BucketExists(l.ctx, constant.ThumbnailBucketName)
-//	if err != nil || !exists {
-//		err = l.svcCtx.MinioClient.MakeBucket(l.ctx, constant.ThumbnailBucketName, minio.MakeBucketOptions{Region: "us-east-1", ObjectLocking: true})
-//		if err != nil {
-//			logx.Errorf("Failed to create MinIO bucket: %v", err)
-//			return "", err
-//		}
-//	}
-//	// 上传到MinIO
-//	_, err = l.svcCtx.MinioClient.PutObject(
-//		l.ctx,
-//		constant.ThumbnailBucketName,
-//		objectKey,
-//		file,
-//		int64(result.ThumbSize),
-//		minio.PutObjectOptions{
-//			ContentType: result.FileType,
-//		},
-//	)
-//	if err != nil {
-//		return "", err
-//	}
-//	//reqParams := make(url.Values)
-//	//presignedURL, err := l.svcCtx.MinioClient.PresignedGetObject(l.ctx, constant.ThumbnailBucketName, objectKey, time.Hour*24*7, reqParams)
-//	//if err != nil {
-//	//	return "", "", err
-//	//}
-//	return objectKey, nil
-//}
 
 // 提取解密操作为函数
 func (l *UploadFileLogic) decryptConfig(dbConfig *model.ScaStorageConfig) (*config.StorageConfig, error) {

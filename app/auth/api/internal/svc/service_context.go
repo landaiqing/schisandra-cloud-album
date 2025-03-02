@@ -28,6 +28,7 @@ import (
 	"schisandra-album-cloud-microservices/common/storage"
 	"schisandra-album-cloud-microservices/common/storage/manager"
 	"schisandra-album-cloud-microservices/common/wechat_official"
+	"schisandra-album-cloud-microservices/common/zincx"
 )
 
 type ServiceContext struct {
@@ -48,6 +49,7 @@ type ServiceContext struct {
 	MinioClient               *minio.Client
 	GeoRegionData             *geo_json.RegionData
 	NSQProducer               *nsq.Producer
+	ZincClient                *zincx.ZincClient
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -72,6 +74,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		MinioClient:               miniox.NewMinio(c.Minio.Endpoint, c.Minio.AccessKeyID, c.Minio.SecretAccessKey, c.Minio.UseSSL),
 		GeoRegionData:             geo_json.NewGeoJSON(),
 		NSQProducer:               nsqx.NewNsqProducer(c.NSQ.NSQDHost),
+		ZincClient:                zincx.NewZincClient(c.Zinc.URL, c.Zinc.Username, c.Zinc.Password),
 	}
 	return serviceContext
 }

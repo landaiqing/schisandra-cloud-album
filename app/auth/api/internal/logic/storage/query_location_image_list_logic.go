@@ -40,17 +40,18 @@ func (l *QueryLocationImageListLogic) QueryLocationImageList(req *types.Location
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
 
 	var locations []types.LocationInfo
-	err = storageLocation.Select(
+	err = storageInfo.Select(
 		storageLocation.ID,
 		storageLocation.Country,
 		storageLocation.City,
 		storageLocation.Province,
 		storageLocation.CoverImage,
 		storageInfo.ID.Count().As("total")).
-		LeftJoin(storageInfo, storageInfo.LocationID.EqCol(storageLocation.ID)).
-		Where(storageLocation.UserID.Eq(uid),
+		LeftJoin(storageLocation, storageLocation.ID.EqCol(storageInfo.LocationID)).
+		Where(storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
-			storageInfo.Bucket.Eq(req.Bucket)).
+			storageInfo.Bucket.Eq(req.Bucket),
+			storageInfo.LocationID.Neq(0)).
 		Order(storageLocation.CreatedAt.Desc()).
 		Group(storageLocation.ID).
 		Scan(&locations)

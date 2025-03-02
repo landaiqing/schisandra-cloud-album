@@ -9,7 +9,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/zeromicro/go-zero/core/logx"
 	"gorm.io/gorm"
-	"mime/multipart"
+	"net/http"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
@@ -19,6 +19,7 @@ import (
 	"schisandra-album-cloud-microservices/common/nsqx"
 	"schisandra-album-cloud-microservices/common/storage/config"
 	"strconv"
+	"time"
 )
 
 type NsqImageProcessConsumer struct {
@@ -60,7 +61,7 @@ func (c *NsqImageProcessConsumer) HandleMessage(msg *nsq.Message) error {
 	}
 
 	// 将文件信息存入数据库
-	storageId, err := c.saveFileInfoToDB(message.UID, message.Result.Bucket, message.Result.Provider, message.FileHeader, message.Result, message.FaceID, message.FilePath, locationId, message.Result.AlbumId)
+	storageId, err := c.saveFileInfoToDB(message.UID, message.Result.Bucket, message.Result.Provider, message.FileName, message.FileSize, message.Result, message.FaceID, message.FilePath, locationId, message.Result.AlbumId)
 	if err != nil {
 		return err
 	}
@@ -70,6 +71,46 @@ func (c *NsqImageProcessConsumer) HandleMessage(msg *nsq.Message) error {
 	}
 	// 删除缓存
 	c.afterImageUpload(message.UID)
+
+	zincFileInfo := types.ZincFileInfo{
+		FaceID:       message.FaceID,
+		FileName:     message.FileName,
+		FileSize:     message.FileSize,
+		UID:          message.UID,
+		FilePath:     message.FilePath,
+		ThumbPath:    message.ThumbPath,
+		CreatedAt:    time.Now().UTC(),
+		StorageId:    storageId,
+		Provider:     message.Result.Provider,
+		Bucket:       message.Result.Bucket,
+		FileType:     message.Result.FileType,
+		IsAnime:      message.Result.IsAnime,
+		TagName:      message.Result.TagName,
+		Landscape:    message.Result.Landscape,
+		TopCategory:  message.Result.TopCategory,
+		IsScreenshot: message.Result.IsScreenshot,
+		Width:        message.Result.Width,
+		Height:       message.Result.Height,
+		Longitude:    message.Result.Longitude,
+		Latitude:     message.Result.Latitude,
+		ThumbW:       message.Result.ThumbW,
+		ThumbH:       message.Result.ThumbH,
+		ThumbSize:    message.Result.ThumbSize,
+		AlbumId:      message.Result.AlbumId,
+		HasQrcode:    message.Result.HasQrcode,
+		Country:      country,
+		Province:     province,
+		City:         city,
+	}
+
+	err = c.svcCtx.ZincClient.CreateFileUploadIndex(constant.ZincIndexNameStorageInfo)
+	if err != nil {
+		return err
+	}
+	_, err = c.insertFileInfoTOZinc(constant.ZincIndexNameStorageInfo, storageId, zincFileInfo)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -225,7 +266,7 @@ func (c *NsqImageProcessConsumer) saveFileThumbnailInfoToDB(uid string, filePath
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, header *multipart.FileHeader, result types.File, faceId int64, filePath string, locationID, albumId int64) (int64, error) {
+func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, fileName string, fileSize int64, result types.File, faceId int64, filePath string, locationID, albumId int64) (int64, error) {
 	tx := c.svcCtx.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -238,8 +279,8 @@ func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string,
 		UserID:     uid,
 		Provider:   provider,
 		Bucket:     bucket,
-		FileName:   header.Filename,
-		FileSize:   strconv.FormatInt(header.Size, 10),
+		FileName:   fileName,
+		FileSize:   strconv.FormatInt(fileSize, 10),
 		FileType:   result.FileType,
 		Path:       filePath,
 		FaceID:     faceId,
@@ -261,6 +302,7 @@ func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string,
 		Tag:       result.TagName,
 		IsAnime:   strconv.FormatBool(result.IsAnime),
 		Category:  result.TopCategory,
+		HasQrcode: strconv.FormatBool(result.HasQrcode),
 	}
 	err = tx.ScaStorageExtra.Create(scaStorageExtra)
 	if err != nil {
@@ -292,6 +334,22 @@ func (c *NsqImageProcessConsumer) afterImageUpload(uid string) {
 	// 删除所有匹配的键
 	if err := c.svcCtx.RedisClient.Del(c.ctx, keys...).Err(); err != nil {
 		logx.Errorf("删除缓存键 %s 失败: %v", keyPattern, err)
-
 	}
+}
+
+func (c *NsqImageProcessConsumer) insertFileInfoTOZinc(indexName string, docID int64, message types.ZincFileInfo) (int64, error) {
+	url := fmt.Sprintf("%s/api/%s/_doc/%v", c.svcCtx.ZincClient.BaseURL, indexName, docID)
+	resp, err := c.svcCtx.ZincClient.Client.R().
+		SetBasicAuth(c.svcCtx.ZincClient.Username, c.svcCtx.ZincClient.Password).
+		SetHeader("Content-Type", "application/json").
+		SetBody(message).
+		Put(url)
+	if err != nil {
+		return 0, fmt.Errorf("请求失败: %w", err)
+	}
+
+	if resp.StatusCode() != http.StatusOK {
+		return 0, fmt.Errorf("插入失败 (状态码 %d): %s", resp.StatusCode(), resp.String())
+	}
+	return docID, nil
 }

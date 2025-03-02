@@ -77,4 +77,9 @@ type Config struct {
 		NSQDHost    string
 		LookUpdHost string
 	}
+	Zinc struct {
+		URL      string
+		Username string
+		Password string
+	}
 }

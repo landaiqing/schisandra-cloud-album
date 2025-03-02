@@ -35,6 +35,7 @@ func newScaStorageExtra(db *gorm.DB, opts ...gen.DOOption) scaStorageExtra {
 	_scaStorageExtra.IsAnime = field.NewString(tableName, "is_anime")
 	_scaStorageExtra.Landscape = field.NewString(tableName, "landscape")
 	_scaStorageExtra.Hash = field.NewString(tableName, "hash")
+	_scaStorageExtra.HasQrcode = field.NewString(tableName, "has_qrcode")
 	_scaStorageExtra.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageExtra.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageExtra.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -57,6 +58,7 @@ type scaStorageExtra struct {
 	IsAnime   field.String // 是否是动漫图片
 	Landscape field.String // 风景类型
 	Hash      field.String // 哈希值
+	HasQrcode field.String // 是否有二维码
 	CreatedAt field.Time   // 创建时间
 	UpdatedAt field.Time   // 更新时间
 	DeletedAt field.Field  // 删除时间
@@ -84,6 +86,7 @@ func (s *scaStorageExtra) updateTableName(table string) *scaStorageExtra {
 	s.IsAnime = field.NewString(table, "is_anime")
 	s.Landscape = field.NewString(table, "landscape")
 	s.Hash = field.NewString(table, "hash")
+	s.HasQrcode = field.NewString(table, "has_qrcode")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -103,7 +106,7 @@ func (s *scaStorageExtra) GetFieldByName(fieldName string) (field.OrderExpr, boo
 }
 
 func (s *scaStorageExtra) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 11)
+	s.fieldMap = make(map[string]field.Expr, 12)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["info_id"] = s.InfoID
@@ -112,6 +115,7 @@ func (s *scaStorageExtra) fillFieldMap() {
 	s.fieldMap["is_anime"] = s.IsAnime
 	s.fieldMap["landscape"] = s.Landscape
 	s.fieldMap["hash"] = s.Hash
+	s.fieldMap["has_qrcode"] = s.HasQrcode
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

@@ -1,7 +1,6 @@
 package types
 
 import (
-	"mime/multipart"
 	"time"
 )
 
@@ -23,18 +22,28 @@ type File struct {
 	ThumbH       float64 `json:"thumb_h"`
 	ThumbSize    float64 `json:"thumb_size"`
 	AlbumId      int64   `json:"albumId"`
+	HasQrcode    bool    `json:"hasQrcode"`
 }
 
-// FileUploadMessage represents a message sent to the user after a file upload.
+type UploadSetting struct {
+	NsfwDetection       bool `json:"nsfw_detection"`
+	AnimeDetection      bool `json:"anime_detection"`
+	LandscapeDetection  bool `json:"landscape_detection"`
+	ScreenshotDetection bool `json:"screenshot_detection"`
+	GpsDetection        bool `json:"gps_detection"`
+	TargetDetection     bool `json:"target_detection"`
+	QrcodeDetection     bool `json:"qrcode_detection"`
+	FaceDetection       bool `json:"face_detection"`
+}
+
 type FileUploadMessage struct {
-	FaceID     int64                 `json:"face_id"`
-	FileHeader *multipart.FileHeader `json:"fileHeader"`
-	Result     File                  `json:"result"`
-	UID        string                `json:"uid"`
-	FilePath   string                `json:"filePath"`
-	URL        string                `json:"url"`
-	ThumbPath  string                `json:"thumbPath"`
-	Thumbnail  string                `json:"thumbnail"`
+	FaceID    int64  `json:"face_id"`
+	FileName  string `json:"file_name"`
+	FileSize  int64  `json:"file_size"`
+	Result    File   `json:"result"`
+	UID       string `json:"uid"`
+	FilePath  string `json:"file_path"`
+	ThumbPath string `json:"thumb_path"`
 }
 
 type FileInfoResult struct {
@@ -73,4 +82,35 @@ type LocationInfo struct {
 	Province   string `json:"province"`
 	CoverImage string `json:"cover_image"`
 	Total      int64  `json:"total"`
+}
+
+type ZincFileInfo struct {
+	FaceID       int64     `json:"face_id"`
+	FileName     string    `json:"file_name"`
+	FileSize     int64     `json:"file_size"`
+	UID          string    `json:"uid"`
+	FilePath     string    `json:"file_path"`
+	ThumbPath    string    `json:"thumb_path"`
+	CreatedAt    time.Time `json:"created_at"`
+	StorageId    int64     `json:"storage_id"`
+	Provider     string    `json:"provider"`
+	Bucket       string    `json:"bucket"`
+	FileType     string    `json:"file_type"`
+	IsAnime      bool      `json:"is_anime"`
+	TagName      string    `json:"tag_name"`
+	Landscape    string    `json:"landscape"`
+	TopCategory  string    `json:"top_category"`
+	IsScreenshot bool      `json:"is_screenshot"`
+	Width        float64   `json:"width"`
+	Height       float64   `json:"height"`
+	Longitude    float64   `json:"longitude"`
+	Latitude     float64   `json:"latitude"`
+	ThumbW       float64   `json:"thumb_w"`
+	ThumbH       float64   `json:"thumb_h"`
+	ThumbSize    float64   `json:"thumb_size"`
+	AlbumId      int64     `json:"album_id"`
+	HasQrcode    bool      `json:"has_qrcode"`
+	Country      string    `json:"country"`
+	Province     string    `json:"province"`
+	City         string    `json:"city"`
 }

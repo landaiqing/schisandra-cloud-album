@@ -189,7 +189,7 @@ func (l *QueryAllImageListLogic) QueryAllImageList(req *types.AllImageListReques
 
 	// 缓存结果
 	if data, err := json.Marshal(resp); err == nil {
-		expireTime := 5*time.Minute + time.Duration(rand.Intn(300))*time.Second
+		expireTime := 1*time.Minute + time.Duration(rand.Intn(60))*time.Second
 		if err := l.svcCtx.RedisClient.Set(l.ctx, cacheKey, data, expireTime).Err(); err != nil {
 			logx.Error("Failed to cache image list:", err)
 		}

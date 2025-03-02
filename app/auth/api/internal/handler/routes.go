@@ -105,7 +105,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/api/auth/comment"),
 		rest.WithTimeout(10000*time.Millisecond),
-		rest.WithMaxBytes(1048576),
+		rest.WithMaxBytes(10485760),
 	)
 
 	server.AddRoutes(
@@ -163,6 +163,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/common/upload",
+					Handler: phone.CommonUploadHandler(serverCtx),
+				},
 				{
 					Method:  http.MethodPost,
 					Path:    "/share/upload",
@@ -346,6 +351,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/image/recent/list",
 					Handler: storage.QueryRecentImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/search",
+					Handler: storage.SearchImageHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

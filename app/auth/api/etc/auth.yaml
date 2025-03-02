@@ -175,3 +175,7 @@ NSQ:
   # NSQD地址
   NSQDHost: 1.95.0.111:4150
   LookUpdHost: 1.95.0.111:4161
+Zinc:
+  URL: http://1.95.0.111:4080
+  Username: landaiqing
+  Password: LDQ20020618xxx

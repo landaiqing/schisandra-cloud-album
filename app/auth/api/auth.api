@@ -363,7 +363,7 @@ type (
 	group:      comment // 微服务分组
 	prefix:     /api/auth/comment // 微服务前缀
 	timeout:    10s // 超时时间
-	maxBytes:   1048576 // 最大请求大小
+	maxBytes:   10485760 // 最大请求大小
 	signature:  false // 是否开启签名验证
 	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
@@ -426,6 +426,9 @@ service auth {
 
 	@handler sharePhoneUpload
 	post /share/upload (SharePhoneUploadRequest)
+
+	@handler commonUpload
+	post /common/upload
 }
 
 // 文件上传配置请求参数
@@ -656,6 +659,18 @@ type (
 		Provider string `json:"provider"`
 		Bucket   string `json:"bucket"`
 	}
+	// 搜索图片请求参数
+	SearchImageRequest {
+		Type       string `json:"type"`
+		Keyword    string `json:"keyword"`
+		Provider   string `json:"provider"`
+		Bucket     string `json:"bucket"`
+		InputImage string `json:"input_image,omitempty"`
+	}
+	// 搜索图片相应参数
+	SearchImageResponse {
+		Records []AllImageDetail `json:"records"`
+	}
 )
 
 // 文件上传
@@ -766,6 +781,10 @@ service auth {
 	// 下载相册
 	@handler downloadAlbum
 	post /album/download (DownloadAlbumRequest) returns (string)
+
+	// 图片搜索
+	@handler searchImage
+	post /image/search (SearchImageRequest) returns (SearchImageResponse)
 }
 
 type (
@@ -810,7 +829,8 @@ type (
 		records []ShareRecord `json:"records"`
 	}
 	QueryShareInfoRequest {
-		InviteCode string `json:"invite_code"`
+		InviteCode     string `json:"invite_code"`
+		AccessPassword string `json:"access_password,omitempty"`
 	}
 	ShareInfoResponse {
 		ID           int64  `json:"id"`
@@ -824,6 +844,8 @@ type (
 		SharerAvatar string `json:"sharer_avatar"`
 		SharerName   string `json:"sharer_name"`
 		AlbumName    string `json:"album_name"`
+		InviteCode   string `json:"invite_code"`
+		SharerUID    string `json:"sharer_uid"`
 	}
 	// 分享数据概览响应参数
 	ShareOverviewResponse {
