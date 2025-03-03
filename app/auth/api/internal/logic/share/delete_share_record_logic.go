@@ -3,6 +3,7 @@ package share
 import (
 	"context"
 	"errors"
+	"schisandra-album-cloud-microservices/common/constant"
 
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
@@ -64,6 +65,19 @@ func (l *DeleteShareRecordLogic) DeleteShareRecord(req *types.DeleteShareRecordR
 	if err != nil || infoDeleted.RowsAffected == 0 {
 		tx.Rollback()
 		return "", errors.New("delete storage info record failed")
+	}
+	// delete redis cache
+	cacheKey := constant.ImageSharePrefix + req.InviteCode
+	err = l.svcCtx.RedisClient.Del(l.ctx, cacheKey).Err()
+	if err != nil {
+		tx.Rollback()
+		return "", errors.New("delete cache failed")
+	}
+	cacheVisitKey := constant.ImageShareVisitPrefix + req.InviteCode
+	err = l.svcCtx.RedisClient.Del(l.ctx, cacheVisitKey).Err()
+	if err != nil {
+		tx.Rollback()
+		return "", errors.New("delete cache visit failed")
 	}
 	err = tx.Commit()
 	if err != nil {

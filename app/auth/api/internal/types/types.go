@@ -11,6 +11,13 @@ type AccountLoginRequest struct {
 	Key       string `json:"key"`
 }
 
+type AddImageToAlbumRequest struct {
+	IDS      []int64 `json:"ids"`
+	AlbumID  int64   `json:"album_id"`
+	Provider string  `json:"provider"`
+	Bucket   string  `json:"bucket"`
+}
+
 type Album struct {
 	ID         int64  `json:"id"`
 	Name       string `json:"name"`
@@ -179,6 +186,10 @@ type DownloadAlbumRequest struct {
 	ID       int64  `json:"id"`
 	Provider string `json:"provider"`
 	Bucket   string `json:"bucket"`
+}
+
+type DownloadAlbumResponse struct {
+	Records []string `json:"records"`
 }
 
 type FaceDetailListRequest struct {
@@ -362,6 +373,14 @@ type RotateCaptchaResponse struct {
 	Key   string `json:"key"`
 	Image string `json:"image"`
 	Thumb string `json:"thumb"`
+}
+
+type SearchAlbumRequest struct {
+	Keyword string `json:"keyword"`
+}
+
+type SearchAlbumResponse struct {
+	Albums []Album `json:"albums"`
 }
 
 type SearchImageRequest struct {

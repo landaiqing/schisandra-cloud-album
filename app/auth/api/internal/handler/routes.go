@@ -259,6 +259,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/album/add/image",
+					Handler: storage.AddImageToAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/album/create",
 					Handler: storage.CreateAlbumHandler(serverCtx),
 				},
@@ -286,6 +291,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/album/rename",
 					Handler: storage.RenameAlbumHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/album/search",
+					Handler: storage.SearchAlbumHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

@@ -659,6 +659,9 @@ type (
 		Provider string `json:"provider"`
 		Bucket   string `json:"bucket"`
 	}
+	DownloadAlbumResponse {
+		Records []string `json:"records"`
+	}
 	// 搜索图片请求参数
 	SearchImageRequest {
 		Type       string `json:"type"`
@@ -670,6 +673,21 @@ type (
 	// 搜索图片相应参数
 	SearchImageResponse {
 		Records []AllImageDetail `json:"records"`
+	}
+	// 搜索相册请求参数
+	SearchAlbumRequest {
+		Keyword string `json:"keyword"`
+	}
+	// 搜索相册相应参数
+	SearchAlbumResponse {
+		Albums []Album `json:"albums"`
+	}
+	// 图片添加到相册请求参数
+	AddImageToAlbumRequest {
+		IDS      []int64 `json:"ids"`
+		AlbumID  int64   `json:"album_id"`
+		Provider string  `json:"provider"`
+		Bucket   string  `json:"bucket"`
 	}
 )
 
@@ -780,11 +798,19 @@ service auth {
 
 	// 下载相册
 	@handler downloadAlbum
-	post /album/download (DownloadAlbumRequest) returns (string)
+	post /album/download (DownloadAlbumRequest) returns (DownloadAlbumResponse)
 
 	// 图片搜索
 	@handler searchImage
 	post /image/search (SearchImageRequest) returns (SearchImageResponse)
+
+	// 搜索相册
+	@handler searchAlbum
+	post /album/search (SearchAlbumRequest) returns (SearchAlbumResponse)
+
+	// 添加图片到相册
+	@handler addImageToAlbum
+	post /album/add/image (AddImageToAlbumRequest) returns (string)
 }
 
 type (
