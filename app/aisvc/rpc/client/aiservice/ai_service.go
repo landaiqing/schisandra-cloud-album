@@ -19,6 +19,8 @@ type (
 	FaceLibrary                 = pb.FaceLibrary
 	FaceRecognitionRequest      = pb.FaceRecognitionRequest
 	FaceRecognitionResponse     = pb.FaceRecognitionResponse
+	ImageClarityRequest         = pb.ImageClarityRequest
+	ImageClarityResponse        = pb.ImageClarityResponse
 	ModifyFaceNameRequest       = pb.ModifyFaceNameRequest
 	ModifyFaceNameResponse      = pb.ModifyFaceNameResponse
 	ModifyFaceTypeRequest       = pb.ModifyFaceTypeRequest
@@ -41,6 +43,8 @@ type (
 		ModifyFaceName(ctx context.Context, in *ModifyFaceNameRequest, opts ...grpc.CallOption) (*ModifyFaceNameResponse, error)
 		// ModifyFaceType
 		ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error)
+		// FuzzySearch
+		ImageClarity(ctx context.Context, in *ImageClarityRequest, opts ...grpc.CallOption) (*ImageClarityResponse, error)
 	}
 
 	defaultAiService struct {
@@ -88,4 +92,10 @@ func (m *defaultAiService) ModifyFaceName(ctx context.Context, in *ModifyFaceNam
 func (m *defaultAiService) ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error) {
 	client := pb.NewAiServiceClient(m.cli.Conn())
 	return client.ModifyFaceType(ctx, in, opts...)
+}
+
+// FuzzySearch
+func (m *defaultAiService) ImageClarity(ctx context.Context, in *ImageClarityRequest, opts ...grpc.CallOption) (*ImageClarityResponse, error) {
+	client := pb.NewAiServiceClient(m.cli.Conn())
+	return client.ImageClarity(ctx, in, opts...)
 }

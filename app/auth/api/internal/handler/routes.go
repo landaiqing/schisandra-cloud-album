@@ -309,8 +309,13 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
-					Path:    "/config",
+					Path:    "/config/add",
 					Handler: storage.SetStorageConfigHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/config/delete",
+					Handler: storage.DeleteStorageConfigHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -391,6 +396,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/user/config/list",
 					Handler: storage.GetUserStorageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/storage/list",
+					Handler: storage.ListUserStorageHandler(serverCtx),
 				},
 			}...,
 		),

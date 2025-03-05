@@ -182,6 +182,12 @@ type DeleteShareRecordRequest struct {
 	AlbumID    int64  `json:"album_id"`
 }
 
+type DeleteStorageConfigRequest struct {
+	ID       int64  `json:"id"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type DownloadAlbumRequest struct {
 	ID       int64  `json:"id"`
 	Provider string `json:"provider"`
@@ -384,11 +390,10 @@ type SearchAlbumResponse struct {
 }
 
 type SearchImageRequest struct {
-	Type       string `json:"type"`
-	Keyword    string `json:"keyword"`
-	Provider   string `json:"provider"`
-	Bucket     string `json:"bucket"`
-	InputImage string `json:"input_image,omitempty"`
+	Type     string `json:"type"`
+	Keyword  string `json:"keyword"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
 }
 
 type SearchImageResponse struct {
@@ -495,8 +500,22 @@ type SmsSendRequest struct {
 	Key   string `json:"key"`
 }
 
+type StorageConfigListResponse struct {
+	Records []StorageConfigMeta `json:"records"`
+}
+
+type StorageConfigMeta struct {
+	ID        int64  `json:"id"`
+	Provider  string `json:"provider"`
+	Endpoint  string `json:"endpoint"`
+	Bucket    string `json:"bucket"`
+	Region    string `json:"region"`
+	Capacity  int64  `json:"capacity"`
+	CreatedAt string `json:"created_at"`
+}
+
 type StorageConfigRequest struct {
-	Type      string `json:"type"`
+	Provider  string `json:"provider"`
 	AccessKey string `json:"access_key"`
 	SecretKey string `json:"secret_key"`
 	Endpoint  string `json:"endpoint"`

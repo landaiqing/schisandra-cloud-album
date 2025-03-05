@@ -60,6 +60,17 @@ message ModifyFaceTypeRequest {
 message ModifyFaceTypeResponse {
   string result = 1;
 }
+
+// 模糊图片搜索
+message ImageClarityRequest {
+  bytes  image = 1;
+}
+message ImageClarityResponse {
+  bool   is_blurred = 1;
+  float  confidence = 2;
+}
+
+
 service AiService {
   // FaceRecognition
   rpc FaceRecognition (FaceRecognitionRequest) returns (FaceRecognitionResponse);
@@ -73,6 +84,8 @@ service AiService {
   rpc ModifyFaceName (ModifyFaceNameRequest) returns (ModifyFaceNameResponse);
   // ModifyFaceType
   rpc ModifyFaceType (ModifyFaceTypeRequest) returns (ModifyFaceTypeResponse);
+  // FuzzySearch
+  rpc ImageClarity (ImageClarityRequest) returns (ImageClarityResponse);
 }
 
 

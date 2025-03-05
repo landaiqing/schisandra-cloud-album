@@ -40,7 +40,7 @@ func (l *SetStorageConfigLogic) SetStorageConfig(req *types.StorageConfigRequest
 	}
 	ossConfig := &model.ScaStorageConfig{
 		UserID:    uid,
-		Provider:  req.Type,
+		Provider:  req.Provider,
 		Endpoint:  req.Endpoint,
 		Bucket:    req.Bucket,
 		AccessKey: accessKey,

@@ -9,6 +9,7 @@ import (
 	"schisandra-album-cloud-microservices/app/aisvc/model/mysql/query"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/internal/config"
 	"schisandra-album-cloud-microservices/common/caffe_classifier"
+	"schisandra-album-cloud-microservices/common/clarity"
 	"schisandra-album-cloud-microservices/common/face_recognizer"
 	"schisandra-album-cloud-microservices/common/miniox"
 	"schisandra-album-cloud-microservices/common/redisx"
@@ -25,6 +26,7 @@ type ServiceContext struct {
 	CaffeNet       *gocv.Net
 	CaffeDesc      []string
 	MinioClient    *minio.Client
+	Clarity        *clarity.Detector
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -42,5 +44,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CaffeNet:       caffeClassifier,
 		CaffeDesc:      caffeDesc,
 		MinioClient:    miniox.NewMinio(c.Minio.Endpoint, c.Minio.AccessKeyID, c.Minio.SecretAccessKey, c.Minio.UseSSL),
+		Clarity:        clarity.NewDetector(clarity.WithConcurrency(8), clarity.WithBaseThreshold(90), clarity.WithEdgeBoost(1.2), clarity.WithSampleScale(1)),
 	}
 }

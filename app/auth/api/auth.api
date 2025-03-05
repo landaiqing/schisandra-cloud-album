@@ -434,7 +434,7 @@ service auth {
 // 文件上传配置请求参数
 type (
 	StorageConfigRequest {
-		Type      string `json:"type"`
+		Provider  string `json:"provider"`
 		AccessKey string `json:"access_key"`
 		SecretKey string `json:"secret_key"`
 		Endpoint  string `json:"endpoint"`
@@ -664,11 +664,10 @@ type (
 	}
 	// 搜索图片请求参数
 	SearchImageRequest {
-		Type       string `json:"type"`
-		Keyword    string `json:"keyword"`
-		Provider   string `json:"provider"`
-		Bucket     string `json:"bucket"`
-		InputImage string `json:"input_image,omitempty"`
+		Type     string `json:"type"`
+		Keyword  string `json:"keyword"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 	// 搜索图片相应参数
 	SearchImageResponse {
@@ -688,6 +687,23 @@ type (
 		AlbumID  int64   `json:"album_id"`
 		Provider string  `json:"provider"`
 		Bucket   string  `json:"bucket"`
+	}
+	StorageConfigMeta {
+		ID        int64  `json:"id"`
+		Provider  string `json:"provider"`
+		Endpoint  string `json:"endpoint"`
+		Bucket    string `json:"bucket"`
+		Region    string `json:"region"`
+		Capacity  int64  `json:"capacity"`
+		CreatedAt string `json:"created_at"`
+	}
+	StorageConfigListResponse {
+		Records []StorageConfigMeta `json:"records"`
+	}
+	DeleteStorageConfigRequest {
+		ID       int64  `json:"id"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 )
 
@@ -710,7 +726,7 @@ service auth {
 
 	// 设置存储配置
 	@handler setStorageConfig
-	post /config (StorageConfigRequest) returns (string)
+	post /config/add (StorageConfigRequest) returns (string)
 
 	// 获取人脸样本库列表
 	@handler getFaceSampleLibraryList
@@ -811,6 +827,14 @@ service auth {
 	// 添加图片到相册
 	@handler addImageToAlbum
 	post /album/add/image (AddImageToAlbumRequest) returns (string)
+
+	//列举用户所有存储商
+	@handler listUserStorage
+	post /user/storage/list returns (StorageConfigListResponse)
+
+	// 删除存储配置
+	@handler deleteStorageConfig
+	post /config/delete (DeleteStorageConfigRequest) returns (string)
 }
 
 type (

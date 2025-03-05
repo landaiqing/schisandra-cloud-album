@@ -25,6 +25,7 @@ const (
 	AiService_QueryFaceLibrary_FullMethodName    = "/ai.AiService/QueryFaceLibrary"
 	AiService_ModifyFaceName_FullMethodName      = "/ai.AiService/ModifyFaceName"
 	AiService_ModifyFaceType_FullMethodName      = "/ai.AiService/ModifyFaceType"
+	AiService_ImageClarity_FullMethodName        = "/ai.AiService/ImageClarity"
 )
 
 // AiServiceClient is the client API for AiService service.
@@ -43,6 +44,8 @@ type AiServiceClient interface {
 	ModifyFaceName(ctx context.Context, in *ModifyFaceNameRequest, opts ...grpc.CallOption) (*ModifyFaceNameResponse, error)
 	// ModifyFaceType
 	ModifyFaceType(ctx context.Context, in *ModifyFaceTypeRequest, opts ...grpc.CallOption) (*ModifyFaceTypeResponse, error)
+	// FuzzySearch
+	ImageClarity(ctx context.Context, in *ImageClarityRequest, opts ...grpc.CallOption) (*ImageClarityResponse, error)
 }
 
 type aiServiceClient struct {
@@ -113,6 +116,16 @@ func (c *aiServiceClient) ModifyFaceType(ctx context.Context, in *ModifyFaceType
 	return out, nil
 }
 
+func (c *aiServiceClient) ImageClarity(ctx context.Context, in *ImageClarityRequest, opts ...grpc.CallOption) (*ImageClarityResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ImageClarityResponse)
+	err := c.cc.Invoke(ctx, AiService_ImageClarity_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AiServiceServer is the server API for AiService service.
 // All implementations must embed UnimplementedAiServiceServer
 // for forward compatibility.
@@ -129,6 +142,8 @@ type AiServiceServer interface {
 	ModifyFaceName(context.Context, *ModifyFaceNameRequest) (*ModifyFaceNameResponse, error)
 	// ModifyFaceType
 	ModifyFaceType(context.Context, *ModifyFaceTypeRequest) (*ModifyFaceTypeResponse, error)
+	// FuzzySearch
+	ImageClarity(context.Context, *ImageClarityRequest) (*ImageClarityResponse, error)
 	mustEmbedUnimplementedAiServiceServer()
 }
 
@@ -156,6 +171,9 @@ func (UnimplementedAiServiceServer) ModifyFaceName(context.Context, *ModifyFaceN
 }
 func (UnimplementedAiServiceServer) ModifyFaceType(context.Context, *ModifyFaceTypeRequest) (*ModifyFaceTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ModifyFaceType not implemented")
+}
+func (UnimplementedAiServiceServer) ImageClarity(context.Context, *ImageClarityRequest) (*ImageClarityResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ImageClarity not implemented")
 }
 func (UnimplementedAiServiceServer) mustEmbedUnimplementedAiServiceServer() {}
 func (UnimplementedAiServiceServer) testEmbeddedByValue()                   {}
@@ -286,6 +304,24 @@ func _AiService_ModifyFaceType_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AiService_ImageClarity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ImageClarityRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AiServiceServer).ImageClarity(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: AiService_ImageClarity_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AiServiceServer).ImageClarity(ctx, req.(*ImageClarityRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AiService_ServiceDesc is the grpc.ServiceDesc for AiService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -316,6 +352,10 @@ var AiService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ModifyFaceType",
 			Handler:    _AiService_ModifyFaceType_Handler,
+		},
+		{
+			MethodName: "ImageClarity",
+			Handler:    _AiService_ImageClarity_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

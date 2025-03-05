@@ -70,7 +70,7 @@ func (l *SearchImageLogic) SearchImage(req *types.SearchImageRequest) (resp *typ
 		// 标签和分类匹配
 		addThingQuery(baseQuery, req.Keyword)
 	case "picture":
-		// 图片属性匹配（示例：文件类型）
+		// 图片属性匹配
 		addPictureQuery(baseQuery, req.Keyword)
 	case "location":
 		addLocationQuery(baseQuery, req.Keyword)
@@ -213,8 +213,8 @@ func addTimeRangeQuery(query map[string]interface{}, start, end int64) {
 	timeQuery := map[string]interface{}{
 		"range": map[string]interface{}{
 			"created_at": map[string]interface{}{ // 改为使用 created_at 字段
-				"gte": start * 1000, // 转换为毫秒（根据格式决定）
-				"lte": end * 1000,
+				"gte": start,
+				"lte": end,
 			},
 		},
 	}
@@ -243,12 +243,12 @@ func addPictureQuery(query map[string]interface{}, keyword string) {
 			"should": []map[string]interface{}{
 				{
 					"wildcard": map[string]interface{}{
-						"file_name": "*" + strings.ToLower(keyword) + "*",
+						"tag_name": "*" + strings.ToLower(keyword) + "*",
 					},
 				},
 				{
 					"term": map[string]interface{}{
-						"file_type": strings.ToLower(keyword),
+						"top_category": strings.ToLower(keyword),
 					},
 				},
 			},
@@ -264,13 +264,13 @@ func addPictureQuery(query map[string]interface{}, keyword string) {
 
 // 添加人脸ID查询
 func addFaceIDQuery(query map[string]interface{}, faceID int64) {
-	must := query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"]
+	must := query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"].([]map[string]interface{})
 	idQuery := map[string]interface{}{
 		"term": map[string]interface{}{
 			"face_id": faceID,
 		},
 	}
-	query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"] = append(must.([]map[string]interface{}), idQuery)
+	query["query"].(map[string]interface{})["bool"].(map[string]interface{})["must"] = append(must, idQuery)
 }
 
 func addLocationQuery(query map[string]interface{}, keyword string) {

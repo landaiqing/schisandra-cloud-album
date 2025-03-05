@@ -58,3 +58,9 @@ func (s *AiServiceServer) ModifyFaceType(ctx context.Context, in *pb.ModifyFaceT
 	l := aiservicelogic.NewModifyFaceTypeLogic(ctx, s.svcCtx)
 	return l.ModifyFaceType(in)
 }
+
+// FuzzySearch
+func (s *AiServiceServer) ImageClarity(ctx context.Context, in *pb.ImageClarityRequest) (*pb.ImageClarityResponse, error) {
+	l := aiservicelogic.NewImageClarityLogic(ctx, s.svcCtx)
+	return l.ImageClarity(in)
+}
