@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"time"
 
+	auth "schisandra-album-cloud-microservices/app/auth/api/internal/handler/auth"
 	captcha "schisandra-album-cloud-microservices/app/auth/api/internal/handler/captcha"
 	client "schisandra-album-cloud-microservices/app/auth/api/internal/handler/client"
 	comment "schisandra-album-cloud-microservices/app/auth/api/internal/handler/comment"
@@ -24,6 +25,23 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
+	server.AddRoutes(
+		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/check/security/setting",
+					Handler: auth.CheckUserSecuritySettingHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/api/auth/user"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(104857600),
+	)
+
 	server.AddRoutes(
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
@@ -389,6 +407,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/share/recent/info",
+					Handler: storage.GetShareRecentInfoHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/uploads",
 					Handler: storage.UploadFileHandler(serverCtx),
 				},
@@ -401,6 +424,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/user/storage/list",
 					Handler: storage.ListUserStorageHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/upload/info",
+					Handler: storage.GetUserUploadInfoHandler(serverCtx),
 				},
 			}...,
 		),

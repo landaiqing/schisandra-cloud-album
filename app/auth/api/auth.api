@@ -40,7 +40,7 @@ type (
 		AccessToken string `json:"access_token"`
 		ExpireAt    int64  `json:"expire_at"`
 		UID         string `json:"uid"`
-		Username    string `json:"username,omitempty"`
+		Username    string `json:"username,optional"`
 		Nickname    string `json:"nickname"`
 		Avatar      string `json:"avatar"`
 		Status      int64  `json:"status"`
@@ -316,15 +316,15 @@ type (
 	CommentContent {
 		NickName        string `json:"nickname"`
 		Avatar          string `json:"avatar"`
-		Level           int64  `json:"level,omitempty" default:"0"`
+		Level           int64  `json:"level,optional" default:"0"`
 		Id              int64  `json:"id"`
 		UserId          string `json:"user_id"`
 		TopicId         string `json:"topic_id"`
 		Content         string `json:"content"`
-		ReplyTo         int64  `json:"reply_to,omitempty"`
-		ReplyId         int64  `json:"reply_id,omitempty"`
-		ReplyUser       string `json:"reply_user,omitempty"`
-		ReplyNickname   string `json:"reply_nickname,omitempty"`
+		ReplyTo         int64  `json:"reply_to,optional"`
+		ReplyId         int64  `json:"reply_id,optional"`
+		ReplyUser       string `json:"reply_user,optional"`
+		ReplyNickname   string `json:"reply_nickname,optional"`
 		IsAuthor        int64  `json:"is_author"`
 		Likes           int64  `json:"likes"`
 		ReplyCount      int64  `json:"reply_count"`
@@ -333,7 +333,7 @@ type (
 		Browser         string `json:"browser"`
 		OperatingSystem string `json:"operating_system"`
 		IsLiked         bool   `json:"is_liked" default:"false"`
-		Images          string `json:"images,omitempty"`
+		Images          string `json:"images,optional"`
 	}
 	// CommentListPageResponse 评论返回值
 	CommentListPageResponse {
@@ -353,9 +353,9 @@ type (
 		Browser         string `json:"browser"`
 		OperatingSystem string `json:"operating_system"`
 		CreatedTime     string `json:"created_time"`
-		ReplyId         int64  `json:"reply_id,omitempty"`
-		ReplyUser       string `json:"reply_user,omitempty"`
-		ReplyTo         int64  `json:"reply_to,omitempty"`
+		ReplyId         int64  `json:"reply_id,optional"`
+		ReplyUser       string `json:"reply_user,optional"`
+		ReplyTo         int64  `json:"reply_to,optional"`
 	}
 )
 
@@ -482,7 +482,7 @@ type (
 	}
 	// 相册列表请求参数
 	AlbumListRequest {
-		Type int64 `json:"type,omitempty"`
+		Type int64 `json:"type,optional"`
 		Sort bool  `json:"sort"`
 	}
 	// 相册列表响应参数
@@ -649,8 +649,8 @@ type (
 	ShareAlbumRequest {
 		ID             int64  `json:"id"`
 		ExpireDate     string `json:"expire_date"`
-		AccessLimit    int64  `json:"access_limit,omitempty"`
-		AccessPassword string `json:"access_password,omitempty"`
+		AccessLimit    int64  `json:"access_limit,optional"`
+		AccessPassword string `json:"access_password,optional"`
 		Provider       string `json:"provider"`
 		Bucket         string `json:"bucket"`
 	}
@@ -704,6 +704,28 @@ type (
 		ID       int64  `json:"id"`
 		Provider string `json:"provider"`
 		Bucket   string `json:"bucket"`
+	}
+	HeatmapMeta {
+		Date  string `json:"date"`
+		Count int64  `json:"count"`
+	}
+	UserUploadInfoResponse {
+		ImageCount         int64         `json:"image_count"`
+		TodayUploadCount   int64         `json:"today_upload_count"`
+		ShareCount         int64         `json:"share_count"`
+		TodayShareCount    int64         `json:"today_share_count"`
+		FileSizeCount      int64         `json:"file_size_count"`
+		TodayFileSizeCount int64         `json:"today_file_size_count"`
+		Heatmap            []HeatmapMeta `json:"heatmap"`
+	}
+	ShareRecentMeta {
+		Date         string `json:"date"`
+		VisitCount   int64  `json:"visit_count"`
+		VisitorCount int64  `json:"visitor_count"`
+		PublishCount int64  `json:"publish_count"`
+	}
+	ShareRecentInfoResponse {
+		Records []ShareRecentMeta `json:"records"`
 	}
 )
 
@@ -835,6 +857,14 @@ service auth {
 	// 删除存储配置
 	@handler deleteStorageConfig
 	post /config/delete (DeleteStorageConfigRequest) returns (string)
+
+	// 获取用户上传统计信息
+	@handler getUserUploadInfo
+	post /user/upload/info returns (UserUploadInfoResponse)
+
+	// 获取分享最近的数据统计
+	@handler getShareRecentInfo
+	post /share/recent/info returns (ShareRecentInfoResponse)
 }
 
 type (
@@ -848,15 +878,15 @@ type (
 		ThumbSize   int64   `json:"thumb_size"`
 	}
 	ShareImageRequest {
-		Title          string           `json:"title,omitempty"`
+		Title          string           `json:"title,optional"`
 		ExpireDate     string           `json:"expire_date"`
-		AccessLimit    int64            `json:"access_limit,omitempty"`
-		AccessPassword string           `json:"access_password,omitempty"`
+		AccessLimit    int64            `json:"access_limit,optional"`
+		AccessPassword string           `json:"access_password,optional"`
 		Images         []ShareImageMeta `json:"images"`
 	}
 	QueryShareImageRequest {
 		InviteCode     string `json:"invite_code"`
-		AccessPassword string `json:"access_password,omitempty"`
+		AccessPassword string `json:"access_password,optional"`
 	}
 	QueryShareImageResponse {
 		Records []AllImageDetail `json:"records"`
@@ -880,7 +910,7 @@ type (
 	}
 	QueryShareInfoRequest {
 		InviteCode     string `json:"invite_code"`
-		AccessPassword string `json:"access_password,omitempty"`
+		AccessPassword string `json:"access_password,optional"`
 	}
 	ShareInfoResponse {
 		ID           int64  `json:"id"`
@@ -949,5 +979,35 @@ service auth {
 	// 删除分享记录
 	@handler deleteShareRecord
 	post /record/delete (DeleteShareRecordRequest) returns (string)
+}
+
+type (
+	UserSecuritySettingResponse {
+		bindPhone   bool `json:"bind_phone,default=false"`
+		bindEmail   bool `json:"bind_email,default=falsel"`
+		bindWechat  bool `json:"bind_wechat,default=false"`
+		bindQQ      bool `json:"bind_qq,default=false"`
+		bindGitHub  bool `json:"bind_github,default=false"`
+		bindGitee   bool `json:"bind_gitee,default=false"`
+		setPassword bool `json:"set_password,default=false"`
+	}
+)
+
+// 分享服务
+@server (
+	group:      auth // 微服务分组
+	prefix:     /api/auth/user // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   104857600 // 最大请求大小
+	signature:  false // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+	jwt:        Auth // 是否开启jwt验证
+)
+service auth {
+	// 判断用户安全设置
+	@handler checkUserSecuritySetting
+	post /check/security/setting returns (UserSecuritySettingResponse)
 }
 

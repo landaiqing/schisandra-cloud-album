@@ -50,7 +50,7 @@ type AlbumDetailListResponse struct {
 }
 
 type AlbumListRequest struct {
-	Type int64 `json:"type,omitempty"`
+	Type int64 `json:"type,optional"`
 	Sort bool  `json:"sort"`
 }
 
@@ -98,15 +98,15 @@ type BucketCapacityResponse struct {
 type CommentContent struct {
 	NickName        string `json:"nickname"`
 	Avatar          string `json:"avatar"`
-	Level           int64  `json:"level,omitempty" default:"0"`
+	Level           int64  `json:"level,optional" default:"0"`
 	Id              int64  `json:"id"`
 	UserId          string `json:"user_id"`
 	TopicId         string `json:"topic_id"`
 	Content         string `json:"content"`
-	ReplyTo         int64  `json:"reply_to,omitempty"`
-	ReplyId         int64  `json:"reply_id,omitempty"`
-	ReplyUser       string `json:"reply_user,omitempty"`
-	ReplyNickname   string `json:"reply_nickname,omitempty"`
+	ReplyTo         int64  `json:"reply_to,optional"`
+	ReplyId         int64  `json:"reply_id,optional"`
+	ReplyUser       string `json:"reply_user,optional"`
+	ReplyNickname   string `json:"reply_nickname,optional"`
 	IsAuthor        int64  `json:"is_author"`
 	Likes           int64  `json:"likes"`
 	ReplyCount      int64  `json:"reply_count"`
@@ -115,7 +115,7 @@ type CommentContent struct {
 	Browser         string `json:"browser"`
 	OperatingSystem string `json:"operating_system"`
 	IsLiked         bool   `json:"is_liked" default:"false"`
-	Images          string `json:"images,omitempty"`
+	Images          string `json:"images,optional"`
 }
 
 type CommentDisLikeRequest struct {
@@ -161,9 +161,9 @@ type CommentResponse struct {
 	Browser         string `json:"browser"`
 	OperatingSystem string `json:"operating_system"`
 	CreatedTime     string `json:"created_time"`
-	ReplyId         int64  `json:"reply_id,omitempty"`
-	ReplyUser       string `json:"reply_user,omitempty"`
-	ReplyTo         int64  `json:"reply_to,omitempty"`
+	ReplyId         int64  `json:"reply_id,optional"`
+	ReplyUser       string `json:"reply_user,optional"`
+	ReplyTo         int64  `json:"reply_to,optional"`
 }
 
 type DeleteImageRequest struct {
@@ -222,6 +222,11 @@ type FaceSampleLibraryListResponse struct {
 	Faces []FaceSampleLibrary `json:"faces"`
 }
 
+type HeatmapMeta struct {
+	Date  string `json:"date"`
+	Count int64  `json:"count"`
+}
+
 type ImageMeta struct {
 	ID        int64   `json:"id"`
 	FileName  string  `json:"file_name"`
@@ -267,7 +272,7 @@ type LoginResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpireAt    int64  `json:"expire_at"`
 	UID         string `json:"uid"`
-	Username    string `json:"username,omitempty"`
+	Username    string `json:"username,optional"`
 	Nickname    string `json:"nickname"`
 	Avatar      string `json:"avatar"`
 	Status      int64  `json:"status"`
@@ -312,7 +317,7 @@ type QueryDeleteRecordRequest struct {
 
 type QueryShareImageRequest struct {
 	InviteCode     string `json:"invite_code"`
-	AccessPassword string `json:"access_password,omitempty"`
+	AccessPassword string `json:"access_password,optional"`
 }
 
 type QueryShareImageResponse struct {
@@ -321,7 +326,7 @@ type QueryShareImageResponse struct {
 
 type QueryShareInfoRequest struct {
 	InviteCode     string `json:"invite_code"`
-	AccessPassword string `json:"access_password,omitempty"`
+	AccessPassword string `json:"access_password,optional"`
 }
 
 type RecentListRequest struct {
@@ -403,8 +408,8 @@ type SearchImageResponse struct {
 type ShareAlbumRequest struct {
 	ID             int64  `json:"id"`
 	ExpireDate     string `json:"expire_date"`
-	AccessLimit    int64  `json:"access_limit,omitempty"`
-	AccessPassword string `json:"access_password,omitempty"`
+	AccessLimit    int64  `json:"access_limit,optional"`
+	AccessPassword string `json:"access_password,optional"`
 	Provider       string `json:"provider"`
 	Bucket         string `json:"bucket"`
 }
@@ -420,10 +425,10 @@ type ShareImageMeta struct {
 }
 
 type ShareImageRequest struct {
-	Title          string           `json:"title,omitempty"`
+	Title          string           `json:"title,optional"`
 	ExpireDate     string           `json:"expire_date"`
-	AccessLimit    int64            `json:"access_limit,omitempty"`
-	AccessPassword string           `json:"access_password,omitempty"`
+	AccessLimit    int64            `json:"access_limit,optional"`
+	AccessPassword string           `json:"access_password,optional"`
 	Images         []ShareImageMeta `json:"images"`
 }
 
@@ -459,6 +464,17 @@ type SharePhoneUploadRequest struct {
 	Size          int64  `json:"size"`
 	AccessToken   string `json:"access_token"`
 	UserId        string `json:"user_id"`
+}
+
+type ShareRecentInfoResponse struct {
+	Records []ShareRecentMeta `json:"records"`
+}
+
+type ShareRecentMeta struct {
+	Date         string `json:"date"`
+	VisitCount   int64  `json:"visit_count"`
+	VisitorCount int64  `json:"visitor_count"`
+	PublishCount int64  `json:"publish_count"`
 }
 
 type ShareRecord struct {
@@ -574,6 +590,26 @@ type UploadRequest struct {
 	Image       string `json:"image"`
 	AccessToken string `json:"access_token"`
 	UserId      string `json:"user_id"`
+}
+
+type UserSecuritySettingResponse struct {
+	BindPhone   bool `json:"bind_phone,default=false"`
+	BindEmail   bool `json:"bind_email,default=falsel"`
+	BindWechat  bool `json:"bind_wechat,default=false"`
+	BindQQ      bool `json:"bind_qq,default=false"`
+	BindGitHub  bool `json:"bind_github,default=false"`
+	BindGitee   bool `json:"bind_gitee,default=false"`
+	SetPassword bool `json:"set_password,default=false"`
+}
+
+type UserUploadInfoResponse struct {
+	ImageCount         int64         `json:"image_count"`
+	TodayUploadCount   int64         `json:"today_upload_count"`
+	ShareCount         int64         `json:"share_count"`
+	TodayShareCount    int64         `json:"today_share_count"`
+	FileSizeCount      int64         `json:"file_size_count"`
+	TodayFileSizeCount int64         `json:"today_file_size_count"`
+	Heatmap            []HeatmapMeta `json:"heatmap"`
 }
 
 type WechatOffiaccountLoginRequest struct {

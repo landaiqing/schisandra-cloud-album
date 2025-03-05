@@ -33,7 +33,7 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.Bucket = field.NewString(tableName, "bucket")
 	_scaStorageInfo.Path = field.NewString(tableName, "path")
 	_scaStorageInfo.FileName = field.NewString(tableName, "file_name")
-	_scaStorageInfo.FileSize = field.NewString(tableName, "file_size")
+	_scaStorageInfo.FileSize = field.NewInt64(tableName, "file_size")
 	_scaStorageInfo.FileType = field.NewString(tableName, "file_type")
 	_scaStorageInfo.Width = field.NewFloat64(tableName, "width")
 	_scaStorageInfo.Height = field.NewFloat64(tableName, "height")
@@ -62,7 +62,7 @@ type scaStorageInfo struct {
 	Bucket      field.String  // 存储桶
 	Path        field.String  // 路径
 	FileName    field.String  // 文件名称
-	FileSize    field.String  // 文件大小
+	FileSize    field.Int64   // 文件大小
 	FileType    field.String  // 文件类型
 	Width       field.Float64 // 宽
 	Height      field.Float64 // 高
@@ -96,7 +96,7 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.Bucket = field.NewString(table, "bucket")
 	s.Path = field.NewString(table, "path")
 	s.FileName = field.NewString(table, "file_name")
-	s.FileSize = field.NewString(table, "file_size")
+	s.FileSize = field.NewInt64(table, "file_size")
 	s.FileType = field.NewString(table, "file_type")
 	s.Width = field.NewFloat64(table, "width")
 	s.Height = field.NewFloat64(table, "height")

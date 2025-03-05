@@ -163,7 +163,7 @@ func (l *UploadShareImageLogic) uploadImageAndRecord(tx *query.QueryTx, uid stri
 		UserID:      uid,
 		Path:        originObjectKey,
 		FileName:    img.FileName,
-		FileSize:    strconv.Itoa(size),
+		FileSize:    int64(size),
 		FileType:    img.FileType,
 		Width:       float64(width),
 		Height:      float64(height),
