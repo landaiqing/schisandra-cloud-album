@@ -42,6 +42,7 @@ func newScaStorageInfo(db *gorm.DB, opts ...gen.DOOption) scaStorageInfo {
 	_scaStorageInfo.IsDisplayed = field.NewInt64(tableName, "is_displayed")
 	_scaStorageInfo.AlbumID = field.NewInt64(tableName, "album_id")
 	_scaStorageInfo.LocationID = field.NewInt64(tableName, "location_id")
+	_scaStorageInfo.IsEncrypted = field.NewInt64(tableName, "is_encrypted")
 	_scaStorageInfo.CreatedAt = field.NewTime(tableName, "created_at")
 	_scaStorageInfo.UpdatedAt = field.NewTime(tableName, "updated_at")
 	_scaStorageInfo.DeletedAt = field.NewField(tableName, "deleted_at")
@@ -71,6 +72,7 @@ type scaStorageInfo struct {
 	IsDisplayed field.Int64   // 是否隐藏（0 不隐藏 1 隐藏）
 	AlbumID     field.Int64   // 相册ID
 	LocationID  field.Int64   // 地址ID
+	IsEncrypted field.Int64   // 是否加密(0 否 1 是)
 	CreatedAt   field.Time    // 创建时间
 	UpdatedAt   field.Time    // 更新时间
 	DeletedAt   field.Field   // 删除时间
@@ -105,6 +107,7 @@ func (s *scaStorageInfo) updateTableName(table string) *scaStorageInfo {
 	s.IsDisplayed = field.NewInt64(table, "is_displayed")
 	s.AlbumID = field.NewInt64(table, "album_id")
 	s.LocationID = field.NewInt64(table, "location_id")
+	s.IsEncrypted = field.NewInt64(table, "is_encrypted")
 	s.CreatedAt = field.NewTime(table, "created_at")
 	s.UpdatedAt = field.NewTime(table, "updated_at")
 	s.DeletedAt = field.NewField(table, "deleted_at")
@@ -124,7 +127,7 @@ func (s *scaStorageInfo) GetFieldByName(fieldName string) (field.OrderExpr, bool
 }
 
 func (s *scaStorageInfo) fillFieldMap() {
-	s.fieldMap = make(map[string]field.Expr, 18)
+	s.fieldMap = make(map[string]field.Expr, 19)
 	s.fieldMap["id"] = s.ID
 	s.fieldMap["user_id"] = s.UserID
 	s.fieldMap["provider"] = s.Provider
@@ -140,6 +143,7 @@ func (s *scaStorageInfo) fillFieldMap() {
 	s.fieldMap["is_displayed"] = s.IsDisplayed
 	s.fieldMap["album_id"] = s.AlbumID
 	s.fieldMap["location_id"] = s.LocationID
+	s.fieldMap["is_encrypted"] = s.IsEncrypted
 	s.fieldMap["created_at"] = s.CreatedAt
 	s.fieldMap["updated_at"] = s.UpdatedAt
 	s.fieldMap["deleted_at"] = s.DeletedAt

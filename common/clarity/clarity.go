@@ -1,260 +1,183 @@
 package clarity
 
 import (
-	"bytes"
 	"context"
+	"fmt"
 	"image"
-	_ "image/jpeg"
-	_ "image/png"
-	"math"
 	"runtime"
 	"sync"
 
-	"golang.org/x/sync/errgroup"
+	"gocv.io/x/gocv"
 	"golang.org/x/sync/semaphore"
 )
 
-// Detector 图片模糊检测器
-type Detector struct {
-	baseThreshold     float64    // 基准阈值
-	sampleScale       int        // 采样比例基数
-	edgeBoost         float64    // 边缘增强系数
-	noiseFloor        float64    // 噪声基底
-	channelWeights    [3]float64 // RGB通道权重
-	adaptiveSampling  bool       // 启用自适应采样
-	regionWeights     []float64  // 区域权重矩阵
-	concurrencyLimit  int64      // 最大并发数
-	weightedSemaphore *semaphore.Weighted
-	pool              sync.Pool // 内存池
+// 模糊检测器
+type ConcurrentDetector struct {
+	maxWorkers          int64   // 最大并发数
+	meanThreshold       float64 // 均值阈值
+	laplaceStdThreshold float64 // Laplace标准差阈值
+	sem                 *semaphore.Weighted
 }
 
-type Option func(*Detector)
+type Option func(*ConcurrentDetector)
 
-// NewDetector 创建检测器实例
-func NewDetector(opts ...Option) *Detector {
-	d := &Detector{
-		baseThreshold:    85.0,
-		sampleScale:      2,
-		edgeBoost:        1.0,
-		noiseFloor:       5.0,
-		channelWeights:   [3]float64{0.299, 0.587, 0.114},
-		adaptiveSampling: true,
-		concurrencyLimit: int64(runtime.NumCPU() * 2),
+// 默认参数
+func NewConcurrentDetector(opts ...Option) *ConcurrentDetector {
+	d := &ConcurrentDetector{
+		maxWorkers:          int64(runtime.NumCPU() * 2),
+		meanThreshold:       5.0,  // 原始值5
+		laplaceStdThreshold: 20.0, // 原始值20
 	}
-
-	d.pool.New = func() interface{} {
-		return &scanContext{
-			sum:   0,
-			sumSq: 0,
-		}
-	}
-
-	d.weightedSemaphore = semaphore.NewWeighted(d.concurrencyLimit)
 
 	for _, opt := range opts {
 		opt(d)
 	}
+
+	d.sem = semaphore.NewWeighted(d.maxWorkers)
 	return d
 }
 
-// 配置选项 ---------------------------------------------------
-
-func WithBaseThreshold(t float64) Option {
-	return func(d *Detector) {
-		d.baseThreshold = t
+// 配置选项 -------------------------------------------------
+func WithMeanThreshold(t float64) Option {
+	return func(d *ConcurrentDetector) {
+		d.meanThreshold = t
 	}
 }
 
-func WithSampleScale(n int) Option {
-	return func(d *Detector) {
-		d.sampleScale = 1 << uint(maxInt(0, n))
+func WithLaplaceStdThreshold(t float64) Option {
+	return func(d *ConcurrentDetector) {
+		d.laplaceStdThreshold = t
 	}
 }
 
-func WithEdgeBoost(factor float64) Option {
-	return func(d *Detector) {
-		d.edgeBoost = clamp(factor, 0.5, 2.0)
+func WithMaxWorkers(n int) Option {
+	return func(d *ConcurrentDetector) {
+		d.maxWorkers = int64(n)
 	}
 }
 
-func WithNoiseFloor(floor float64) Option {
-	return func(d *Detector) {
-		d.noiseFloor = math.Max(0, floor)
+func (d *ConcurrentDetector) ClarityCheck(img image.Image) (bool, error) {
+	if img == nil {
+		return false, fmt.Errorf("nil image input")
 	}
+
+	mat, err := gocv.ImageToMatRGB(img)
+	if err != nil || mat.Empty() {
+		if mat.Empty() == false {
+			mat.Close()
+		}
+		return false, err
+	}
+	matClone := mat.Clone()
+	if mat.Channels() != 1 {
+		gocv.CvtColor(mat, &matClone, gocv.ColorRGBToGray)
+	}
+	mat.Close()
+
+	// Canny检测部分
+	destCanny := gocv.NewMat()
+	defer destCanny.Close()
+	gocv.Canny(matClone, &destCanny, 200, 200)
+
+	destCannyC := gocv.NewMat()
+	defer destCannyC.Close()
+	destCannyD := gocv.NewMat()
+	defer destCannyD.Close()
+	gocv.MeanStdDev(destCanny, &destCannyC, &destCannyD)
+	if destCannyD.GetDoubleAt(0, 0) == 0 {
+		matClone.Close()
+		return false, nil
+	}
+
+	// Laplace检测部分
+	destA := gocv.NewMat()
+	defer destA.Close()
+	gocv.Laplacian(matClone, &destA, gocv.MatTypeCV64F, 3, 1, 0, gocv.BorderDefault)
+
+	destC := gocv.NewMat()
+	defer destC.Close()
+	destD := gocv.NewMat()
+	defer destD.Close()
+	gocv.MeanStdDev(destA, &destC, &destD)
+
+	destMean := gocv.NewMat()
+	defer destMean.Close()
+	gocv.Laplacian(matClone, &destMean, gocv.MatTypeCV16U, 3, 1, 0, gocv.BorderDefault)
+	mean := destMean.Mean()
+	matClone.Close()
+
+	// 使用可配置阈值（mean.Val1 >5 || destD.GetDoubleAt>20）
+	result := mean.Val1 > d.meanThreshold && destD.GetDoubleAt(0, 0) > d.laplaceStdThreshold
+	return result, nil
 }
 
-func WithConcurrency(n int) Option {
-	return func(d *Detector) {
-		d.concurrencyLimit = int64(maxInt(1, n))
-		d.weightedSemaphore = semaphore.NewWeighted(d.concurrencyLimit)
-	}
+type Result struct {
+	Blurred bool
+	Err     error
 }
 
-// Detect 执行模糊检测
-func (d *Detector) Detect(imgData []byte) (isBlurred bool, confidence float64, err error) {
-	img, _, err := image.Decode(bytes.NewReader(imgData))
-	if err != nil {
-		return true, 0.0, err
-	}
+func (d *ConcurrentDetector) BatchDetect(ctx context.Context, images <-chan image.Image) <-chan Result {
+	results := make(chan Result)
+	var wg sync.WaitGroup
 
-	bounds := img.Bounds()
-	width, height := bounds.Dx(), bounds.Dy()
-
-	if width < 32 || height < 32 {
-		return true, 0.0, nil
-	}
-
-	ctx := d.pool.Get().(*scanContext)
-	defer d.pool.Put(ctx)
-	ctx.reset()
-
-	step := d.calculateStep(width, height)
-
-	g, groupCtx := errgroup.WithContext(context.Background())
-	processingCtx, cancel := context.WithCancel(groupCtx)
-	defer cancel()
-
-	for y := bounds.Min.Y; y < bounds.Max.Y; y += step {
-		for x := bounds.Min.X; x < bounds.Max.X; x += step {
-			x, y := x, y // 捕获循环变量
-
-			if err := d.weightedSemaphore.Acquire(processingCtx, 1); err != nil {
+	go func() {
+		defer close(results)
+		for img := range images {
+			if err := d.sem.Acquire(ctx, 1); err != nil {
 				break
 			}
+			wg.Add(1)
 
-			g.Go(func() error {
-				defer d.weightedSemaphore.Release(1)
+			go func(img image.Image) {
+				defer wg.Done()
+				defer d.sem.Release(1)
 
+				blurred, err := d.ClarityCheck(img)
 				select {
-				case <-processingCtx.Done():
-					return nil
-				default:
+				case results <- Result{Blurred: blurred, Err: err}:
+				case <-ctx.Done():
 				}
-
-				if x <= 0 || y <= 0 || x >= bounds.Max.X-1 || y >= bounds.Max.Y-1 {
-					return nil
-				}
-
-				gray := d.calculateGray(img, x, y)
-				val := d.calculateLaplacian(img, x, y, gray)
-				weight := d.getRegionWeight(x, y, bounds)
-
-				ctx.mu.Lock()
-				ctx.sum += val * weight
-				ctx.sumSq += (val * weight) * (val * weight)
-				ctx.mu.Unlock()
-
-				return nil
-			})
+			}(img)
 		}
-	}
+		wg.Wait()
+	}()
 
-	if err := g.Wait(); err != nil {
-		return true, 0.0, err
-	}
-
-	n := float64(((width / step) * (height / step)) - 4)
-	if n <= 0 {
-		return true, 0.0, nil
-	}
-
-	mean := ctx.sum / n
-	variance := (ctx.sumSq/n - mean*mean) * 1e6
-
-	dynamicThreshold := d.calculateDynamicThreshold(width, height)
-	confidence = math.Max(0, math.Min(1, (variance-d.noiseFloor)/(dynamicThreshold-d.noiseFloor)))
-
-	return variance < dynamicThreshold, confidence, nil
+	return results
 }
 
-// 私有方法 ---------------------------------------------------
+/*
+func main() {
+	// 初始化检测器（调整阈值参数）
+	detector := NewConcurrentDetector(
+		WithMeanThreshold(8.0),        // 提高均值阈值
+		WithLaplaceStdThreshold(25.0),  // 提高标准差阈值
+		WithMaxWorkers(8),              // 设置并发数
+	)
 
-func (d *Detector) calculateStep(width, height int) int {
-	if !d.adaptiveSampling {
-		return d.sampleScale
+	// 准备测试图片
+	img := loadImage("test.jpg")
+
+	// 单张检测
+	blurred, _ := detector.clarityCheck(img)
+	fmt.Println("Blurred:", blurred)
+
+	// 批量检测
+	ctx := context.Background()
+	imgChan := make(chan image.Image, 10)
+	go func() {
+		for i := 0; i < 10; i++ {
+			imgChan <- loadImage(fmt.Sprintf("image%d.jpg", i))
+		}
+		close(imgChan)
+	}()
+
+	results := detector.BatchDetect(ctx, imgChan)
+	for res := range results {
+		if res.Err != nil {
+			fmt.Println("Error:", res.Err)
+			continue
+		}
+		fmt.Println("Result:", res.Blurred)
 	}
-
-	area := width * height
-	switch {
-	case area > 4000*3000:
-		return d.sampleScale * 4
-	case area > 2000*1500:
-		return d.sampleScale * 2
-	default:
-		return d.sampleScale
-	}
 }
-
-func (d *Detector) calculateGray(img image.Image, x, y int) float64 {
-	r, g, b, _ := img.At(x, y).RGBA()
-	return d.channelWeights[0]*float64(r>>8) +
-		d.channelWeights[1]*float64(g>>8) +
-		d.channelWeights[2]*float64(b>>8)
-}
-
-func (d *Detector) calculateLaplacian(img image.Image, x, y int, center float64) float64 {
-	getGray := func(x, y int) float64 {
-		r, g, b, _ := img.At(x, y).RGBA()
-		return d.channelWeights[0]*float64(r>>8) +
-			d.channelWeights[1]*float64(g>>8) +
-			d.channelWeights[2]*float64(b>>8)
-	}
-
-	return math.Abs(4*center-
-		getGray(x-1, y)-
-		getGray(x+1, y)-
-		getGray(x, y-1)-
-		getGray(x, y+1)) * d.edgeBoost
-}
-
-func (d *Detector) calculateDynamicThreshold(width, height int) float64 {
-	areaRatio := float64(width*height) / 250000.0
-	return d.baseThreshold*math.Pow(areaRatio, 0.65) + d.noiseFloor
-}
-
-func (d *Detector) getRegionWeight(x, y int, bounds image.Rectangle) float64 {
-	if len(d.regionWeights) == 0 {
-		return 1.0
-	}
-
-	size := int(math.Sqrt(float64(len(d.regionWeights))))
-	if size == 0 {
-		return 1.0
-	}
-
-	nx := float64(x-bounds.Min.X) / float64(bounds.Dx())
-	ny := float64(y-bounds.Min.Y) / float64(bounds.Dy())
-
-	ix := int(nx * float64(size))
-	iy := int(ny * float64(size))
-	idx := iy*size + ix
-
-	if idx >= 0 && idx < len(d.regionWeights) {
-		return d.regionWeights[idx]
-	}
-	return 1.0
-}
-
-// 辅助函数 ---------------------------------------------------
-
-type scanContext struct {
-	sum   float64
-	sumSq float64
-	mu    sync.Mutex
-}
-
-func (c *scanContext) reset() {
-	c.sum = 0
-	c.sumSq = 0
-}
-
-func maxInt(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func clamp(value, min, max float64) float64 {
-	return math.Max(min, math.Min(max, value))
-}
+*/

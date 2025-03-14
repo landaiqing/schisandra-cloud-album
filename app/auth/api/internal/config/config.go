@@ -16,7 +16,6 @@ type Config struct {
 	}
 	Encrypt struct {
 		Key string
-		IV  string
 	}
 	Mysql struct {
 		DataSource  string

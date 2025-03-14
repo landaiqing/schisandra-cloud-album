@@ -3,6 +3,7 @@ package svc
 import (
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/officialAccount"
 	"github.com/casbin/casbin/v2"
+	"github.com/landaiqing/go-xcipher"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/minio/minio-go/v7"
 	"github.com/nsqio/go-nsq"
@@ -37,6 +38,7 @@ type ServiceContext struct {
 	SecurityHeadersMiddleware rest.Middleware
 	CasbinVerifyMiddleware    rest.Middleware
 	NonceMiddleware           rest.Middleware
+	AuthMiddleware            rest.Middleware
 	DB                        *query.Query
 	RedisClient               *redis.Client
 	Ip2Region                 *xdb.Searcher
@@ -50,6 +52,7 @@ type ServiceContext struct {
 	GeoRegionData             *geo_json.RegionData
 	NSQProducer               *nsq.Producer
 	ZincClient                *zincx.ZincClient
+	XCipher                   *xcipher.XCipher
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -61,6 +64,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SecurityHeadersMiddleware: middleware.NewSecurityHeadersMiddleware().Handle,
 		CasbinVerifyMiddleware:    middleware.NewCasbinVerifyMiddleware(casbinEnforcer).Handle,
 		NonceMiddleware:           middleware.NewNonceMiddleware(redisClient).Handle,
+		AuthMiddleware:            middleware.NewAuthMiddleware(redisClient).Handle,
 		DB:                        queryDB,
 		RedisClient:               redisClient,
 		Ip2Region:                 ip2region.NewIP2Region(),
@@ -75,6 +79,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GeoRegionData:             geo_json.NewGeoJSON(),
 		NSQProducer:               nsqx.NewNsqProducer(c.NSQ.NSQDHost),
 		ZincClient:                zincx.NewZincClient(c.Zinc.URL, c.Zinc.Username, c.Zinc.Password),
+		XCipher:                   xcipher.NewXCipher([]byte(c.Encrypt.Key)),
 	}
 	return serviceContext
 }

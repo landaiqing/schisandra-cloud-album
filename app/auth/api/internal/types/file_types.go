@@ -34,16 +34,18 @@ type UploadSetting struct {
 	TargetDetection     bool `json:"target_detection"`
 	QrcodeDetection     bool `json:"qrcode_detection"`
 	FaceDetection       bool `json:"face_detection"`
+	Encrypt             bool `json:"encrypt"`
 }
 
 type FileUploadMessage struct {
-	FaceID    int64  `json:"face_id"`
-	FileName  string `json:"file_name"`
-	FileSize  int64  `json:"file_size"`
-	Result    File   `json:"result"`
-	UID       string `json:"uid"`
-	FilePath  string `json:"file_path"`
-	ThumbPath string `json:"thumb_path"`
+	FaceID    int64         `json:"face_id"`
+	FileName  string        `json:"file_name"`
+	FileSize  int64         `json:"file_size"`
+	Result    File          `json:"result"`
+	UID       string        `json:"uid"`
+	FilePath  string        `json:"file_path"`
+	ThumbPath string        `json:"thumb_path"`
+	Setting   UploadSetting `json:"setting"`
 }
 
 type FileInfoResult struct {

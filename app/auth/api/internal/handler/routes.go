@@ -27,12 +27,17 @@ import (
 func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware, serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
 					Path:    "/check/security/setting",
 					Handler: auth.CheckUserSecuritySettingHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/logout",
+					Handler: auth.LogoutHandler(serverCtx),
 				},
 			}...,
 		),
@@ -81,7 +86,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware, serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -205,7 +210,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware, serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -273,7 +278,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
-			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware, serverCtx.AuthMiddleware},
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
@@ -337,6 +342,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/coordinate/list",
+					Handler: storage.GetCoordinateListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/delete/record",
 					Handler: storage.GetDeleteRecordHandler(serverCtx),
 				},
@@ -379,6 +389,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/image/location/list",
 					Handler: storage.QueryLocationImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/private/list",
+					Handler: storage.GetPrivateImageListHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,

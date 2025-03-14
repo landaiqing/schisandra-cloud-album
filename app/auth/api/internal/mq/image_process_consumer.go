@@ -61,7 +61,7 @@ func (c *NsqImageProcessConsumer) HandleMessage(msg *nsq.Message) error {
 	}
 
 	// 将文件信息存入数据库
-	storageId, err := c.saveFileInfoToDB(message.UID, message.Result.Bucket, message.Result.Provider, message.FileName, message.FileSize, message.Result, message.FaceID, message.FilePath, locationId, message.Result.AlbumId)
+	storageId, err := c.saveFileInfoToDB(message.UID, message.Result.Bucket, message.Result.Provider, message.FileName, message.FileSize, message.Result, message.FaceID, message.FilePath, locationId, message.Result.AlbumId, message.Setting.Encrypt)
 	if err != nil {
 		return err
 	}
@@ -266,7 +266,7 @@ func (c *NsqImageProcessConsumer) saveFileThumbnailInfoToDB(uid string, filePath
 }
 
 // 将 EXIF 和文件信息存入数据库
-func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, fileName string, fileSize int64, result types.File, faceId int64, filePath string, locationID, albumId int64) (int64, error) {
+func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string, fileName string, fileSize int64, result types.File, faceId int64, filePath string, locationID, albumId int64, encrypt bool) (int64, error) {
 	tx := c.svcCtx.DB.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -274,21 +274,26 @@ func (c *NsqImageProcessConsumer) saveFileInfoToDB(uid, bucket, provider string,
 			logx.Errorf("transaction rollback: %v", r)
 		}
 	}()
+	var isEncrypted int64 = 0
+	if encrypt {
+		isEncrypted = 1
+	}
 	typeName := c.classifyFile(result.FileType, result.IsScreenshot)
 	scaStorageInfo := &model.ScaStorageInfo{
-		UserID:     uid,
-		Provider:   provider,
-		Bucket:     bucket,
-		FileName:   fileName,
-		FileSize:   fileSize,
-		FileType:   result.FileType,
-		Path:       filePath,
-		FaceID:     faceId,
-		Type:       typeName,
-		Width:      result.Width,
-		Height:     result.Height,
-		LocationID: locationID,
-		AlbumID:    albumId,
+		UserID:      uid,
+		Provider:    provider,
+		Bucket:      bucket,
+		FileName:    fileName,
+		FileSize:    fileSize,
+		FileType:    result.FileType,
+		Path:        filePath,
+		FaceID:      faceId,
+		Type:        typeName,
+		Width:       result.Width,
+		Height:      result.Height,
+		LocationID:  locationID,
+		AlbumID:     albumId,
+		IsEncrypted: isEncrypted,
 	}
 	err := tx.ScaStorageInfo.Create(scaStorageInfo)
 	if err != nil {

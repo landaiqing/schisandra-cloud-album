@@ -82,7 +82,8 @@ func (l *QueryRecentImageListLogic) QueryRecentImageList(req *types.RecentListRe
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
 			storageInfo.Type.Neq(constant.ImageTypeShared),
-			storageInfo.CreatedAt.Gt(thirtyDaysAgo)).
+			storageInfo.CreatedAt.Gt(thirtyDaysAgo),
+			storageInfo.IsEncrypted.Eq(constant.NoEncrypt)).
 		Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
 	if err != nil {
 		return nil, err

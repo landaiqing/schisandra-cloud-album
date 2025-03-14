@@ -166,6 +166,17 @@ type CommentResponse struct {
 	ReplyTo         int64  `json:"reply_to,optional"`
 }
 
+type CoordinateListResponse struct {
+	Records []CoordinateMeta `json:"records"`
+}
+
+type CoordinateMeta struct {
+	ID         int64   `json:"id"`
+	Latitude   float64 `json:"latitude"`
+	Longitude  float64 `json:"longitude"`
+	ImageCount int64   `json:"image_count"`
+}
+
 type DeleteImageRequest struct {
 	IDS      []int64 `json:"ids"`
 	Provider string  `json:"provider"`
@@ -308,6 +319,12 @@ type PhoneLoginRequest struct {
 	Phone     string `json:"phone"`
 	Captcha   string `json:"captcha"`
 	AutoLogin bool   `json:"auto_login"`
+}
+
+type PrivateImageListRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+	Password string `json:"password"`
 }
 
 type QueryDeleteRecordRequest struct {

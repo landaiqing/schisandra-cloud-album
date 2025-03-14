@@ -1,7 +1,9 @@
 package aiservicelogic
 
 import (
+	"bytes"
 	"context"
+	"image"
 
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/internal/svc"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/pb"
@@ -25,12 +27,15 @@ func NewImageClarityLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Imag
 
 // ImageClarity 图像清晰度检测
 func (l *ImageClarityLogic) ImageClarity(in *pb.ImageClarityRequest) (*pb.ImageClarityResponse, error) {
-	blurred, confidence, err := l.svcCtx.Clarity.Detect(in.Image)
+	img, _, err := image.Decode(bytes.NewReader(in.Image))
+	if err != nil {
+		return nil, err
+	}
+	check, err := l.svcCtx.ClarityDetector.ClarityCheck(img)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.ImageClarityResponse{
-		IsBlurred:  blurred,
-		Confidence: float32(confidence),
+		IsBlurred: check,
 	}, nil
 }

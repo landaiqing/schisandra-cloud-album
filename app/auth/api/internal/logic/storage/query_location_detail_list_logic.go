@@ -79,7 +79,8 @@ func (l *QueryLocationDetailListLogic) QueryLocationDetailList(req *types.Locati
 			storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
-			storageLocation.ID.Eq(req.ID)).
+			storageLocation.ID.Eq(req.ID),
+			storageInfo.IsEncrypted.Eq(constant.NoEncrypt)).
 		Order(storageInfo.CreatedAt.Desc())
 	err = storageInfoQuery.Scan(&storageInfoList)
 	if err != nil {

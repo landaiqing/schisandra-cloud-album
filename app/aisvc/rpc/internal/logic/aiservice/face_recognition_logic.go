@@ -86,7 +86,7 @@ func (l *FaceRecognitionLogic) FaceRecognition(in *pb.FaceRecognitionRequest) (*
 	l.svcCtx.FaceRecognizer.SetSamples(samples, ids)
 
 	// 人脸分类
-	classify := l.svcCtx.FaceRecognizer.ClassifyThreshold(faceFeatures.Descriptor, 0.3)
+	classify := l.svcCtx.FaceRecognizer.ClassifyThreshold(faceFeatures.Descriptor, 0.2)
 	if classify > 0 {
 		return &pb.FaceRecognitionResponse{
 			FaceId: int64(classify),
@@ -242,10 +242,10 @@ func (l *FaceRecognitionLogic) saveCroppedFaceToLocal(faceImage []byte, rect ima
 	// 增加边距（比如 20 像素）
 	margin := 20
 	extendedRect := image.Rect(
-		max(rect.Min.X-margin, imgBounds.Min.X), // 确保不超出左边界
-		max(rect.Min.Y-margin, imgBounds.Min.Y), // 确保不超出上边界
-		min(rect.Max.X+margin, imgBounds.Max.X), // 确保不超出右边界
-		min(rect.Max.Y+margin, imgBounds.Max.Y), // 确保不超出下边界
+		max(rect.Min.X-margin, imgBounds.Min.X),
+		max(rect.Min.Y-margin, imgBounds.Min.Y),
+		min(rect.Max.X+margin, imgBounds.Max.X),
+		min(rect.Max.Y+margin, imgBounds.Max.Y),
 	)
 	// 裁剪图像
 	croppedImage := img.(interface {

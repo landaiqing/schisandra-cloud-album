@@ -1,27 +1,30 @@
 package clarity
 
 import (
-	"bytes"
 	"image"
+	_ "image/jpeg"
+	_ "image/png"
 	"os"
 	"testing"
 )
 
 func TestClarity(t *testing.T) {
 
-	//detector := NewDetector(
-	//	WithConcurrency(8), WithBaseThreshold(90), WithEdgeBoost(1.2), WithSampleScale(1))
-	//imgData, _ := os.ReadFile("4.png")
-	//blurred, confidence, err := detector.Detect(imgData)
-	//if err != nil {
-	//	t.Error(err)
-	//}
-	//t.Log(blurred, confidence)
-	imgData, _ := os.ReadFile("2.png")
-	img, _, err := image.Decode(bytes.NewReader(imgData))
-	clarity, err := Clarity(img)
+	imgData, err := os.Open("2.jpg")
 	if err != nil {
 		t.Error(err)
 	}
-	t.Log(clarity)
+	img, _, err := image.Decode(imgData)
+	if err != nil {
+		t.Error(err)
+	}
+	detector := NewConcurrentDetector(WithMeanThreshold(13.0), // 提高均值阈值
+		WithLaplaceStdThreshold(25.0), // 提高标准差阈值
+		WithMaxWorkers(8),             // 设置并发数
+	)
+	check, err := detector.ClarityCheck(img)
+	if err != nil {
+		t.Error(err)
+	}
+	t.Log(check)
 }

@@ -17,16 +17,16 @@ import (
 )
 
 type ServiceContext struct {
-	Config         config.Config
-	FaceRecognizer *face.Recognizer
-	DB             *query.Query
-	RedisClient    *redis.Client
-	TfNet          *gocv.Net
-	TfDesc         []string
-	CaffeNet       *gocv.Net
-	CaffeDesc      []string
-	MinioClient    *minio.Client
-	Clarity        *clarity.Detector
+	Config          config.Config
+	FaceRecognizer  *face.Recognizer
+	DB              *query.Query
+	RedisClient     *redis.Client
+	TfNet           *gocv.Net
+	TfDesc          []string
+	CaffeNet        *gocv.Net
+	CaffeDesc       []string
+	MinioClient     *minio.Client
+	ClarityDetector *clarity.ConcurrentDetector
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -44,6 +44,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CaffeNet:       caffeClassifier,
 		CaffeDesc:      caffeDesc,
 		MinioClient:    miniox.NewMinio(c.Minio.Endpoint, c.Minio.AccessKeyID, c.Minio.SecretAccessKey, c.Minio.UseSSL),
-		Clarity:        clarity.NewDetector(clarity.WithConcurrency(8), clarity.WithBaseThreshold(90), clarity.WithEdgeBoost(1.2), clarity.WithSampleScale(1)),
+		ClarityDetector: clarity.NewConcurrentDetector(clarity.WithMeanThreshold(13.0), // 提高均值阈值
+			clarity.WithLaplaceStdThreshold(25.0), // 提高标准差阈值
+			clarity.WithMaxWorkers(8)),
 	}
 }

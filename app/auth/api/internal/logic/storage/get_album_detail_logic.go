@@ -67,6 +67,7 @@ func (l *GetAlbumDetailLogic) GetAlbumDetail(req *types.AlbumDetailListRequest) 
 	var queryCondition []gen.Condition
 	queryCondition = append(queryCondition, storageInfo.UserID.Eq(uid))
 	queryCondition = append(queryCondition, storageInfo.AlbumID.Eq(req.ID))
+	queryCondition = append(queryCondition, storageInfo.IsEncrypted.Eq(constant.NoEncrypt))
 	// 类型筛选 1 是分享类型
 	if req.Type != constant.AlbumTypeShared {
 		queryCondition = append(queryCondition, storageInfo.Provider.Eq(req.Provider))

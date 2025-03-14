@@ -74,7 +74,8 @@ func (l *GetFaceDetailListLogic) GetFaceDetailList(req *types.FaceDetailListRequ
 		storageInfo.UserID.Eq(uid),
 		storageInfo.Provider.Eq(req.Provider),
 		storageInfo.Bucket.Eq(req.Bucket),
-		storageInfo.FaceID.Eq(req.FaceID)).
+		storageInfo.FaceID.Eq(req.FaceID),
+		storageInfo.IsEncrypted.Eq(constant.NoEncrypt)).
 		Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
 	if err != nil {
 		return nil, err

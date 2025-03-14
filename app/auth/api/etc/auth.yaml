@@ -90,8 +90,6 @@ Signature:
 Encrypt:
   # 密钥（32）
   Key: p3380puliiep184buh8d5dvujeerqtem
-  # 向量 (16)
-  IV: spb7er04k2vz3dtk
 # Redis 配置
 Redis:
   # Redis 地址

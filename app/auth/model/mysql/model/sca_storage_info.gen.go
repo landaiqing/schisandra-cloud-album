@@ -29,6 +29,7 @@ type ScaStorageInfo struct {
 	IsDisplayed int64          `gorm:"column:is_displayed;type:tinyint(4);comment:是否隐藏（0 不隐藏 1 隐藏）" json:"is_displayed"`                // 是否隐藏（0 不隐藏 1 隐藏）
 	AlbumID     int64          `gorm:"column:album_id;type:bigint(20);comment:相册ID" json:"album_id"`                                    // 相册ID
 	LocationID  int64          `gorm:"column:location_id;type:bigint(20);comment:地址ID" json:"location_id"`                              // 地址ID
+	IsEncrypted int64          `gorm:"column:is_encrypted;type:tinyint(4);comment:是否加密(0 否 1 是)" json:"is_encrypted"`                   // 是否加密(0 否 1 是)
 	CreatedAt   time.Time      `gorm:"column:created_at;type:timestamp;autoCreateTime;comment:创建时间" json:"created_at"`                  // 创建时间
 	UpdatedAt   time.Time      `gorm:"column:updated_at;type:timestamp;autoUpdateTime;comment:更新时间" json:"updated_at"`                  // 更新时间
 	DeletedAt   gorm.DeletedAt `gorm:"column:deleted_at;type:timestamp;comment:删除时间" json:"deleted_at"`                                 // 删除时间

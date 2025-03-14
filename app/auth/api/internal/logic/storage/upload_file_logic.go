@@ -110,6 +110,15 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 			return nil
 		})
 	}
+	var imageBytes []byte
+	if settingResult.Encrypt {
+		encryptedData, err := l.svcCtx.XCipher.Encrypt(data, []byte(uid))
+		if err != nil {
+			return "", err
+		}
+		imageBytes = encryptedData
+	}
+
 	// 上传文件到 OSS
 	g.Go(func() error {
 		if err := sem.Acquire(ctx, 1); err != nil {
@@ -117,16 +126,7 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		}
 		defer sem.Release(1)
 
-		// 重新创建 `multipart.File` 兼容的 `Reader`
-		fileReader := struct {
-			*bytes.Reader
-			io.Closer
-		}{
-			Reader: bytes.NewReader(data),
-			Closer: io.NopCloser(nil),
-		}
-
-		fileUrl, thumbUrl, err := l.uploadFileToOSS(uid, header, fileReader, thumbnail, result)
+		fileUrl, thumbUrl, err := l.uploadFileToOSS(uid, header, bytes.NewReader(imageBytes), thumbnail, result)
 		if err != nil {
 			return err
 		}
@@ -148,6 +148,7 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		FileSize:  header.Size,
 		FilePath:  filePath,
 		ThumbPath: thumbPath,
+		Setting:   settingResult,
 	}
 	// 转换为 JSON
 	messageData, err := json.Marshal(fileUploadMessage)
@@ -209,7 +210,7 @@ func (l *UploadFileLogic) parseUploadSettingResult(r *http.Request) (types.Uploa
 }
 
 // 上传文件到 OSS
-func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file multipart.File, thumbnail multipart.File, result types.File) (string, string, error) {
+func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file io.Reader, thumbnail io.Reader, result types.File) (string, string, error) {
 	cacheKey := constant.UserOssConfigPrefix + uid + ":" + result.Provider
 	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheKey, uid, result.Provider)
 	if err != nil {

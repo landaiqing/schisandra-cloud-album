@@ -365,7 +365,7 @@ type (
 	timeout:    10s // 超时时间
 	maxBytes:   10485760 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware,AuthMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证
@@ -727,6 +727,20 @@ type (
 	ShareRecentInfoResponse {
 		Records []ShareRecentMeta `json:"records"`
 	}
+	PrivateImageListRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+		Password string `json:"password"`
+	}
+	CoordinateMeta {
+		ID         int64   `json:"id"`
+		Latitude   float64 `json:"latitude"`
+		Longitude  float64 `json:"longitude"`
+		ImageCount int64   `json:"image_count"`
+	}
+	CoordinateListResponse {
+		Records []CoordinateMeta `json:"records"`
+	}
 )
 
 // 文件上传
@@ -736,7 +750,7 @@ type (
 	timeout:    20s // 超时时间
 	maxBytes:   104857600 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware,AuthMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证
@@ -865,6 +879,14 @@ service auth {
 	// 获取分享最近的数据统计
 	@handler getShareRecentInfo
 	post /share/recent/info returns (ShareRecentInfoResponse)
+
+	// 获取隐私加密图片
+	@handler getPrivateImageList
+	post /image/private/list (PrivateImageListRequest) returns (AllImageListResponse)
+
+	// 获取图像经纬度列表
+	@handler getCoordinateList
+	post /coordinate/list returns (CoordinateListResponse)
 }
 
 type (
@@ -951,7 +973,7 @@ type (
 	timeout:    10s // 超时时间
 	maxBytes:   104857600 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware,AuthMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证
@@ -993,14 +1015,14 @@ type (
 	}
 )
 
-// 分享服务
+// 用户服务
 @server (
 	group:      auth // 微服务分组
 	prefix:     /api/auth/user // 微服务前缀
 	timeout:    10s // 超时时间
 	maxBytes:   104857600 // 最大请求大小
 	signature:  false // 是否开启签名验证
-	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware // 注册中间件
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware,AuthMiddleware // 注册中间件
 	MaxConns:   true // 是否开启最大连接数限制
 	Recover:    true // 是否开启自动恢复
 	jwt:        Auth // 是否开启jwt验证
@@ -1009,5 +1031,9 @@ service auth {
 	// 判断用户安全设置
 	@handler checkUserSecuritySetting
 	post /check/security/setting returns (UserSecuritySettingResponse)
+
+	// 退出登录
+	@handler logout
+	post /logout returns (string)
 }
 

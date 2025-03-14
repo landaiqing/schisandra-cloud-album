@@ -21,9 +21,13 @@ func NewCasbinVerifyMiddleware(casbin *casbin.SyncedCachedEnforcer) *CasbinVerif
 func (m *CasbinVerifyMiddleware) Handle(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		userId := r.Header.Get(constant.UID_HEADER_KEY)
+		if userId == "" {
+			xhttp.JsonBaseResponseCtx(r.Context(), w, errors.New(http.StatusNotFound, "user id not found in header"))
+			return
+		}
 		correct, err := m.casbin.Enforce(userId, r.URL.Path, r.Method)
 		if err != nil || !correct {
-			xhttp.JsonBaseResponseCtx(r.Context(), w, errors.New(http.StatusNotFound, "not found"))
+			xhttp.JsonBaseResponseCtx(r.Context(), w, errors.New(http.StatusNotFound, "casbin verify failed"))
 			return
 		}
 		next(w, r)

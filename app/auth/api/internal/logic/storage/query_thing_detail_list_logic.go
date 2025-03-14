@@ -79,7 +79,8 @@ func (l *QueryThingDetailListLogic) QueryThingDetailList(req *types.ThingDetailL
 			storageInfo.UserID.Eq(uid),
 			storageInfo.Provider.Eq(req.Provider),
 			storageInfo.Bucket.Eq(req.Bucket),
-			storageExtra.Tag.Eq(req.TagName)).
+			storageExtra.Tag.Eq(req.TagName),
+			storageInfo.IsEncrypted.Eq(constant.NoEncrypt)).
 		Order(storageInfo.CreatedAt.Desc())
 	err = storageInfoQuery.Scan(&storageInfoList)
 	if err != nil {
