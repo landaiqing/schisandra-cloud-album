@@ -45,6 +45,12 @@ type (
 		Avatar      string `json:"avatar"`
 		Status      int64  `json:"status"`
 	}
+	AdminLoginRequest {
+		Account  string `json:"account"`
+		Password string `json:"password"`
+		Dots     string `json:"dots"`
+		Key      string `json:"key"`
+	}
 )
 
 // OAuth请求参数
@@ -95,6 +101,11 @@ type (
 		ThumbX      int64  `json:"thumb_x"`
 		ThumbY      int64  `json:"thumb_y"`
 	}
+	TextCaptchaResponse {
+		Key   string `json:"key"`
+		Image string `json:"image"`
+		Thumb string `json:"thumb"`
+	}
 )
 
 // 用户服务
@@ -128,6 +139,10 @@ service auth {
 	// 获取微信公众号二维码
 	@handler getWechatOffiaccountQrcode
 	post /wechat/offiaccount/qrcode (OAuthWechatRequest) returns (string)
+
+	// 管理员登录
+	@handler adminLogin
+	post /admin/login (AdminLoginRequest) returns (LoginResponse)
 }
 
 @server (
@@ -250,6 +265,10 @@ service auth {
 
 	@handler generateSlideBasicCaptcha
 	get /slide/generate returns (SlideCaptchaResponse)
+
+	// 文字点选验证码
+	@handler generateTextCaptcha
+	get /text/generate returns (TextCaptchaResponse)
 }
 
 type (
@@ -731,12 +750,23 @@ type (
 		Provider string `json:"provider"`
 		Bucket   string `json:"bucket"`
 		Password string `json:"password"`
+		Dots     string `json:"dots"`
+		Key      string `json:"key"`
+	}
+	SinglePrivateImageRequest {
+		ID       int64  `json:"id"`
+		Password string `json:"password"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
 	}
 	CoordinateMeta {
 		ID         int64   `json:"id"`
 		Latitude   float64 `json:"latitude"`
 		Longitude  float64 `json:"longitude"`
 		ImageCount int64   `json:"image_count"`
+		Country    string  `json:"country"`
+		Province   string  `json:"province"`
+		City       string  `json:"city"`
 	}
 	CoordinateListResponse {
 		Records []CoordinateMeta `json:"records"`
@@ -883,6 +913,10 @@ service auth {
 	// 获取隐私加密图片
 	@handler getPrivateImageList
 	post /image/private/list (PrivateImageListRequest) returns (AllImageListResponse)
+
+	// 获取解密单个隐私加密图片
+	@handler getPrivateImageUrl
+	post /image/private/url/single (SinglePrivateImageRequest) returns (string)
 
 	// 获取图像经纬度列表
 	@handler getCoordinateList
@@ -1035,5 +1069,39 @@ service auth {
 	// 退出登录
 	@handler logout
 	post /logout returns (string)
+}
+
+type (
+	UserMeta {
+		ID        int64  `json:"id"`
+		Username  string `json:"username"`
+		Nickname  string `json:"nickname"`
+		Avatar    string `json:"avatar"`
+		Email     string `json:"email"`
+		Phone     string `json:"phone"`
+		Status    int64  `json:"status"`
+		CreatedAt string `json:"created_at"`
+	}
+	UserInfoListResponse {
+		Records []UserMeta `json:"records"`
+	}
+)
+
+// 系统服务
+@server (
+	group:      system // 微服务分组
+	prefix:     /api/auth/system // 微服务前缀
+	timeout:    10s // 超时时间
+	maxBytes:   10485760 // 最大请求大小
+	signature:  true // 是否开启签名验证
+	middleware: SecurityHeadersMiddleware,CasbinVerifyMiddleware,NonceMiddleware,AuthMiddleware // 注册中间件
+	MaxConns:   true // 是否开启最大连接数限制
+	Recover:    true // 是否开启自动恢复
+	jwt:        Auth // 是否开启jwt验证
+)
+service auth {
+	// 获取用户列表
+	@handler getUserList
+	post /user/list returns (UserInfoListResponse)
 }
 

@@ -16,6 +16,7 @@ import (
 	share "schisandra-album-cloud-microservices/app/auth/api/internal/handler/share"
 	sms "schisandra-album-cloud-microservices/app/auth/api/internal/handler/sms"
 	storage "schisandra-album-cloud-microservices/app/auth/api/internal/handler/storage"
+	system "schisandra-album-cloud-microservices/app/auth/api/internal/handler/system"
 	token "schisandra-album-cloud-microservices/app/auth/api/internal/handler/token"
 	user "schisandra-album-cloud-microservices/app/auth/api/internal/handler/user"
 	websocket "schisandra-album-cloud-microservices/app/auth/api/internal/handler/websocket"
@@ -60,6 +61,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodGet,
 					Path:    "/slide/generate",
 					Handler: captcha.GenerateSlideBasicCaptchaHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodGet,
+					Path:    "/text/generate",
+					Handler: captcha.GenerateTextCaptchaHandler(serverCtx),
 				},
 			}...,
 		),
@@ -397,6 +403,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/image/private/url/single",
+					Handler: storage.GetPrivateImageUrlHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/image/recent/list",
 					Handler: storage.QueryRecentImageListHandler(serverCtx),
 				},
@@ -455,6 +466,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 
 	server.AddRoutes(
 		rest.WithMiddlewares(
+			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware, serverCtx.AuthMiddleware},
+			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/list",
+					Handler: system.GetUserListHandler(serverCtx),
+				},
+			}...,
+		),
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithSignature(serverCtx.Config.Signature),
+		rest.WithPrefix("/api/auth/system"),
+		rest.WithTimeout(10000*time.Millisecond),
+		rest.WithMaxBytes(10485760),
+	)
+
+	server.AddRoutes(
+		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.CasbinVerifyMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
 				{
@@ -474,6 +503,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		rest.WithMiddlewares(
 			[]rest.Middleware{serverCtx.SecurityHeadersMiddleware, serverCtx.NonceMiddleware},
 			[]rest.Route{
+				{
+					Method:  http.MethodPost,
+					Path:    "/admin/login",
+					Handler: user.AdminLoginHandler(serverCtx),
+				},
 				{
 					Method:  http.MethodPost,
 					Path:    "/login",

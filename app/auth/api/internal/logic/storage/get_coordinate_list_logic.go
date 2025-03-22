@@ -35,13 +35,18 @@ func (l *GetCoordinateListLogic) GetCoordinateList() (resp *types.CoordinateList
 		storageLocation.ID,
 		storageLocation.Longitude,
 		storageLocation.Latitude,
+		storageLocation.Country,
+		storageLocation.Province,
+		storageLocation.City,
 		storageInfo.ID.Count().As("image_count"),
 	).Join(
 		storageInfo,
 		storageLocation.ID.EqCol(storageInfo.LocationID),
 	).Where(storageLocation.UserID.Eq(uid),
 		storageInfo.UserID.Eq(uid),
-	).Scan(&records)
+	).
+		Group(storageLocation.ID).
+		Scan(&records)
 	if err != nil {
 		return nil, err
 	}

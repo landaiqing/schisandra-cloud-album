@@ -54,23 +54,25 @@ func (l *QueryShareImageLogic) QueryShareImage(req *types.QueryShareImageRequest
 	shareData, err := l.svcCtx.RedisClient.Get(l.ctx, cacheKey).Result()
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
-			return nil, errors.New("share code not found")
+			return nil, errors.New("没有找到分享记录")
 		}
 		return nil, err
 	}
 	var storageShare model.ScaStorageShare
 	if err := json.Unmarshal([]byte(shareData), &storageShare); err != nil {
-		return nil, errors.New("unmarshal share data failed")
+		return nil, errors.New("解析分享记录失败")
 	}
 
 	// 验证密码
 	if storageShare.AccessPassword != "" && storageShare.AccessPassword != req.AccessPassword {
-		return nil, errors.New("incorrect password")
+		return nil, errors.New("密码错误")
 	}
 
 	// 检查分享是否过期
-	if storageShare.ExpireTime.Before(time.Now()) {
-		return nil, errors.New("share link has expired")
+	if storageShare.ValidityPeriod > 0 {
+		if storageShare.ExpireTime.Before(time.Now()) {
+			return nil, errors.New("分享已过期")
+		}
 	}
 
 	// 检查访问限制

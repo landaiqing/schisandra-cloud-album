@@ -15,7 +15,9 @@ type Config struct {
 		AccessSecret string
 	}
 	Encrypt struct {
-		Key string
+		Key        string
+		PublicKey  string
+		PrivateKey string
 	}
 	Mysql struct {
 		DataSource  string

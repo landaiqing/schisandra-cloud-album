@@ -3,11 +3,12 @@ package svc
 import (
 	"github.com/ArtisanCloud/PowerWeChat/v3/src/officialAccount"
 	"github.com/casbin/casbin/v2"
-	"github.com/landaiqing/go-xcipher"
+	"github.com/landaiqing/go-pixelnebula"
 	"github.com/lionsoul2014/ip2region/binding/golang/xdb"
 	"github.com/minio/minio-go/v7"
 	"github.com/nsqio/go-nsq"
 	"github.com/redis/go-redis/v9"
+	"github.com/wenlng/go-captcha/v2/click"
 	"github.com/wenlng/go-captcha/v2/rotate"
 	"github.com/wenlng/go-captcha/v2/slide"
 	"github.com/zeromicro/go-zero/rest"
@@ -46,13 +47,14 @@ type ServiceContext struct {
 	WechatOfficial            *officialAccount.OfficialAccount
 	RotateCaptcha             rotate.Captcha
 	SlideCaptcha              slide.Captcha
+	TextCaptcha               click.Captcha
 	Sensitive                 *sensitive.Manager
 	StorageManager            *manager.Manager
 	MinioClient               *minio.Client
 	GeoRegionData             *geo_json.RegionData
 	NSQProducer               *nsq.Producer
 	ZincClient                *zincx.ZincClient
-	XCipher                   *xcipher.XCipher
+	PN                        *pixelnebula.PixelNebula
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -72,6 +74,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		WechatOfficial:            wechat_official.NewWechatPublic(c.Wechat.AppID, c.Wechat.AppSecret, c.Wechat.Token, c.Wechat.AESKey, c.Redis.Host, c.Redis.Pass, c.Redis.DB),
 		RotateCaptcha:             initialize.NewRotateCaptcha(),
 		SlideCaptcha:              initialize.NewSlideCaptcha(),
+		TextCaptcha:               initialize.NewTextCaptcha(),
 		Sensitive:                 sensitivex.NewSensitive(),
 		StorageManager:            storage.InitStorageManager(),
 		AiSvcRpc:                  aiservice.NewAiService(zrpc.MustNewClient(c.AiSvcRpc)),
@@ -79,7 +82,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		GeoRegionData:             geo_json.NewGeoJSON(),
 		NSQProducer:               nsqx.NewNsqProducer(c.NSQ.NSQDHost),
 		ZincClient:                zincx.NewZincClient(c.Zinc.URL, c.Zinc.Username, c.Zinc.Password),
-		XCipher:                   xcipher.NewXCipher([]byte(c.Encrypt.Key)),
+		PN:                        pixelnebula.NewPixelNebula().WithDefaultCache(),
 	}
 	return serviceContext
 }

@@ -14,6 +14,7 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
+	"os"
 	"path"
 	"path/filepath"
 	"schisandra-album-cloud-microservices/app/aisvc/rpc/pb"
@@ -22,6 +23,7 @@ import (
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
+	"schisandra-album-cloud-microservices/common/hybrid_encrypt"
 	"schisandra-album-cloud-microservices/common/storage/config"
 	"strings"
 	"sync"
@@ -50,13 +52,16 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 	if err != nil {
 		return "", err
 	}
-
+	// 解析上传配置信息
+	settingResult, err := l.parseUploadSettingResult(r)
+	if err != nil {
+		return "", err
+	}
 	// 解析上传的文件
 	file, header, err := l.getUploadedFile(r)
 	if err != nil {
 		return "", err
 	}
-	defer file.Close()
 
 	data, err := io.ReadAll(file)
 	if err != nil {
@@ -72,12 +77,6 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 
 	// 解析图片信息识别结果
 	result, err := l.parseImageInfoResult(r)
-	if err != nil {
-		return "", err
-	}
-
-	// 解析上传配置信息
-	settingResult, err := l.parseUploadSettingResult(r)
 	if err != nil {
 		return "", err
 	}
@@ -110,13 +109,25 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 			return nil
 		})
 	}
-	var imageBytes []byte
+
+	var uploadReader io.Reader = bytes.NewReader(data)
 	if settingResult.Encrypt {
-		encryptedData, err := l.svcCtx.XCipher.Encrypt(data, []byte(uid))
+		dir, err := os.Getwd()
 		if err != nil {
 			return "", err
 		}
-		imageBytes = encryptedData
+		publicKeyPath := filepath.Join(dir, l.svcCtx.Config.Encrypt.PublicKey)
+		publicKey, err := os.ReadFile(publicKeyPath)
+		if err != nil {
+			return "", err
+		}
+
+		pem, err := hybrid_encrypt.ImportPublicKeyPEM(publicKey)
+		if err != nil {
+			return "", err
+		}
+		image, err := hybrid_encrypt.EncryptImage(pem, data)
+		uploadReader = bytes.NewReader(image)
 	}
 
 	// 上传文件到 OSS
@@ -126,7 +137,7 @@ func (l *UploadFileLogic) UploadFile(r *http.Request) (resp string, err error) {
 		}
 		defer sem.Release(1)
 
-		fileUrl, thumbUrl, err := l.uploadFileToOSS(uid, header, bytes.NewReader(imageBytes), thumbnail, result)
+		fileUrl, thumbUrl, err := l.uploadFileToOSS(uid, header, uploadReader, thumbnail, result, settingResult)
 		if err != nil {
 			return err
 		}
@@ -210,7 +221,7 @@ func (l *UploadFileLogic) parseUploadSettingResult(r *http.Request) (types.Uploa
 }
 
 // 上传文件到 OSS
-func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file io.Reader, thumbnail io.Reader, result types.File) (string, string, error) {
+func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHeader, file io.Reader, thumbnail io.Reader, result types.File, settingResult types.UploadSetting) (string, string, error) {
 	cacheKey := constant.UserOssConfigPrefix + uid + ":" + result.Provider
 	ossConfig, err := l.getOssConfigFromCacheOrDb(cacheKey, uid, result.Provider)
 	if err != nil {
@@ -220,7 +231,6 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 	if err != nil {
 		return "", "", errors.New("get storage failed")
 	}
-
 	objectKey := path.Join(
 		constant.ImageSpace,
 		uid,
@@ -228,6 +238,15 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 		l.classifyFile(result.FileType, result.IsScreenshot),
 		fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), filepath.Ext(header.Filename)),
 	)
+	if settingResult.Encrypt {
+		objectKey = path.Join(
+			constant.ImageSpace,
+			uid,
+			time.Now().Format("2006/01"), // 按年/月划分目录
+			"encrypted",
+			fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), ".enc"),
+		)
+	}
 
 	_, err = service.UploadFileSimple(l.ctx, ossConfig.BucketName, objectKey, file, map[string]string{
 		"Content-Type": header.Header.Get("Content-Type"),
@@ -241,7 +260,7 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 		uid,
 		time.Now().Format("2006/01"), // 按年/月划分目录
 		l.classifyFile(result.FileType, result.IsScreenshot),
-		fmt.Sprintf("%s_%s%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid(), filepath.Ext(header.Filename)),
+		fmt.Sprintf("%s_%s", strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)), kgo.SimpleUuid()),
 	)
 	_, err = service.UploadFileSimple(l.ctx, ossConfig.BucketName, thumbObjectKey, thumbnail, map[string]string{
 		"Content-Type": header.Header.Get("Content-Type"),
@@ -249,6 +268,7 @@ func (l *UploadFileLogic) uploadFileToOSS(uid string, header *multipart.FileHead
 	if err != nil {
 		return "", "", errors.New("upload thumbnail file failed")
 	}
+
 	return objectKey, thumbObjectKey, nil
 }
 

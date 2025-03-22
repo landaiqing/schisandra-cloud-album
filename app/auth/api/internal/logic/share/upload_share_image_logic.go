@@ -87,7 +87,10 @@ func (l *UploadShareImageLogic) UploadShareImage(req *types.ShareImageRequest) (
 	if err != nil {
 		return "", errors.New("invalid expire date")
 	}
-	expiryTime := l.GenerateExpiryTime(time.Now(), duration)
+	var expiryTime time.Time
+	if duration > 0 {
+		expiryTime = l.GenerateExpiryTime(time.Now(), duration)
+	}
 	storageShare := model.ScaStorageShare{
 		UserID:         uid,
 		AlbumID:        album.ID,

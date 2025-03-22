@@ -13,7 +13,7 @@ import (
 )
 
 // GenerateBasicTextCaptcha generates a basic text captcha and saves it to redis.
-func GenerateBasicTextCaptcha(capt click.Captcha, redis redis.Client, ctx context.Context) (map[string]interface{}, error) {
+func GenerateBasicTextCaptcha(capt click.Captcha, redis *redis.Client, ctx context.Context) (map[string]interface{}, error) {
 	captData, err := capt.Generate()
 	if err != nil {
 		return nil, err

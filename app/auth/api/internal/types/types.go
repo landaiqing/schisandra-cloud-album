@@ -18,6 +18,13 @@ type AddImageToAlbumRequest struct {
 	Bucket   string  `json:"bucket"`
 }
 
+type AdminLoginRequest struct {
+	Account  string `json:"account"`
+	Password string `json:"password"`
+	Dots     string `json:"dots"`
+	Key      string `json:"key"`
+}
+
 type Album struct {
 	ID         int64  `json:"id"`
 	Name       string `json:"name"`
@@ -175,6 +182,9 @@ type CoordinateMeta struct {
 	Latitude   float64 `json:"latitude"`
 	Longitude  float64 `json:"longitude"`
 	ImageCount int64   `json:"image_count"`
+	Country    string  `json:"country"`
+	Province   string  `json:"province"`
+	City       string  `json:"city"`
 }
 
 type DeleteImageRequest struct {
@@ -325,6 +335,8 @@ type PrivateImageListRequest struct {
 	Provider string `json:"provider"`
 	Bucket   string `json:"bucket"`
 	Password string `json:"password"`
+	Dots     string `json:"dots"`
+	Key      string `json:"key"`
 }
 
 type QueryDeleteRecordRequest struct {
@@ -517,6 +529,13 @@ type SingleImageRequest struct {
 	ID int64 `json:"id"`
 }
 
+type SinglePrivateImageRequest struct {
+	ID       int64  `json:"id"`
+	Password string `json:"password"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type SlideCaptchaResponse struct {
 	Key         string `json:"key"`
 	Image       string `json:"image"`
@@ -572,6 +591,12 @@ type StroageNode struct {
 	Children []StorageMeta `json:"children"`
 }
 
+type TextCaptchaResponse struct {
+	Key   string `json:"key"`
+	Image string `json:"image"`
+	Thumb string `json:"thumb"`
+}
+
 type ThingDetailListRequest struct {
 	TagName  string `json:"tag_name"`
 	Provider string `json:"provider"`
@@ -609,6 +634,21 @@ type UploadRequest struct {
 	UserId      string `json:"user_id"`
 }
 
+type UserInfoListResponse struct {
+	Records []UserMeta `json:"records"`
+}
+
+type UserMeta struct {
+	ID        int64  `json:"id"`
+	Username  string `json:"username"`
+	Nickname  string `json:"nickname"`
+	Avatar    string `json:"avatar"`
+	Email     string `json:"email"`
+	Phone     string `json:"phone"`
+	Status    int64  `json:"status"`
+	CreatedAt string `json:"created_at"`
+}
+
 type UserSecuritySettingResponse struct {
 	BindPhone   bool `json:"bind_phone,default=false"`
 	BindEmail   bool `json:"bind_email,default=falsel"`
@@ -632,4 +672,9 @@ type UserUploadInfoResponse struct {
 type WechatOffiaccountLoginRequest struct {
 	Openid   string `json:"openid"`
 	ClientId string `json:"client_id"`
+}
+
+type ImageStreamResponse struct {
+	ContentType string `json:"content_type"`
+	Size        int64  `json:"size"`
 }

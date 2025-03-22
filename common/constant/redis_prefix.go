@@ -22,7 +22,6 @@ const (
 
 const (
 	ImageCachePrefix      = "image:cache:"
-	ImageRecentPrefix     = "image:recent:"
 	ImageSinglePrefix     = "image:single:"
 	ImageSharePrefix      = "image:share:"
 	ImageShareVisitPrefix = "image:share:visit:"

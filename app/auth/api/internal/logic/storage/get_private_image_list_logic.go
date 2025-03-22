@@ -1,24 +1,20 @@
 package storage
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"github.com/go-resty/resty/v2"
 	"github.com/redis/go-redis/v9"
 	"golang.org/x/sync/errgroup"
 	"golang.org/x/sync/semaphore"
 	"gorm.io/gen"
-	"io"
-	"math/rand"
-	"net/http"
+	"gorm.io/gorm"
 	"schisandra-album-cloud-microservices/app/auth/model/mysql/model"
+	"schisandra-album-cloud-microservices/common/captcha/verify"
 	"schisandra-album-cloud-microservices/common/constant"
 	"schisandra-album-cloud-microservices/common/encrypt"
 	storageConfig "schisandra-album-cloud-microservices/common/storage/config"
+	"schisandra-album-cloud-microservices/common/utils"
 	"sort"
 	"sync"
 	"time"
@@ -31,9 +27,8 @@ import (
 
 type GetPrivateImageListLogic struct {
 	logx.Logger
-	ctx         context.Context
-	svcCtx      *svc.ServiceContext
-	RestyClient *resty.Client
+	ctx    context.Context
+	svcCtx *svc.ServiceContext
 }
 
 func NewGetPrivateImageListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetPrivateImageListLogic {
@@ -41,16 +36,6 @@ func NewGetPrivateImageListLogic(ctx context.Context, svcCtx *svc.ServiceContext
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
-		RestyClient: resty.New().
-			SetTimeout(30 * time.Second).          // 总超时时间
-			SetRetryCount(3).                      // 重试次数
-			SetRetryWaitTime(5 * time.Second).     // 重试等待时间
-			SetRetryMaxWaitTime(30 * time.Second). // 最大重试等待
-			AddRetryCondition(func(r *resty.Response, err error) bool {
-				return r.StatusCode() == http.StatusTooManyRequests ||
-					err != nil ||
-					r.StatusCode() >= 500
-			}),
 	}
 }
 
@@ -59,8 +44,29 @@ func (l *GetPrivateImageListLogic) GetPrivateImageList(req *types.PrivateImageLi
 	if !ok {
 		return nil, errors.New("user_id not found")
 	}
+	captcha := verify.VerifyBasicTextCaptcha(req.Dots, req.Key, l.svcCtx.RedisClient, l.ctx)
+	if !captcha {
+		return nil, errors.New("验证错误")
+	}
+	if req.Password == "" {
+		return nil, errors.New("密码不能为空")
+	}
+	authUser := l.svcCtx.DB.ScaAuthUser
+	userInfo, err := authUser.
+		Select(authUser.UID, authUser.Password).
+		Where(authUser.UID.Eq(uid)).First()
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		return nil, err
+	}
+	if userInfo == nil {
+		return nil, errors.New("密码错误")
+	}
+	if !utils.Verify(userInfo.Password, req.Password) {
+		return nil, errors.New("密码错误")
+	}
 
 	storageInfo := l.svcCtx.DB.ScaStorageInfo
+	storageThumb := l.svcCtx.DB.ScaStorageThumb
 	conditions := []gen.Condition{
 		storageInfo.UserID.Eq(uid),
 		storageInfo.Provider.Eq(req.Provider),
@@ -74,10 +80,16 @@ func (l *GetPrivateImageListLogic) GetPrivateImageList(req *types.PrivateImageLi
 		storageInfo.ID,
 		storageInfo.FileName,
 		storageInfo.CreatedAt,
-		storageInfo.Path).
+		storageThumb.ThumbPath,
+		storageInfo.Path,
+		storageThumb.ThumbW,
+		storageThumb.ThumbH,
+		storageThumb.ThumbSize,
+	).
+		LeftJoin(storageThumb, storageInfo.ID.EqCol(storageThumb.InfoID)).
 		Where(conditions...).
 		Order(storageInfo.CreatedAt.Desc()).Scan(&storageInfoList)
-	if err != nil {
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, err
 	}
 	if len(storageInfoList) == 0 {
@@ -110,48 +122,15 @@ func (l *GetPrivateImageListLogic) GetPrivateImageList(req *types.PrivateImageLi
 		g.Go(func() error {
 			defer sem.Release(1)
 
-			//  生成单条缓存键（包含文件唯一标识）
-			imageCacheKey := fmt.Sprintf("%s%s:%s:%s:%s:%v",
-				constant.ImageCachePrefix,
-				uid,
-				"list",
-				req.Provider,
-				req.Bucket,
-				dbFileInfo.ID)
-			// 尝试获取单条缓存
-			if cached, err := l.svcCtx.RedisClient.Get(l.ctx, imageCacheKey).Result(); err == nil {
-				var meta types.ImageMeta
-				if err := json.Unmarshal([]byte(cached), &meta); err == nil {
-					parse, err := time.Parse("2006-01-02 15:04:05", meta.CreatedAt)
-					if err == nil {
-						logx.Error("Parse Time Error:", err)
-						return nil
-					}
-					date := parse.Format("2006年1月2日 星期") + WeekdayMap[parse.Weekday()]
-					value, _ := groupedImages.LoadOrStore(date, []types.ImageMeta{})
-					images := value.([]types.ImageMeta)
-					images = append(images, meta)
-					groupedImages.Store(date, images)
-					return nil
-				}
-			}
 			weekday := WeekdayMap[dbFileInfo.CreatedAt.Weekday()]
 			date := dbFileInfo.CreatedAt.Format("2006年1月2日 星期" + weekday)
-			url, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.Path, time.Minute*30)
+
+			thumbnailUrl, err := service.PresignedURL(l.ctx, ossConfig.BucketName, dbFileInfo.ThumbPath, time.Minute*30)
 			if err != nil {
 				logx.Error(err)
 				return err
 			}
-			imageBytes, err := l.DownloadAndDecrypt(l.ctx, url, uid)
-			if err != nil {
-				logx.Error(err)
-				return err
-			}
-			imageData, err := l.svcCtx.XCipher.Decrypt(imageBytes, []byte(uid))
-			if err != nil {
-				logx.Error(err)
-				return err
-			}
+
 			// 使用 Load 或 Store 确保原子操作
 			value, _ := groupedImages.LoadOrStore(date, []types.ImageMeta{})
 			images := value.([]types.ImageMeta)
@@ -159,7 +138,7 @@ func (l *GetPrivateImageListLogic) GetPrivateImageList(req *types.PrivateImageLi
 			images = append(images, types.ImageMeta{
 				ID:        dbFileInfo.ID,
 				FileName:  dbFileInfo.FileName,
-				URL:       base64.StdEncoding.EncodeToString(imageData),
+				Thumbnail: thumbnailUrl,
 				Width:     dbFileInfo.ThumbW,
 				Height:    dbFileInfo.ThumbH,
 				CreatedAt: dbFileInfo.CreatedAt.Format("2006-01-02 15:04:05"),
@@ -167,14 +146,6 @@ func (l *GetPrivateImageListLogic) GetPrivateImageList(req *types.PrivateImageLi
 
 			// 重新存储更新后的图像列表
 			groupedImages.Store(date, images)
-
-			// 缓存单条数据（24小时基础缓存 + 随机防雪崩）
-			if data, err := json.Marshal(images); err == nil {
-				expire := 24*time.Hour + time.Duration(rand.Intn(3600))*time.Second
-				if err := l.svcCtx.RedisClient.Set(l.ctx, imageCacheKey, data, expire).Err(); err != nil {
-					logx.Error("Failed to cache image meta:", err)
-				}
-			}
 			return nil
 		})
 	}
@@ -262,28 +233,4 @@ func (l *GetPrivateImageListLogic) getOssConfigFromCacheOrDb(cacheKey, uid, prov
 	}
 
 	return ossConfig, nil
-}
-
-func (l *GetPrivateImageListLogic) DownloadAndDecrypt(ctx context.Context, url string, uid string) ([]byte, error) {
-	resp, err := l.RestyClient.R().
-		SetContext(ctx).
-		SetDoNotParseResponse(true). // 保持原始响应流
-		Get(url)
-
-	if err != nil {
-		return nil, fmt.Errorf("request failed: %w", err)
-	}
-	defer resp.RawBody().Close()
-
-	if resp.StatusCode() != http.StatusOK {
-		return nil, fmt.Errorf("HTTP %d: %s", resp.StatusCode(), resp.Status())
-	}
-
-	// 使用缓冲区分块读取
-	buf := new(bytes.Buffer)
-	if _, err := io.Copy(buf, resp.RawBody()); err != nil {
-		return nil, fmt.Errorf("read response body failed: %w", err)
-	}
-
-	return buf.Bytes(), nil
 }

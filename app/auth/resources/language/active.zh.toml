@@ -15,6 +15,7 @@ passwordNotMatch = "两次输入的密码不一致！"
 passwordFormatError = "密码格式错误！"
 resetPasswordError = "重置密码失败！"
 loginSuccess = "登录成功！"
+notPermission = "无权访问！"
 
 [sms]
 smsSendTooFrequently = "验证码发送过于频繁，请稍后再试！"

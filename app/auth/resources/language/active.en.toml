@@ -15,7 +15,7 @@ passwordNotMatch = "password not match！"
 passwordFormatError = "password format error！"
 resetPasswordError = "reset password error！"
 loginSuccess = "login success！"
-
+notPermission = "not permission！"
 [sms]
 smsSendTooFrequently = "sms send too frequently！"
 smsSendFailed = "sms send failed！"

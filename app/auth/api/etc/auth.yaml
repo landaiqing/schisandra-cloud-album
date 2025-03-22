@@ -90,6 +90,8 @@ Signature:
 Encrypt:
   # 密钥（32）
   Key: p3380puliiep184buh8d5dvujeerqtem
+  PublicKey: api/etc/common_rsa_public_key.pem
+  PrivateKey: api/etc/common_rsa_private_key.pem
 # Redis 配置
 Redis:
   # Redis 地址

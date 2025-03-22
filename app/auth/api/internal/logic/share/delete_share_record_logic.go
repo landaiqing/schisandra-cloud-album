@@ -49,8 +49,8 @@ func (l *DeleteShareRecordLogic) DeleteShareRecord(req *types.DeleteShareRecordR
 		return "", errors.New("delete share record failed")
 	}
 	shareVisit := tx.ScaStorageShareVisit
-	shareVisitDeleted, err := shareVisit.Where(shareVisit.ShareID.Eq(req.ID), shareVisit.UserID.Eq(uid)).Delete()
-	if err != nil || shareVisitDeleted.RowsAffected == 0 {
+	_, err = shareVisit.Where(shareVisit.ShareID.Eq(req.ID), shareVisit.UserID.Eq(uid)).Delete()
+	if err != nil {
 		tx.Rollback()
 		return "", errors.New("delete share visit record failed")
 	}

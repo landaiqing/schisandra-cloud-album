@@ -60,7 +60,11 @@ func (l *PhoneLoginLogic) PhoneLogin(r *http.Request, req *types.PhoneLoginReque
 	if userInfo == nil {
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
-		avatar := utils2.GenerateAvatar(uidStr)
+		avatar, err := l.svcCtx.PN.Generate(uidStr, false).ToBase64()
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 		name := randomname.GenerateName()
 		male := constant2.Male
 		user := &model.ScaAuthUser{

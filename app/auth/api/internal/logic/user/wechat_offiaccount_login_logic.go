@@ -12,7 +12,6 @@ import (
 	errors2 "schisandra-album-cloud-microservices/common/errors"
 	"schisandra-album-cloud-microservices/common/i18n"
 	"schisandra-album-cloud-microservices/common/random_name"
-	"schisandra-album-cloud-microservices/common/utils"
 	"strconv"
 
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
@@ -58,7 +57,11 @@ func (l *WechatOffiaccountLoginLogic) WechatOffiaccountLogin(r *http.Request, re
 		// 创建用户
 		uid := idgen.NextId()
 		uidStr := strconv.FormatInt(uid, 10)
-		avatar := utils.GenerateAvatar(uidStr)
+		avatar, err := l.svcCtx.PN.Generate(uidStr, false).ToBase64()
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
 		name := randomname.GenerateName()
 
 		addUser := &model2.ScaAuthUser{
