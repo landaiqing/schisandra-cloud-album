@@ -119,6 +119,7 @@ func main() {
 	scaStorageShare := g.GenerateModel("sca_storage_share", fieldOpts...)
 	scaStorageShareVisit := g.GenerateModel("sca_storage_share_visit", fieldOpts...)
 	scaStorageExtra := g.GenerateModel("sca_storage_extra", fieldOpts...)
+	scaStorageImgBed := g.GenerateModel("sca_storage_img_bed", fieldOpts...)
 
 	g.ApplyBasic(
 		scaAuthMenu,
@@ -141,6 +142,7 @@ func main() {
 		scaStorageShare,
 		scaStorageShareVisit,
 		scaStorageExtra,
+		scaStorageImgBed,
 	)
 
 	g.Execute()

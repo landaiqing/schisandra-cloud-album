@@ -771,6 +771,32 @@ type (
 	CoordinateListResponse {
 		Records []CoordinateMeta `json:"records"`
 	}
+	RecoverImageRequest {
+		ID       int64  `json:"id"`
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	ImageBedUploadResponse {
+		ID int64 `json:"id"`
+	}
+	ImageBedUploadListRequest {
+		Provider string `json:"provider"`
+		Bucket   string `json:"bucket"`
+	}
+	ImageBedUploadMeta {
+		ID        int64  `json:"id"`
+		FileName  string `json:"file_name"`
+		FileSize  int64  `json:"file_size"`
+		FileType  string `json:"file_type"`
+		Path      string `json:"path"`
+		Thumbnail string `json:"thumbnail"`
+		CreatedAt string `json:"created_at"`
+		Width     int64  `json:"width"`
+		Height    int64  `json:"height"`
+	}
+	ImageBedUploadListResponse {
+		Records []ImageBedUploadMeta `json:"records"`
+	}
 )
 
 // 文件上传
@@ -921,6 +947,18 @@ service auth {
 	// 获取图像经纬度列表
 	@handler getCoordinateList
 	post /coordinate/list returns (CoordinateListResponse)
+
+	// 恢复删除图片
+	@handler recoverImage
+	post /image/recover (RecoverImageRequest) returns (string)
+
+	// 图床上传图片
+	@handler imageBedUpload
+	post /image/bed/upload returns (ImageBedUploadResponse)
+
+	// 获取图床上传的图片列表
+	@handler getImageBedUploadList
+	post /image/bed/upload/list (ImageBedUploadListRequest) returns (ImageBedUploadListResponse)
 }
 
 type (
@@ -1073,17 +1111,114 @@ service auth {
 
 type (
 	UserMeta {
-		ID        int64  `json:"id"`
-		Username  string `json:"username"`
-		Nickname  string `json:"nickname"`
-		Avatar    string `json:"avatar"`
-		Email     string `json:"email"`
-		Phone     string `json:"phone"`
-		Status    int64  `json:"status"`
-		CreatedAt string `json:"created_at"`
+		ID         int64  `json:"id"`
+		UID        string `json:"uid"`
+		Username   string `json:"username"`
+		Nickname   string `json:"nickname"`
+		Avatar     string `json:"avatar"`
+		Email      string `json:"email"`
+		Phone      string `json:"phone"`
+		Gender     string `json:"gender"`
+		Introduce  string `json:"introduce"`
+		Blog       string `json:"blog"`
+		Location   string `json:"location"`
+		Company    string `json:"company"`
+		Status     int64  `json:"status"`
+		CreatedAt  string `json:"created_at"`
+		UpadatedAt string `json:"updated_at"`
+		DeletedAt  string `json:"deleted_at"`
 	}
 	UserInfoListResponse {
 		Records []UserMeta `json:"records"`
+	}
+	RoleMeta {
+		ID        int64  `json:"id"`
+		RoleName  string `json:"role_name"`
+		RoleKey   string `json:"role_key"`
+		CreatedAt string `json:"created_at"`
+		UpdatedAt string `json:"updated_at"`
+		DeletedAt string `json:"deleted_at"`
+	}
+	RoleListResponse {
+		Records []RoleMeta `json:"records"`
+	}
+	PermissionRuleMeta {
+		ID    int64  `json:"id"`
+		Ptype string `json:"ptype"`
+		V0    string `json:"v0"`
+		V1    string `json:"v1"`
+		V2    string `json:"v2"`
+		V3    string `json:"v3"`
+		V4    string `json:"v4"`
+		V5    string `json:"v5"`
+	}
+	PermissionRuleListResponse {
+		Records []PermissionRuleMeta `json:"records"`
+	}
+	UserLoginLogMeta {
+		ID              int64  `json:"id"`
+		UserID          int64  `json:"user_id"`
+		IP              string `json:"ip"`
+		Location        string `json:"location"`
+		Agent           string `json:"agent"`
+		CreatedAt       string `json:"created_at"`
+		Browser         string `json:"browser"`
+		OperatingSystem string `json:"operating_system"`
+		BrowserVersion  string `json:"browser_version"`
+		Mobile          string `json:"mobile"`
+		Bot             int64  `json:"bot"`
+		Mozilla         string `json:"mozilla"`
+		Platform        string `json:"platform"`
+		EngineName      string `json:"engine_name"`
+		EngineVersion   string `json:"engine_version"`
+		UpdatedAt       string `json:"updated_at"`
+		DeletedAt       string `json:"deleted_at"`
+	}
+	UserLoginLogListResponse {
+		Records []UserLoginLogMeta `json:"records"`
+	}
+	UserThirdPartyLoginMeta {
+		ID        int64  `json:"id"`
+		UserID    int64  `json:"user_id"`
+		OpenID    string `json:"open_id"`
+		Source    string `json:"source"`
+		Status    int64  `json:"status"`
+		CreatedAt string `json:"created_at"`
+		UpdatedAt string `json:"updated_at"`
+		DeletedAt string `json:"deleted_at"`
+	}
+	UserThirdPartyLoginListResponse {
+		Records []UserThirdPartyLoginMeta `json:"records"`
+	}
+	AllStorageListResponse {
+		Records []StorageConfigMeta `json:"records"`
+	}
+	CommentReplyMeta {
+		ID              int64  `json:"id"`
+		UserID          int64  `json:"user_id"`
+		TopicID         int64  `json:"topic_id"`
+		TopicType       string `json:"topic_type"`
+		Content         string `json:"content"`
+		CommentType     string `json:"comment_type"`
+		ReplyTo         int64  `json:"reply_to"`
+		ReplyID         int64  `json:"reply_id"`
+		ReplyUser       string `json:"reply_user"`
+		Author          string `json:"author"`
+		Likes           int64  `json:"likes"`
+		ReplyCount      int64  `json:"reply_count"`
+		ImagePath       string `json:"image_path"`
+		Browser         string `json:"browser"`
+		OperatingSystem string `json:"operating_system"`
+		BrowserVersion  string `json:"browser_version"`
+		CommentIP       string `json:"comment_ip"`
+		Loaction        string `json:"loaction"`
+		Agent           string `json:"agent"`
+		CreatedAt       string `json:"created_at"`
+		UpdatedAt       string `json:"updated_at"`
+		DeletedAt       string `json:"deleted_at"`
+	}
+	AllCommentListResponse {
+		Records []CommentReplyMeta `json:"records"`
 	}
 )
 
@@ -1103,5 +1238,29 @@ service auth {
 	// 获取用户列表
 	@handler getUserList
 	post /user/list returns (UserInfoListResponse)
+
+	// 获取所有角色列表
+	@handler getAllRoleList
+	post /role/list returns (RoleListResponse)
+
+	// 获取去权限规则表
+	@handler getPermissionRuleList
+	post /permission/rule/list returns (PermissionRuleListResponse)
+
+	// 获取用户登录日志列表
+	@handler getUserLoginLogList
+	post /user/login/log/list returns (UserLoginLogListResponse)
+
+	// 获取用户第三方登录列表
+	@handler getUserThirdPartyLoginList
+	post /user/third/party/login/list returns (UserThirdPartyLoginListResponse)
+
+	// 获取用户存储配置列表
+	@handler getAllStorageList
+	post /user/storage/config/list returns (AllStorageListResponse)
+
+	// 获取所有评论列表
+	@handler getAllCommentList
+	post /comment/list returns (AllCommentListResponse)
 }
 

@@ -2,7 +2,6 @@ package system
 
 import (
 	"context"
-
 	"schisandra-album-cloud-microservices/app/auth/api/internal/svc"
 	"schisandra-album-cloud-microservices/app/auth/api/internal/types"
 
@@ -24,7 +23,28 @@ func NewGetUserListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *GetUs
 }
 
 func (l *GetUserListLogic) GetUserList() (resp *types.UserInfoListResponse, err error) {
-	// todo: add your logic here and delete this line
-
-	return
+	authUser := l.svcCtx.DB.ScaAuthUser
+	var userMetaList []types.UserMeta
+	err = authUser.Select(
+		authUser.ID,
+		authUser.UID,
+		authUser.Username,
+		authUser.Nickname,
+		authUser.Email,
+		authUser.Phone,
+		authUser.Gender,
+		authUser.Avatar,
+		authUser.Location,
+		authUser.Company,
+		authUser.Blog,
+		authUser.Introduce,
+		authUser.Status,
+		authUser.CreatedAt,
+		authUser.UpdatedAt,
+		authUser.DeletedAt,
+	).Scan(&userMetaList)
+	if err != nil {
+		return nil, err
+	}
+	return &types.UserInfoListResponse{Records: userMetaList}, nil
 }

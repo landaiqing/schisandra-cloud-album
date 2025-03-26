@@ -383,6 +383,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				},
 				{
 					Method:  http.MethodPost,
+					Path:    "/image/bed/upload",
+					Handler: storage.ImageBedUploadHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/bed/upload/list",
+					Handler: storage.GetImageBedUploadListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/image/delete",
 					Handler: storage.DeleteImageHandler(serverCtx),
 				},
@@ -410,6 +420,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 					Method:  http.MethodPost,
 					Path:    "/image/recent/list",
 					Handler: storage.QueryRecentImageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/image/recover",
+					Handler: storage.RecoverImageHandler(serverCtx),
 				},
 				{
 					Method:  http.MethodPost,
@@ -470,8 +485,38 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			[]rest.Route{
 				{
 					Method:  http.MethodPost,
+					Path:    "/comment/list",
+					Handler: system.GetAllCommentListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/permission/rule/list",
+					Handler: system.GetPermissionRuleListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/role/list",
+					Handler: system.GetAllRoleListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
 					Path:    "/user/list",
 					Handler: system.GetUserListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/login/log/list",
+					Handler: system.GetUserLoginLogListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/storage/config/list",
+					Handler: system.GetAllStorageListHandler(serverCtx),
+				},
+				{
+					Method:  http.MethodPost,
+					Path:    "/user/third/party/login/list",
+					Handler: system.GetUserThirdPartyLoginListHandler(serverCtx),
 				},
 			}...,
 		),

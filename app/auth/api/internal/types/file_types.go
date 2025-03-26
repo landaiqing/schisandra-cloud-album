@@ -116,3 +116,10 @@ type ZincFileInfo struct {
 	Province     string    `json:"province"`
 	City         string    `json:"city"`
 }
+
+type ImageBedMeta struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+	Width    int64  `json:"width"`
+	Height   int64  `json:"height"`
+}

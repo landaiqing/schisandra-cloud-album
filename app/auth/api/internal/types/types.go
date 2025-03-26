@@ -75,6 +75,10 @@ type AlbumRenameResponse struct {
 	Name string `json:"name"`
 }
 
+type AllCommentListResponse struct {
+	Records []CommentReplyMeta `json:"records"`
+}
+
 type AllImageDetail struct {
 	Date string      `json:"date"`
 	List []ImageMeta `json:"list"`
@@ -89,6 +93,10 @@ type AllImageListRequest struct {
 
 type AllImageListResponse struct {
 	Records []AllImageDetail `json:"records"`
+}
+
+type AllStorageListResponse struct {
+	Records []StorageConfigMeta `json:"records"`
 }
 
 type BucketCapacityRequest struct {
@@ -147,6 +155,31 @@ type CommentListRequest struct {
 	Page    int    `json:"page,default=1,optional"`
 	Size    int    `json:"size,default=5,optional"`
 	IsHot   bool   `json:"is_hot,default=true,optional"`
+}
+
+type CommentReplyMeta struct {
+	ID              int64  `json:"id"`
+	UserID          int64  `json:"user_id"`
+	TopicID         int64  `json:"topic_id"`
+	TopicType       string `json:"topic_type"`
+	Content         string `json:"content"`
+	CommentType     string `json:"comment_type"`
+	ReplyTo         int64  `json:"reply_to"`
+	ReplyID         int64  `json:"reply_id"`
+	ReplyUser       string `json:"reply_user"`
+	Author          string `json:"author"`
+	Likes           int64  `json:"likes"`
+	ReplyCount      int64  `json:"reply_count"`
+	ImagePath       string `json:"image_path"`
+	Browser         string `json:"browser"`
+	OperatingSystem string `json:"operating_system"`
+	BrowserVersion  string `json:"browser_version"`
+	CommentIP       string `json:"comment_ip"`
+	Loaction        string `json:"loaction"`
+	Agent           string `json:"agent"`
+	CreatedAt       string `json:"created_at"`
+	UpdatedAt       string `json:"updated_at"`
+	DeletedAt       string `json:"deleted_at"`
 }
 
 type CommentRequest struct {
@@ -248,6 +281,31 @@ type HeatmapMeta struct {
 	Count int64  `json:"count"`
 }
 
+type ImageBedUploadListRequest struct {
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
+type ImageBedUploadListResponse struct {
+	Records []ImageBedUploadMeta `json:"records"`
+}
+
+type ImageBedUploadMeta struct {
+	ID        int64  `json:"id"`
+	FileName  string `json:"file_name"`
+	FileSize  int64  `json:"file_size"`
+	FileType  string `json:"file_type"`
+	Path      string `json:"path"`
+	Thumbnail string `json:"thumbnail"`
+	CreatedAt string `json:"created_at"`
+	Width     int64  `json:"width"`
+	Height    int64  `json:"height"`
+}
+
+type ImageBedUploadResponse struct {
+	ID int64 `json:"id"`
+}
+
 type ImageMeta struct {
 	ID        int64   `json:"id"`
 	FileName  string  `json:"file_name"`
@@ -325,6 +383,21 @@ type OAuthWechatRequest struct {
 	ClientId string `json:"client_id"`
 }
 
+type PermissionRuleListResponse struct {
+	Records []PermissionRuleMeta `json:"records"`
+}
+
+type PermissionRuleMeta struct {
+	ID    int64  `json:"id"`
+	Ptype string `json:"ptype"`
+	V0    string `json:"v0"`
+	V1    string `json:"v1"`
+	V2    string `json:"v2"`
+	V3    string `json:"v3"`
+	V4    string `json:"v4"`
+	V5    string `json:"v5"`
+}
+
 type PhoneLoginRequest struct {
 	Phone     string `json:"phone"`
 	Captcha   string `json:"captcha"`
@@ -367,6 +440,12 @@ type RecentListResponse struct {
 	Records []AllImageDetail `json:"records"`
 }
 
+type RecoverImageRequest struct {
+	ID       int64  `json:"id"`
+	Provider string `json:"provider"`
+	Bucket   string `json:"bucket"`
+}
+
 type RefreshTokenResponse struct {
 	AccessToken string `json:"access_token"`
 	ExpireAt    int64  `json:"expire_at"`
@@ -407,6 +486,19 @@ type ResetPasswordRequest struct {
 	Captcha    string `json:"captcha"`
 	Password   string `json:"password"`
 	Repassword string `json:"repassword"`
+}
+
+type RoleListResponse struct {
+	Records []RoleMeta `json:"records"`
+}
+
+type RoleMeta struct {
+	ID        int64  `json:"id"`
+	RoleName  string `json:"role_name"`
+	RoleKey   string `json:"role_key"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	DeletedAt string `json:"deleted_at"`
 }
 
 type RotateCaptchaResponse struct {
@@ -638,15 +730,47 @@ type UserInfoListResponse struct {
 	Records []UserMeta `json:"records"`
 }
 
+type UserLoginLogListResponse struct {
+	Records []UserLoginLogMeta `json:"records"`
+}
+
+type UserLoginLogMeta struct {
+	ID              int64  `json:"id"`
+	UserID          int64  `json:"user_id"`
+	IP              string `json:"ip"`
+	Location        string `json:"location"`
+	Agent           string `json:"agent"`
+	CreatedAt       string `json:"created_at"`
+	Browser         string `json:"browser"`
+	OperatingSystem string `json:"operating_system"`
+	BrowserVersion  string `json:"browser_version"`
+	Mobile          string `json:"mobile"`
+	Bot             int64  `json:"bot"`
+	Mozilla         string `json:"mozilla"`
+	Platform        string `json:"platform"`
+	EngineName      string `json:"engine_name"`
+	EngineVersion   string `json:"engine_version"`
+	UpdatedAt       string `json:"updated_at"`
+	DeletedAt       string `json:"deleted_at"`
+}
+
 type UserMeta struct {
-	ID        int64  `json:"id"`
-	Username  string `json:"username"`
-	Nickname  string `json:"nickname"`
-	Avatar    string `json:"avatar"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-	Status    int64  `json:"status"`
-	CreatedAt string `json:"created_at"`
+	ID         int64  `json:"id"`
+	UID        string `json:"uid"`
+	Username   string `json:"username"`
+	Nickname   string `json:"nickname"`
+	Avatar     string `json:"avatar"`
+	Email      string `json:"email"`
+	Phone      string `json:"phone"`
+	Gender     string `json:"gender"`
+	Introduce  string `json:"introduce"`
+	Blog       string `json:"blog"`
+	Location   string `json:"location"`
+	Company    string `json:"company"`
+	Status     int64  `json:"status"`
+	CreatedAt  string `json:"created_at"`
+	UpadatedAt string `json:"updated_at"`
+	DeletedAt  string `json:"deleted_at"`
 }
 
 type UserSecuritySettingResponse struct {
@@ -657,6 +781,21 @@ type UserSecuritySettingResponse struct {
 	BindGitHub  bool `json:"bind_github,default=false"`
 	BindGitee   bool `json:"bind_gitee,default=false"`
 	SetPassword bool `json:"set_password,default=false"`
+}
+
+type UserThirdPartyLoginListResponse struct {
+	Records []UserThirdPartyLoginMeta `json:"records"`
+}
+
+type UserThirdPartyLoginMeta struct {
+	ID        int64  `json:"id"`
+	UserID    int64  `json:"user_id"`
+	OpenID    string `json:"open_id"`
+	Source    string `json:"source"`
+	Status    int64  `json:"status"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
+	DeletedAt string `json:"deleted_at"`
 }
 
 type UserUploadInfoResponse struct {
@@ -672,9 +811,4 @@ type UserUploadInfoResponse struct {
 type WechatOffiaccountLoginRequest struct {
 	Openid   string `json:"openid"`
 	ClientId string `json:"client_id"`
-}
-
-type ImageStreamResponse struct {
-	ContentType string `json:"content_type"`
-	Size        int64  `json:"size"`
 }

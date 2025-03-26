@@ -29,6 +29,7 @@ var (
 	ScaStorageAlbum       *scaStorageAlbum
 	ScaStorageConfig      *scaStorageConfig
 	ScaStorageExtra       *scaStorageExtra
+	ScaStorageImgBed      *scaStorageImgBed
 	ScaStorageInfo        *scaStorageInfo
 	ScaStorageLocation    *scaStorageLocation
 	ScaStorageShare       *scaStorageShare
@@ -53,6 +54,7 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	ScaStorageAlbum = &Q.ScaStorageAlbum
 	ScaStorageConfig = &Q.ScaStorageConfig
 	ScaStorageExtra = &Q.ScaStorageExtra
+	ScaStorageImgBed = &Q.ScaStorageImgBed
 	ScaStorageInfo = &Q.ScaStorageInfo
 	ScaStorageLocation = &Q.ScaStorageLocation
 	ScaStorageShare = &Q.ScaStorageShare
@@ -78,6 +80,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		ScaStorageAlbum:       newScaStorageAlbum(db, opts...),
 		ScaStorageConfig:      newScaStorageConfig(db, opts...),
 		ScaStorageExtra:       newScaStorageExtra(db, opts...),
+		ScaStorageImgBed:      newScaStorageImgBed(db, opts...),
 		ScaStorageInfo:        newScaStorageInfo(db, opts...),
 		ScaStorageLocation:    newScaStorageLocation(db, opts...),
 		ScaStorageShare:       newScaStorageShare(db, opts...),
@@ -104,6 +107,7 @@ type Query struct {
 	ScaStorageAlbum       scaStorageAlbum
 	ScaStorageConfig      scaStorageConfig
 	ScaStorageExtra       scaStorageExtra
+	ScaStorageImgBed      scaStorageImgBed
 	ScaStorageInfo        scaStorageInfo
 	ScaStorageLocation    scaStorageLocation
 	ScaStorageShare       scaStorageShare
@@ -131,6 +135,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		ScaStorageAlbum:       q.ScaStorageAlbum.clone(db),
 		ScaStorageConfig:      q.ScaStorageConfig.clone(db),
 		ScaStorageExtra:       q.ScaStorageExtra.clone(db),
+		ScaStorageImgBed:      q.ScaStorageImgBed.clone(db),
 		ScaStorageInfo:        q.ScaStorageInfo.clone(db),
 		ScaStorageLocation:    q.ScaStorageLocation.clone(db),
 		ScaStorageShare:       q.ScaStorageShare.clone(db),
@@ -165,6 +170,7 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		ScaStorageAlbum:       q.ScaStorageAlbum.replaceDB(db),
 		ScaStorageConfig:      q.ScaStorageConfig.replaceDB(db),
 		ScaStorageExtra:       q.ScaStorageExtra.replaceDB(db),
+		ScaStorageImgBed:      q.ScaStorageImgBed.replaceDB(db),
 		ScaStorageInfo:        q.ScaStorageInfo.replaceDB(db),
 		ScaStorageLocation:    q.ScaStorageLocation.replaceDB(db),
 		ScaStorageShare:       q.ScaStorageShare.replaceDB(db),
@@ -189,6 +195,7 @@ type queryCtx struct {
 	ScaStorageAlbum       IScaStorageAlbumDo
 	ScaStorageConfig      IScaStorageConfigDo
 	ScaStorageExtra       IScaStorageExtraDo
+	ScaStorageImgBed      IScaStorageImgBedDo
 	ScaStorageInfo        IScaStorageInfoDo
 	ScaStorageLocation    IScaStorageLocationDo
 	ScaStorageShare       IScaStorageShareDo
@@ -213,6 +220,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		ScaStorageAlbum:       q.ScaStorageAlbum.WithContext(ctx),
 		ScaStorageConfig:      q.ScaStorageConfig.WithContext(ctx),
 		ScaStorageExtra:       q.ScaStorageExtra.WithContext(ctx),
+		ScaStorageImgBed:      q.ScaStorageImgBed.WithContext(ctx),
 		ScaStorageInfo:        q.ScaStorageInfo.WithContext(ctx),
 		ScaStorageLocation:    q.ScaStorageLocation.WithContext(ctx),
 		ScaStorageShare:       q.ScaStorageShare.WithContext(ctx),
